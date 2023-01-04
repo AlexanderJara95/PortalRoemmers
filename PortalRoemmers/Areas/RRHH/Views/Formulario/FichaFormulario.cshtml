@@ -1,0 +1,316 @@
+﻿@model  PortalRoemmers.Areas.Sistemas.Models.Usuario.EmpleadoModels
+
+@{
+    ViewBag.Title = "FichaFormulario";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="row">
+    <div class="col-md-6 col-md-offset-3">
+        <div class="white-box" style="border: 1px solid #dadce0;border-radius: 8px;">
+            <h1 class="box-title center" style="font-size: 30px;font-weight: 400;">DECLARACI&Oacute;N JURADA DE FICHA SINTOMATOL&Oacute;GICA - COVID 19</h1>
+            <p class="text m-b-30 m-t-30" style="font-size:16px ; font-weight: 400;">He recibido explicación del objetivo de esta evaluación y me comprometo a responder con  la verdad.</p>
+            <p style="font-size: 14px; font-weight: 400; color: #d93025;">*Campos Obligatorio</p>
+        </div>
+    </div>
+    <form class="form-material form-horizontal" data-toggle="validator" action="/Formulario/FichaFormulario" method="post">
+
+        <input type="hidden" name="form" value="@ViewBag.form" />
+
+        <div id="item1" class="col-md-6 col-md-offset-3">
+            <div class="white-box" style="border: 1px solid #dadce0;border-radius: 8px;">
+                <div class="form-group">
+                    <label class="control-label col-md-12" style="font-size: 16px;font-weight: 400;line-height: 24px; text-align: left;">Nombres y Apellidos completos: <span class="text-danger">*</span></label>
+                    <div class="col-md-12" style="margin-top:14px;">
+                        <input type="text" class="form-control form-control-line" name="item1" value="@Model.nom1Emp @Model.nom2Emp @Model.apePatEmp @Model.apeMatEmp" data-error="Esta pregunta es obligatoria" placeholder="Tu respuesta" autocomplete="off" required>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="item2" class="col-md-6 col-md-offset-3">
+            <div class="white-box" style="border: 1px solid #dadce0;border-radius: 8px;">
+                <div class="form-group">
+                    <label class="control-label col-md-12" style="font-size: 16px;font-weight: 400;line-height: 24px; text-align: left;">Sede o ciudad donde labora (EJEMPLOS; "Magdalena" ó "Lima" ó "Pucallpa", etc) <span class="text-danger">*</span></label>
+                    <div class="col-md-12" style="margin-top:14px;">
+                        <input type="text" class="form-control form-control-line" name="item2" data-error="Esta pregunta es obligatoria" value="@ViewBag.sede" placeholder="Tu respuesta" autocomplete="off" required>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="item3" class="col-md-6 col-md-offset-3">
+            <div class="white-box" style="border: 1px solid #dadce0;border-radius: 8px;">
+                <div class="form-group">
+                    <label class="control-label col-md-12" style="font-size: 16px;font-weight: 400;line-height: 24px;text-align: left;">DNI / CE <span class="text-danger">*</span></label>
+                    <div class="col-md-12" style="margin-top:14px;">
+                        <input type="number" class="form-control form-control-line" name="item3" value="@Model.nroDocEmp" data-error="Esta pregunta es obligatoria" placeholder="Tu respuesta" autocomplete="off" required>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="item4" class="col-md-6 col-md-offset-3">
+            <div class="white-box" style="border: 1px solid #dadce0;border-radius: 8px;">
+                <div class="form-group">
+                    <label class="control-label col-md-12" style="font-size: 16px;font-weight: 400;line-height: 24px;text-align: left;">Número (Celular) <span class="text-danger">*</span></label>
+                    <div class="col-md-12" style="margin-top:14px;">
+                        <input type="number" class="form-control form-control-line" name="item4" value="@Model.numCelEmp" data-error="Esta pregunta es obligatoria" placeholder="Tu respuesta" autocomplete="off" required>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="item5" class="col-md-6 col-md-offset-3">
+            <div class="white-box" style="border: 1px solid #dadce0;border-radius: 8px;">
+                <div class="form-group">
+                    <label class="control-label col-md-12" style="font-size: 16px;font-weight: 400;line-height: 24px;text-align: left;">1. En los últimos 14 días he tenido sensación de alza térmica, fiebre o malestar.	 <span class="text-danger">*</span></label>
+                    <div class="col-md-12" style="margin-top:14px;">
+                        <div class="radio radio-info">
+                            <input type="radio" name="item5" value="SI" id="item5S" data-error="Esta pregunta es obligatoria" required>
+                            <label for="item5S"> SI </label>
+                        </div>
+                        <div class="radio radio-info">
+                            <input type="radio" name="item5" value="NO" id="item5N" data-error="Esta pregunta es obligatoria" required>
+                            <label for="item5N"> NO </label>
+                        </div>
+                        <div class="help-block with-errors m-t-10"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="item6" class="col-md-6 col-md-offset-3">
+            <div class="white-box" style="border: 1px solid #dadce0;border-radius: 8px;">
+                <div class="form-group">
+                    <label class="control-label col-md-12" style="font-size: 16px;font-weight: 400;line-height: 24px;text-align: left;">2. En los últimos 14 días he tenido dolor de garganta, tos, estornudos o dificultad para respirar. <span class="text-danger">*</span></label>
+                    <div class="col-md-12" style="margin-top:14px;">
+                        <div class="radio radio-info">
+                            <input type="radio" name="item6" value="SI" id="item6S" data-error="Esta pregunta es obligatoria" required>
+                            <label for="item6S"> SI </label>
+                        </div>
+                        <div class="radio radio-info">
+                            <input type="radio" name="item6" value="NO" id="item6N" data-error="Esta pregunta es obligatoria" required>
+                            <label for="item6N"> NO </label>
+                        </div>
+                        <div class="help-block with-errors m-t-10"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="item7" class="col-md-6 col-md-offset-3">
+            <div class="white-box" style="border: 1px solid #dadce0;border-radius: 8px;">
+                <div class="form-group">
+                    <label class="control-label col-md-12" style="font-size: 16px;font-weight: 400;line-height: 24px;text-align: left;">3. En los últimos 14 días he tenido dolor de cabeza, diarrea o congestión nasal. <span class="text-danger">*</span></label>
+                    <div class="col-md-12" style="margin-top:14px;">
+                        <div class="radio radio-info">
+                            <input type="radio" name="item7" value="SI" id="item7S" data-error="Esta pregunta es obligatoria" required>
+                            <label for="item7S"> SI </label>
+                        </div>
+                        <div class="radio radio-info">
+                            <input type="radio" name="item7" value="NO" id="item7N" data-error="Esta pregunta es obligatoria" required>
+                            <label for="item7N"> NO </label>
+                        </div>
+                        <div class="help-block with-errors m-t-10"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="item13" class="col-md-6 col-md-offset-3">
+            <div class="white-box" style="border: 1px solid #dadce0;border-radius: 8px;">
+                <div class="form-group">
+                    <label class="control-label col-md-12" style="font-size: 16px;font-weight: 400;line-height: 24px;text-align: left;">4. En los últimos 14 días he tenido pérdida del gusto y/o del olfato. <span class="text-danger">*</span></label>
+                    <div class="col-md-12" style="margin-top:14px;">
+                        <div class="radio radio-info">
+                            <input type="radio" name="item13" value="SI" id="item13S" data-error="Esta pregunta es obligatoria" required>
+                            <label for="item13S"> SI </label>
+                        </div>
+                        <div class="radio radio-info">
+                            <input type="radio" name="item13" value="NO" id="item13N" data-error="Esta pregunta es obligatoria" required>
+                            <label for="item13N"> NO </label>
+                        </div>
+                        <div class="help-block with-errors m-t-10"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="item8" class="col-md-6 col-md-offset-3">
+            <div class="white-box" style="border: 1px solid #dadce0;border-radius: 8px;">
+                <div class="form-group">
+                    <label class="control-label col-md-12" style="font-size: 16px;font-weight: 400;line-height: 24px;text-align: left;">5. En los últimos 14 días he tenido he tenido contacto con un caso confirmado de COVID- 19. <span class="text-danger">*</span></label>
+                    <div class="col-md-12" style="margin-top:14px;">
+                        <div class="radio radio-info">
+                            <input type="radio" name="item8" value="SI" id="item8S" data-error="Esta pregunta es obligatoria" required>
+                            <label for="item8S"> SI </label>
+                        </div>
+                        <div class="radio radio-info">
+                            <input type="radio" name="item8" value="NO" id="item8N" data-error="Esta pregunta es obligatoria" required>
+                            <label for="item8N"> NO </label>
+                        </div>
+                        <div class="help-block with-errors m-t-10"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="item9" class="col-md-6 col-md-offset-3">
+            <div class="white-box" style="border: 1px solid #dadce0;border-radius: 8px;">
+                <div class="form-group">
+                    <label class="control-label col-md-12" style="font-size: 16px;font-weight: 400;line-height: 24px;text-align: left;">6. En los últimos 14 días está tomando alguna medicación. <span class="text-danger">*</span></label>
+                    <div class="col-md-12" style="margin-top:14px;">
+                        <div class="radio radio-info">
+                            <input type="radio" name="item9" value="SI" id="item9S" data-error="Esta pregunta es obligatoria" required onclick="hiddenrequired('item10',true);">
+                            <label for="item9S"> SI </label>
+                        </div>
+                        <div class="radio radio-info">
+                            <input type="radio" name="item9" value="NO" id="item9N" data-error="Esta pregunta es obligatoria" required onclick="hiddenrequired('item10',false);">
+                            <label for="item9N"> NO </label>
+                        </div>
+                        <div class="help-block with-errors m-t-10"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="item10" class="col-md-6 col-md-offset-3 hidden">
+            <div class="white-box" style="border: 1px solid #dadce0;border-radius: 8px;">
+                <div class="form-group">
+                    <label class="control-label col-md-12" style="font-size: 16px;font-weight: 400;line-height: 24px;text-align: left;">6.1. Detalla cuál o cuáles medicamentos estas tomando:  <span class="text-danger">*</span></label>
+                    <div class="col-md-12" style="margin-top:14px;">
+                        <input type="text" class="form-control form-control-line" name="item10" data-error="Esta pregunta es obligatoria" placeholder="Tu respuesta" autocomplete="off">
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="item14" class="col-md-6 col-md-offset-3">
+            <div class="white-box" style="border: 1px solid #dadce0;border-radius: 8px;">
+                <div class="form-group">
+                    <label class="control-label col-md-12" style="font-size: 16px;font-weight: 400;line-height: 24px;text-align: left;">7. Pertenece a algún Grupo de Riesgo para COVID 19. <span class="text-danger">*</span></label>
+                    <div class="col-md-12" style="margin-top:14px;">
+                        <div class="radio radio-info">
+                            <input type="radio" name="item14" value="SI" id="item14S" data-error="Esta pregunta es obligatoria" required>
+                            <label for="item14S"> SI </label>
+                        </div>
+                        <div class="radio radio-info">
+                            <input type="radio" name="item14" value="NO" id="item14N" data-error="Esta pregunta es obligatoria" required>
+                            <label for="item14N"> NO </label>
+                        </div>
+                        <div class="help-block with-errors m-t-10"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="item15" class="col-md-6 col-md-offset-3">
+            <div class="white-box" style="border: 1px solid #dadce0;border-radius: 8px;">
+                <div class="form-group">
+                    <label class="control-label col-md-12" style="font-size: 16px;font-weight: 400;line-height: 24px;text-align: left;">8. ¿Indicar si usted está en contacto con alguna persona (familiar, entorno) con sospecha o COVID-19 Positivo?. <span class="text-danger">*</span></label>
+                    <div class="col-md-12" style="margin-top:14px;">
+                        <div class="radio radio-info">
+                            <input type="radio" name="item15" value="SI" id="item15S" data-error="Esta pregunta es obligatoria" required>
+                            <label for="item15S"> SI </label>
+                        </div>
+                        <div class="radio radio-info">
+                            <input type="radio" name="item15" value="NO" id="item15N" data-error="Esta pregunta es obligatoria" required>
+                            <label for="item15N"> NO </label>
+                        </div>
+                        <div class="help-block with-errors m-t-10"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="item16" class="col-md-6 col-md-offset-3">
+            <div class="white-box" style="border: 1px solid #dadce0;border-radius: 8px;">
+                <div class="form-group">
+                    <label class="control-label col-md-12" style="font-size: 16px;font-weight: 400;line-height: 24px;text-align: left;">9. Indicar si usted está en contacto con alguna persona (familiar,entorno) con síntomas Respiratorios. Ejemplo: Gripe, Faringitis, Amigdalitis, Rinofaringitis, entre otros.  <span class="text-danger">*</span></label>
+                    <div class="col-md-12" style="margin-top:14px;">
+                        <div class="radio radio-info">
+                            <input type="radio" name="item16" value="SI" id="item16S" data-error="Esta pregunta es obligatoria" required>
+                            <label for="item16S"> SI </label>
+                        </div>
+                        <div class="radio radio-info">
+                            <input type="radio" name="item16" value="NO" id="item16N" data-error="Esta pregunta es obligatoria" required>
+                            <label for="item16N"> NO </label>
+                        </div>
+                        <div class="help-block with-errors m-t-10"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="item11" class="col-md-6 col-md-offset-3">
+            <div class="white-box" style="border: 1px solid #dadce0;border-radius: 8px;">
+                <div class="form-group">
+                    <label class="control-label col-md-12" style="font-size: 16px;font-weight: 400;line-height: 24px;text-align: left;">Fecha de llenado de la encuesta: <span class="text-danger">*</span></label>
+                    <div class="col-md-12" style="margin-top:14px;">
+                        <input type="text" class="form-control form-control-line datepicker" name="item11" value="@DateTime.Today.ToString("dd/MM/yyyy")" data-error="Esta pregunta es obligatoria" placeholder="dd/mm/aaaa" autocomplete="off" required>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="item12" class="col-md-6 col-md-offset-3">
+            <div class="white-box" style="border: 1px solid #dadce0;border-radius: 8px;">
+                <div class="form-group">
+                    <label class="control-label col-md-12" style="font-size: 16px;font-weight: 400;line-height: 24px;text-align: left;">Todos los datos expresado en esta ficha constituyen una declaración jurada de mi parte. He sido informado que de omitir o declarar información falsa puedo perjudicar la salud de mis compañeros de trabajo, y la mía propia, asumiendo las responsabilidades que correspondan. <span class="text-danger">*</span></label>
+                    <div class="col-md-12" style="margin-top:14px;">
+                        <div class="radio radio-info">
+                            <input type="radio" name="item12" value="ACEPTO" id="item12S" data-error="Esta pregunta es obligatoria" required>
+                            <label for="item12S"> ACEPTO </label>
+                        </div>
+                        <div class="radio radio-info">
+                            <input type="radio" name="item12" id="item12N" value="NO ACEPTO" data-error="Esta pregunta es obligatoria" required">
+                            <label for="item12N"> NO ACEPTO </label>
+                        </div>
+                        <div class="help-block with-errors m-t-10"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-md-offset-3 ">
+            <div class="col-lg-2 col-sm-4 col-xs-12 m-b-40">
+                <button class="btn btn-block btn-info btn-rounded btn-lg">Enviar</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+@section scripts
+{
+    @Scripts.Render("~/Bundles/datepicker_JS")
+    <script src="~/Scripts/js/validator.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.datepicker').datepicker({
+                dateFormat: 'dd/mm/yy'
+            });
+        });
+
+        function hiddenrequired(id, valor) {
+            if (valor) {
+                $('input[name=' + id + ']').attr("required", "required");
+                $('#' + id).removeClass("hidden")
+            } else {
+                $('input[name=' + id + ']').removeAttr("required");
+                $('#' + id).addClass("hidden")
+
+            }
+        }
+
+
+    </script>
+}

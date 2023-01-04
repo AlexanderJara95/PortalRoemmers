@@ -1,0 +1,132 @@
+﻿@model PortalRoemmers.Areas.Sistemas.Models.Medico.MedicoModels
+@using PortalRoemmers.Security
+
+@{
+    ViewBag.Title = "Modificar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="white-box p-l-20 p-r-20">
+    <h3 class="box-title m-b-0"> Modificar M&eacutedico</h3>
+    <p class="text-muted m-b-30 font-13">Completar todos los campos necesarios. </p>
+    <div class="row">
+        <div class="col-md-12">
+            @using (Html.BeginForm("Modificar", "Medico", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal form-material" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.idCli)
+                @Html.HiddenFor(model => model.usuCrea)
+                @Html.HiddenFor(model => model.usufchCrea)
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.nomCli)</label>
+                    <div class="col-md-12">
+
+                        @Html.EditorFor(model => model.nomCli, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Nombre", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                        @Html.ValidationMessageFor(model => model.nomCli, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.fchNacCli)</label>
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.fchNacCli, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "dd/mm/aaaa", @data_mask = "99/99/9999" } })
+                        @Html.ValidationMessageFor(model => model.fchNacCli, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.idTipDoc)  <span class="text-danger">*</span></label>
+                    <div class="col-md-12">
+                        @Html.DropDownListFor(model => model.idTipDoc, (SelectList)ViewBag.tipDoc, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                        @Html.ValidationMessageFor(model => model.idTipDoc, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.nroDocCli)</label>
+                    <div class="col-md-12">
+
+                        @Html.EditorFor(model => model.nroDocCli, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "DNI", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                        @Html.ValidationMessageFor(model => model.nroDocCli, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.nroMatCli)</label>
+                    <div class="col-md-12">
+
+                        @Html.EditorFor(model => model.nroMatCli, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Matrícula", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                        @Html.ValidationMessageFor(model => model.nroMatCli, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.codSigma)</label>
+                    <div class="col-md-12">
+
+                        @Html.EditorFor(model => model.codSigma, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Código Sigma", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                        @Html.ValidationMessageFor(model => model.codSigma, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.nroCloUPCli)</label>
+                    <div class="col-md-12">
+
+                        @Html.EditorFor(model => model.nroCloUPCli, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "CloseUP", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                        @Html.ValidationMessageFor(model => model.nroCloUPCli, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.nroTelCli)</label>
+                    <div class="col-md-12">
+
+                        @Html.EditorFor(model => model.nroTelCli, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Teléfono", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                        @Html.ValidationMessageFor(model => model.nroTelCli, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.corEleCli)</label>
+                    <div class="col-md-12">
+
+                        @Html.EditorFor(model => model.corEleCli, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Correo Electrónico", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                        @Html.ValidationMessageFor(model => model.corEleCli, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.idGen)</label>
+                    <div class="col-md-12">
+                        @Html.DropDownListFor(model => model.idGen, (SelectList)ViewBag.sexoUsu, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                        @Html.ValidationMessageFor(model => model.idGen, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.idTipCli)</label>
+                    <div class="col-md-12">
+                        @Html.DropDownListFor(model => model.idTipCli, (SelectList)ViewBag.tipoCli, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                        @Html.ValidationMessageFor(model => model.idTipCli, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.idEst)</label>
+                    <div class="col-md-12">
+                        @Html.DropDownListFor(model => model.idEst, (SelectList)ViewBag.estado, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                        @Html.ValidationMessageFor(model => model.idEst, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+
+                <button class="btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10">Guardar</button>
+                @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-default btn-rounded btn-outline waves-effect waves-light" })
+
+            }
+        </div>
+    </div>
+</div>
+

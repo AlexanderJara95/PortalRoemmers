@@ -1,0 +1,253 @@
+﻿@model PortalRoemmers.Areas.Sistemas.Models.Usuario.EmpleadoModels
+@using PortalRoemmers.Security
+@{
+    ViewBag.Title = "Visualizar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="white-box p-l-20 p-r-20">
+    <h3 class="box-title m-b-0"> Modificar Empleado </h3>
+    <p class="text-muted m-b-30 font-13"> </p>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-horizontal form-material">
+
+                <ul class="nav nav-tabs tabs customtab">
+                    <li class="tab active">
+                        <a href="#home" data-toggle="tab" aria-expanded="false"> <span class="visible-xs"><i class="fa fa-user"></i></span> <span class="hidden-xs">Datos Personales</span> </a>
+                    </li>
+                    <li class="tab ">
+                        <a href="#profile" data-toggle="tab" aria-expanded="true"> <span class="visible-xs"><i class="fa fa-home"></i></span> <span class="hidden-xs">Dirección</span> </a>
+                    </li>
+                    <li class="tab">
+                        <a href="#messages" data-toggle="tab" aria-expanded="true"> <span class="visible-xs"><i class="fa fa-suitcase"></i></span> <span class="hidden-xs">Laboral</span> </a>
+                    </li>
+                    <li class="tab">
+                        <a href="#settings" data-toggle="tab" aria-expanded="true"> <span class="visible-xs"><i class="fa fa-cog"></i></span> <span class="hidden-xs">Adicional</span> </a>
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+
+                    @Html.AntiForgeryToken()
+
+                    <div class="tab-pane active" id="home">
+                        <div class="form-horizontal form-material">
+                            <div class="form-group">
+                                <label class="col-md-12">@Html.LabelFor(model => model.apePatEmp)  <span class="text-danger">*</span></label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.apePatEmp, new { htmlAttributes = new { @style = "border: 0;width: 100%;", @readonly = "readonly" } })
+
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-12">@Html.LabelFor(model => model.apeMatEmp)  <span class="text-danger">*</span></label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.apeMatEmp, new { htmlAttributes = new { @style = "border: 0;width: 100%;", @readonly = "readonly" } })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-12">@Html.LabelFor(model => model.nom1Emp)  <span class="text-danger">*</span></label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.nom1Emp, new { htmlAttributes = new { @style = "border: 0;width: 100%;", @readonly = "readonly" } })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-12">@Html.LabelFor(model => model.nom2Emp)</label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.nom2Emp, new { htmlAttributes = new { @style = "border: 0;width: 100%;", @readonly = "readonly" } })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-12">@Html.LabelFor(model => model.idTipDoc)  <span class="text-danger">*</span></label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.tipDoc.nomTipDoc, new { htmlAttributes = new { @style = "border: 0;width: 100%;", @readonly = "readonly" } })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-12">@Html.LabelFor(model => model.nroDocEmp)  <span class="text-danger">*</span></label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.nroDocEmp, new { htmlAttributes = new { @style = "border: 0;width: 100%;", @readonly = "readonly" } })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-12">@Html.LabelFor(model => model.emailPerEmp)  </label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.emailPerEmp, new { htmlAttributes = new { @style = "border: 0;width: 100%;", @readonly = "readonly" } })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-12">@Html.LabelFor(model => model.nacEmp)</label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.nacEmp, new { htmlAttributes = new { @style = "border: 0;width: 100%;", @readonly = "readonly" } })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-12">@Html.LabelFor(model => model.idEstCiv)</label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.estCiv.nomEstCiv, new { htmlAttributes = new { @style = "border: 0;width: 100%;", @readonly = "readonly" } })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-12">@Html.LabelFor(model => model.numTeleEmp)</label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.numTeleEmp, new { htmlAttributes = new { @style = "border: 0;width: 100%;", @readonly = "readonly" } })
+
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-12">@Html.LabelFor(model => model.numCelEmp)</label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.numCelEmp, new { htmlAttributes = new { @style = "border: 0;width: 100%;", @readonly = "readonly" } })
+
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-12">@Html.LabelFor(model => model.idGen)</label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.gene.nomGen, new { htmlAttributes = new { @style = "border: 0;width: 100%;", @readonly = "readonly" } })
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="tab-pane " id="profile">
+                        <div class="form-horizontal form-material">
+                            <div class="form-group">
+                                <label class="col-md-12">@Html.LabelFor(model => model.cCod_Pais)</label>
+                                <div class="col-md-12">
+
+                                    @Html.EditorFor(model => model.ubicacion.cPais, new { htmlAttributes = new { @style = "border: 0;width: 100%;", @readonly = "readonly" } })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-12">@Html.LabelFor(model => model.cCod_Dpto)</label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.ubicacion.cDepartamento, new { htmlAttributes = new { @style = "border: 0;width: 100%;", @readonly = "readonly" } })
+
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-12">@Html.LabelFor(model => model.cCod_Provincia)</label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.ubicacion.cProvincia, new { htmlAttributes = new { @style = "border: 0;width: 100%;", @readonly = "readonly" } })
+
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-12">@Html.LabelFor(model => model.cCod_Ubi)</label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.ubicacion.cDistrito, new { htmlAttributes = new { @style = "border: 0;width: 100%;", @readonly = "readonly" } })
+
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-12">@Html.LabelFor(model => model.dirEmp)</label>
+                                <div class="col-md-12">
+                                    @Html.TextAreaFor(model => model.dirEmp, new { @rows = 5, @style = "border: 0;width: 100%;", @readonly = "readonly" })
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="messages">
+                        <div class="form-group">
+                            <label class="col-md-12">@Html.LabelFor(model => model.idAreRoe)</label>
+                            <div class="col-md-12">
+                                @Html.EditorFor(model => model.area.nomAreRoe, new { htmlAttributes = new { @style = "border: 0;width: 100%;", @readonly = "readonly" } })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-12">@Html.LabelFor(model => model.idCarg)</label>
+                            <div class="col-md-12">
+                                @Html.EditorFor(model => model.cargo.desCarg, new { htmlAttributes = new { @style = "border: 0;width: 100%;", @readonly = "readonly" } })
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label class="col-md-12">
+                                @Html.DisplayNameFor(model => model.idEmpJ)
+                            </label>
+
+                            <div class="col-md-12">
+                                <p class="text-muted">@Html.DisplayFor(model => model.jefe.nom1Emp) @Html.DisplayFor(model => model.jefe.nom2Emp) @Html.DisplayFor(model => model.jefe.apePatEmp) </p>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label class="col-md-12">@Html.LabelFor(model => model.ingfchEmp)</label>
+                            <div class="col-md-12">
+                                @Html.EditorFor(model => model.ingfchEmp, new { htmlAttributes = new { @style = "border: 0;width: 100%;", @readonly = "readonly" } })
+
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-12">@Html.LabelFor(model => model.idEst)</label>
+                            <div class="col-md-12">
+                                @Html.EditorFor(model => model.estado.nomEst, new { htmlAttributes = new { @style = "border: 0;width: 100%;", @readonly = "readonly" } })
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label class="col-md-12">@Html.LabelFor(model => model.idAfp)</label>
+                            <div class="col-md-12">
+                                @Html.EditorFor(model => model.afp.nomAfp, new { htmlAttributes = new { @style = "border: 0;width: 100%;", @readonly = "readonly" } })
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="tab-pane" id="settings">
+                        <div class="form-group">
+                            <label class="col-md-12">@Html.LabelFor(model => model.perConEmp)</label>
+                            <div class="col-md-12">
+                                @Html.EditorFor(model => model.perConEmp, new { htmlAttributes = new { @style = "border: 0;width: 100%;", @readonly = "readonly" } })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-12">@Html.LabelFor(model => model.celConEmp)</label>
+                            <div class="col-md-12">
+                                @Html.EditorFor(model => model.celConEmp, new { htmlAttributes = new { @style = "border: 0;width: 100%;", @readonly = "readonly" } })
+
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-12">@Html.LabelFor(model => model.corConEmp)</label>
+                            <div class="col-md-12">
+                                @Html.EditorFor(model => model.corConEmp, new { htmlAttributes = new { @style = "border: 0;width: 100%;", @readonly = "readonly" } })
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <button class="btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10">Guardar</button>
+                @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-default btn-rounded btn-outline waves-effect waves-light" })
+
+            </div>
+        </div>
+    </div>
+</div>

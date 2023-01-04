@@ -1,0 +1,440 @@
+﻿@model PortalRoemmers.Areas.Sistemas.Models.Presupuesto.PresupuestoModels
+@using PortalRoemmers.Security
+
+
+@{
+    ViewBag.Title = "Registrar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section css {
+    @Styles.Render("~/Content/datepicker_CSS")
+    @Styles.Render("~/Content/sweetalert_CSS")
+    @Styles.Render("~/Content/AccordionWizard_CSS")
+    @Styles.Render("~/Content/selectBusqueda_CSS")
+}
+
+<div class="white-box p-l-20 p-r-20">
+    <div id='danger' class='alert alert-danger hidden'>Ingresar todos los campos </div>
+    <h3 class="box-title m-b-0"> Modificar Presupuesto de Gastos N°: @Html.DisplayFor(model => model.idPres)</h3>
+    <p class="text-muted m-b-30 font-13"></p>
+    @using (Html.BeginForm("Modificar", "Presupuesto", FormMethod.Post, new { id = "modPres", enctype = "multipart/form-data", @class = "form-horizontal form-material" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.idPres)
+        @Html.HiddenFor(model => model.idTipoPres)
+        @Html.HiddenFor(model => model.idEst)
+        @Html.HiddenFor(model => model.refIdPres)
+        @Html.HiddenFor(model => model.Monto)
+        @Html.HiddenFor(model => model.Saldo)
+        @Html.HiddenFor(model => model.Estim)
+        @Html.HiddenFor(model => model.usuCrea)
+        @Html.HiddenFor(model => model.usufchCrea)
+        <div class="col-md-12">
+            <section id="wrapper" class="block1">
+                <div class="panel-group wiz-aco" id="accordion" aria-multiselectable="true" role="tablist">
+                    <div class="panel">
+                        <div class="panel-heading" id="exampleHeadingDefaultOne" role="tab"> <a class="panel-title" data-toggle="collapse" href="#exampleCollapseDefaultOne" data-parent="#exampleAccordionDefault" aria-expanded="true" aria-controls="exampleCollapseDefaultOne"> Datos del Presupuesto </a> </div>
+                        <div class="panel-collapse collapse in" id="exampleCollapseDefaultOne" aria-labelledby="exampleHeadingDefaultOne" role="tabpanel">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="row show-grid">
+                                        <div class="col-md-4">
+                                            <div class="form-group col-md-12">
+                                                <label>TIPO</label>
+                                                @Html.DropDownListFor(model => model.idTipoPres, (SelectList)ViewBag.TipoPres, "Seleccionar", htmlAttributes: new { @class = "form-control form-control-line" })
+                                                @Html.ValidationMessageFor(model => model.idTipoPres, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group col-md-12">
+                                                <label>DESDE</label>
+                                                @Html.EditorFor(model => model.fchIniVigencia, new { htmlAttributes = new { @class = "form-control form-control-line datepicker", @placeholder = "dd/mm/aaaa", @autocomplete = "off" } })
+                                                @Html.ValidationMessageFor(model => model.fchIniVigencia, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group col-md-12">
+                                                <label>HASTA</label>
+                                                @Html.EditorFor(model => model.fchFinVigencia, new { htmlAttributes = new { @class = "form-control form-control-line datepicker", @placeholder = "dd/mm/aaaa", @autocomplete = "off" } })
+                                                @Html.ValidationMessageFor(model => model.fchFinVigencia, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-heading" id="exampleHeadingDefaultTwo" role="tab"> <a class="panel-title collapsed" data-toggle="collapse" href="#exampleCollapseDefaultTwo" data-parent="#exampleAccordionDefault" aria-expanded="false" aria-controls="exampleCollapseDefaultTwo"> Detalle Presupuesto </a> </div>
+                        <div class="panel-collapse collapse" id="exampleCollapseDefaultTwo" aria-labelledby="exampleHeadingDefaultTwo" role="tabpanel">
+                            <div class="panel-body">
+                                <div class="row hidden" id="PtoCom1">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="col-md-12">@Html.LabelFor(model => model.idAccRes) </label>
+                                            <div class="col-md-12">
+                                                @Html.DropDownListFor(model => model.idAccRes, (SelectList)ViewBag.responsable, "Seleccionar", htmlAttributes: new { @class = "form-control form-control-line" })
+                                                @Html.ValidationMessageFor(model => model.idAccRes, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row hidden" id="PtoVtas">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="col-md-12">@Html.LabelFor(model => model.idZon) </label>
+                                            <div class="col-md-12">
+                                                @Html.DropDownListFor(model => model.idZon, (SelectList)ViewBag.zona, "Seleccionar", htmlAttributes: new { @class = "form-control form-control-line" })
+                                                @Html.ValidationMessageFor(model => model.idZon, "", new { @class = "text-danger" })
+                                                @Html.HiddenFor(model => model.idZon)
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="col-md-12">@Html.LabelFor(model => model.idLin) </label>
+                                            <div class="col-md-12">
+                                                @Html.DropDownListFor(model => model.idLin, (SelectList)ViewBag.linea, "Seleccionar", htmlAttributes: new { @class = "form-control form-control-line" })
+                                                @Html.ValidationMessageFor(model => model.idLin, "", new { @class = "text-danger" })
+                                                @Html.HiddenFor(model => model.idLin)
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="col-md-12">@Html.LabelFor(model => model.idAccJ)</label>
+                                            <div class="col-md-12">
+                                                @Html.DropDownListFor(model => model.idAccJ, (SelectList)ViewBag.Jefes, "Seleccionar", htmlAttributes: new { @class = "form-control form-control-line" })
+                                                @Html.ValidationMessageFor(model => model.idAccJ, "", new { @class = "text-danger" })
+                                                @Html.HiddenFor(model => model.idAccJ)
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row hidden" id="PtoMkt">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="col-md-12">@Html.LabelFor(model => model.idEsp) </label>
+                                            <div class="col-md-12">
+                                                @Html.DropDownListFor(model => model.idEsp, (SelectList)ViewBag.especialidad, "Seleccionar", htmlAttributes: new { @class = "form-control form-control-line" })
+                                                @Html.ValidationMessageFor(model => model.idEsp, "", new { @class = "text-danger" })
+                                                @Html.HiddenFor(model => model.idEsp)
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="col-md-12">@Html.LabelFor(model => model.idTipGas) </label>
+                                            <div class="col-md-12">
+                                                @Html.DropDownListFor(model => model.idTipGas, (SelectList)ViewBag.tipgasto, "Seleccionar", htmlAttributes: new { @class = "form-control form-control-line" })
+                                                @Html.ValidationMessageFor(model => model.idTipGas, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="col-md-12">@Html.LabelFor(model => model.idConGas) </label>
+                                            <div class="col-md-12">
+                                                @Html.DropDownListFor(model => model.idConGas, (SelectList)ViewBag.congasto, "Seleccionar", htmlAttributes: new { @class = "form-control form-control-line" })
+                                                @Html.ValidationMessageFor(model => model.idConGas, "", new { @class = "text-danger" })
+                                                @Html.HiddenFor(model => model.idConGas)
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="row hidden" id="PtoCom2">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="col-md-12">Importe Total</label>
+                                            <div class="col-md-12" style="padding-bottom: 10px; padding-top: 10px;">
+                                                @Html.DisplayFor(model => model.moneda.simbMon) @Html.DisplayFor(model => model.Monto)
+                                                @Html.HiddenFor(model => model.idMon)
+                                                @Html.HiddenFor(model => model.Monto)
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="col-md-12">@Html.LabelFor(model => model.obsPtoGas)</label>
+                                            <div class="col-md-12" style="padding-bottom: 10px; padding-top: 10px;">
+                                                @Html.TextAreaFor(model => model.obsPtoGas, new { @class = "form-control form-control-line", @rows = 5, @placeholder = "Observación" })
+                                                @Html.ValidationMessageFor(model => model.obsPtoGas, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <div class="form-group">
+            @{ string mod = ""; try { mod = TempData["Modular"].ToString(); } catch { }}
+        </div>
+
+            <button class="btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10">Guardar</button>
+            @Html.ActionLink("Volver", @mod, new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-default btn-rounded btn-outline waves-effect waves-light" })
+    }
+</div>
+
+@section scripts
+{
+    @Scripts.Render("~/Bundles/datepicker_JS")
+    @Scripts.Render("~/Bundles/sweetalert_JS")
+    @Scripts.Render("~/Bundles/AccordionWizard_JS")
+    @Scripts.Render("~/Bundles/selectBusqueda_JS")
+    <script src="~/Areas/Sistemas/Scripts/Sistemas.js"></script>
+    <script src="~/Content/plugins/bower_components/sweetalert/sweetalert.min.js"></script>
+    <script>
+        // Date Picker
+        $('.datepicker').datepicker({
+            dateFormat: 'dd/mm/yy'
+        });
+        // Accordion Wizard
+        $('#accordion').wizard({
+            step: '[data-toggle="collapse"]'
+            , buttonsAppendTo: '.panel-collapse'
+            , templates: {
+                buttons: function () {
+                    var options = this.options;
+                    return '<div class="panel-footer">'
+                        + '<ul class="pager">'
+                        + '<li class="previous">'
+                        + '<a href="#' + this.id + '" data-wizard="back" role="button">' + options.buttonLabels.back + '</a>'
+                        + '</li>'
+                        + '<li class="next">'
+                        + '<a id="nextButtonA" href="#' + this.id + '" data-wizard="next" role="button">' + options.buttonLabels.next + '</a>'
+                        + '<a href="#' + this.id + '" data-wizard="finish" role="button">' + options.buttonLabels.finish + '</a>'
+                        + '</li>'
+                        + '</ul>'
+                        + '</div>';
+                }
+            }
+            , onBeforeShow: function (step) {
+                step.$pane.collapse('show');
+                //swal("Message NEXT!");
+            }
+            , onBeforeHide: function (step) {
+                step.$pane.collapse('hide');
+                //swal("Message BEFORE!");
+            }
+            , onFinish: function () {
+                swal("Dar click en Guardar!!!");
+            }
+
+        });
+        var PtoVtas = false;
+        function launchPtoVtas() {
+            PtoVtas = true;
+        }
+        function delayPtoVtas() {
+            PtoVtas = false;
+        }
+        //ACTIVA EL DOM//------------------------------------------------------
+        $(document).ready(function () {
+
+        ///////////////////////////////////////////////////////
+            //Evento Next Accordion
+            $("#nextButtonA").on("click", function () {
+                var req1 = "";
+                var req2 = "";
+                var data = "";
+                req1 = $("#fchIniVigencia").val();
+                req2 = $("#fchFinVigencia").val();
+                data = $('#idTipoPres').val();
+                console.log(req1 + req2 + "-"+data+"-entronext");
+                if (req1 != "" && req2 != "" && data != "")
+                {
+                    $("#PtoCom1").removeClass("hidden");
+                    $("#PtoCom2").removeClass("hidden");
+                    console.log("Entro primer condicional");
+                    if (data == @ConstantesGlobales.plan_Trab)
+                    {
+                        launchPtoVtas();
+                        //--------------------------------------
+                        $("#PtoVtas").removeClass("hidden");
+                    }
+                    else
+                    {
+                        $("#PtoVtas").addClass("hidden");
+                    }
+                    if (data == @ConstantesGlobales.plan_Mark)
+                    {
+                        delayPtoVtas();
+                        //--------------------------------------
+                        $("#PtoMkt").removeClass("hidden");
+                    }
+                    else
+                    {
+                        $("#PtoMkt").addClass("hidden");
+                    }
+                }
+                else {
+                    $("#PtoVtas").addClass("hidden");
+                    $("#PtoMkt").addClass("hidden");
+                    $("#PtoCom1").addClass("hidden");
+                    $("#PtoCom2").addClass("hidden");
+                    //--------------------------------------
+                    swal("Ingresar todos los campos");
+                    return false;
+                }
+            });
+            ///////////////////////////////////////////////////////
+            //buscar el jefe del Responsable
+            $("#idAccRes").change(function () {
+                if(PtoVtas)
+                {
+                    //-- Efecto Bloqueo --
+                    block();
+                    //-- Efecto Bloqueo --
+                    if ($("#idAccRes").val() != "") {
+                        var RolOptions = {};
+                        RolOptions.url = "/Presupuesto/buscarJefe";
+                        RolOptions.type = "POST";
+                        RolOptions.data = JSON.stringify({ idAccRes: $("#idAccRes").val() });
+                        RolOptions.datatype = "json";
+                        RolOptions.contentType = "application/json";
+                        RolOptions.success = function (data) {
+                            /////////////////////////////////////////////
+                            $("#idAccJ").empty();
+                            $("#idAccJ").select2("val", "");
+                            $("#idAccJ").append($("<option> </option>").val("").html("Seleccionar"));
+                            $.each(data, function (i, item) {
+                                $("#idAccJ").append($("<option> </option>").val(item.value).html(item.text));
+                            });
+                            //--
+                            $("#idAccJ").find("option:last").prop("selected", true);
+                            var resulEmp = $("#idAccJ option:selected").text();
+                            var valorEmp = $("#idAccJ option:selected").val();
+                            console.log("Entro If");
+                            console.log(resulEmp + "-" + valorEmp);
+                            $("#idAccJ").select2("data", { id: valorEmp, text: resulEmp });
+                            //-- Efecto Bloqueo --
+                            unblock();
+                            //-- Efecto Bloqueo --
+                        };
+                        RolOptions.error = function () { alert("Error !!"); };
+                        $.ajax(RolOptions);
+                    }
+                    else {
+                        //-- Efecto Bloqueo --
+                        unblock();
+                        //-- Efecto Bloqueo --
+                        $("#idAccJ").empty();
+                        $("#idAccJ").append($("<option> </option>").val("").html("Seleccionar"));
+                        $("#idAccJ").select2();
+                        $("#idAccJ").prop("disabled", true);
+                    }
+                    /////////////////////////////////////////////
+                }
+            });
+            ///////////////////////////////////////////////////////
+            //Cambio Tipo de Gasto y Gasto
+            //llenar concepto de gasto por un tipo de gasto
+            $("#idTipGas").change(function () {
+                if ($("#idTipGas").val() != "") {
+                    $("#idConGas").prop("disabled", true);
+                    var RolOptions = {};
+                    RolOptions.url = "/SolicitudGasto/buscarConceptoTGasto";
+                    RolOptions.type = "POST";
+                    RolOptions.data = JSON.stringify({ idTipGas: $("#idTipGas").val() });
+                    RolOptions.datatype = "json";
+                    RolOptions.contentType = "application/json";
+                    RolOptions.success = function (data) {
+                        $("#idConGas").select2("val", "");
+                        $('#idConGas').empty();
+                        $("#idConGas").append($("<option> </option>").val("").html("Seleccionar"));
+                        $.each(data, function (i, item) {
+                            $("#idConGas").append($("<option> </option>").val(item.idConGas).html(item.nomConGas));
+                        });
+                        $("#idConGas").append($("<option> </option>").val("00").html("CUALQUIERA"));
+
+                    };
+                    RolOptions.error = function () { alert("Error in Getting States!!"); };
+                    $.ajax(RolOptions);
+                    $("#idConGas").prop("disabled", false);
+                }
+                else {
+                    $("#idConGas").empty();
+                    $("#idConGas").prop("disabled", true);
+                }
+            });
+            ///////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////
+            $("#idTipoPres").prop("disabled", true);
+            $("#idZon").prop("disabled", true);
+            $("#idLin").prop("disabled", true);
+            //$("#idConGas").prop("disabled", true);
+            $("#idEsp").prop("disabled", true);
+            //$("#idMon").prop("disabled", true);
+            //$("#Monto").prop("disabled", true);
+            ///////////////////////////////////////////////////////
+            $("#idAccRes").select2();
+            $("#idZon").select2();
+            $("#idLin").select2();
+            $("#idAccJ").select2();
+            $("#idConGas").select2();
+            $("#idEsp").select2();
+            $("#idTipGas").select2();
+            //$("#idMon").select2();
+            ///////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////
+            //Efecto de bloqueo en espera .....
+            function block() {
+                $("section.block1").block({
+                    message: "<h4><img src='../../Content/plugins/images/busy.gif' />...</h4>",
+                    css: {  border: "100px solid #fff" }
+                });
+            };
+
+            function unblock() {
+                $("section.block1").unblock();
+            };
+            ///////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////
+        });
+        //------------------------------------------------------
+        $("#modPres").submit(function (e) {
+            //----------------------------------------
+            var data = $('#idTipoPres').val();
+            //----------------------------------------
+            var responsable = $("#idAccRes").val();
+            var aprobador = $("#idAccJ").val();
+            var zona = $("#idZon").val();
+            var linea = $("#idLin").val();
+            var congas = $("#idConGas").val();
+            var espec = $("#idEsp").val();
+            //var moneda = $("#idMon").val();
+            var monto = $("#Monto").val();
+            console.log("-resp=" + responsable + "-aprob=" + aprobador );
+            //------------------------------------------
+            if (data == @ConstantesGlobales.plan_Trab)
+            {
+                if (responsable == "" || aprobador == "" )
+                {
+                    swal("Ingresar todos los campos");
+                    return false;
+                }
+            }
+            else if (data ==@ConstantesGlobales.plan_Fuera)
+            {
+                if (responsable == "" ||  moneda == "" || monto == "") {
+                    swal("Ingresar todos los campos");
+                    return false;
+                }
+            }
+            else if(data ==@ConstantesGlobales.plan_Mark)
+            {
+                if (responsable == "" || congas == "" || espec == "" )
+                {
+                    swal("Ingresar todos los campos");
+                    return false;
+                }
+            }
+            //-------------------------------------------
+        });
+        //------------------------------------------------------
+    </script>
+}

@@ -1,0 +1,424 @@
+﻿@model PortalRoemmers.Areas.Ventas.Models.SolicitudGasto.SolicitudGastoModels
+@using PortalRoemmers.Security
+
+@{
+    ViewBag.Title = "";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section css {
+    @Styles.Render("~/Content/selectBusqueda_CSS")
+    @Styles.Render("~/Content/sweetalert_CSS")
+}
+<!--model editar presupuestos-->
+<div id="responsive-modal-PresEdit" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <section id="wrapper" class="block1">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">Ingresa Presupuesto a Aplicar</h4>
+                </div>
+                <div class="modal-body">
+                    <div id='danger1' class='alert alert-danger hidden'>Modificar los campos</div>
+                    <form>
+                        <input type="text" class="hidden" id="idPresSelec">
+                        <input type="text" class="hidden" id="indexMov">
+                        <div class="form-group">
+                            <label for="idPres" class="control-label">Presupuesto:</label>
+                            <div>
+                                <label class="control-label" id="TipPresEdit" style="font-family:Calibri;color:green !important;font-size:medium"></label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="importeM" class="control-label">Importe a aplicar :</label>
+                            <input type="text" class="form-control" id="importeM">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal" id="Cerrar_Gasto">Cerrar</button>
+                    <button type="button" class="btn btn-danger waves-effect waves-light" id="btn_ModificarP">Modificar</button>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<!--model editar presupuestos-->
+<!--model presupuestos-->
+<div id="responsive-modal-Pres" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <section id="wrapper" class="block1">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">Ingresa Presupuesto a Aplicar</h4>
+                </div>
+                <div class="modal-body">
+                    <div id='danger1' class='alert alert-danger hidden'>Ingresar todos los campos</div>
+                    <form>
+                        <input type="text" class="hidden" id="idSolGasSelec">
+                        <div class="form-group">
+                            <label for="idPres" class="control-label">Presupuesto:</label>
+                            <div>
+                                @Html.DropDownList("idPres", (SelectList)ViewBag.presupuestos, "Seleccionar", htmlAttributes: new { @class = "form-control form-control-line" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="importeN" class="control-label">Importe a aplicar :</label>
+                            <input type="text" class="form-control" id="importeN">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal" id="Cerrar_Gasto">Cerrar</button>
+                    <button type="button" class="btn btn-danger waves-effect waves-light" id="btn_AgregarP">Agregar</button>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<!--model presupuestos-->
+<div id='danger' class='alert alert-danger hidden'></div>
+@{string msg = ""; try { msg = TempData["mensaje"].ToString(); } catch { }}
+@(new HtmlString(msg))
+<div class="row">
+    <div class="col-md-12">
+        @using (Html.BeginForm("ModMovPres", "SolicitudGastoMkt", FormMethod.Post, new { id = "idSolGas", enctype = "multipart/form-data", @class = "form-horizontal form-material" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => model.idSolGas)
+            @Html.HiddenFor(model => model.idMon)
+            @Html.HiddenFor(model => model.valtipCam)
+            @Html.HiddenFor(model => model.idEst)
+            @Html.HiddenFor(model => model.usuCrea)
+            @Html.HiddenFor(model => model.usufchCrea)
+            @Html.HiddenFor(model => model.usuMod)
+            @Html.HiddenFor(model => model.usufchMod)
+            @Html.HiddenFor(model => model.procedeMov, new { Value = ViewBag.procedeMov })
+
+            <div class="form-horizontal form-material">
+                <div class="col-md-12">
+                    <div class="panel panel-info">
+                        <div class="panel-heading"> Modificar Presupuesto de la Solicitud de Gasto</div>
+                        <div class="panel-wrapper collapse in" aria-expanded="true">
+                            <div class="panel-body">
+
+                                <div class="form-body">
+                                    <h3 class="box-title">Datos de la Solicitud Nro. @Html.DisplayFor(model => model.idSolGas) </h3>
+                                    <hr class="m-t-0 m-b-40">
+                                    <!--/row-->
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label col-md-3">@Html.LabelFor(model => model.idAccRes):</label>
+                                                <div class="col-md-9">
+                                                    <p class="form-control-static">  @Html.EditorFor(model => model.responsable.empleado.nomComEmp, new { htmlAttributes = new { @style = "border: 0;width: 100%;", @readonly = "readonly" } }) </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--/span-->
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label col-md-3">@Html.LabelFor(model => model.idEsp):</label>
+                                                <div class="col-md-9">
+                                                    <p class="form-control-static"> @Html.EditorFor(model => model.especialidad.nomEsp, new { htmlAttributes = new { @style = "border: 0;width: 100%;", @readonly = "readonly" } }) </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--/span-->
+                                    </div>
+                                    <!--/row-->
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label col-md-3">@Html.LabelFor(model => model.idTipGas):</label>
+                                                <div class="col-md-9">
+                                                    <p class="form-control-static">  @Html.EditorFor(model => model.concepto.tipoGasto.nomTipGas, new { htmlAttributes = new { @style = "border: 0;width: 100%;", @readonly = "readonly" } }) </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--/span-->
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label col-md-3">@Html.LabelFor(model => model.idConGas):</label>
+                                                <div class="col-md-9">
+                                                    <p class="form-control-static">@Html.EditorFor(model => model.concepto.nomConGas, new { htmlAttributes = new { @style = "border: 0;width: 100%;", @readonly = "readonly" } }) </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--/span-->
+                                    </div>
+                                    <!--/row-->
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label col-md-3">@Html.LabelFor(model => model.monNeto):</label>
+                                                <div class="col-md-9">
+                                                    <p class="form-control-static">  @Html.EditorFor(model => model.monNeto, new { htmlAttributes = new { @style = "border: 0;width: 100%;", @readonly = "" } }) </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--/span-->
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label col-md-3">@Html.LabelFor(model => model.idMon):</label>
+                                                <div class="col-md-9">
+                                                    <p class="form-control-static">@Html.EditorFor(model => model.moneda.nomMon, new { htmlAttributes = new { @style = "border: 0;width: 100%;", @readonly = "readonly" } }) </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--/span-->
+                                    </div>
+                                </div>
+                                <!--/row-->
+                                <h3 class="box-title">Presupuestos de la Solicitud</h3>
+                                <hr class="m-t-0 m-b-40">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                Detalle
+                                                <div class="panel-action">
+                                                    <a data-toggle="modal" href="#responsive-modal-Pres"><span class="btn btn-block btn-outline btn-info">Agregar</span></a>
+                                                    <!--<button class="btn btn-block btn-outline btn-info">Agregar detalle</button>-->
+                                                </div>
+                                            </div>
+                                            <div class="panel-wrapper collapse in">
+                                                <div class="table-responsive">
+                                                    <table class="table table-hover manage-u-table" id="tb_Movimiento">
+                                                        <thead>
+                                                            <tr>
+                                                                <th width="70" class="text-center">#</th>
+                                                                <th class="text-center">ID</th>
+                                                                <th class="text-center">ATRIBUTOS</th>
+                                                                <th class="text-center">IMPORTE</th>
+                                                                <th width="80"></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @{ string v = ""; try { v = @ViewBag.tbMovimiento; } catch { }}
+                                                            @(new HtmlString(v))
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class='col-md-12 tab-content'>
+                                        <div class="col-lg-9 col-sm-4 panel-group text-right">
+                                            <label class="col-md-12">Total</label>
+                                        </div>
+                                        <div class="col-lg-3 col-sm-4 text-left">
+                                            <input type="text" class="text-center" id="monTotal" name="monTotal" placeholder="0.00">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel-group">
+                                    <div class="row">
+                                        <div class="col-md-12 tab-content">
+                                            <div class="col-lg-6 col-sm-4 panel-group">
+                                                <button class="btn btn-block btn-outline btn-rounded btn-info" onclick="Hidden('mov', 'tb_Movimiento', '0|1|2|3', '|')"> <i class="fa fa-pencil"></i> Guardar</button>
+                                            </div>
+                                            <div class="col-lg-6 col-sm-4">
+                                                @Html.ActionLink("Volver", "IndexGeneral", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-block btn-outline btn-rounded btn-default" })
+                                                <!--<button type="button" class="btn btn-default">Cancel</button>-->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6"> </div>
+                                <!--Detalle-->
+                                <input type="hidden" name="movD" id="mov" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section scripts
+{
+    @Scripts.Render("~/Bundles/selectBusqueda_JS")
+    <script src="~/Areas/Marketing/Scripts/Marketing.js"></script>
+    <script>
+        $(document).ready(function () {
+            //------
+            $("#idPres").select2();
+            //Activar funcion de sumar totales
+            SumarTotales();
+            //------
+            $('#btn_AgregarP').on('click', function () {
+                var row = "";
+                //obtengo el id de la otra tabla
+                var id = $("#tb_Movimiento > tbody > tr").length;
+                //+++++++++++++++++++++++++++++++
+                var req1 = "";
+                var req2 = "";
+                var req3 = "";
+                //+++++++++++++++++++++++++++++++
+                req1 = $("#idPres").val();
+                req2 = $("#importeN").val();
+                req3 = $("#idPres option:selected").text();
+                console.log(req1 + "-" + req2 + "-" + req3);
+                //+++++++++++++++++++++++++++++++
+                if (req1 != "" && req2 != "" && req3 != "") {
+                    //*******************************************
+                    console.log(req1 + "-" + req2 + "-" + req3);
+                    var Pres = $("#idPres option:selected").text();
+
+                    //-----------LLENAR TABLA DE GASTOS ----------
+                    row = "<tr>";
+                    row += "<td class='text-center'>" + 1 + "</td>";
+                    row += "<td class='text-center'>" + req1 + "</td>";
+                    row += "<td class='text-center'>" + req3 + "</td>";
+                    row += "<td class='text-center'>" + req2 + "</td>";
+                    row += "<td><button type='button' class='btn btn-info btn-outline btn-circle btn-lg m-r-5 delete' onclick='DeleteFila(event)' id='btneliminar'><i class='ti ti-trash'></i></button><button type = 'button' class='btn btn-info btn-outline btn-circle btn-lg m-r-5 editar' onclick='EditarFila(event)' id='btneditar'><a data-toggle='modal' title='Editar' href='#responsive-modal-PresEdit'><i class='ti ti-pencil-alt'></i></a></button></td>";
+                    row += "</tr>";
+                    $("#tb_Movimiento>tbody:last").append(row);
+                    console.log(row);
+                    //-----------LLENAR TABLA DE GASTOS ----------
+                }
+                else {
+                    $("div #danger1").removeClass('hidden');
+                    setTimeout(function () { $("div #danger1").fadeOut(2000).fadeIn(2000).fadeOut(1500).fadeIn(1500).fadeOut(500) }, 500);
+                    setTimeout(function () { $("div #danger1").addClass('hidden'); }, 4000);
+                    return false;
+                }
+                //++++++++++++++++++++++++++++++++++++++++++++
+                $("#responsive-modal-Pres").modal('hide');
+                //++++++++++++++++++++++++++++++++++++++++++++
+                //Limpíar el texto ---------------------------
+                $("#importeN").val("0");
+                //--------------------------------------------
+                //<!---------SUMAR A TOTALES -----------------
+                SumarTotales();
+                //----------*****************--------------!>
+                $("#idPres").select2("data", { id: "", text: "Seleccionar" });
+                //-------------------------------------------
+            });
+            //------
+            $('#btn_ModificarP').on('click', function () {
+                var tablaIndex = parseInt($("#indexMov").val());
+                console.log(parseInt(tablaIndex));
+                //---
+                var req3 = 0;
+                var req4 = 0;
+                var req5 = 0;
+
+                req3 = $("#idPresSelec").text();
+                req4 = $("#TipPresEdit").text();
+                req5 = $("#importeM").val();
+
+                var id = req3;
+                var tip = req4;
+                var importe = req5;
+
+                console.log("index : " + tablaIndex);
+                console.log(req3 + "-" + req4 + "-" + req5);
+                //----
+                $('#tb_Movimiento').find('tr').eq(parseInt(tablaIndex)).find("td").each(function () {
+                    if ($(this).index() == 1) {
+                        $(this).text(id);
+                    }
+                    if ($(this).index() == 2) {
+                        $(this).text(tip);
+                    }
+                    if ($(this).index() == 3) {
+                        $(this).text(importe);
+                    }
+                });
+                //----------------------------
+                //console.log(valores);
+                //<!---------SUMAR A TOTALES -----------------
+                SumarTotales();
+                //----------*****************--------------!>
+                $("#responsive-modal-PresEdit").modal('hide');
+            });
+        });
+        //=======================================
+        function DeleteFila(evt) {
+            /////////////
+            $(document).on("click", ".delete", function () {
+
+                var parent = $(this).parents().get(1);
+                var indexTable = $(this).parents().index('tr');
+                /////////////
+                console.log(parent);
+                /////////////
+                $(parent).remove();
+                /////////////
+                var indice = 1;
+                $('#tb_Movimiento tbody tr').each(function (index, element) {
+                    $(element).find("td").eq(0).text(indice);
+                    indice = indice + 1;
+                });
+                //<!---------SUMAR A TOTALES -----------------
+                SumarTotales();
+                //----------*****************--------------!>
+            });
+        }
+        //=======================================
+        //=======================================
+        function EditarFila(evt) {
+            /////////////
+            $(document).on("click", ".editar", function () {
+                /////////////
+                var parent = $(this).parents().get(1);
+                var indexTable = parseInt($(this).parents("tr").index()) + 1;
+                /////////////
+                console.log("Editar: " + parent);
+                console.log("INDEXMOV: " + indexTable);
+                /////////////
+                var req1 = "";
+                var req2 = "";
+                var req3 = "";
+                req1 = $(parent).find("td").eq(1).text();
+                req2 = $(parent).find("td").eq(2).text();
+                req3 = $(parent).find("td").eq(3).text();
+                console.log("Editar rq1 =>: " + req1 + "-req2=>" + req2 + "-req3=>" + req3);
+                /////////////
+                $("#idPresSelec").text(req1);
+                $("#TipPresEdit").text(req2);
+                $("#importeM").val(req3);
+                $("#indexMov").val(indexTable);
+                /////////////
+                //<!---------SUMAR A TOTALES -----------------
+                SumarTotales();
+                //----------*****************--------------!>
+            });
+        }
+
+        function SumarTotales() {
+            var totalPres = 0;
+            var monNetSol = $("#monNeto").val();
+            /////////////
+            console.log("monNetSol: " + monNetSol);
+            
+            /////////////
+            $('#tb_Movimiento tbody tr').each(function (index) {
+                var fil = $('#tb_Movimiento tbody tr').eq(index).find("td").eq(parseInt(3)).html();
+                totalPres = totalPres + parseFloat(fil);
+            });
+            $("#monTotal").val(totalPres);
+            //Validar que el monto de los presupuestos asig. sean igual a la Solicitud.
+            if (monNetSol == totalPres) {
+                $("#procedeMov").val('true');//
+            }
+            else
+            {
+                $("#procedeMov").val('false');//
+            }
+            console.log("procede: " + $("#procedeMov").val());
+        }
+        //=======================================
+         //valores fijos
+        $("#usuMod").val('@SessionPersister.Username');
+        $("#usufchMod").val('@DateTime.Today');
+        //=======================================
+    </script>
+}
+

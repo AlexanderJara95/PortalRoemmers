@@ -1,0 +1,58 @@
+﻿@model PortalRoemmers.Areas.Marketing.Models.Actividad.ActividadModels
+@using PortalRoemmers.Security
+
+@{
+    ViewBag.Title = "Eliminar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<div class="white-box p-l-20 p-r-20">
+    <h3 class="box-title m-b-0"> Eliminar Actividad</h3>
+    <p class="text-muted m-b-30 font-13">¿Estás seguro que quieres eliminar esto?</p>
+    <div class="row">
+        <div class="col-md-12">
+            @using (Html.BeginForm("Eliminar", "Actividad", FormMethod.Post, new { @class = "form-horizontal form-material" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.idActiv)
+                @Html.HiddenFor(model => model.nomActiv)
+                @Html.HiddenFor(model => model.desActiv)
+                @Html.HiddenFor(model => model.fchCreActiv)
+                @Html.HiddenFor(model => model.fchFinActiv)
+                @Html.HiddenFor(model => model.userCreActiv)
+                @Html.HiddenFor(model => model.userModActiv)
+                @Html.HiddenFor(model => model.idEst)
+                @Html.HiddenFor(model => model.idEsp)
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.idActiv)</label>
+                    <div class="col-md-12">
+                        @Html.DisplayFor(model => model.idActiv, new { htmlAttributes = new { @class = "form-control form-control-line" } })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.nomActiv)</label>
+                    <div class="col-md-12">
+                        @Html.DisplayFor(model => model.nomActiv, new { htmlAttributes = new { @class = "form-control form-control-line" } })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.idEsp)</label>
+                    <div class="col-md-12">
+                        @Html.DisplayFor(model => model.especialidad.nomEsp, new { htmlAttributes = new { @class = "form-control form-control-line" } })
+                    </div>
+                </div>
+
+
+                <button class="btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10">Guardar</button>
+                @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-default btn-rounded btn-outline waves-effect waves-light" })
+
+            }
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,88 @@
+﻿@model List<PortalRoemmers.Areas.RRHH.Models.Galeria.GaleriaModels>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section css {
+    @Styles.Render("~/Content/Galeria_CSS")
+
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="white-box">
+            <h3 class="box-title">Galleria Megalabs Perú</h3>
+            <div id="gallery">
+                <div id="gallery-header">
+                    <div id="gallery-header-center">
+                        <div id="gallery-header-center-left">
+                            <div class="gallery-header-center-right-links" id="filter-all">Todos</div>
+                            @foreach (var tip in Model.Select(x => x.tipoGal).Distinct())
+                            {
+                                <div class="gallery-header-center-right-links" id="@tip.filTipGal">@tip.titTipGal</div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body" style="padding: 35px"></div>
+                <div id="gallery-content">
+                    <div id="gallery-content-center">
+                        @foreach (var gal in Model)
+                        {
+                            <a href="@gal.rutaGaleria" data-toggle="lightbox" data-gallery="multiimages" data-title="@gal.titGaleria"><img src="@gal.rutaGaleria" alt="gallery" class="@gal.tipoGal.classesTipGal" /> </a>
+                        }
+                    </div>
+                </div>
+
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+</div>
+@section scripts
+{
+    @Scripts.Render("~/Bundles/Galeria_JS")
+    <script src="~/Content/plugins/bower_components/gallery/js/animated-masonry-gallery.js"></script>
+    <script>
+        $(document).ready(function () {
+            // delegate calls to data-toggle="lightbox"
+            $(document).delegate('*[data-toggle="lightbox"]:not([data-gallery="navigateTo"])', 'click', function (event) {
+                event.preventDefault();
+                return $(this).ekkoLightbox({
+                    onShown: function () {
+                        if (window.console) {
+                            return console.log('Checking our the events huh?');
+                        }
+                    }
+                    , onNavigate: function (direction, itemIndex) {
+                        if (window.console) {
+                            return console.log('Navigating ' + direction + '. Current item: ' + itemIndex);
+                        }
+                    }
+                });
+            });
+            //Programatically call
+            $('#open-image').click(function (e) {
+                e.preventDefault();
+                $(this).ekkoLightbox();
+            });
+            $('#open-youtube').click(function (e) {
+                e.preventDefault();
+                $(this).ekkoLightbox();
+            });
+            // navigateTo
+            $(document).delegate('*[data-gallery="navigateTo"]', 'click', function (event) {
+                event.preventDefault();
+                var lb;
+                return $(this).ekkoLightbox({
+                    onShown: function () {
+                        lb = this;
+                        $(lb.modal_content).on('click', '.modal-footer a', function (e) {
+                            e.preventDefault();
+                            lb.navigateTo(2);
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}

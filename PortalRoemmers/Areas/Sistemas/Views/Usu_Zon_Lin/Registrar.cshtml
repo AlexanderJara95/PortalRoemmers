@@ -1,0 +1,71 @@
+﻿@using PortalRoemmers.Security
+@model PortalRoemmers.Areas.Sistemas.Models.Trilogia.Usu_Zon_Lin_Models
+
+@{
+    ViewBag.Title = "Registrar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section css {
+    @Styles.Render("~/Content/selectBusqueda_CSS")
+}
+
+
+
+
+<div class="white-box p-l-20 p-r-20">
+    <h3 class="box-title m-b-0"> Nuevo Trilogía</h3>
+    <p class="text-muted m-b-30 font-13">Completar todos los campos necesarios. </p>
+    @{ string v = ""; try { v = TempData["mensaje"].ToString(); } catch { }}
+    @(new HtmlString(v))
+
+    <div class="row">
+        <div class="col-md-12">
+            @using (Html.BeginForm("Registrar", "Usu_Zon_Lin", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal form-material" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.idAcc)</label>
+                    <div class="col-md-12">
+                        @Html.DropDownListFor(model => model.idAcc, (SelectList)ViewBag.usuario, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                        @Html.ValidationMessageFor(model => model.idAcc, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.idLin)</label>
+                    <div class="col-md-12">
+                        @Html.DropDownListFor(model => model.idLin, (SelectList)ViewBag.linea, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                        @Html.ValidationMessageFor(model => model.idLin, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.idZon)</label>
+                    <div class="col-md-12">
+                        @Html.DropDownListFor(model => model.idZon, (SelectList)ViewBag.zona, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                        @Html.ValidationMessageFor(model => model.idZon, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <button class="btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10">Guardar</button>
+                @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-default btn-rounded btn-outline waves-effect waves-light" })
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    @Scripts.Render("~/Bundles/selectBusqueda_JS")
+    <script src="~/Areas/Sistemas/Scripts/Sistemas.js">
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#idAcc").select2();
+            $("#idLin").select2();
+            $("#idZon").select2();
+        });
+    </script>
+}
+

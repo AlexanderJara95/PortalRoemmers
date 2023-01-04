@@ -1,0 +1,93 @@
+﻿@using PortalRoemmers.Security
+@model PortalRoemmers.Areas.Sistemas.Models.Producto.ProductoModels
+@{
+    ViewBag.Title = "ModificarProducto";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="white-box p-l-20 p-r-20">
+    <h3 class="box-title m-b-0"> Modificar Producto</h3>
+    <p class="text-muted m-b-30 font-13">Completar todos los campos necesarios. </p>
+    <div class="row">
+        <div class="col-md-12">
+            @using (Html.BeginForm("Modificar", "Producto", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal form-material" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.usuCrea)
+                @Html.HiddenFor(model => model.usufchCrea)
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.idProAX)</label>
+                    <div class="col-md-12">
+
+                        @Html.EditorFor(model => model.idProAX, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "000-000-000000", @onkeyup = "javascript:this.value=this.value.toUpperCase();", @readonly = "" } })
+                        @Html.ValidationMessageFor(model => model.idProAX, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.nomPro)</label>
+                    <div class="col-md-12">
+
+                        @Html.EditorFor(model => model.nomPro, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Producto", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                        @Html.ValidationMessageFor(model => model.nomPro, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.idFam)</label>
+                    <div class="col-md-12">
+                        @Html.DropDownListFor(model => model.idFam, (SelectList)ViewBag.familiaAx, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                        @Html.ValidationMessageFor(model => model.idFam, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.idFamRoe)</label>
+                    <div class="col-md-12">
+                        @Html.DropDownListFor(model => model.idFamRoe, (SelectList)ViewBag.familiaRoe, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                        @Html.ValidationMessageFor(model => model.idFamRoe, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.idEmp)</label>
+                    <div class="col-md-12">
+                        @Html.DropDownListFor(model => model.idEmp, (SelectList)ViewBag.usuario, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                        @Html.ValidationMessageFor(model => model.idEmp, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.idLab)</label>
+                    <div class="col-md-12">
+                        @Html.DropDownListFor(model => model.idLab, (SelectList)ViewBag.laborato, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                        @Html.ValidationMessageFor(model => model.idLab, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.idAreaTerap)</label>
+                    <div class="col-md-12">
+                        @Html.DropDownListFor(model => model.idAreaTerap, (SelectList)ViewBag.areaTer, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                        @Html.ValidationMessageFor(model => model.idAreaTerap, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.idEst)</label>
+                    <div class="col-md-12">
+                        @Html.DropDownListFor(model => model.idEst, (SelectList)ViewBag.estado, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                        @Html.ValidationMessageFor(model => model.idEst, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <button class="btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10">Guardar</button>
+                @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-default btn-rounded btn-outline waves-effect waves-light" })
+
+            }
+        </div>
+    </div>
+</div>
+
+

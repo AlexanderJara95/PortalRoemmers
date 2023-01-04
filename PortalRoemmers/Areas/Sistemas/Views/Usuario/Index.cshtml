@@ -1,0 +1,234 @@
+﻿@model PortalRoemmers.ViewModels.IndexViewModel
+@using PortalRoemmers.Helpers
+@using PortalRoemmers.Security
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section css {
+    @Styles.Render("~/Content/tablaResponsive_CSS")
+}
+<div id="modal-password" class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <section id="wrapper" class="block1">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h2 class="modal-title">Cambiar contraseña</h2>
+                </div>
+                <div class="modal-body">
+                    <div id='danger' class='alert alert-danger hidden'></div>
+                    <div id='success' class='alert alert-success hidden'></div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-horizontal form-material">
+                                <input type="text" id="idAcc" class="hidden" />
+                                <input type="text" id="nomComEmp" class="hidden" />
+                                <input type="text" id="email" class="hidden" />
+                                <div class="form-group">
+                                    <label class="col-md-12">Contraseña  <span class="text-danger">*</span></label>
+                                    <div class="col-md-12">
+                                        @Html.Editor("userpass", new { htmlAttributes = new { @class = "form-control form-control-line", @type = "password", @autocomplete = "off" } })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-12">Confirmar Contraseña   <span class="text-danger">*</span></label>
+                                    <div class="col-md-12">
+                                        @Html.Editor("confirmPassword", new { htmlAttributes = new { @class = "form-control form-control-line", @type = "password", @autocomplete = "off" } })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info waves-effect" id="btnGuardar">Guardar</button>
+                    <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading box-title"><h2>Mantenimiento de Usuarios</h2></div>
+    <div class="panel-body">
+        <div class="form-group">
+            @{ string v = ""; try { v = TempData["mensaje"].ToString(); } catch { }}
+            @(new HtmlString(v))
+        </div>
+
+        @using (Html.BeginForm("Index", "Usuario", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista }, FormMethod.Post))
+        {
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="input-group">
+                        <input type="text" id="search" name="search" class="form-control" placeholder="Buscar" value="@ViewBag.search">
+                        <span class="input-group-btn">
+                            <button class="btn waves-effect waves-light btn-info">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        }
+        <br />
+        <div class="row">
+            <div class="col-xs-6">
+                @Html.ActionLink("Crear Usuario", "Registrar", "Usuario", new { Area = "Sistemas" }, new { @Class = "btn btn-info btn-rounded" })
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <table class="tablesaw table-bordered table-hover table" data-tablesaw-mode="swipe">
+                    <thead>
+                        <tr>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist"></th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1">
+                                Codigo
+                            </th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2">
+                                Nombre Completo
+                            </th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">
+                                Usuario
+                            </th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="4">
+                                Estado
+                            </th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="5">
+                                Confirmo
+                            </th>
+
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="6">
+                                Perfil
+                            </th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Usuarios)
+                        {
+                            <tr>
+                                <td class="text-nowrap">
+                                    <a href="@MyExtensions.ActionUrl("Modificar", "Usuario", new { Area = "Sistemas", id = item.idAcc })" data-toggle="tooltip" title="Editar"> <i class="fa fa-pencil text-inverse m-r-5"></i> </a>
+                                    @{
+                                        if (item.idEst != ConstantesGlobales.estadoCesado)
+                                        {
+                                            if (item.aprobacion.pesNapro != null)
+                                            {
+                                                <a href="@MyExtensions.ActionUrl("AsignarAprobador", "Usuario", new { Area = "Sistemas", id = item.idAcc, nom = item.empleado.nomComEmp, pes = item.aprobacion.pesNapro })" data-toggle="tooltip" title="Aprobar"> <i class="mdi mdi-gavel m-r-5"></i> </a>
+                                            }
+                                            <a href="@MyExtensions.ActionUrl("PermisosRoles", "Roles", new { Area = "Sistemas", id = ConstantesGlobales.rolInicio, usu = item.idAcc })" data-toggle="tooltip" title="Permisos"> <i class="fa fa-unlock-alt m-r-5"></i> </a>
+                                        }
+                                    }
+                                    <a href="#modal-password" data-toggle="modal" title="Cambiar contraseña" class="open-password" data-id="@item.idAcc" data-nomc="@item.empleado.nomComEmp" data-email="@item.email"><i class="fa icon-shield"></i></a>
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.idAcc)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.empleado.nomComEmp)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.username)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.estado.nomEst)
+                                </td>
+                                <td>
+                                    @{ if (item.confirmEmail == true)
+                                        {
+                                            <span>SI</span>
+                                        }
+                                        else
+                                        {
+                                            <span>NO</span>
+                                        }
+                                    }
+                                </td>
+
+                                <td>
+                                    <img width="50" height="50" src="@Url.Action("convertirImagen", "Usuario", new {idAcc = item.idAcc})" />
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-12">
+                @{Html.RenderPartial("_paginador", Model);}
+            </div>
+        </div>
+    </div>
+    <div class="panel-footer"></div>
+</div>
+@section scripts
+{
+    @Scripts.Render("~/Bundles/tablaResponsive_JS")
+    @Scripts.Render("~/Bundles/bloqueo_JS")
+    <script src="~/Areas/Sistemas/Scripts/Sistemas.js"></script>
+    <script>
+        $(document).on("click", "#btnGuardar", function () {
+            var pass = $("#userpass").val();
+            var repass = $("#confirmPassword").val();
+            var idAcc = $("#idAcc").val();
+            var nomComEmp = $("#nomComEmp").val();
+            var email = $("#email").val();
+            if (pass != "" && repass != "") {
+                if (pass == repass) {
+                    block();
+                    $.post('/Sistemas/Usuario/updatePassword', { idAcc: idAcc, userpass: pass, nomComEmp: nomComEmp, email: email }, function (data, status) {
+                        unblock();
+                        $("div #success").removeClass('hidden');
+                        $("div #success").text(data);
+                        setTimeout(function () { $("div #success").fadeOut(5000); $("div #success").fadeIn(5000); }, 2000);
+                        setTimeout(function () { $("div #success").addClass('hidden'); $('#modal-password').modal('hide'); }, 8000);
+                    });
+                }
+                else {
+                    $("div #danger").removeClass('hidden');
+                    $("div #danger").text('No coinciden ambas contraseñas');
+                    setTimeout(function () { $("div #danger").fadeOut(2000).fadeIn(2000).fadeOut(1500).fadeIn(1500).fadeOut(500) }, 500);
+                    setTimeout(function () { $("div #danger").addClass('hidden'); }, 4000);
+                }
+            } else {
+                $("div #danger").removeClass('hidden');
+                $("div #danger").text('No puede dejar en blanco la contraseña');
+                setTimeout(function () { $("div #danger").fadeOut(2000).fadeIn(2000).fadeOut(1500).fadeIn(1500).fadeOut(500) }, 500);
+                setTimeout(function () { $("div #danger").addClass('hidden'); }, 4000);
+            }
+        });
+
+        $(document).on("click", ".open-password", function () {
+            $("#userpass").val('');
+            $("#confirmPassword").val('');
+            $("#idAcc").val($(this).data('id'));
+            $("#nomComEmp").val($(this).data('nomc'));
+            $("#email").val($(this).data('email'));
+        });
+
+        function block() {
+            $('section.block1').block({
+                message: '<h4><img src="../Content/plugins/images/busy.gif" /> Sólo un momento...</h4>'
+                , css: {
+                    border: '1px solid #fff'
+                }
+            });
+        }
+
+        function unblock() {
+            $('section.block1').unblock();
+        }
+
+
+    </script>
+}
+
+
+

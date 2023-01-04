@@ -1,0 +1,417 @@
+﻿@model PortalRoemmers.Areas.Ventas.Models.SolicitudGasto.SolicitudGastoModels
+@using PortalRoemmers.Security
+
+@{
+    ViewBag.Title = "Modificar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section css {
+    @Styles.Render("~/Content/datepicker_CSS")
+
+}
+
+<div class="white-box p-l-20 p-r-20">
+    <h3 class="box-title m-b-0"> Solicitud de Gasto : @Html.DisplayFor(model => model.idSolGas)</h3>
+    <p class="text-muted m-b-30 font-13">Completar todos los campos necesarios.</p>
+    <div class="row">
+        <div class="col-md-12">
+            @using (Html.BeginForm("Modificar", "SolicitudGastoMkt", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal form-material" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.idSolGas)
+                @Html.HiddenFor(model => model.idAccSol)
+                @Html.HiddenFor(model => model.idTipPag)
+                @Html.HiddenFor(model => model.idPres)
+                @Html.HiddenFor(model => model.idTipSol)
+                @Html.HiddenFor(model => model.idNapro)
+                @Html.HiddenFor(model => model.usuCrea)
+                @Html.HiddenFor(model => model.usufchCrea)
+                @Html.HiddenFor(model => model.usufchMod)
+                @Html.HiddenFor(model => model.usuMod)
+                @Html.HiddenFor(model => model.modSolGas)
+                @Html.HiddenFor(model => model.idEst)
+                <div class="form-horizontal form-material">
+                    <div class="col-md-12">
+                        <div class="panel-group" id="exampleAccordionDefault" aria-multiselectable="true" role="tablist">
+                            <div class="panel">
+                                <div class="panel-heading" id="exampleHeadingDefaultOne" role="tab"> <a class="panel-title" data-toggle="collapse" href="#exampleCollapseDefaultOne" data-parent="#exampleAccordionDefault" aria-expanded="true" aria-controls="exampleCollapseDefaultOne"> Datos de la Solicitud </a> </div>
+                                <div class="panel-collapse collapse in" id="exampleCollapseDefaultOne" aria-labelledby="exampleHeadingDefaultOne" role="tabpanel">
+                                    <div class="panel-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="col-md-12">@Html.LabelFor(model => model.idAccRes) </label>
+                                                    <div class="col-md-12">
+                                                        @Html.HiddenFor(model => model.idAccRes)
+                                                        @Html.DisplayFor(model => model.responsable.empleado.nomComEmp)
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="col-md-12">@Html.LabelFor(model => model.idAccApro) </label>
+                                                    <div class="col-md-12">
+                                                        @Html.HiddenFor(model => model.idAccApro)
+                                                        @Html.DisplayFor(model => model.aprobador.empleado.nomComEmp)
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="col-md-12">@Html.LabelFor(model => model.idEsp) </label>
+                                                    <div class="col-md-12">
+                                                        @Html.HiddenFor(model => model.idEsp)
+                                                        @Html.DisplayFor(model => model.especialidad.nomEsp)
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 ">
+                                                <div class="form-group">
+                                                    <label class="col-md-12">@Html.LabelFor(model => model.fchEveSolGas)</label>
+                                                    <div class="col-md-12">
+                                                        @Html.EditorFor(model => model.fchEveSolGas, new { htmlAttributes = new { @class = "form-control form-control-line datepicker" } })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="col-md-12">@Html.LabelFor(model => model.idTipGas) </label>
+                                                    <div class="col-md-12">
+                                                        @Html.HiddenFor(model => model.idTipGas)
+                                                        @Html.DisplayFor(model => model.concepto.tipoGasto.nomTipGas)
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="col-md-12">@Html.LabelFor(model => model.idConGas)</label>
+                                                    <div class="col-md-12">
+                                                        @Html.HiddenFor(model => model.idConGas)
+                                                        @Html.DisplayFor(model => model.concepto.nomConGas)
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="col-md-12">@Html.LabelFor(model => model.idZon) </label>
+                                                    <div class="col-md-12">
+                                                        @Html.HiddenFor(model => model.idZon)
+                                                        @Html.DisplayFor(model => model.zona.nomZon)
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="col-md-12">@Html.LabelFor(model => model.idLin) </label>
+                                                    <div class="col-md-12">
+                                                        @Html.HiddenFor(model => model.idLin)
+                                                        @Html.DisplayFor(model => model.linea.nomLin)
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="col-md-12">@Html.LabelFor(model => model.idTipSol)</label>
+                                                    <div class="col-md-12">
+                                                        @Html.HiddenFor(model => model.idTipSol)
+                                                        @Html.DisplayFor(model => model.solicitud.nomTipSol)
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="col-md-12">@Html.LabelFor(model => model.idTipPag)</label>
+                                                    <div class="col-md-12">
+                                                        @Html.HiddenFor(model => model.idTipPag)
+                                                        @Html.DisplayFor(model => model.pago.nomTipPag)
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label class="col-md-12">@Html.LabelFor(model => model.titSolGas)</label>
+                                                    <div class="col-md-12">
+                                                        @Html.EditorFor(model => model.titSolGas, new { htmlAttributes = new { @class = "form-control form-control-line" } })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label class="col-md-12">@Html.LabelFor(model => model.obsSolGas)</label>
+                                                    <div class="col-md-12">
+                                                        @Html.TextAreaFor(model => model.obsSolGas, new { @class = "form-control form-control-line", @rows = 5 })
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label class="col-md-12">@Html.LabelFor(model => model.idPres)</label>
+                                                    <div class="col-md-12">
+
+                                                        @{
+                                                            if (Model.movimiento.Count() != 0)
+                                                            {
+                                                                foreach (var sol in Model.movimiento)
+                                                                {
+
+                                                                    string nombre = "N°: " + sol.idPres + " | " + "Vencimiento: " + sol.presupuesto.fchFinVigencia.ToShortDateString() + " | " + "Importe: " + sol.presupuesto.moneda.simbMon + " " + sol.presupuesto.Monto + " | " + "Saldo: " + sol.presupuesto.moneda.simbMon + " " + sol.presupuesto.Saldo;
+                                                                    <input style="border: 0;width: 100%;" value="@nombre" readonly="readonly" />
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                <input style="border: 0;width: 100%;" value="Ninguno" readonly="readonly" />
+                                                            }
+                                                        }
+
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <div class="col-md-12">
+                                                        <div class="col-md-4" style="padding-bottom: 10px; padding-top: 10px;">
+                                                            <label>Total</label>
+                                                            @Html.EditorFor(model => model.monSolGas, new { htmlAttributes = new { @style = "border: 0;width: 100%;", @readonly = "" } })
+                                                        </div>
+
+                                                        <div class="col-md-4" style="padding-bottom: 10px; padding-top: 10px;">
+                                                            <label>Impuesto</label>
+                                                            @Html.EditorFor(model => model.monImp, new { htmlAttributes = new { @style = "border: 0;width: 100%;", @readonly = "" } })
+                                                        </div>
+                                                        <div class="col-md-4" style="padding-bottom: 10px; padding-top: 10px;">
+                                                            <label>SubTotal</label>
+                                                            @Html.EditorFor(model => model.monNeto, new { htmlAttributes = new { @style = "border: 0;width: 100%;", @readonly = "" } })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <div class="col-md-12">
+                                                        <div class="col-md-4" style="padding-bottom: 10px; padding-top: 10px;">
+                                                            <label>Moneda</label>
+                                                            @Html.HiddenFor(model => model.idMon)
+                                                            <input value="@Model.moneda.nomMon" style="border: 0;width: 100%;" readonly="readonly" />
+                                                        </div>
+                                                        <div class="col-md-4" style="padding-bottom: 10px; padding-top: 10px;">
+                                                            <label>T.Cambio</label>
+                                                            @Html.EditorFor(model => model.valtipCam, new { htmlAttributes = new { @style = "border: 0;width: 100%;", @readonly = "readonly" } })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel">
+                                <div class="panel-heading" id="exampleHeadingDefaultTwo" role="tab"> <a class="panel-title collapsed" data-toggle="collapse" href="#exampleCollapseDefaultTwo" data-parent="#exampleAccordionDefault" aria-expanded="false" aria-controls="exampleCollapseDefaultTwo">Detalle Gastos </a> </div>
+                                <div class="panel-collapse collapse" id="exampleCollapseDefaultTwo" aria-labelledby="exampleHeadingDefaultTwo" role="tabpanel">
+                                    <div class="col-md-12">
+                                        <br />
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="col-md-12">Actividad</label>
+                                                <div class="col-md-12">
+                                                    @{
+                                                        if (Model.dGas.Count() != 0)
+                                                        {
+                                                            var act = Model.dGas.Select(y => y.actividad.nomActiv).FirstOrDefault();
+                                                            string activida = act.ToString();
+                                                            <input style="border: 0;width: 100%;" value="@activida" readonly="readonly" />
+
+                                                        }
+                                                        else
+                                                        {
+                                                            <input style="border: 0;width: 100%;" value="Ninguno" readonly="readonly" />
+                                                        }
+                                                    }
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="col-md-12">Estimaci&oacuten</label>
+                                                <div class="col-md-12">
+                                                    @{
+                                                        if (Model.dGas.Count() != 0)
+                                                        {
+                                                            var est = Model.dGas.Select(y => new { y.actividad.idActiv, y.actividad.estimacion.monEstGas, y.actividad.estimacion.moneda.nomMon }).FirstOrDefault();
+
+                                                            string estima = "N°" + est.idActiv + " | " + est.monEstGas + " " + est.nomMon;
+
+                                                            <input style="border: 0;width: 100%;" value="@estima" readonly="readonly" />
+                                                        }
+                                                        else
+                                                        {
+                                                            <input style="border: 0;width: 100%;" value="Ninguno" readonly="readonly" />
+                                                        }
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <br />
+                                        <div class="col-md-12">
+                                            <a data-toggle="modal" title="Agregar Actividad" class="btn btn-block btn-primary" href="#responsive-modal-actividad">
+                                                <span class="glyphicon glyphicon-plus"></span> GASTOS
+                                            </a>
+                                            <div class="table-responsive m-t-10" style="clear: both;">
+                                                <table class="table table-hover" id="tb_actividad">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="text-center">T.Gasto</th>
+                                                            <th class="text-center">Gasto</th>
+                                                            <th class="text-center">Total</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @{ string a = ""; try { a = @ViewBag.tbActividad; } catch { }}
+                                                        @(new HtmlString(a))
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="panel">
+                                <div class="panel-heading" id="exampleHeadingDefaultThree" role="tab"> <a class="panel-title collapsed" data-toggle="collapse" href="#exampleCollapseDefaultThree" data-parent="#exampleAccordionDefault" aria-expanded="false" aria-controls="exampleCollapseDefaultThree"> Detalle Familia </a> </div>
+                                <div class="panel-collapse collapse" id="exampleCollapseDefaultThree" aria-labelledby="exampleHeadingDefaultThree" role="tabpanel">
+                                    <div class="col-md-12">
+                                        <a data-toggle="modal" title="Agregar familia" class="btn btn-block btn-primary" href="#responsive-modal">
+                                            <span class="glyphicon glyphicon-plus"></span> FAMILIAS
+                                        </a>
+                                        <div class="table-responsive m-t-10" style="clear: both;">
+                                            <table class="table table-hover" id="tb_Familia">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="hidden"></th>
+                                                        <th class="text-center">#</th>
+                                                        <th class="text-center">Familia</th>
+                                                        <th class="hidden"></th>
+                                                        <th class="text-center"></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @{ string v = ""; try { v = @ViewBag.tbFamilia; } catch { }}
+                                                    @(new HtmlString(v))
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel">
+                                <div class="panel-heading" id="exampleHeadingDefaultFour" role="tab"> <a class="panel-title collapsed" data-toggle="collapse" href="#exampleCollapseDefaultFour" data-parent="#exampleAccordionDefault" aria-expanded="false" aria-controls="exampleCollapseDefaultFour"> Detalle Medico </a> </div>
+                                <div class="panel-collapse collapse" id="exampleCollapseDefaultFour" aria-labelledby="exampleHeadingDefaultFour" role="tabpanel">
+                                    <div class="col-md-12">
+                                        <a data-toggle="modal" title="Agregar familia" class="btn btn-block btn-primary" href="#responsive-modal-medico">
+                                            <span class="glyphicon glyphicon-plus"></span> MEDICOS
+                                        </a>
+                                        <div class="table-responsive m-t-10" style="clear: both;">
+                                            <table class="table table-hover" id="tb_medico">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="text-center">#</th>
+                                                        <th class="text-center">Nombre</th>
+                                                        <th class="text-center">Matricula</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @{ string v1 = ""; try { v1 = @ViewBag.tbMedico; } catch { }}
+                                                    @(new HtmlString(v1))
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel">
+                                <div class="panel-heading" id="exampleHeadingDefaultFive" role="tab"> <a class="panel-title collapsed" data-toggle="collapse" href="#exampleCollapseDefaultFive" data-parent="#exampleAccordionDefault" aria-expanded="false" aria-controls="exampleCollapseDefaultFive"> Detalle Responsable </a> </div>
+                                <div class="panel-collapse collapse" id="exampleCollapseDefaultFive" aria-labelledby="exampleHeadingDefaultFive" role="tabpanel">
+                                    <div class="col-md-12">
+                                        <a data-toggle="modal" title="Agregar responsable" class="btn btn-block btn-primary" href="#responsive-modal-responsable">
+                                            <span class="glyphicon glyphicon-plus"></span> RESPONSABLES
+                                        </a>
+                                        <div class="table-responsive m-t-10" style="clear: both;">
+                                            <table class="table table-hover" id="tb_responsable">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="text-center">#</th>
+                                                        <th class="text-center">Nombre</th>
+                                                        <th class="text-center">DNI</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @{ string v2 = ""; try { v2 = @ViewBag.tbResponsable; } catch { }}
+                                                    @(new HtmlString(v2))
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel">
+                                <div class="panel-heading" id="exampleHeadingDefaultSix" role="tab"> <a class="panel-title collapsed" data-toggle="collapse" href="#exampleCollapseDefaultSix" data-parent="#exampleAccordionDefault" aria-expanded="false" aria-controls="exampleCollapseDefaultSix"> Detalle Area Terapeutica </a> </div>
+                                <div class="panel-collapse collapse" id="exampleCollapseDefaultSix" aria-labelledby="exampleHeadingDefaultSix" role="tabpanel">
+                                    <div class="col-md-12">
+                                        <a data-toggle="modal" title="Agregar area terapeutica" class="btn btn-block btn-primary" href="#responsive-modal-areaTerap">
+                                            <span class="glyphicon glyphicon-plus"></span> AREA TERAPEUTICA
+                                        </a>
+                                        <div class="table-responsive m-t-10" style="clear: both;">
+                                            <table class="table table-hover" id="tb_areaTerap">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="text-center">#</th>
+                                                        <th class="text-center">Area Terap.</th>
+                                                        <th class="text-center">Descripcion</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @{ string v3 = ""; try { v3 = @ViewBag.tbareaTerap; } catch { }}
+                                                    @(new HtmlString(v3))
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel-group">
+                            <div class="col-md-4 tab-content">
+                                <div class="col-lg-6 col-sm-4 panel-group">
+                                    <button class="btn btn-block btn-outline btn-rounded btn-info" onclick="Hidden('familia', 'tb_Familia', '0|1|2', '|');Hidden('medico', 'tb_medico', '0|1|2', '|');Hidden('responsable', 'tb_responsable', '0|1|2', '|')">Guardar</button>
+                                </div>
+                                <div class="col-lg-6 col-sm-4">
+                                    @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-block btn-outline btn-rounded btn-default" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    @Scripts.Render("~/Bundles/datepicker_JS")
+    <script>
+    $(document).ready(function () {
+    $('.datepicker').datepicker({
+        dateFormat: 'dd/mm/yy'
+    });
+    $("#idEst").val('@ConstantesGlobales.estadoModificado');
+    });
+    </script>
+}

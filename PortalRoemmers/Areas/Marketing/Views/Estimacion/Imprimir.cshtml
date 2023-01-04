@@ -1,0 +1,143 @@
+﻿@model  PortalRoemmers.Areas.Marketing.Models.Estimacion.EstimacionModels
+
+@{
+    if (ViewBag.pdf)
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+}
+<style type="text/css" media="print">
+    .cabecera {
+        font-family: Arial;
+        font-size: 10pt;
+        border-collapse: collapse;
+        font-weight: normal;
+        width: 100%;
+    }
+
+        .cabecera th, .cabecera td {
+            height: 40px;
+        }
+
+    .detalle {
+        width: 100%;
+    }
+
+        .detalle th {
+            border: 1px solid black;
+        }
+
+        .detalle, .detalle td, .detalle th {
+            border-collapse: collapse;
+        }
+
+    .box {
+        border-left-style: solid;
+        border-left-width: 1px;
+        border-right-style: solid;
+        border-right-width: 1px;
+        border-top-style: solid;
+        border-top-width: 1px;
+        border-bottom-style: solid;
+        border-bottom-width: 1px;
+        font-weight: bold;
+    }
+    .divbox {
+        border-style: double;
+        border-width: 4px;
+    }
+
+    .titulo {
+        background-color: #c0c0c0;
+        box-shadow: 10px 10px;
+    }
+</style>
+<table class="cabecera">
+    <tr>
+        <td colspan="2">Mega Labs Latam S.A.</td>
+        <td colspan="2" style="text-align: right">@DateTime.Today</td>
+    </tr>
+    <tr>
+        <td colspan="2"></td>
+        <td colspan="2" style="width:50%;text-align:right">
+            <div><h4>EST. Nº @Model.idActiv</h4></div>
+        </td>
+    </tr>
+    <tr>
+        <br />
+    </tr>
+    <tr>
+        <td colspan="4" style="text-align: center"><div class="titulo"><h2>ESTIMACION DE ACTIVIDADES</h2></div></td>
+    </tr>
+    <tr>
+        <td style="text-align: left;font-weight: bold;">@Html.DisplayNameFor(model => model.idActiv):</td>
+        <td style="text-align: left">@Html.DisplayFor(model => model.actividad.nomActiv)</td>
+        <td style="text-align: left;font-weight: bold;">@Html.DisplayNameFor(model => model.actividad.idAccRes):</td>
+        <td style="text-align: left">@Html.DisplayFor(model => model.actividad.responsable.empleado.nomComEmp)</td>
+
+    </tr>
+    <tr>
+        <td style="text-align: left;font-weight: bold;">@Html.DisplayNameFor(model => model.actividad.idEsp):</td>
+        <td style="text-align: left">@Html.DisplayFor(model => model.actividad.especialidad.nomEsp)</td>
+        <td style="text-align: left;font-weight: bold;">@Html.DisplayNameFor(model => model.idLin):</td>
+        <td style="text-align: left">@Html.DisplayFor(model => model.linea.nomLin)</td>
+    </tr>
+    <tr>
+        <td style="text-align: left;font-weight: bold;">@Html.DisplayNameFor(model => model.numAsist):</td>
+        <td style="text-align: left">@Html.DisplayFor(model => model.numAsist)</td>
+        <td style="text-align: left;font-weight: bold;">@Html.DisplayNameFor(model => model.numStaff):</td>
+        <td style="text-align: left">@Html.DisplayFor(model => model.numStaff)</td>
+    </tr>
+    <tr>
+        <td style="text-align: left;font-weight: bold;">Monto:</td>
+        <td style="text-align: left">@Html.DisplayFor(model => model.moneda.simbMon)  @Html.DisplayFor(model => model.monEstGas)</td>
+        <td style="text-align: left;font-weight: bold;">T. Cambio:</td>
+        <td style="text-align: left">@Html.DisplayFor(model => model.valtipCam)</td>
+    </tr>
+    <tr>
+        <td colspan="1" style="text-align: left;font-weight: bold;">@Html.DisplayNameFor(model => model.obsEstGas):</td>
+        <td colspan="3" style="text-align: left">@Html.DisplayFor(model => model.obsEstGas)</td>
+    </tr>
+</table>
+<h4>GASTOS</h4>
+<table class="detalle">
+    <thead>
+        <tr>
+            <th style="width:10%;text-align:center">#</th>
+            <th style="width:35%;text-align:center">Tipo de Gasto</th>
+            <th style="width:35%;text-align:center">Gasto</th>
+            <th style="width:20%;text-align:center">Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.detalleEstim_Gas)
+        {
+        <tr>
+            <td>#</td>
+            <td>@Html.DisplayFor(modelItem => item.gastoActiv.tipoGastoActividad.nomTipGasAct)</td>
+            <td>@Html.DisplayFor(modelItem => item.gastoActiv.nomActGas)</td>
+            <td style="text-align:right">@Html.DisplayFor(modelItem => item.cabecera.moneda.simbMon) @Html.DisplayFor(modelItem => item.monTotal)</td>
+            <td></td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+<h4>FAMILIA PRODUCTOS</h4>
+<table class="detalle">
+    <thead>
+        <tr>
+            <th style="width:15%;text-align:center">#</th>
+            <th style="width:85%;text-align:center">Producto</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.detalleEstim_Fam)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.familia.idFamRoe)</td>
+                <td>@Html.DisplayFor(modelItem => item.familia.nomFamRoe)</td>
+            </tr>
+        }
+    </tbody>
+</table>

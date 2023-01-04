@@ -1,0 +1,230 @@
+﻿@model List<PortalRoemmers.Areas.Sistemas.Models.Equipo.EquipoModels>
+@using PortalRoemmers.Helpers
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section css {
+    <link href="~/Content/plugins/bower_components/footable/css/footable.core.css" rel="stylesheet" />
+}
+<!--DAR DE BAJA-->
+<div id="responsive-modal-baja" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">Equipo a dar de baja</h4>
+                </div>
+                <div id='danger' class='alert alert-danger hidden'></div>
+                <div id='success' class='alert alert-success hidden'></div>
+                <div class="modal-body">
+                    <form>
+                        <input id="idEquipo" type="hidden" />
+                        <div class="form-group">
+                            <label for="message-text" class="control-label">Motivo de baja:</label>
+                            <textarea class="form-control" id="msjBaja"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-danger waves-effect waves-light" id="btnGuardarBaja">Guardar</button>
+                </div>
+            </div>
+        </div>
+</div>
+ <!--DAR DE BAJA-->
+
+    <div class="panel panel-default">
+        <div class="panel-heading box-title m-b-0"><h2>Mantenimiento de Equipo</h2></div>
+        <div class="panel-body">
+            <div class="form-group">
+                @{ string v = ""; try { v = TempData["mensaje"].ToString(); } catch { }}
+                @(new HtmlString(v))
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="white-box">
+                        <div class="flot-chart">
+                            <div class="flot-chart-content" id="flot-pie-chart"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row show-grid">
+
+                @Html.ActionLink("Crear Equipo", "Registrar", "Equipo", new { Area = "Sistemas" }, new { @Class = "btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10" })
+
+
+                @Html.ActionLink("Exportar Equipo", "ExporEquipos", "Equipo", new { Area = "Sistemas" }, new { @Class = "btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10" })
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="table-responsive">
+                        <div class="right-page-header">
+                            <div class="pull-right">
+                                <input type="text" id="demo-input-search2" placeholder="Buscar colaborador" class="form-control">
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="scrollable">
+                            <div class="table-responsive">
+                                <table id="demo-foo-addrow" class="table m-t-30 table-hover contact-list" data-page-size="10">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>PROCESADOR</th>
+                                            <th>MODELO</th>
+                                            <th>ESTADO</th>
+                                            <th>USUARIO</th>
+                                            <th>NOMBRE PC</th>
+                                            <th>TIPO</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{foreach (var item in Model)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        <a href="@MyExtensions.ActionUrl("Eliminar", "Equipo", new { Area = "Sistemas", id = item.idEquipo })" data-toggle="tooltip" title="Eliminar"> <i class="fa fa-close text-danger m-r-10"></i> </a>
+                                                        @{ if(item.idEst!= ConstantesGlobales.estadoInactivo)
+                                                            {
+                                                                <a href="@MyExtensions.ActionUrl("Modificar", "Equipo", new { Area = "Sistemas", id = item.idEquipo })" data-toggle="tooltip" title="Modificar"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a>
+                                                                <a id="urlBaja" data-toggle="modal" href="#responsive-modal-baja" data-tooltip="tooltip" title="Baja" data-equipo="@item.idEquipo" ><i class="fa fa-trash-o text-danger"></i></a>
+                                                            }
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        @item.procesador.nomProce
+                                                    </td>
+                                                        @{ 
+                                                            string modelo = item.modelos == null ? "SIN MODELO" : item.modelos.nomMolEq;
+                                                        }
+                                                    <td>@modelo</td>
+                                                    <td>@item.estado.nomEst</td>
+                                                    @{
+                                                        var nombre = item.empleado == null ? "" : item.empleado.nomComEmp;
+
+                                                    }
+                                                    <td>@nombre</td>
+                                                    <td><span class="label label-info" style="font-size: 100%;">@item.nomPcEqui</span></td>
+
+                                                    <td>@item.tipEqui.nomTipEqui</td>
+
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="7">
+                                                <div class="text-left">
+                                                    <ul class="pagination"> </ul>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+        <div class="panel-footer"></div>
+    </div>
+    @section scripts
+{
+        <script src="~/Content/plugins/bower_components/footable/js/footable.all.min.js"></script>
+        <script src="~/Scripts/js/footable-init.js"></script>
+        <script src="~/Areas/Sistemas/Scripts/Sistemas.js"></script>
+        <script src="~/Content/plugins/bower_components/flot/excanvas.min.js"></script>
+        <script src="~/Content/plugins/bower_components/flot/jquery.flot.js"></script>
+        <script src="~/Content/plugins/bower_components/flot/jquery.flot.pie.js"></script>
+        <script src="~/Content/plugins/bower_components/flot.tooltip/js/jquery.flot.tooltip.min.js"></script>
+        <script>
+            $(function () {
+
+                var RolOptions = {};
+                RolOptions.url = "/Equipo/InfoEquipo";
+                RolOptions.type = "POST";
+                RolOptions.datatype = "json";
+                RolOptions.contentType = "application/json";
+                RolOptions.success = function (data) {
+                    var plotObj = $.plot($("#flot-pie-chart"), data, {
+                        series: {
+                            pie: {
+                                innerRadius: 0.5,
+                                show: true
+                            }
+                        },
+                        grid: {
+                            hoverable: true
+                        },
+                        color: null,
+                        tooltip: true,
+                        tooltipOpts: {
+                            content: "%p.0%, %s", // show percentages, rounding to 2 decimal places
+                            shifts: {
+                                x: 20,
+                                y: 0
+                            },
+                            defaultTheme: false
+                        }
+                    });
+                };
+                RolOptions.error = function () { alert("Error in Getting States!!"); };
+                $.ajax(RolOptions);
+            });
+            $(document).ready(function () {
+                $('body').tooltip({
+                    selector: "[data-tooltip=tooltip]",
+                    container: "body"
+                });
+
+                $('#btnGuardarBaja').click(function () {
+                    if ($("#msjBaja").val() != "") {
+                        $.ajax({
+                             url: '@Url.Action("darBajaCPU", "Equipo")',
+                             type: 'POST',
+                             cache: false,
+                            data: { msjBaja: $("#msjBaja").val(), idEquipo: $("#idEquipo").val()},
+                             success: function (result) {
+                                 if (result == "OK") {
+                                     $("div #success").removeClass('hidden');
+                                     $("div #success").text('Se actualizo el equipo satisfactoriamente');
+                                     setTimeout(function () { $("div #success").fadeOut(5000); $("div #success").fadeIn(5000); }, 2000);
+                                     setTimeout(function () { $("div #success").addClass('hidden');location.reload();}, 8000);
+                                 } else {
+                                     $("div #danger").removeClass('hidden');
+                                     $("div #success").text(result);
+                                     setTimeout(function () { $("div #danger").fadeOut(2000).fadeIn(2000).fadeOut(1500).fadeIn(1500).fadeOut(500) }, 500);
+                                     setTimeout(function () { $("div #danger").addClass('hidden'); }, 4000);
+                                     return false;
+                                 }
+                             },
+                             error: function (jqXHR, textStatus, error) {
+                                 alert("Estado: Error inesperado");
+                                 unblock();
+                             }
+                         });
+                    }
+                    else {
+                         $("div #danger").removeClass('hidden');
+                         $("div #danger").text('Debe completar todos los campos obligatorios (*)');
+                         setTimeout(function () { $("div #danger").fadeOut(2000).fadeIn(2000).fadeOut(1500).fadeIn(1500).fadeOut(500) }, 500);
+                         setTimeout(function () { $("div #danger").addClass('hidden'); }, 4000);
+                         return false;
+                     }
+                });
+
+                $(document).on("click", "#urlBaja", function () {
+                    $("#idEquipo").val($(this).data('equipo'));
+                });
+
+            });
+        </script>
+    }

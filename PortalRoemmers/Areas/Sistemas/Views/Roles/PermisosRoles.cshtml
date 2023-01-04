@@ -1,0 +1,126 @@
+﻿@model IEnumerable<PortalRoemmers.Areas.Sistemas.Models.Roles.RolesModels>
+@using PortalRoemmers.Helpers
+@using PortalRoemmers.Security
+@{
+    ViewBag.Title = "PermisosRoles";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="col-md-12">
+    <section id="wrapper" class="block1">
+        <div class="white-box">
+            <h3 class="box-title m-b-0"> Permiso por Usuario</h3>
+            <p class="text-muted m-b-30 font-13"> </p>
+            <div class="row">
+                <div class="col-sm-12">
+                    <input type="hidden" id="usu" value="@ViewBag.usuario">
+                    <div class="table-responsive m-t-10" style="clear: both;">
+                        <table class="table table-hover" data-tablesaw-mode="swipe">
+                            <thead>
+                                <tr>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist">
+
+                                    </th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1">
+                                        Título
+                                    </th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2">
+                                        Tipo
+                                    </th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">
+
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td class="text-nowrap">
+                                            @if (item.rolTip != ConstantesGlobales.tipRol_Area)
+                                            {
+                                                <a href="@MyExtensions.ActionUrl("PermisosRoles", "Roles", new { Area = "Sistemas", id = item.Parent.ParentId,usu=@ViewBag.usuario })" data-toggle="tooltip" title="Regresar"> <i class="fa fa-rotate-left"></i> </a>
+                                            }
+
+                                            @if (item.rolTip != ConstantesGlobales.tipRol_Vista)
+                                            {
+                                                <a href="@MyExtensions.ActionUrl("PermisosRoles", "Roles", new { Area = "Sistemas", id = item.rolId,usu=@ViewBag.usuario})" data-toggle="tooltip" title="Siguiente"> <i class="fa fa-repeat"></i> </a>
+                                            }
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.roltitu)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.TipRol.nomTipRol)
+                                        </td>
+                                        <td class="jsgrid-align-center">
+                                            @Html.EditorFor(modelItem => item.option)
+                                        </td>
+                                        <td class="hidden">
+                                            @Html.DisplayFor(modelItem => item.rolId)
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                        <div class="panel-group">
+                            <div class="col-md-4 tab-content">
+                                <div class="col-lg-6 col-sm-4">
+                                    @Html.ActionLink("Volver", "Index", "Usuario", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, Area = "Sistemas", pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-block btn-outline btn-rounded btn-default" })
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+        </div>
+    </section>
+</div>
+@section scripts
+{
+    @Scripts.Render("~/Bundles/bloqueo_JS")
+    <script>
+        $(document).ready(function () {
+
+            $("input[type=checkbox]").change(function () {
+                block();
+                var selec;
+                if (this.checked) {
+                    // obtenemos el texto del td
+                    selec = true;
+
+                } else {
+                    // obtenemos el texto del td
+                    selec = false;
+                }
+
+                var idRols = $(this).parents("tr").find("td").eq(4).text().trim();
+                var RolOptions = {};
+                RolOptions.url = "/Roles/RegistrarPermisosUsuarios";
+                RolOptions.type = "POST";
+                RolOptions.data = JSON.stringify({ idRol: idRols, selec: selec, usu: $("#usu").val() });
+                RolOptions.datatype = "json";
+                RolOptions.contentType = "application/json";
+                RolOptions.success = function (data) {
+                    unblock();
+                };
+                RolOptions.error = function () { alert("Error in Getting States!!"); unblock(); };
+                $.ajax(RolOptions);
+            });
+
+            function block() {
+                $('section.block1').block({
+                    message: '<h4><img src="../../Content/plugins/images/busy.gif" /> Sólo un momento...</h4>'
+                    , css: {
+                        border: '1px solid #fff'
+                    }
+                });
+            }
+
+            function unblock() {
+                $('section.block1').unblock();
+            }
+        });
+    </script>
+}

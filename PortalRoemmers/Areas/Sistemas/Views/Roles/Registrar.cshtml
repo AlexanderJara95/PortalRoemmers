@@ -1,0 +1,94 @@
+﻿@model PortalRoemmers.Areas.Sistemas.Models.Roles.RolesModels
+@using PortalRoemmers.Security
+@{
+    ViewBag.Title = "RegistrarRol";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section css {
+    @Styles.Render("~/Content/selectBusqueda_CSS")
+}
+
+<div class="white-box p-l-20 p-r-20">
+    <h3 class="box-title m-b-0"> Nuevo Rol</h3>
+    <p class="text-muted m-b-30 font-13">Completar todos los campos necesarios. </p>
+    <div class="row">
+        <div class="col-md-12">
+            @using (Html.BeginForm("Registrar", "Roles", new { rol = ViewBag.rol }, FormMethod.Post, new { @class = "form-horizontal form-material" }))
+            {
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.roltitu)</label>
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.roltitu, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "", @style = "text-transform:uppercase;", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                        @Html.ValidationMessageFor(model => model.roltitu, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.rolDes)</label>
+                    <div class="col-md-12">
+                        @Html.TextAreaFor(model => model.rolDes, new { @class = "form-control form-control-line", @rows = 5, @style = "text-transform:uppercase;", @onkeyup = "javascript:this.value=this.value.toUpperCase();" })
+                        @Html.ValidationMessageFor(model => model.rolDes, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.rolTip)</label>
+                    <div class="col-md-12">
+                        @Html.DropDownListFor(model => model.rolTip, (SelectList)ViewBag.id, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                        @Html.ValidationMessageFor(model => model.rolTip, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.ParentId)</label>
+                    <div class="col-md-12">
+                        <select id="ParentId" class="form-control" name="ParentId"></select>
+                    </div>
+                </div>
+
+                <button class="btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10">Guardar</button>
+                @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-default btn-rounded btn-outline waves-effect waves-light" })
+
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    @Scripts.Render("~/Bundles/selectBusqueda_JS")
+    <script>
+        $(document).ready(function () {
+            $("#ParentId").prop("disabled", true);
+            $("#rolTip").change(function () {
+                if ($("#rolTip").val() != "" && $("#rolTip").val() != "01") {
+                    var RolOptions = {};
+                    RolOptions.url = "/Roles/rolesCondicion";
+                    RolOptions.type = "POST";
+                    RolOptions.data = JSON.stringify({ rolTip: $("#rolTip").val() });
+                    RolOptions.datatype = "json";
+                    RolOptions.contentType = "application/json";
+                    RolOptions.success = function (data) {
+                        $("#ParentId").empty();
+
+                        $("#ParentId").append($("<option> </option>").val("").html("Seleccionar"));
+                        $.each(data, function (i, item) {
+                            $("#ParentId").append($("<option> </option>").val(item.rolId).html(item.roltitu));
+                        });
+                        $("#ParentId").prop("disabled", false);
+                    };
+                    RolOptions.error = function () { alert("Error in Getting States!!"); };
+                    $.ajax(RolOptions);
+
+                }
+                else {
+                    $("#ParentId").empty();
+                    $("#ParentId").prop("disabled", true);
+                }
+            });
+
+            $("#ParentId").select2();
+        });
+    </script>
+}

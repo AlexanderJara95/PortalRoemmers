@@ -1,0 +1,52 @@
+﻿@using PortalRoemmers.Security
+@model PortalRoemmers.Areas.Sistemas.Models.Equipo.ModEquiModels
+@{
+    ViewBag.Title = "Registrar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="white-box p-l-20 p-r-20">
+    <h3 class="box-title m-b-0"> Nuevo Modelo Equipo</h3>
+    <p class="text-muted m-b-30 font-13">Completar todos los campos necesarios. </p>
+    <div class="row">
+        <div class="col-md-12">
+            @using (Html.BeginForm("Registrar", "ModeloE", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal form-material" }))
+            {
+                @Html.AntiForgeryToken()
+
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.nomMolEq)</label>
+                    <div class="col-md-12">
+
+                        @Html.EditorFor(model => model.nomMolEq, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Nombre" } })
+                        @Html.ValidationMessageFor(model => model.nomMolEq, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.descMolEq)</label>
+                    <div class="col-md-12">
+
+                        @Html.EditorFor(model => model.descMolEq, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Descripción" } })
+                        @Html.ValidationMessageFor(model => model.descMolEq, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.idFabrica)</label>
+                    <div class="col-md-12">
+                        @Html.DropDownListFor(model => model.idFabrica, (SelectList)ViewBag.fabricante, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                        @Html.ValidationMessageFor(model => model.idFabrica, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+
+                <button class="btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10">Guardar</button>
+                @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-default btn-rounded btn-outline waves-effect waves-light" })
+
+            }
+        </div>
+    </div>
+</div>
+

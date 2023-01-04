@@ -1,0 +1,86 @@
+﻿@model  PortalRoemmers.ViewModels.IndexViewModel
+@using PortalRoemmers.Helpers
+@using PortalRoemmers.Security
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section css {
+    @Styles.Render("~/Content/tablaResponsive_CSS")
+}
+
+<div class="panel panel-default">
+    <div class="panel-heading box-title m-b-0"><h2>Mantenimiento de Galer&iacutea</h2></div>
+    <div class="panel-body">
+        <div class="form-group">
+            @{ string v = ""; try { v = TempData["mensaje"].ToString(); } catch { }}
+            @(new HtmlString(v))
+        </div>
+        @using (Html.BeginForm("Index", "Galeria", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista }, FormMethod.Post))
+        {
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="input-group">
+                        <input type="text" id="search" name="search" class="form-control" placeholder="Buscar" value="@ViewBag.search">
+                        <span class="input-group-btn">
+                            <button class="btn waves-effect waves-light btn-info">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        }
+        <br />
+        <div class="row">
+            <div class="col-xs-6">
+                @Html.ActionLink("Crear", "Registrar", "Galeria", new { Area = "RRHH" }, new { @Class = "btn btn-info btn-rounded" })
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <table class="tablesaw table-bordered table-hover table" data-tablesaw-mode="swipe">
+                    <thead>
+                        <tr>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist"></th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1">C&oacutedigo</th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2">T&iacutetulo</th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Tipo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Galeria)
+                        {
+                            <tr>
+                                <td class="text-nowrap">
+                                    <a href="@MyExtensions.ActionUrl("Modificar", "Galeria", new {Area="RRHH", id = item.idGaleria})" data-toggle="tooltip" title="Editar"> <i class="fa fa-pencil text-inverse m-r-5"></i> </a>
+                                    <a href="@MyExtensions.ActionUrl("Eliminar", "Galeria", new {Area="RRHH",id = item.idGaleria})" data-toggle="tooltip" title="Eliminar"> <i class="fa fa-close text-danger m-r-5"></i> </a>
+                                </td>
+                                <td>@Html.DisplayFor(modelItem => item.idGaleria)</td>
+                                <td>@Html.DisplayFor(modelItem => item.titGaleria)</td>
+                                <td>@Html.DisplayFor(modelItem => item.tipoGal.titTipGal)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                @{Html.RenderPartial("_paginador", Model);}
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-footer"></div>
+</div>
+
+
+@section scripts
+{
+    @Scripts.Render("~/Bundles/tablaResponsive_JS")
+    <script src="~/Areas/RRHH/Scripts/RRHH.js"></script>
+}

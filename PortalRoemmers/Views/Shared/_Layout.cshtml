@@ -1,0 +1,295 @@
+﻿
+@using PortalRoemmers.Areas.Sistemas.Models.Enlace;
+@using PortalRoemmers.Areas.Sistemas.Models.Usuario;
+@using PortalRoemmers.Areas.RRHH.Models.Formulario;
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" type="image/png" sizes="16x16" href="~/Content/plugins/images/roemmers_R.png">
+    <title>Megalabs - Un lugar donde te quieres quedar</title>
+    <!-- Inicio -->
+    @Styles.Render("~/Content/Inicio_CCS")
+    @RenderSection("css", required: false)
+    <link href="~/Content/plugins/bower_components/sweetalert/sweetalert.css" rel="stylesheet" />
+</head>
+
+<body class="fix-header" onload="sinVueltaAtras();" onpageshow="if (event.persisted) sinVueltaAtras();" onunload="">
+    <div class="preloader">
+        <svg class="circular" viewBox="25 25 50 50">
+            <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10" />
+        </svg>
+    </div>
+
+    <div id="wrapper">
+        <nav class="navbar navbar-default navbar-static-top m-b-0">
+            <div class="navbar-header">
+                <div class="top-left-part">
+                    <a class="logo" href="@Url.Action("Index", "Home", new { Area = "" })">
+                        <b>
+                            <img src="~/Content/plugins/images/roemmers_R.png" alt="home" class="light-logo" />
+                        </b>
+                        <span class="hidden-xs">
+                            <img src="~/Content/plugins/images/ROEMMERS.png" alt="home" class="light-logo" />
+                        </span>
+                    </a>
+                </div>
+
+                <ul class="nav navbar-top-links navbar-left">
+                    <li><a href="javascript:void(0)" class="open-close waves-effect waves-light"><i class="ti-menu"></i></a></li>
+                    @{
+                        List<EmpleadoModels> cumple = (List<EmpleadoModels>)System.Web.HttpContext.Current.Session[Sessiones.cumple];
+                    }
+                    <li class="dropdown">
+                        <a class="dropdown-toggle waves-effect waves-light" data-toggle="dropdown" href="#">
+                            <img src="~/Content/icono/torta-de-cumpleanos.png" />
+                            @{
+                                try
+                                {
+                                    if (cumple.Count != 0)
+                                    {
+                                        <div class="notify"> <span class="heartbit"></span> <span class="point"></span> </div>
+                                    }
+                                }
+                                catch (Exception e)
+                                {
+                                }
+                            }
+                        </a>
+                        <ul class="dropdown-menu mailbox animated bounceInDown">
+                            <li>
+                                @{
+                                    try
+                                    {
+                                        if (cumple.Count != 0)
+                                        {
+                                            <div class="drop-title" style="TEXT-ALIGN: CENTER;">HOY CUMPLEN AÑOS </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="drop-title" style="TEXT-ALIGN: CENTER;">HOY NADIE CUMPLE AÑOS </div>
+                                        }
+                                    }
+                                    catch (Exception e)
+                                    {
+                                    }
+                                }
+                            </li>
+                            <li>
+                                <div class="message-center">
+                                    @{
+                                        if (cumple != null)
+                                        {
+                                            foreach (var m in cumple)
+                                            {
+                                                string codigo = "";
+                                                string cargo = "";
+                                                string area = "";
+                                                try
+                                                {
+                                                    codigo = m.usuarios.Where(x => x.idEst != ConstantesGlobales.estadoCesado).Select(x => x.idAcc).FirstOrDefault();
+                                                    cargo = m.cargo.desCarg;
+                                                    area = m.area.nomAreRoe;
+                                                }
+                                                catch (Exception e)
+                                                {
+                                                    cargo = "NINGUNO";
+                                                    area = "NINGUNO";
+                                                }
+                                                <a href="#">
+                                                    <div class="user-img"> <img height="45" alt="user" class="img-circle" src="@Url.Action("convertirImagen", "Usuario", new {Area="Sistemas",idAcc = codigo})" /> </div>
+                                                    <div class="mail-contnet">
+                                                        <h5>@m.apePatEmp @m.nom1Emp</h5> <span class="mail-desc">@cargo</span> <span class="time">@area</span>
+                                                    </div>
+                                                </a>
+                                            }
+                                        }
+                                    }
+                                </div>
+                            </li>
+                            <li>
+                                <a class="text-center" href="@Url.Action("Cumpleanio", "Empleado", new { Area = "Sistemas",mes=DateTime.Today.Month})"> <strong>Ver todos los cumpleaños</strong> <i class="fa fa-angle-right"></i> </a>
+                            </li>
+                        </ul>
+
+                        <!-- /.dropdown-messages -->
+                    </li>
+
+                    <!--inicio formulario-->
+                    @{
+                        List<Form_Usu_Models> formulario = (List<Form_Usu_Models>)System.Web.HttpContext.Current.Session[Sessiones.formulario];
+
+                        var actual = DateTime.Now;
+                        int cantForAcc = 0;
+                        int cantPorCom = 0;
+                        try
+                        {
+
+                            cantForAcc = formulario.Where(x => (x.comForm == false || x.comForm == true) && (actual >= x.formularios.fchIniFor && actual <= x.formularios.fchFinFor)).Count();
+                            cantPorCom = formulario.Where(x => x.comForm == false).Count();
+                        }
+                        catch (Exception e)
+                        {
+                        }
+                        if (cantForAcc != 0)
+                        {
+                            <li class="dropdown">
+                                <a class="dropdown-toggle waves-effect waves-light" data-toggle="dropdown" href="#">
+                                    <img src="~/Content/icono/escritura.png" />
+                                    @{if (cantPorCom != 0)
+                                        {
+                                            <div class="notify"> <span class="heartbit"></span> <span class="point"></span> </div>
+                                        }
+                                    }
+                                </a>
+
+                                <ul class="dropdown-menu dropdown-tasks animated slideInUp">
+                                    @{
+                                        foreach (var frm in formulario)
+                                        {
+                                            string porc = "0";
+                                            string link = Url.Action("FichaFormulario", "Formulario", new { Area = "RRHH", form = frm.idFor });
+                                            if (frm.comForm == true)
+                                            {
+                                                porc = "100";
+                                                link = "#";
+                                            }
+                                            <li>
+                                                <a href="@link">
+                                                    <div>
+                                                        <p> <strong>@frm.formularios.nomFor</strong> <span class="pull-right text-muted">@porc%</span> </p>
+                                                        <div class="progress progress-striped active">
+                                                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="@porc" aria-valuemin="0" aria-valuemax="100" style="width: @porc%"></div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </li>
+                                        }
+                                    }
+                                </ul>
+                            </li>
+                        }
+                    }
+                    <!--fin formulario-->
+                    <!-- .Megamenu -->
+                    <li class="mega-dropdown">
+                        <a class="dropdown-toggle waves-effect waves-light" data-toggle="dropdown" href="#"><span class="hidden-xs">Documentos</span> <i class="icon-options-vertical"></i></a>
+                        <ul class="dropdown-menu mega-dropdown-menu animated bounceInDown">
+                            @{
+                                List<TipoEnlaceModels> tEnlace = (List<TipoEnlaceModels>)System.Web.HttpContext.Current.Session[Sessiones.enlace];
+                            }
+                            @{
+                                if (tEnlace != null)
+                                {
+                                    try
+                                    {
+                                        foreach (var te in tEnlace)
+                                        {
+                                            <li class="col-sm-2">
+                                                <ul>
+                                                    <li class="dropdown-header">@te.desTEnl</li>
+                                                    @{
+                                                        var enlaces = te.Enlaces.ToList();
+                                                        if (enlaces.Count != 0)
+                                                        {
+                                                            foreach (var en in enlaces)
+                                                            {
+                                                                <li><a href="@en.rutaEnl" target="_blank">@en.nomEnl</a></li>
+                                                            }
+                                                        }
+                                                    }
+                                                </ul>
+                                            </li>
+                                        }
+                                    }
+                                    catch (Exception e) { }
+                                }
+
+                            }
+                        </ul>
+                    </li>
+
+                </ul>
+
+                @Html.Partial("_LoginPartial")
+            </div>
+        </nav>
+
+
+        @{
+            Html.RenderAction("_MenuLayout", "Menu", new { Area = "Sistemas" });
+        }
+
+        <div id="page-wrapper">
+            <div class="container-fluid">
+                <div class="row bg-title">
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                        <h4 class="page-title">"Megalabs, un lugar donde te quieres quedar."</h4>
+                    </div>
+                    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+                        <h4 class="page-title"></h4>
+                    </div>
+                </div>
+
+                <div class="col-sm-12">
+                    <div class="row">
+                        @RenderBody()
+                    </div>
+                </div>
+            </div>
+            <footer class="footer text-center">&copy; @DateTime.Now.Year Mega Labs Latam - Perú: Faustino Sánchez carrión 425 Magdalena Lima - Perú Telf. 462 - 1616 </footer>
+        </div>
+    </div>
+
+    <!-- Inicio JS -->
+    @Scripts.Render("~/Bundles/Inicio_JS")
+    @RenderSection("scripts", required: false)
+    <script src="~/Content/plugins/bower_components/sweetalert/sweetalert.min.js"></script>
+    <script type="text/javascript">
+  
+        window.history.forward();
+        function sinVueltaAtras() { window.history.forward(); }
+        var Idsesion = setInterval(function () { popup(); }, 2370 * 1000);
+        var i = 30;
+        function SetTime() {
+            $("#expiredTime").html(i.toString());
+            if (i > 0) {
+                i--;
+            }
+            if (i == 0) {
+                window.location.href = "/Account/Logout";
+            }
+        }
+        function popup() {
+            var cuenta = setInterval(function () { SetTime(); }, 1000);
+            swal({
+                title: "Su sesión caducará después de ",
+                text: "¿Te gustaría extender el tiempo de sesión?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Si!",
+                cancelButtonText: "No!",
+                closeOnConfirm: false
+            }, function (isConfirm) {
+                if (isConfirm) {
+                    swal("Extendido!", "Su sesión fue extendida.", "success");
+                    //clearInterval(Idsesion);
+                    //clearInterval(cuenta);
+                    location.reload();
+                } else {
+                    window.location.href = "/Account/Logout";
+                }
+            });
+            $("div.sweet-alert h2").append("<span id='expiredTime'></span> segundos");
+        }
+
+    </script>
+</body>
+
+</html>

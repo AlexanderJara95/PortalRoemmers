@@ -1,0 +1,104 @@
+﻿@model PortalRoemmers.Areas.Sistemas.Models.Usuario.UbicacionModels
+@using PortalRoemmers.Security
+@{
+    ViewBag.Title = "Modificar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="white-box p-l-20 p-r-20">
+    <h3 class="box-title m-b-0"> Modificar Ubicacion</h3>
+    <p class="text-muted m-b-30 font-13">Completar todos los campos necesarios. </p>
+    <div class="row">
+        <div class="col-md-12">
+            @using (Html.BeginForm("Modificar", "Ubicacion", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal form-material" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.cCod_Ubi)
+                @Html.HiddenFor(model => model.usuCrea)
+                @Html.HiddenFor(model => model.usufchCrea)
+
+                <div class="form-group">
+                    <div class="col-xs-6 b-r">
+                        <label class="col-md-12">@Html.LabelFor(model => model.cCod_Pais)</label>
+                        <div class="col-md-12">
+
+                            @Html.EditorFor(model => model.cCod_Pais, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Código", @onkeyup = "javascript:this.value=this.value.toUpperCase();", @readonly = "" } })
+                            @Html.ValidationMessageFor(model => model.cCod_Pais, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <label class="col-md-12">@Html.LabelFor(model => model.cPais)</label>
+                        <div class="col-md-12">
+
+                            @Html.EditorFor(model => model.cPais, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "nombre", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                            @Html.ValidationMessageFor(model => model.cPais, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-xs-6 b-r">
+                        <label class="col-md-12">@Html.LabelFor(model => model.cCod_Dpto)</label>
+                        <div class="col-md-12">
+
+                            @Html.EditorFor(model => model.cCod_Dpto, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Código", @onkeyup = "javascript:this.value=this.value.toUpperCase();", @readonly = "" } })
+                            @Html.ValidationMessageFor(model => model.cCod_Dpto, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <label class="col-md-12">@Html.LabelFor(model => model.cDepartamento)</label>
+                        <div class="col-md-12">
+
+                            @Html.EditorFor(model => model.cDepartamento, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "nombre", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                            @Html.ValidationMessageFor(model => model.cDepartamento, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-xs-6 b-r">
+                        <label class="col-md-12">@Html.LabelFor(model => model.cCod_Provincia)</label>
+                        <div class="col-md-12">
+
+                            @Html.EditorFor(model => model.cCod_Provincia, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Código", @onkeyup = "javascript:this.value=this.value.toUpperCase();", @readonly = "" } })
+                            @Html.ValidationMessageFor(model => model.cCod_Provincia, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <label class="col-md-12">@Html.LabelFor(model => model.cProvincia)</label>
+                        <div class="col-md-12">
+
+                            @Html.EditorFor(model => model.cProvincia, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "nombre", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                            @Html.ValidationMessageFor(model => model.cProvincia, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="form-group">
+                    <div class="col-xs-6 b-r">
+                        <label class="col-md-12">@Html.LabelFor(model => model.cCod_Distrito)</label>
+                        <div class="col-md-12">
+
+                            @Html.EditorFor(model => model.cCod_Distrito, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Código", @onkeyup = "javascript:this.value=this.value.toUpperCase();", @readonly = "" } })
+                            @Html.ValidationMessageFor(model => model.cCod_Distrito, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <label class="col-md-12">@Html.LabelFor(model => model.cDistrito)</label>
+                        <div class="col-md-12">
+
+                            @Html.EditorFor(model => model.cDistrito, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "nombre", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                            @Html.ValidationMessageFor(model => model.cDistrito, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10">Guardar</button>
+                @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-default btn-rounded btn-outline waves-effect waves-light" })
+            }
+        </div>
+    </div>
+</div>
+

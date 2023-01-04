@@ -1,0 +1,767 @@
+﻿@model IEnumerable<PortalRoemmers.Areas.Ventas.Models.SolicitudGasto.SolicitudGastoModels>
+@using PortalRoemmers.Security
+@using PortalRoemmers.Models
+@using System.Text;
+
+@{
+    /**/
+
+    ViewBag.Title = "Contabilizar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section css {
+    @Styles.Render("~/Content/tablaExport_CSS")
+    @Styles.Render("~/Content/datepicker_CSS")
+}
+<!--En giro-->
+<div id="responsive-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h2 class="modal-title">En Proceso Solicitud </h2>
+            </div>
+            <input id="idpeso" name="idpeso" type="hidden" value="@ViewBag.Peso">
+            <div class="modal-body">
+                <div id='danger' class='alert alert-danger hidden'></div>
+                <div class="form-group">
+                    <label for="message-text" class="control-label">Observaci&oacuten:</label>
+                    <textarea class="form-control" id="idGlosaApro" name="idGlosaApro"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-danger waves-effect waves-light" onclick="enGiroSol()">Procesar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!---->
+<!--No atender-->
+<div id="responsive-modal-rechazado" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h2 class="modal-title">No atender Solicitud</h2>
+            </div>
+            <div class="modal-body">
+                <div id='danger' class='alert alert-danger hidden'></div>
+                <div class="form-group">
+                    <label for="message-text" class="control-label">Observaci&oacuten:</label>
+                    <textarea class="form-control" id="idGlosaRecha"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-danger waves-effect waves-light" onclick="rechazarSol()">No atender</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!---->
+<!--Visualizar-->
+<div class="modal fade bs-example-modal-lg" id="visualizar">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h2>SOLICITUD DE GASTO</h2>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">C&oacutedigo</label>
+                            <input type="text" id="data_cod" class="form-control" disabled />
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">F. Evento</label>
+                            <input type="text" id="data_fec" class="form-control" disabled />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">Responsable</label>
+                            <input type="text" id="data_res" class="form-control" disabled />
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">Tipo Gasto</label>
+                            <input type="text" id="data_tga" class="form-control" disabled />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">Concepto</label>
+                            <input type="text" id="data_con" class="form-control" disabled />
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">Zona</label>
+                            <input type="text" id="data_zon" class="form-control" disabled />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">Linea</label>
+                            <input type="text" id="data_lin" class="form-control" disabled />
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">Especialidad</label>
+                            <input type="text" id="data_esp" class="form-control" disabled />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">Título</label>
+                            <input type="text" id="data_tit" class="form-control" disabled />
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">Lugar</label>
+                            <input type="text" id="data_lug" class="form-control" disabled />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">U.Creaci&oacuten</label>
+                            <input type="text" id="data-usc" class="form-control" disabled />
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">U. Fecha Creaci&oacuten</label>
+                            <input type="text" id="data-ucf" class="form-control" disabled />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label class="control-label">Observaci&oacuten</label>
+                            <textarea id="data_obs" class="form-control" disabled></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <input type="text" id="data_mto" class="form-control" disabled />
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <input type="text" id="data_mon" class="form-control" disabled />
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <input type="text" id="data_cam" class="form-control" disabled />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h2> Familia de producto</h2>
+                        <table id="tb_familia" class="tablesaw table-bordered table-hover table" data-tablesaw-mode="swipe">
+                            <thead>
+                                <tr>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist">C&oacutedigo</th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1">Nombre</th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2">Descripci&oacuten</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h2> M&eacutedicos</h2>
+                        <table id="tb_medico" class="tablesaw table-bordered table-hover table" data-tablesaw-mode="swipe">
+                            <thead>
+                                <tr>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist">C&oacutedigo</th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1">Nombre</th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2">Descripci&oacuten</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h2> Responsable</h2>
+                        <table id="tb_responsable" class="tablesaw table-bordered table-hover table" data-tablesaw-mode="swipe">
+                            <thead>
+                                <tr>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist">C&oacutedigo</th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1">Nombre</th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2">Descripci&oacuten</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!---->
+<!--Firmas-->
+<div id="responsive-modal-Firmas" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h2 class="modal-title">Firmas de la Solicitud</h2>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="table-responsive m-t-10" style="clear: both;">
+                            <table id="tb_firma" class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">N°</th>
+                                        <th class="text-center">Firm&oacute</th>
+                                        <th class="text-center">Fecha</th>
+                                        <th class="text-center">Estado</th>
+                                        <th class="text-center">Monto</th>
+                                        <th class="text-center">Observaci&oacuten</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Firmas-->
+<div class="panel panel-default">
+    <div class="panel-heading box-title m-b-0"><h2>Contabilizar solicitud</h2></div>
+    <div class="panel-body">
+        <section id="wrapper" class="block1">
+            <div class="row">
+                <div id='success' class='alert alert-success hidden'></div>
+                @using (Html.BeginForm("Contabilizar", "SolicitudGasto", FormMethod.Post))
+                {
+                    <div class="row show-grid">
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label for="desMen">TIPO</label>
+                                @Html.DropDownList("estado", (SelectList)ViewBag.conta, htmlAttributes: new { @class = "form-control form-control-line", @id = "idestado" })
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="desMen">DESDE</label>
+                                <input class="form-control form-control-line datepicker" id="fchEveSolGasI" name="fchEveSolGasI" placeholder="dd/mm/aaaa" autocomplete="off" value="@ViewBag.primero">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="desMen">HASTA</label>
+                                <input class="form-control form-control-line datepicker" id="fchEveSolGasF" name="fchEveSolGasF" placeholder="dd/mm/aaaa" autocomplete="off" value="@ViewBag.actual">
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <span class="input-group-btn">
+                                <button class="btn waves-effect waves-light btn-info">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                }
+                <div id="divAproba" class="row show-grid">
+                    <div class="col-xs-12">
+                        <div class="col-lg-6 col-sm-6 col-xs-12">
+                            <a data-toggle="modal" class="fcbtn btn btn-info btn-outline btn-1d btn-lg btn-block" href="#responsive-modal"><i class="fa fa-thumbs-o-up"></i> <strong>Girar</strong></a>
+                        </div>
+                        <div class="col-lg-6 col-sm-6 col-xs-12">
+                            <a data-toggle="modal" class="fcbtn btn btn-danger btn-outline btn-1d btn-lg btn-block" href="#responsive-modal-rechazado"><i class="fa fa-thumbs-o-down"></i> <strong>Rechazar</strong></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="divImpri" class="row show-grid">
+                    <div class="col-xs-12">
+                        <div class="col-lg-12 col-sm-12 col-xs-12">
+                            <a id="idImprimir" class="fcbtn btn btn-success btn-outline btn-1d btn-lg btn-block" href="#"><i class="fa fa-print"></i>   Imprimir</a>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-sm-12">
+                    <div class="table-responsive">
+                        <table id="example23" class="display nowrap" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="chkParent" /></th>
+                                    <th>C&oacutedigo</th>
+                                    <th>Solicitante</th>
+                                    <th>T.Gasto</th>
+                                    <th>Concepto</th>
+                                    <th>Responsable</th>
+                                    <th>F.Atenci&oacuten</th>
+                                    <th>F.Solicitud</th>
+                                    <th>F.de Evento</th>
+                                    <th>Costo</th>
+                                    <th class="hidden"></th>
+                                    <th class="hidden"></th>
+                                    <th class="hidden"></th>
+                                    <th class="hidden"></th>
+                                    <th class="hidden"></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <th></th>
+                                    <th>C&oacutedigo</th>
+                                    <th>Solicitante</th>
+                                    <th>T.Gasto</th>
+                                    <th>Concepto</th>
+                                    <th>Responsable</th>
+                                    <th>F.Atenci&oacuten</th>
+                                    <th>F.Solicitud</th>
+                                    <th>F.de Evento</th>
+                                    <th>Costo</th>
+                                    <th class="hidden"></th>
+                                    <th class="hidden"></th>
+                                    <th class="hidden"></th>
+                                    <th class="hidden"></th>
+                                    <th class="hidden"></th>
+                                    <th></th>
+                                </tr>
+                            </tfoot>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td class="jsgrid-align-center">
+                                            @Html.EditorFor(modelItem => item.option)
+                                        </td>
+                                        <td> @Html.DisplayFor(modelItem => item.idSolGas)</td>
+                                        @{
+                                            var nombre = item.solicitante.empleado.nom1Emp;
+                                            var apellido = item.solicitante.empleado.apePatEmp;
+                                            var solicitante = nombre.Substring(0, 1) + ". " + apellido;
+                                        }
+                                        <td> @solicitante</td>
+                                        <td> @Html.DisplayFor(modelItem => item.concepto.tipoGasto.nomTipGas)</td>
+                                        <td> @Html.DisplayFor(modelItem => item.concepto.nomConGas)</td>
+                                        <td> @Html.DisplayFor(modelItem => item.responsable.empleado.nom1Emp) @Html.DisplayFor(modelItem => item.responsable.empleado.apePatEmp)  </td>
+                                        <td> @Html.DisplayFor(modelItem => item.usufchMod)</td>
+                                        <td> @Html.DisplayFor(modelItem => item.usufchCrea)</td>
+                                        <td> @Html.DisplayFor(modelItem => item.fchEveSolGas)</td>
+                                        <td> @Html.DisplayFor(modelItem => item.moneda.simbMon) @Html.DisplayFor(modelItem => item.monSolGas)</td>
+                                        <td class="hidden"> @Html.DisplayFor(modelItem => item.idPres)</td>
+                                        <td class="hidden"> @Html.DisplayFor(modelItem => item.idMon)</td>
+                                        <td class="hidden"> @Html.DisplayFor(modelItem => item.valtipCam)</td>
+                                        <td class="hidden"> @Html.DisplayFor(modelItem => item.titSolGas)</td>
+                                        <td class="hidden"> @Html.DisplayFor(modelItem => item.obsSolGas)</td>
+                                        <td class="jsgrid-align-center">
+                                            @{
+                                                //familia
+                                                var detF = item.dFam.ToList();
+                                                var dF = "";
+                                                if (detF.Count != 0)
+                                                {
+                                                    foreach (var f in detF)
+                                                    {
+                                                        dF += f.idFamRoe + ";" + f.familia.nomFamRoe + ";" + f.familia.desFamRoe + "|";
+                                                    }
+                                                    dF = dF.Remove(dF.Length - 1, 1);
+                                                }
+                                                //medico
+                                                var detM = item.dMed.ToList();
+                                                var dM = "";
+                                                if (detM.Count != 0)
+                                                {
+                                                    foreach (var f in detM)
+                                                    {
+                                                        dM += f.idCli + ";" + f.cliente.nomCli + ";" + f.cliente.nroCloUPCli + "|";
+                                                    }
+                                                    dM = dM.Remove(dM.Length - 1, 1);
+                                                }
+                                                //responsable
+                                                var detR = item.dResp.ToList();
+                                                var dR = "";
+                                                if (detR.Count != 0)
+                                                {
+                                                    foreach (var f in detR)
+                                                    {
+                                                        dR += f.idEmp + ";" + f.responsable.nomComEmp + ";" + f.responsable.nroDocEmp + "|";
+                                                    }
+                                                    dR = dR.Remove(dR.Length - 1, 1);
+                                                }
+                                                //Firmas
+                                                var detFr = item.dFirma.OrderBy(x => x.usufchCrea).ToList();
+                                                var dfr = "";
+                                                if (detFr.Count != 0)
+                                                {
+                                                    foreach (var f in detFr)
+                                                    {
+                                                        dfr += f.idSolGas + ";" + f.solicitante.username + ";" + f.usufchCrea + ";" + f.estado.nomEst + ";" + f.gasto.monSolGas + ";" + f.gasto.dFirma.Where(x => x.idAcc == f.solicitante.idAcc).Select(x => x.obsFirSol).FirstOrDefault() + "|";
+                                                    }
+                                                    dfr = dfr.Remove(dfr.Length - 1, 1);
+                                                }
+                                            }
+                                            <a href="#visualizar" data-toggle="modal" title="Visualizar" class="open-proces m-r-10"
+                                               data-res="@item.responsable.empleado.nomComEmp"
+                                               data-con="@item.concepto.nomConGas"
+                                               data-tga="@item.concepto.tipoGasto.nomTipGas"
+                                               data-zon="@item.zona.nomZon"
+                                               data-lin="@item.linea.nomLin"
+                                               data-esp="@item.especialidad.nomEsp"
+                                               data-tit="@item.titSolGas"
+                                               data-lug="@item.lugSolGas"
+                                               data-fec="@item.fchEveSolGas"
+                                               data-obs="@item.obsSolGas"
+                                               data-cod="@item.idSolGas"
+                                               data-mto="@item.monSolGas"
+                                               data-mon="@item.moneda.nomMon"
+                                               data-cam="@item.valtipCam"
+                                               data-usc="@item.usuCrea"
+                                               data-ucf="@item.usufchCrea"
+                                               data-detf="@dF"
+                                               data-detm="@dM"
+                                               data-detr="@dR"><i class="fa fa-eye"></i></a>
+                                            <a href="#responsive-modal-Firmas" data-toggle="modal" title="Firmas" class="open-firma" data-detfr="@dfr"><i class="fa fa-list-ol m-r-10"></i></a>
+
+                                            @{
+                                                if (item.idEst != ConstantesGlobales.estadoAprobado)
+                                                {
+                                                    <a href="@Url.Action("Imprimir", "SolicitudGasto", new {Area="Ventas",html = false,sol=item.idSolGas })" data-toggle="tooltip" title="Imprimir"> <i class="fa fa-print text-inverse m-r-10"></i> </a>
+                                                }
+
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="panel-footer"></div>
+</div>
+@section scripts
+{
+    @Scripts.Render("~/Bundles/tablaExport_JS")
+    @Scripts.Render("~/Bundles/bloqueo_JS")
+    @Scripts.Render("~/Bundles/datepicker_JS")
+    <script src="~/Areas/Sistemas/Scripts/Sistemas.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            $('#example23').DataTable({
+                dom: 'Bfrtip'
+                , buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+            });
+            $('.datepicker').datepicker({
+                dateFormat: 'dd/mm/yy'
+            });
+
+
+            $('#chkParent').click(function () {
+                var isChecked = $(this).prop("checked");
+                var prueba = "";
+                $('#example23').DataTable().rows({ search: 'applied' }).iterator('row', function (context, index) {
+                    //prueba = prueba + "-" + index + "-";
+                    $(this.row(index).node()).find('td').eq(0).find('input[type="checkbox"]').prop('checked', isChecked);
+                });
+                //console.log(prueba);
+            });
+
+            $('#example23 tr:has(td)').find('input[type="checkbox"]').click(function () {
+                var isChecked = $(this).prop("checked");
+                var isHeaderChecked = $("#chkParent").prop("checked");
+                if (isChecked == false && isHeaderChecked) {
+                    $("#chkParent").prop('checked', isChecked);
+                }
+                else {
+                    $('#example23 tr:has(td)').find('input[type="checkbox"]').each(function () {
+                        if ($(this).prop("checked") == false)
+                            isChecked = false;
+                    });
+                    $("#chkParent").prop('checked', isChecked);
+                }
+            });
+            unblock();
+
+            //////revisar//////////////////////////////////////////////////////////////////////////////////////
+            if ($('#idestado').val() ==@ConstantesGlobales.estadoAprobado) {
+                //significa aprobado
+                $("#divAproba").removeClass("hidden");
+                $("#divImpri").addClass("hidden");
+            }
+            if ($('#idestado').val() == @ConstantesGlobales.estadoRechazado) {
+                //significa rechazado
+                $("#divAproba").addClass("hidden");
+                $("#divImpri").removeClass("hidden");
+            }
+            if ($('#idestado').val() == @ConstantesGlobales.estadoEnGiro) {
+                //significa en giro
+                $("#divAproba").addClass("hidden");
+                $("#divImpri").removeClass("hidden");
+            }
+             //////////////////////////////////////////////////////////////////////////////////////////////////////
+            $('#idImprimir').click(function () {
+                var existe = false;
+                var solicitudes = '';
+
+                $('#example23').DataTable().rows().iterator('row', function (context, index) {
+                    if ($(this.row(index).node()).find('td').eq(0).find('input:checked').val()) {//capturamos los seleccionados
+                        solicitudes += $.trim($(this.row(index).node()).find('td').eq(1).text()) + '|';
+                        existe = true;
+                    }
+                });
+                solicitudes = solicitudes.substr(0, solicitudes.length - 1);
+                console.log(solicitudes)
+
+                url = "/Ventas/SolicitudGasto/ImprimirV?html=" + false + "&solicitudes=" + solicitudes;
+                window.open(url);
+            });
+
+        });
+
+
+
+        $(document).on("click", ".open-proces", function () {
+            $("#data_res").val($(this).data('res'));
+            $("#data_con").val($(this).data('con'));
+            $("#data_tga").val($(this).data('tga'));
+            $("#data_zon").val($(this).data('zon'));
+            $("#data_lin").val($(this).data('lin'));
+            $("#data_esp").val($(this).data('esp'));
+            $("#data_tit").val($(this).data('tit'));
+            $("#data_lug").val($(this).data('lug'));
+            $("#data_fec").val($(this).data('fec'));
+            $("#data_obs").val($(this).data('obs'));
+            $("#data_cod").val($(this).data('cod'));
+            $("#data_mto").val($(this).data('mto'));
+            $("#data_mon").val($(this).data('mon'));
+            $("#data_cam").val($(this).data('cam'));
+            $("#data-usc").val($(this).data('usc'));
+            $("#data-ucf").val($(this).data('ucf'));
+            //armo la tabla familia
+            var df = $(this).data('detf');
+            var filas = df.split("|");
+            var row = "";
+            $("#tb_familia > tbody:last").empty();
+            if (filas != "") {
+                $.each(filas, function (id, elem) {
+                    var col = elem.split(";");
+                    row = "<tr>";
+                    row += "<td>" + col[0] + "</td>";
+                    row += "<td>" + col[1] + "</td>";
+                    row += "<td>" + col[2] + "</td>";
+                    row += "</tr>";
+                    $("#tb_familia > tbody:last").append(row);
+                });
+            }
+            //armo la tabla medico
+            var dm = $(this).data('detm');
+            var filasM = dm.split("|");
+            var rowM = "";
+            $("#tb_medico > tbody:last").empty();
+            if (filasM != "") {
+                $.each(filasM, function (id, elem) {
+                    var col = elem.split(";");
+                    rowM = "<tr>";
+                    rowM += "<td>" + col[0] + "</td>";
+                    rowM += "<td>" + col[1] + "</td>";
+                    rowM += "<td>" + col[2] + "</td>";
+                    rowM += "</tr>";
+                    $("#tb_medico > tbody:last").append(rowM);
+                });
+            }
+
+            //armo la tabla responsable
+            var dr = $(this).data('detr');
+            var filasR = dr.split("|");
+            var rowR = "";
+            $("#tb_responsable > tbody:last").empty();
+            if (filasR != "") {
+                $.each(filasR, function (id, elem) {
+                    var col = elem.split(";");
+                    rowR = "<tr>";
+                    rowR += "<td>" + col[0] + "</td>";
+                    rowR += "<td>" + col[1] + "</td>";
+                    rowR += "<td>" + col[2] + "</td>";
+                    rowR += "</tr>";
+                    $("#tb_responsable > tbody:last").append(rowR);
+                });
+            }
+        });
+        $(document).on("click", ".open-firma", function () {
+            //armo la tabla firma
+            var df = $(this).data('detfr');
+            var filas = df.split("|");
+            var row = "";
+            $("#tb_firma > tbody:last").empty();
+            if (filas != "") {
+                $.each(filas, function (id, elem) {
+                    var col = elem.split(";");
+                    row = "<tr>";
+                    row += "<td>" + col[0] + "</td>";
+                    row += "<td>" + col[1] + "</td>";
+                    row += "<td>" + col[2] + "</td>";
+                    row += "<td>" + col[3] + "</td>";
+                    row += "<td>" + col[4] + "</td>";
+                    row += "<td>" + col[5] + "</td>";
+                    row += "</tr>";
+                    $("#tb_firma > tbody:last").append(row);
+                });
+            }
+        });
+
+        function enGiroSol() {
+            var existe = false;
+            var solicitudes = '';
+            var glosario = $("#idGlosaApro").val();
+
+            $('#example23').DataTable().rows().iterator('row', function (context, index) {
+                if ($(this.row(index).node()).find('td').eq(0).find('input:checked').val()) {//capturamos los seleccionados
+                    solicitudes += $.trim($(this.row(index).node()).find('td').eq(1).text()) + '|';
+                    existe = true;
+                }
+            });
+            solicitudes = solicitudes.substr(0, solicitudes.length - 1);
+            console.log(solicitudes)
+            //debe seleccionar almenos una solicitud de la grilla
+            if (!existe) {
+                $("div #danger").removeClass('hidden');
+                $("div #danger").text('Debe seleccionar una solicitud');
+                setTimeout(function () { $("div #danger").fadeOut(2000).fadeIn(2000).fadeOut(1500).fadeIn(1500).fadeOut(500) }, 500);
+                setTimeout(function () { $("div #danger").addClass('hidden'); }, 4000);
+                return false;
+            } else {
+
+                let url = "/Ventas/SolicitudGasto/enGiroSolicitud?solicitudes=" + solicitudes + "&idGlosaApro=" + glosario;
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    processData: true,
+                    success: function (data) {
+                        if (data) {
+                            url = "/Ventas/SolicitudGasto/ImprimirV?html=" + false + "&solicitudes=" + solicitudes;
+                            window.open(url);
+                            $('#responsive-modal').modal('hide');
+                            $("div #success").removeClass('hidden');
+                            $("div #success").text('Se atendieron la(s) solicitud(es)');
+                            setTimeout(function () { $("div #success").fadeOut(2500).fadeIn(2500).fadeOut(2000).fadeIn(2000).fadeOut(500) }, 500);
+                            setTimeout(function () { $("div #success").addClass('hidden'); }, 3000);
+                            block();
+                            location.reload();
+                        }
+                        else {
+                            $("div #danger").removeClass('hidden');
+                            $("div #danger").text('Se genero un error');
+                            setTimeout(function () { $("div #danger").fadeOut(2000).fadeIn(2000).fadeOut(1500).fadeIn(1500).fadeOut(500) }, 500);
+                            setTimeout(function () { $("div #danger").addClass('hidden'); }, 4000);
+                        }
+                    },
+                    error: function (xhr) {
+                        console.log(' Error:  >>>> ' + JSON.stringify(xhr));
+                    }
+                });
+
+            }
+        }
+        function rechazarSol() {
+            var existe = false;
+            var solicitudes = '';
+            $('#example23').DataTable().rows().iterator('row', function (context, index) {
+                if ($(this.row(index).node()).find('td').eq(0).find('input:checked').val()) {//capturamos los seleccionados
+                    solicitudes += $.trim($(this.row(index).node()).find('td').eq(1).text()) + '|';
+                    existe = true;
+                }
+            });
+
+            solicitudes = solicitudes.substr(0, solicitudes.length - 1);
+            //validar si selecciono al menos una solicitud
+            if (!existe) {
+                $("div #danger").removeClass('hidden');
+                $("div #danger").text('Debe seleccionar una solicitud');
+                setTimeout(function () { $("div #danger").fadeOut(2000).fadeIn(2000).fadeOut(1500).fadeIn(1500).fadeOut(500); }, 500);
+                setTimeout(function () { $("div #danger").addClass('hidden'); }, 4000);
+                return false;
+            }
+            var aprobador = @SessionPersister.UserId;
+            var glosario = $("#idGlosaRecha").val();
+
+            $.post('/SolicitudGasto/rechazarSolicitud', { sol: solicitudes, apr: aprobador, glo: glosario }, function (data, status) {
+                if (status == "success") {
+                    if (data) {
+                        $('#responsive-modal-rechazado').modal('hide');
+                        $("div #success").removeClass('hidden');
+                        $("div #success").text('Se rechazo la(s) solicitud(es)');
+                        setTimeout(function () { $("div #success").fadeOut(2500).fadeIn(2500).fadeOut(2000).fadeIn(2000).fadeOut(500); }, 500);
+                        setTimeout(function () { $("div #success").addClass('hidden'); block(); location.reload(); }, 3000);
+                    }
+                    else {
+                        $("div #danger").removeClass('hidden');
+                        $("div #danger").text('Se genero un error');
+                        setTimeout(function () { $("div #danger").fadeOut(2000).fadeIn(2000).fadeOut(1500).fadeIn(1500).fadeOut(500); }, 500);
+                        setTimeout(function () { $("div #danger").addClass('hidden'); }, 4000);
+                    }
+                }
+            });
+        }
+
+
+        function block() {
+            $('section.block1').block({
+                message: '<h4><img src="../../Content/plugins/images/busy.gif" /> Sólo un momento...</h4>'
+                , css: {
+                    border: '1px solid #fff'
+                }
+            });
+        }
+        function unblock() {
+            $('section.block1').unblock();
+        }
+
+
+
+    </script>
+}
+

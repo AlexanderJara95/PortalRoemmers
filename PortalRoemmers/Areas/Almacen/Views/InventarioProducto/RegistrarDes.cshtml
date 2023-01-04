@@ -1,0 +1,214 @@
+﻿@using PortalRoemmers.Security
+@model PortalRoemmers.Areas.Almacen.Models.Inventario.InventarioProductoModels
+
+@{
+    ViewBag.Title = "RegistrarDes";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section css {
+    @Styles.Render("~/Content/selectBusqueda_CSS")
+    @Styles.Render("~/Content/autocompletado_CSS")
+}
+
+<div class="white-box p-l-20 p-r-20">
+    <h3 class="box-title m-b-0"> Nuevo Conteo</h3>
+    <p class="text-muted m-b-30 font-13">Completar todos los campos necesarios.</p>
+    <div class="row">
+        <div class="col-md-12">
+            @using (Html.BeginForm("RegistrarDes", "InventarioProducto", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal form-material" }))
+            {
+                @Html.AntiForgeryToken()
+
+                @Html.HiddenFor(model => model.fabInvCon, new { Value = "VACIO" })
+
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.nroInvCon) <i class="ti-key"></i></label>
+                    <div class="col-md-12">
+                        @Html.DropDownList("nroInvCon", (SelectList)ViewBag.nroInvCon, "Seleccionar", htmlAttributes: new { @class = "form-control form-control-line" })
+                        @Html.ValidationMessageFor(model => model.codProCon, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">Producto <i class="ti-key"></i></label>
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.desProCon, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Descripción del producto" } })
+                        @Html.HiddenFor(model => model.codProCon)
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.almInvCon)</label>
+                    <div class="col-md-12">
+                        @Html.DropDownList("almInvCon", (SelectList)ViewBag.almInvCon, "Seleccionar", htmlAttributes: new { @class = "form-control form-control-line" })
+                        @Html.ValidationMessageFor(model => model.almInvCon, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.nroLotCon) <i class="ti-key"></i></label>
+                    <div class="col-md-12">
+                        @Html.DropDownList("nroLotCon", (SelectList)ViewBag.nroLotCon, "Seleccionar", htmlAttributes: new { @class = "form-control form-control-line" })
+                        @Html.ValidationMessageFor(model => model.nroLotCon, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.ubiProCon) <i class="ti-key"></i></label>
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.ubiProCon, new { htmlAttributes = new { @class = "form-control form-control-line", @onkeyup = "javascript:this.value=this.value.toUpperCase();", @placeholder = "Ubicación", @autocomplete = "off" } })
+                        @Html.ValidationMessageFor(model => model.ubiProCon, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div id='danger' class='alert alert-danger hidden'></div>
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.canInvCon)</label>
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.canInvCon, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Cantidad" } })
+                        @Html.ValidationMessageFor(model => model.canInvCon, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.obsInvCon)</label>
+                    <div class="col-md-12">
+                        @Html.TextAreaFor(model => model.obsInvCon, new { @class = "form-control form-control-line", @rows = 5, @style = "text-transform:uppercase;", @onkeyup = "javascript:this.value=this.value.toUpperCase();", @placeholder = "Obs." })
+                        @Html.ValidationMessageFor(model => model.obsInvCon, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+
+                <button class="btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10">Guardar</button>
+                @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-default btn-rounded btn-outline waves-effect waves-light" })
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    @Scripts.Render("~/Bundles/autocompletado_JS")
+    @Scripts.Render("~/Bundles/selectBusqueda_JS")
+    <script>
+        $(document).ready(function () {
+            $("#nroLotCon").select2();
+            $("#almInvCon").select2();
+
+            $("#desProCon").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: "/InventarioProducto/autoDesPro",
+                        type: "POST",
+                        dataType: "json",
+                        data: { Prefix: request.term },
+                        success: function (data) {
+                            response($.map(data, function (item) {
+                                return {
+                                    label: item.text, value: item.text, valor: item.value
+                                };
+                            }));
+                        }
+                    });
+                },
+                select: function (event, ui) {
+                    $("#codProCon").val(ui.item.valor);
+
+                    var RolOptions = {};
+                    RolOptions.url = "/InventarioProducto/buscarAlmacen";
+                    RolOptions.type = "POST";
+                    RolOptions.data = JSON.stringify({ codProCon: $("#codProCon").val() });
+                    RolOptions.datatype = "json";
+                    RolOptions.contentType = "application/json";
+                    RolOptions.success = function (data) {
+                        /*limpiar*/
+                        $("#nroLotCon").empty();
+                        $("#nroLotCon").append($("<option> </option>").val("").html("Seleccionar"));
+                        $("#nroLotCon").select2("val", "");
+
+                        $("#almInvCon").empty();
+                        $("#almInvCon").append($("<option> </option>").val("").html("Seleccionar"));
+                        $("#almInvCon").select2("val", "");
+                        /*limpiar*/
+                        $.each(data, function (i, item) {
+                            $("#almInvCon").append($("<option> </option>").val(item.value).html(item.text));
+                        });
+                    };
+                    RolOptions.error = function () { alert("Error in Getting Data!!"); };
+                    $.ajax(RolOptions);
+
+
+                }
+            });
+
+            $("#almInvCon").change(function () {
+                if ($("#almInvCon").val() != "") {
+                    var RolOptions = {};
+                    RolOptions.url = "/InventarioProducto/buscarNroLote";
+                    RolOptions.type = "POST";
+                    RolOptions.data = JSON.stringify({ codProCon: $("#codProCon").val(), almInvCon: $("#almInvCon").val() });
+                    RolOptions.datatype = "json";
+                    RolOptions.contentType = "application/json";
+                    RolOptions.success = function (data) {
+                        /*limpiar*/
+                        $("#nroLotCon").empty();
+                        $("#nroLotCon").append($("<option> </option>").val("").html("Seleccionar"));
+                        $("#nroLotCon").select2("val", "");
+
+                        /*limpiar*/
+                        $.each(data, function (i, item) {
+                            $("#nroLotCon").append($("<option> </option>").val(item.value).html(item.text));
+                        });
+                    };
+                    RolOptions.error = function () { alert("Error in Getting Data!!"); };
+                    $.ajax(RolOptions);
+                }
+            });
+
+            $("#ubiProCon").change(function () {
+                buscarConteo();
+            });
+
+            $("#ubiProCon").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: "/InventarioProducto/autoUbi",
+                        type: "POST",
+                        dataType: "json",
+                        data: { Prefix: request.term, codProCon: $("#codProCon").val(), nroLotCon: $("#nroLotCon").val() },
+                        success: function (data) {
+                            response($.map(data, function (item) {
+                                return {
+                                    label: item.text, value: item.text, valor: item.value
+                                };
+                            }));
+                        }
+                    });
+                }
+            });
+
+        });
+
+        function buscarConteo() {
+            var RolOptions = {};
+            RolOptions.url = "/InventarioProducto/buscarConteo";
+            RolOptions.type = "POST";
+            RolOptions.data = JSON.stringify({ codProCon: $("#codProCon").val(), nroLotCon: $("#nroLotCon").val(), ubiProCon: $("#ubiProCon").val(), nroInvCon: $("#nroInvCon").val() });
+            RolOptions.datatype = "json";
+            RolOptions.contentType = "application/json";
+            RolOptions.success = function (data) {
+                if (data != "") {
+                    $("div #danger").removeClass('hidden');
+                    $("div #danger").text('Ya está registrado la combinación de llaves elegidas !, fue creado por ' + data);
+                    setTimeout(function () { $("div #danger").fadeOut(5000); $("div #success").fadeIn(5000); }, 2000);
+                    setTimeout(function () { $("div #danger").addClass('hidden'); $("div #danger").attr("style", ""); }, 8000);
+                }
+
+            };
+            RolOptions.error = function () { alert("Error in Getting Data!!"); };
+            $.ajax(RolOptions);
+        }
+    </script>
+}

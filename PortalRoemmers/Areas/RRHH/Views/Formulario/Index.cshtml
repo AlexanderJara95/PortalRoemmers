@@ -1,0 +1,197 @@
+﻿@model  PortalRoemmers.ViewModels.IndexViewModel
+@using PortalRoemmers.Helpers
+@using PortalRoemmers.Security
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section css {
+    @Styles.Render("~/Content/tablaResponsive_CSS")
+    @Styles.Render("~/Content/Daterange_CSS")
+}
+<!--Activar Ficha-->
+<div id="responsive-modal-ficha" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="frmActivar" enctype="multipart/form-data" method="post">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h2 class="modal-title">Activar Ficha</h2>
+                </div>
+                <div class="modal-body">
+
+                    <div id='success' class='alert alert-success hidden'></div>
+                    <div id='danger' class='alert alert-danger hidden'></div>
+                    <div class="form-horizontal form-material">
+                        <div class="form-group">
+                            <input id="codForm" type="hidden" />
+                            <label class="col-md-12">Fecha de activaci&oacute;n</label>
+                            <div class="col-md-12">
+                                @{string fecha = DateTime.Now.ToString("dd/MM/yyyy hh:mm") + " PM";
+                                    string fecha2 = DateTime.Now.AddDays(1).ToString("dd/MM/yyyy hh:mm") + " PM";}
+                                <input type="text" class="form-control input-daterange-timepicker" id="daterange" name="daterange" value="@fecha - @fecha2" />
+                            </div>
+                        </div>
+                    </div>
+                   
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-danger waves-effect waves-light" type="submit">Activar</button>
+                    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cerrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--Activar Ficha-->
+
+<div class="panel panel-default">
+    <div class="panel-heading box-title m-b-0"><h2>Mantenimiento de Formularios</h2></div>
+    <div class="panel-body">
+        <div class="form-group">
+            @{ string v = ""; try { v = TempData["mensaje"].ToString(); } catch { }}
+            @(new HtmlString(v))
+        </div>
+        @using (Html.BeginForm("Index", "Formulario", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista }, FormMethod.Post))
+        {
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="input-group">
+                        <input type="text" id="search" name="search" class="form-control" placeholder="Buscar" value="@ViewBag.search">
+                        <span class="input-group-btn">
+                            <button class="btn waves-effect waves-light btn-info">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        }
+        <br />
+        <div class="row">
+            <div class="col-xs-6">
+                @Html.ActionLink("Crear", "Registrar", "Formulario", new { Area = "RRHH" }, new { @Class = "btn btn-info btn-rounded" })
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <table class="tablesaw table-bordered table-hover table" data-tablesaw-mode="swipe">
+                    <thead>
+                        <tr>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist"></th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1">C&oacutedigo</th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2">Nombre</th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Estado</th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="4">Inicio</th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="4">Fin</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Formulario)
+                        {
+                            <tr>
+                                <td class="text-nowrap">
+                                    <a href="@MyExtensions.ActionUrl("Modificar", "Formulario", new {Area="RRHH", id = item.idFor})" data-toggle="tooltip" title="Editar"> <i class="fa fa-pencil text-inverse m-r-5"></i> </a>
+                                    <a href="@MyExtensions.ActionUrl("Eliminar", "Formulario", new {Area="RRHH",id = item.idFor})" data-toggle="tooltip" title="Eliminar"> <i class="fa fa-close text-danger m-r-5"></i> </a>
+                                    <a href="#responsive-modal-ficha" data-toggle="modal" id="urlFicha" title="Activar Ficha" data-tooltip="tooltip" data-form="@item.idFor"><i class="fa fa-clock-o m-r-5"></i></a>
+                                    <a href="@MyExtensions.ActionUrl("FormularioUsuarios", "ForUsu", new {Area="RRHH", id = item.idFor,nom=item.nomFor})" data-toggle="tooltip" title="Asignar Usuarios"> <i class="fa fa-group m-r-5"></i> </a>
+                                </td>
+                                <td>@Html.DisplayFor(modelItem => item.idFor)</td>
+                                <td>@Html.DisplayFor(modelItem => item.nomFor)</td>
+                                <td>@Html.DisplayFor(modelItem => item.estado.nomEst)</td>
+                                <td>@Html.DisplayFor(modelItem => item.fchIniFor)</td>
+                                <td>@Html.DisplayFor(modelItem => item.fchFinFor)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                @{Html.RenderPartial("_paginador", Model);}
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-footer"></div>
+</div>
+
+
+@section scripts
+{
+    @Scripts.Render("~/Bundles/tablaResponsive_JS")
+    @Scripts.Render("~/Bundles/Daterange_JS")
+    <script src="~/Areas/RRHH/Scripts/RRHH.js"></script>
+    <script>
+        var startDate;
+        var endDate;
+        $(document).ready(function () {
+            $('body').tooltip({
+                selector: "[data-tooltip=tooltip]",
+                container: "body"
+            });
+
+            $('.input-daterange-timepicker').daterangepicker({
+                timePicker: true
+                , format: 'DD/MM/YYYY h:mm A'
+                , timePickerIncrement: 30
+                , timePicker12Hour: true
+                , timePickerSeconds: false
+                , buttonClasses: ['btn', 'btn-sm']
+                , applyClass: 'btn-danger'
+                , cancelClass: 'btn-inverse'
+            }, function (start, end, label) {
+                    startDate = start.format('DD/MM/YYYY h:mm A');
+                    endDate = end.format('DD/MM/YYYY h:mm A');
+              }
+            );
+        });
+
+        $(document).on("click", "#urlFicha", function () {
+            //--------------------
+            var ficha = $(this).data('form');
+            $("#codForm").val(ficha);
+            //--------------------
+        });
+
+        $("#frmActivar").submit(function (e) {
+            var idFor = $("#codForm").val();
+                 $.ajax({
+                     url: '@Url.Action("activarFicha", "Formulario")',
+                     dataType: 'json',
+                     type: 'POST',
+                     data:{
+                         idFor: idFor,
+                         fchIniFor: startDate,
+                         fchFinFo: endDate
+                     },
+                     success: function (result) {
+                         if (result) {
+                             $("div #success").removeClass('hidden');
+                             $("div #success").text("Se activo el Formulario !!!");
+                             setTimeout(function () { $("div #success").fadeOut(5000); $("div #success").fadeIn(5000); }, 2000);
+                             setTimeout(function () { $("div #success").addClass('hidden'); return true; location.reload();}, 8000);
+
+                         } else {
+                             $("div #danger").removeClass('hidden');
+                             $("div #danger").text('Se genero un error !!!');
+                             setTimeout(function () { $("div #danger").fadeOut(5000); $("div #success").fadeIn(5000); }, 2000);
+                             setTimeout(function () { $("div #danger").addClass('hidden'); }, 8000);
+                         }
+                     },
+                     error: function (err) {
+                         alert(err.statusText);
+                     }
+                 });
+                return false;
+        });
+
+
+
+    </script>
+}

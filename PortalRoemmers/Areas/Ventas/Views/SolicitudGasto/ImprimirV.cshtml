@@ -1,0 +1,306 @@
+﻿@model  List<PortalRoemmers.Areas.Ventas.Models.SolicitudGasto.SolicitudGastoModels>
+
+
+@{
+    if (ViewBag.pdf)
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+}
+
+
+
+
+<style>
+    .cabecera {
+        font-family: Arial;
+        font-size: 9pt;
+        border-collapse: collapse;
+        font-weight: normal;
+        width: 100%;
+    }
+
+        .cabecera th, .cabecera td {
+            height: 25px;
+            text-align: left;
+        }
+
+    .detalle {
+        width: 100%;
+        font-size: 9pt;
+    }
+
+        .detalle th {
+            border: 1px solid black;
+        }
+
+        .detalle, .detalle td, .detalle th {
+            border-collapse: collapse;
+        }
+
+    .box {
+        border-left-style: solid;
+        border-left-width: 1px;
+        border-right-style: solid;
+        border-right-width: 1px;
+        border-top-style: solid;
+        border-top-width: 1px;
+        border-bottom-style: solid;
+        border-bottom-width: 1px;
+        font-weight: bold;
+    }
+
+    .titulo {
+        background-color: #c0c0c0;
+        box-shadow: 10px 10px;
+    }
+
+    .A4Div {
+        height: 100%;
+        width: 100%;
+    }
+</style>
+
+
+@foreach (var sol in Model)
+{
+<div class="A4Div">
+    <table class="cabecera">
+        <tr>
+            <td colspan="2">Mega Labs Latam S.A.</td>
+            <td colspan="2" style="text-align: right">@DateTime.Today.ToString("dd/MM/yyyy")</td>
+        </tr>
+        <tr>
+            <td colspan="2"></td>
+            <td colspan="2" style="text-align: center"><div class="box">SOLICITUD Nº @sol.idSolGas</div></td>
+        </tr>
+        <tr>
+            <td colspan="4" style="text-align: center"><div class="titulo" style="width:100%;"><h2>SOLICITUD DE FONDOS</h2></div></td>
+        </tr>
+        <tr>
+            <td style="text-align: left;font-weight: bold;width:18%"><label>Solicitante :</label></td>
+            <td style="text-align: left;width:44%">@sol.solicitante.empleado.nomComEmp</td>
+            <td style="text-align: left;font-weight: bold;width:18%"><label>Módulo :</label> </td>
+
+
+            @{
+                string plan = "";
+                int tipo = sol.movimiento.Count();
+                string modSol = sol.modSolGas;
+                string tipSol = "";
+                if (tipo != 0)
+                {
+                    tipSol = sol.movimiento.FirstOrDefault().presupuesto.tipospres.idTipoPres;
+                }
+                //------------------------------------------
+                if (tipSol != "")
+                {
+                    if (tipSol == ConstantesGlobales.plan_Trab)
+                    {
+                        plan = "PLAN DE TRABAJO";
+                    }
+                    if (tipSol == ConstantesGlobales.plan_Mark)
+                    {
+                        plan = "PLAN DE MARKETING";
+                    }
+                    if (tipSol == ConstantesGlobales.plan_Fuera)
+                    {
+                        plan = "FUERA DEL PLAN";
+                    }
+                }
+                else
+                {
+                    plan = "NINGUNO";
+                }
+            }
+            <td style="text-align: left;width:25%">@plan</td>
+
+
+        </tr>
+        <tr>
+            <td style="text-align: left;font-weight: bold;width:18%"><label>Tipo Gasto :</label> </td>
+            <td style="text-align: left;width:44%">@sol.concepto.tipoGasto.nomTipGas</td>
+            <td style="text-align: left;font-weight: bold;width:18%"><label>Zona :</label></td>
+            <td style="text-align: left;width:20%">@sol.zona.nomZon</td>
+        </tr>
+        <tr>
+            <td style="text-align: left;font-weight: bold;"><label>Concepto Gasto :</label></td>
+            <td style="text-align: left">@sol.concepto.nomConGas</td>
+            <td style="text-align: left;font-weight: bold;"><label>Linea :</label> </td>
+            <td style="text-align: left">@sol.linea.nomLin</td>
+        </tr>
+
+        <tr>
+            <td style="text-align: left;font-weight: bold;">@sol.concepto.concContable</td>
+            <td style="text-align: left">@sol.concepto.concContable)</td>
+            <td style="text-align: left;font-weight: bold;">@sol.concepto.ctaContable</td>
+            <td style="text-align: left">@sol.concepto.ctaContable</td>
+        </tr>
+
+        <tr>
+            <td style="text-align: left;font-weight: bold;"><label>Especialidad :</label></td>
+            <td style="text-align: left">@sol.especialidad.nomEsp</td>
+            <td style="text-align: left;font-weight: bold;"><label>Fecha Creación :</label> </td>
+            <td style="text-align: left">@sol.usufchCrea</td>
+        </tr>
+        <tr>
+            <td style="text-align: left;font-weight: bold;"><label>Título :</label></td>
+            <td style="text-align: left">@sol.titSolGas</td>
+            <td style="text-align: left;font-weight: bold;"><label>Fecha Evento :</label> </td>
+            <td style="text-align: left">@sol.fchEveSolGas</td>
+        </tr>
+        <tr>
+            <td style="text-align: left;font-weight: bold;"><label>Tipo de Solicitud :</label></td>
+            <td style="text-align: left">@sol.solicitud.nomTipSol</td>
+            <td style="text-align: left;font-weight: bold;"><label>Tipo de Pago :</label></td>
+            <td style="text-align: left">@sol.pago.nomTipPag</td>
+        </tr>
+        <tr>
+            <td style="text-align: left;font-weight: bold;">Monto:</td>
+            <td style="text-align: left">@sol.moneda.simbMon  @sol.monSolGas</td>
+            <td style="text-align: left;font-weight: bold;">T. Cambio:</td>
+            <td style="text-align: left">@sol.valtipCam</td>
+        </tr>
+        <tr>
+            <td colspan="1" style="text-align: left;font-weight: bold;"><label>Observación :</label></td>
+            <td colspan="3" style="text-align: left">@sol.obsSolGas</td>
+        </tr>
+    </table>
+
+    <h4>RESPONSABLES</h4>
+    <table class="detalle">
+        <thead>
+            <tr>
+                <th style="width:15%">#</th>
+                <th style="width:85%">Nombre</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in sol.dResp)
+            {
+                <tr>
+                    <td>@item.responsable.nroDocEmp</td>
+                    <td>@item.responsable.nomComEmp</td>
+                    <td></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h4>FAMILIA PRODUCTOS</h4>
+    <table class="detalle">
+        <thead>
+            <tr>
+                <th style="width:15%">#</th>
+                <th style="width:85%">Producto</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in sol.dFam)
+            {
+                <tr>
+                    <td>@item.familia.idFamRoe</td>
+                    <td>@item.familia.nomFamRoe</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+    @{
+        if (sol.dGas.Count() != 0)
+        {
+            var act = sol.dGas.Select(y => y.actividad.nomActiv).FirstOrDefault();
+            string activida = act.ToString();
+            <h4>ACTIVIDAD : @activida </h4>
+        }
+        else
+        {
+            <h4>ACTIVIDAD : NINGUNA </h4>
+        }
+    }
+    <table class="detalle">
+        <thead>
+            <tr>
+
+                <th style="width:30%">Gasto</th>
+                <th style="width:30%">Gasto</th>
+                <th style="width:15%">Importe</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in sol.dGas)
+            {
+                <tr>
+                    <td>@item.gasto.tipoGastoActividad.nomTipGasAct</td>
+                    <td>@item.gasto.nomActGas</td>
+                    <td>@item.monTotal</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h4>MEDICOS</h4>
+    <table class="detalle">
+        <thead>
+            <tr>
+                <th style="width:15%">#</th>
+                <th style="width:85%">Nombre</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in sol.dMed)
+            {
+                <tr>
+                    <td>@item.cliente.idCli</td>
+                    <td>@item.cliente.nomCli</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h4>AREA TERAPEUTICA</h4>
+    <table class="detalle">
+        <thead>
+            <tr>
+                <th style="width:15%">#</th>
+                <th style="width:35%">Nombre</th>
+                <th style="width:25%;text-align:center;">Porcentage</th>
+                <th style="width:25%;text-align:center;">Valor</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in sol.dAre)
+            {
+                <tr>
+                    <td>@item.areaTerap.numAreaTerap</td>
+                    <td>@item.areaTerap.desAreaTerap</td>
+                    <td style="text-align:center">@item.valPorcen</td>
+                    <td style="text-align:center">@item.valor</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h4>FIRMAS</h4>
+    <table class="detalle">
+        <thead>
+            <tr>
+                <th style="width:15%">Usuario</th>
+                <th style="width:30%">Fecha</th>
+                <th style="width:55%">Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in sol.dFirma.OrderBy(x=>x.usufchCrea))
+            {
+                <tr>
+                    <td>@item.usuCrea</td>
+                    <td>@item.usufchCrea</td>
+                    <td>@item.estado.nomEst</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+}

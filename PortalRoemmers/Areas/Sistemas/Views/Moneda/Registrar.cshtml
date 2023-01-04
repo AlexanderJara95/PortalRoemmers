@@ -1,0 +1,50 @@
+﻿@model PortalRoemmers.Areas.Sistemas.Models.Global.MonedaModels
+@using PortalRoemmers.Security
+@{
+    ViewBag.Title = "Registrar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="white-box p-l-20 p-r-20">
+    <h3 class="box-title m-b-0"> Nueva Moneda</h3>
+    <p class="text-muted m-b-30 font-13">Completar todos los campos necesarios. </p>
+    <div class="row">
+        <div class="col-md-12">
+            @using (Html.BeginForm("Registrar", "Moneda", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal form-material" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.nomMon)</label>
+                    <div class="col-md-12">
+
+                        @Html.EditorFor(model => model.nomMon, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Nombre", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                        @Html.ValidationMessageFor(model => model.nomMon, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.abrMon)</label>
+                    <div class="col-md-12">
+
+                        @Html.EditorFor(model => model.abrMon, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Abreviatura", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                        @Html.ValidationMessageFor(model => model.abrMon, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.simbMon)</label>
+                    <div class="col-md-12">
+
+                        @Html.EditorFor(model => model.simbMon, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Símbolo", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                        @Html.ValidationMessageFor(model => model.simbMon, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <button class="btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10">Guardar</button>
+                @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-default btn-rounded btn-outline waves-effect waves-light" })
+            }
+        </div>
+    </div>
+</div>
+
+
+

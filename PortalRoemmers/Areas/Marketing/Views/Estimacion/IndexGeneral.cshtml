@@ -1,0 +1,374 @@
+﻿@model IEnumerable<PortalRoemmers.Areas.Marketing.Models.Estimacion.EstimacionModels>
+@using PortalRoemmers.Helpers
+@using PortalRoemmers.Security
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section css {
+    @Styles.Render("~/Content/tablaExport_CSS")
+    @Styles.Render("~/Content/datepicker_CSS")
+    <style type="text/css">
+        .group {
+            font-weight: bold;
+        }
+    </style>
+}
+<!--Detalle Solicitud de Gastos-->
+<div id="responsive-modal-solGas" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h2 class="modal-title">
+                    <label id="act"></label>
+                    <br />
+                    Detalle de Solicitudes
+                </h2>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="table-responsive m-t-10" style="clear: both;">
+                            <div class="col-sm-12">
+                                <table id="tb_solGas" class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">N°</th>
+                                            <th class="text-center">Codigo</th>
+                                            <th class="text-center">Titulo</th>
+                                            <th class="text-center">Estado</th>
+                                            <th class="text-center">Fec.Eve.</th>
+                                            <th class="text-center">Imp.Neto</th>
+                                            <th class="hidden"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="responsive-modal-pres" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h2 class="modal-title">
+                    <label id="act"></label>
+                    <br />
+                    Detalle de Presupuesto
+                </h2>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="table-responsive m-t-10" style="clear: both;">
+                            <div class="col-sm-12">
+                                <table id="tb_presEst" class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">N° Pto</th>
+                                            <th class="text-center">Especialidad</th>
+                                            <th class="text-center">Inversion</th>
+                                            <th class="text-center">Consumo Real</th>
+                                            <th class="text-center">Saldo Real</th>
+                                            <th class="hidden"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Detalle Solicitud de Gastos-->
+<!--Detalle de estimacion-->
+<div class="panel panel-default">
+    <div class="panel-heading box-title m-b-0"><h2>Consulta de Estimacion de Gastos</h2></div>
+    <div class="panel-body">
+        <div class="form-group">
+            @{ string v = ""; try { v = TempData["mensaje"].ToString(); } catch { }}
+            @(new HtmlString(v))
+        </div>
+        <div class="row align-items-center">
+            @using (Html.BeginForm("IndexGeneral", "Estimacion", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista }, FormMethod.Post))
+            {
+                <div class="row show-grid">
+                    <div class="col-md-7">
+                        <div class="form-group">
+                            <label for="search">RESPONSABLE</label>
+                            @Html.DropDownList("idAccRes", (SelectList)ViewBag.responsable, "TODOS", htmlAttributes: new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="desMen">DESDE</label>
+                            <input class="form-control form-control-line datepicker" id="fchEveSolGasI" name="fchEveSolGasI" placeholder="dd/mm/aaaa" autocomplete="off" value="@ViewBag.primero">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="desMen">HASTA</label>
+                            <input class="form-control form-control-line datepicker" id="fchEveSolGasF" name="fchEveSolGasF" placeholder="dd/mm/aaaa" autocomplete="off" value="@ViewBag.actual">
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <span class="input-group-btn">
+                            <button class="btn waves-effect waves-light btn-info">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+                <div class="row show-grid text-center">
+                    <div class="col-md-12">
+                        <ul class="list-inline two-part">
+                            <li>
+                                <a id="rel-presEst" href="#responsive-modal-pres" data-toggle="modal" title="Ver Presupuesto" class="text-center"><i class="fa fa-file-text-o text-success"></i></a>
+                                <label>Ver Presupuesto</label>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                }
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="white-box">
+                            <h3 class="box-title m-b-0"></h3>
+                            <p class="text-muted m-b-30"></p>
+                            <div class="table-responsive">
+                                <table id="example23" class="display nowrap table display" cellspacing="0" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>C&oacutedigo</th>
+                                            <th>Actividad</th>
+                                            <th>Responsable</th>
+                                            <th>Fecha Inicio</th>
+                                            <th>Fecha Final</th>
+                                            <th>Especialidad</th>
+                                            <th class="text-right">Estimación</th>
+                                            <th class="text-right">Real</th>
+                                            <th class="hidden"></th>
+                                            <th class="hidden"></th>
+                                        </tr>
+                                    </thead>
+                                    <tfoot>
+                                        <tr>
+                                            <th></th>
+                                            <th>C&oacutedigo</th>
+                                            <th>Actividad</th>
+                                            <th>Responsable</th>
+                                            <th>Fecha Inicio</th>
+                                            <th>Fecha Final</th>
+                                            <th>Especialidad</th>
+                                            <th class="text-right">Estimación</th>
+                                            <th class="text-right">Real</th>
+                                            <th class="hidden"></th>
+                                            <th class="hidden"></th>
+                                        </tr>
+                                    </tfoot>
+                                    <tbody>
+                                        @foreach (var item in Model)
+                                        {
+                                            <tr>
+                                                <td class="text-nowrap">
+                                                    <a href="@Url.Action("Imprimir", "Estimacion", new { Area = "Marketing", html = false, est = item.idActiv })" data-toggle="tooltip" title="Imprimir"> <i class="fa fa-print text-inverse m-r-10"></i> </a>
+                                                    @{
+                                                        //solo algunos lo ven
+
+                                                        if ((item.idEst == ConstantesGlobales.estadoRegistrado || item.idEst == ConstantesGlobales.estadoModificado) && ( ConstantesGlobales.administrator.Contains(SessionPersister.Username) || ConstantesGlobales.administratorMkt.Contains(SessionPersister.Username)))
+                                                        {
+                                                            <a href="@MyExtensions.ActionUrl("Modificar", "Estimacion", new { Area = "Marketing", id = item.idActiv ,modulo="IndexGeneral" })" data-toggle="tooltip" title="Editar"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a>
+                                                            <a href="@MyExtensions.ActionUrl("Eliminar", "Estimacion", new { Area = "Marketing", id = item.idActiv })" data-toggle="tooltip" title="Anular" id="sa-params"> <i class="fa fa-close text-danger  m-r-10"></i> </a>
+                                                        }
+                                                    }
+                                                    <a id="rel-solGas" href="#responsive-modal-solGas" data-toggle="modal" title="Ver Gastos" class="open-solGas m-r-12"><i class="icon-book-open  m-r-10"></i></a>
+                                                </td>
+                                                <td>@Html.DisplayFor(modelItem => item.idActiv)</td>
+                                                @{
+                                                    var longitud = item.actividad.nomActiv.Length;
+                                                    var activ = "";
+                                                    if (longitud > 60)
+                                                    {
+                                                        activ = item.actividad.nomActiv.Substring(0, 60);
+                                                    }
+                                                    else
+                                                    {
+                                                        activ = item.actividad.nomActiv;
+                                                    }
+                                                }
+                                                <td>@activ</td>
+                                                @{
+                                                    var respon = item.actividad.responsable.empleado.nom1Emp.Substring(0, 1) + ". " + item.actividad.responsable.empleado.apePatEmp;
+                                                }
+                                                <td>@respon</td>
+                                                <td>@Html.DisplayFor(modelItem => item.actividad.fchIniActiv)</td>
+                                                <td>@Html.DisplayFor(modelItem => item.actividad.fchFinActiv)</td>
+                                                <td>@Html.DisplayFor(modelItem => item.actividad.especialidad.nomEsp)</td>
+                                                <td class="text-right">@Html.DisplayFor(modelItem => item.moneda.simbMon) @Html.DisplayFor(modelItem => item.monEstGas) </td>
+                                                @{
+                                                    //Gastos Reales
+                                                    //var dgasto = Model.SelectMany(x => x.detalleEstim_Gas.SelectMany(y => y.detSolGas, (parent, child) => new { idAct = parent.idActiv, idSol = child.idSolGas, idMon = child.solicitud.idMon, tc = child.solicitud.valtipCam, idEst = child.solicitud.idEst, monto = child.monTotal }));
+                                                    var dgasto = Model.SelectMany(x => x.detalleEstim_Gas.SelectMany(y => y.detSolGas.Select(z=>z.solicitud), (parent, child) => new { idAct = parent.idActiv, idSol = child.idSolGas, idMon = child.idMon, tc = child.valtipCam, idEst = child.idEst, monto = child.movimiento.Select(g=>g.monSolGas).FirstOrDefault() }).Distinct());
+                                                    double gasto = 0;
+                                                    double real = 0;
+
+                                                    if (dgasto.Count() != 0)
+                                                    {
+                                                        foreach (var g in dgasto)
+                                                        {
+                                                            if (g.idAct == item.idActiv && (g.idEst != ConstantesGlobales.estadoAnulado && g.idEst != ConstantesGlobales.estadoRechazado && g.idEst != ConstantesGlobales.estadoNoAtendido))
+                                                            {
+                                                                gasto = g.monto;
+
+                                                                if (g.idMon != ConstantesGlobales.monedaDol)
+                                                                {
+                                                                    gasto = gasto / g.tc;
+                                                                }
+                                                                real = real + gasto;
+                                                            }
+                                                        }
+                                                    }
+                                                    real = Math.Round(real, 2);
+                                                }
+                                                <td class="text-right">@Html.DisplayFor(modelItem => item.moneda.simbMon)  @String.Format("{0:#,##0.00}", real)</td>
+                                                <td class="hidden">@Html.DisplayFor(modelItem => item.presupuesto.Monto)</td>
+                                                <td class="hidden">@Html.DisplayFor(modelItem => item.presupuesto.Estim)</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+
+                </div>
+
+
+                <div class="panel-footer"></div>
+            </div>
+</div>
+<!--Detalle de estimacion-->
+@section scripts
+{
+    @Scripts.Render("~/Bundles/tablaExport_JS")
+    @Scripts.Render("~/Bundles/bloqueo_JS")
+    @Scripts.Render("~/Bundles/datepicker_JS")
+    <script src="~/Content/plugins/bower_components/sweetalert/sweetalert.min.js"></script>
+    <script src="~/Areas/Marketing/Scripts/Marketing.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
+    <script src="//cdn.datatables.net/rowgroup/1.0.4/js/dataTables.rowGroup.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            //--
+            //-------------------------
+            $('#example23').DataTable({
+                dom: 'Bfrtip'
+                , buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print'
+                ]
+            });
+            //-------------------------
+            //-------------------------
+            $('table tbody tr a#rel-solGas').click(function () {
+              
+            });
+            //----------------*************************************--------------
+            $(document).on("click", ".open-solGas", function () {
+                var idEst = $(this).parent().parents('tr').find('td').eq(1).text();
+                var actividad = $(this).parent().parents('tr').find('td').eq(2).text();
+                $("#act").text(actividad);
+                //-----------------------------------
+                console.log("entro detalle de gastos sobre las estimaciones");
+                //-----------------------------------
+                //armo la tabla firma
+                $.post('/Estimacion/obtenerSolGas', { id: idEst }, function (data, status) {
+                    if (status == "success") {
+                        $("#tb_solGas > tbody:last").empty();
+                        $.each(data, function (i, item) {
+                            //-----------------------------------------------------
+                            var id = $("#tb_solGas > tbody > tr").length;
+                            row = "<tr>";
+                            row += "<td class='text-center'>" + (id + 1) + "</td>";
+                            row += "<td class='text-center'>" + item.cod + "</td>";
+                            row += "<td class='text-center'>" + item.tit + "</td>";
+                            row += "<td class='text-center'>" + item.est + "</td>";
+                            row += "<td class='text-center'>" + item.fec + "</td>";
+                            row += "<td class='text-center'>" + item.costo + "</td>";
+                            row += "<td class='descargar' ><a target='_blank' id='linkDesc'  title='Solicitud " + item.cod + "'  href='/Marketing/Estimacion/DescargarSolicitud?html=false&id=" + item.cod + " '><i class='mdi mdi-briefcase-download' ></i></a></td>";
+                            row += "</tr>";
+                            $("#tb_solGas > tbody:last").append(row);
+                            //-----------------------------------------------------
+                        });
+                    }
+                });
+                //-----------------------------------------------
+            });
+            //-------------------------
+            $("#idAccRes").change(function () {
+                //-----------------------------------
+                //-----------------------------------
+                var usuario = $("#idAccRes").val();
+                //-----------------------------------
+                console.log("entro presupuesto segun gerente de producto");
+                //-----------------------------------
+                //armo la tabla firma
+                $.post('/Estimacion/obtenerPres', { usu: usuario }, function (data, status) {
+                    if (status == "success") {
+                        $("#tb_presEst > tbody").html("");
+                        //$("#tb_presEst > tbody:last").empty();
+                        $.each(data, function (i, item) {
+                            //-----------------------------------------------------
+                            var string1 = numeral(item.mon).format('$ 0,0.00');
+                           
+                            var string2 = numeral(item.sal).format('$ 0,0.00');
+                          
+                            var string3 = numeral(item.consumo).format('$ 0,0.00');
+                          
+                            //-----------------------------------------------------
+                            row = "<tr>";
+                            row += "<td class='text-center'>" + item.cod + "</td>";
+                            row += "<td class='text-center'>" + item.esp + "</td>";
+                            row += "<td class='text-center'>" + string1 + "</td>";
+                            row += "<td class='text-center'>" + string3 + "</td>";
+                            row += "<td class='text-center'>" + string2 + "</td>";
+                            row += "<td class='hidden' ></td>";
+                            row += "</tr>";
+                            $("#tb_presEst > tbody:last").append(row);
+                            //-----------------------------------------------------
+                        });
+                    }
+                });
+            });
+            //-------------------------
+            $('#rel-presEst').click(function () {
+
+            });
+            //-------------------------
+
+            //-----------------------------------------------
+        });
+
+    </script>
+}

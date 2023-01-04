@@ -1,0 +1,51 @@
+﻿@using PortalRoemmers.Helpers
+@using PortalRoemmers.Security
+@using PortalRoemmers.Areas.Sistemas.Models.Usuario
+@{
+    EmpleadoModels emple = (EmpleadoModels)System.Web.HttpContext.Current.Session[Sessiones.empleado];
+}
+
+@{ 
+    string nombre1 = "";
+    string nombre2 = "";
+    try
+    {
+        nombre1 = emple.nom1Emp;
+        nombre2 = emple.nom2Emp;
+    }
+    catch (Exception)
+    {
+        nombre1 = "NINGUNO";
+        nombre2 = "NINGUNO";
+    }
+
+}
+
+
+<ul class="nav navbar-top-links navbar-right pull-right">
+    <li class="dropdown">
+        <a class="dropdown-toggle profile-pic" data-toggle="dropdown" href="#"> <img src="@Url.Action("convertirImagenPerfil", "Home", new { Area = "" })" alt="Foto" width="36" class="img-circle"><b class="hidden-xs">@nombre1</b><span class="caret"></span> </a>
+        <ul class="dropdown-menu dropdown-user animated flipInY">
+            <li>
+                <div class="dw-user-box">
+                    <div class="u-img"><img src="@Url.Action("convertirImagenPerfil", "Home", new { Area = "" })" alt="Foto" /></div>
+                    <div class="u-text">
+                        <h4>@nombre1 @nombre2 </h4>
+                        <p class="text-muted">@SessionPersister.Username</p>
+                        <a href="@MyExtensions.ActionUrl("PerfilUsuario", "Usuario", new { Area = "Sistemas",idAcc=@SessionPersister.UserId })" class="btn btn-rounded btn-danger btn-sm">Ver Perfil</a>
+                    </div>
+                </div>
+            </li>
+            <li role="separator" class="divider"></li>
+            <!--<li><a href="#"><i class="ti-user"></i> My Profile</a></li>
+                <li><a href="#"><i class="ti-wallet"></i> My Balance</a></li>
+                <li><a href="#"><i class="ti-email"></i> Inbox</a></li>
+                <li role="separator" class="divider"></li>-->
+            <li><a href="@MyExtensions.ActionUrl("CambiarContrasenia", "Usuario", new { Area = "Sistemas",idAcc=@SessionPersister.UserId })"><i class="mdi mdi-key-variant"></i> Cambiar contrase&ntildea</a></li>
+            <li role="separator" class="divider"></li>
+            <li>
+                <a href="@Url.Action("Logout","Account",new { Area=""} )"><i class="fa fa-power-off"></i> Cerrar sesión</a>
+            </li>
+        </ul>
+    </li>
+</ul>

@@ -1,0 +1,93 @@
+﻿@model  PortalRoemmers.ViewModels.IndexViewModel
+@using PortalRoemmers.Helpers
+@using PortalRoemmers.Security
+
+
+@section css {
+    @Styles.Render("~/Content/Bootstrap_CSS")
+}
+
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="panel panel-default">
+    <div class="panel-heading box-title m-b-0"><h2>Mantenimiento de cantidad de conteos</h2></div>
+    <div class="panel-body">
+        <div class="form-group">
+            @{ string v = ""; try { v = TempData["mensaje"].ToString(); } catch { }}
+            @(new HtmlString(v))
+        </div>
+        @using(Html.BeginForm("Index", "NumeroConteo", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista }, FormMethod.Post))
+        {
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="input-group">
+                        <input type="text" id="search" name="search" class="form-control" placeholder="Buscar" value="@ViewBag.search">
+                        <span class="input-group-btn">
+                            <button class="btn waves-effect waves-light btn-info">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        }
+        <br />
+        <div class="row">
+            <div class="col-xs-12">
+                @Html.ActionLink("Crear", "Registrar", "NumeroConteo", new { Area = "Almacen" }, new { @Class = "btn btn-info btn-rounded m-r-10" })
+                @Html.ActionLink("R.General", "ReporteConteo", "NumeroConteo", new { Area = "Almacen" }, new { @Class = "btn btn-info btn-rounded m-r-10" })
+                @Html.ActionLink("R.Detalle", "ReporteConteoDetalle", "NumeroConteo", new { Area = "Almacen" }, new { @Class = "btn btn-info btn-rounded m-r-10" })
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-sm-12">
+                <table data-toggle="table" class="table">
+                    <thead>
+                        <tr>
+                            <th> </th>
+                            <th> Codigo </th>
+                            <th> Descripción </th>
+                            <th> Usuario </th>
+                            <th> Estado </th>
+                        </tr>
+                    </thead>
+                    @foreach(var item in Model.ConteoR)
+                    {
+                    <tr>
+                        <td class="text-nowrap">
+                            <a href="@MyExtensions.ActionUrl("Modificar", "NumeroConteo", new {Area="Almacen", codCon = item.codCon})" data-toggle="tooltip" title="Editar"> <i class="fa fa-pencil text-inverse m-r-5"></i> </a>
+                            <a href="@MyExtensions.ActionUrl("Eliminar", "NumeroConteo", new {Area="Almacen",codCon = item.codCon})" data-toggle="tooltip" title="Eliminar"> <i class="fa fa-close text-danger m-r-5"></i> </a>
+                            <a href="@Url.Action("Activar", "NumeroConteo", new {Area="Almacen",con = item.codCon, est = item.estado.nomEst})" data-toggle="tooltip" title="Activar"> <i class="fa fa-check text-success "></i> </a>
+                        </td>
+                        <td>@Html.DisplayFor(modelItem => item.codCon)</td>
+                        <td>@Html.DisplayFor(modelItem => item.desCon)</td>
+                        <td>@Html.DisplayFor(modelItem => item.usuCrea)</td>
+                        <td>@Html.DisplayFor(modelItem => item.estado.nomEst)</td>
+
+                    </tr>
+                    }
+
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                @{Html.RenderPartial("_paginador", Model);}
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-footer"></div>
+</div>
+
+@section scripts
+{
+    <script src="~/Areas/Sistemas/Scripts/Sistemas.js"></script>
+    <script src="~/Scripts/js/jasny-bootstrap.js"></script>
+    @Scripts.Render("~/Bundles/Bootstrap_JS")
+}

@@ -1,0 +1,165 @@
+﻿@model PortalRoemmers.Areas.Marketing.Models.Actividad.ActividadModels
+@using PortalRoemmers.Security
+
+@{
+    ViewBag.Title = "Registrar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section css {
+    @Styles.Render("~/Content/selectBusqueda_CSS")
+    @Styles.Render("~/Content/datepicker_CSS")
+}
+
+<div class="white-box p-l-20 p-r-20">
+    <h3 class="box-title m-b-0"> Nueva Actividad</h3>
+    <p class="text-muted m-b-30 font-13">Completar todos los campos necesarios. </p>
+    <div class="row">
+        <div class="col-md-12">
+            @using (Html.BeginForm("Registrar", "Actividad", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal form-material" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="col-md-12">@Html.LabelFor(model => model.nomActiv)</label>
+                            <div class="col-md-12">
+
+                                @Html.EditorFor(model => model.nomActiv, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Nombre", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                                @Html.ValidationMessageFor(model => model.nomActiv, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="col-md-12">@Html.LabelFor(model => model.desActiv)</label>
+                            <div class="col-md-12">
+                                @Html.TextAreaFor(model => model.desActiv, new { @class = "form-control form-control-line", @rows = 5, @placeholder = "Descripcion" })
+                                @Html.ValidationMessageFor(model => model.desActiv, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="col-md-12">@Html.LabelFor(model => model.idAccRes)  <span class="text-danger">*</span></label>
+                            <div class="col-md-12">
+                                @Html.DropDownListFor(model => model.idAccRes, (SelectList)ViewBag.responsable, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                                @Html.ValidationMessageFor(model => model.idAccRes, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="col-md-12">@Html.LabelFor(model => model.idEsp)  <span class="text-danger">*</span></label>
+                            <div class="col-md-12">
+                                @Html.DropDownListFor(model => model.idEsp, (SelectList)ViewBag.especialidad, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                                @Html.ValidationMessageFor(model => model.idEsp, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-12">@Html.LabelFor(model => model.fchIniActiv) </label>
+                            <div class="col-md-12">
+                                @Html.EditorFor(model => model.fchIniActiv, new { htmlAttributes = new { @class = "form-control form-control-line datepicker", @placeholder = "dd/mm/aaaa", @autocomplete = "off" } })
+                                @Html.ValidationMessageFor(model => model.fchIniActiv, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-12">@Html.LabelFor(model => model.fchFinActiv) </label>
+                            <div class="col-md-12">
+                                @Html.EditorFor(model => model.fchFinActiv, new { htmlAttributes = new { @class = "form-control form-control-line datepicker", @placeholder = "dd/mm/aaaa", @autocomplete = "off" } })
+                                @Html.ValidationMessageFor(model => model.fchFinActiv, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group col-md-12">
+                            <label>Periodo F. Inicial</label>
+                            <input class="form-control form-control-line datepicker" id="fchIniVig" name="fchIniVig" placeholder="dd/mm/aaaa" autocomplete="off" value="@ViewBag.actual1">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group col-md-12">
+                            <label>Periodo F. Final</label>
+                            <input class="form-control form-control-line datepicker" id="fchFinVig" name="fchFinVig" placeholder="dd/mm/aaaa" autocomplete="off" value="@ViewBag.actual2">
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="col-md-12">@Html.LabelFor(model => model.idEst)  <span class="text-danger">*</span></label>
+                            <div class="col-md-12">
+                                @Html.DropDownListFor(model => model.idEst, (SelectList)ViewBag.estado, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10">Guardar</button>
+                @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-default btn-rounded btn-outline waves-effect waves-light" })
+
+                <!--Ocultos-->
+                <input type="hidden" name="userCreActiv" id="userCreActiv" />
+                <input type="hidden" name="fchCreActiv" id="fchCreActiv" />
+                <!--Ocultos-->
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    @Scripts.Render("~/Bundles/selectBusqueda_JS")
+    @Scripts.Render("~/Bundles/datepicker_JS")
+    <script src="~/Areas/Marketing/Scripts/Marketing.js"></script>
+    <script src="~/Areas/Sistemas/Scripts/Sistemas.js"></script>
+    <script src="~/Content/plugins/bower_components/sweetalert/sweetalert.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            //para la fecha
+            $('.datepicker').datepicker({
+                dateFormat: 'dd/mm/yy'
+            });
+            //<!------------------------------
+            //cabecera///////////////////////////
+            //llenar especialidades por responsable
+            $("#idAccRes").change(function () {
+                if ($("#idAccRes").val() != "") {
+                    //especialidad
+                    console.log("Entro change idAccRes");
+                    var RolOptions = {};
+                    RolOptions.url = "/Actividad/buscarEspecialidad";
+                    RolOptions.type = "POST";
+                    RolOptions.data = JSON.stringify({ idAccRes: $("#idAccRes").val() });
+                    RolOptions.datatype = "json";
+                    RolOptions.contentType = "application/json";
+                    RolOptions.success = function (data) {
+                        $("#idEsp").empty();
+                        console.log("Entro change idAccRes-data");
+                        $("#idEsp").append($("<option> </option>").val("").html("Seleccionar"));
+                        $.each(data, function (i, item) {
+                            $("#idEsp").append($("<option> </option>").val(item.value).html(item.text));
+                        });
+                        $("#idEsp").prop("disabled", false);
+                        $("#idEsp").select2().select2("val", $(".select2 option:eq(1)").val());
+                    };
+                    RolOptions.error = function () { alert("Error in Getting Data!!"); };
+                    $.ajax(RolOptions);
+                    $("#idEsp").select2().select2("val", $(".select2 option:eq(1)").val());
+                }
+                else {
+                    $("#idEsp").empty();
+                    $("#idEsp").prop("disabled", true);
+                }
+            });
+            //--------------------------------!>
+            //para que tengan la opcion de buscar en el combobox
+            $("#idAccRes").select2();
+            $("#idEsp").select2();
+            $("#idEst").select2();
+            $("#idEst").val('@ConstantesGlobales.estadoActivo');
+            //$("#idEst").prop("disabled", true);
+        });
+    </script>
+}

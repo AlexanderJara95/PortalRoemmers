@@ -1,0 +1,96 @@
+﻿@model List<PortalRoemmers.Areas.RRHH.Models.Periodico.PeriodicoSeccionModels>
+@{
+    ViewBag.Title = "PeriodicoMural";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/Content/StyleRoemmers.css" rel="stylesheet" />
+@foreach (var cont in Model)
+{
+    <div class="modal fade @cont.tarPerSec" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title" id="myLargeModalLabel"> @cont.titPerSec </h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="white-box">
+                                <h3 class="box-title">@{try
+                                    {@cont.contSec.titConSec;
+                                }
+                                catch (Exception e)
+                                { <span>Ninguna</span> } }</h3>
+                                <div class="row">
+                                    <div class="col-sm-5"><img src="@{try {@cont.contSec.rutConSec} catch (Exception e) { var n="Ninguno"; } } " class="img-responsive" /></div>
+                                    <div class="col-sm-7" id="slimtest1">
+                                        @{ string v = ""; try { v = cont.contSec.desConSec; } catch { }}
+                                        @(new HtmlString(v))
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+    </div>
+}
+<div class="container-fluid">
+    <div class="row">
+        <div class="white-box">
+            <h3 class="box-title m-b-0">Peri&oacute;dico Mural</h3>
+            <br />
+            <div class="row">
+                <div class="col-sm-12">
+                    @foreach (var per in Model)
+                    {
+                        string idspan = "animation" + per.idPerSec;
+                        string target = "." + @per.tarPerSec;
+                        <div class="col-xs-12 col-sm-4 white-box">
+                            <a id="@per.idPerSec" title="@per.titPerSec" class="mytooltip" onclick="efectolink('@idspan','@per.efecIma.titEfeIma')">
+                                <span class="tooltip-content3">@per.titPerSec.</span>
+                                <span id="@idspan" style="display: block;">
+                                    <img data-toggle="modal" data-target="@target" alt="@per.titPerSec" src="@per.rutPerSec" class="img-responsive @per.caiPerSec" />
+                                </span>
+                            </a>
+                        </div>
+                        <br />
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            $('.col-xs-12.col-sm-4 .img-responsive').hover(function(){
+                //cuando pones el mouses
+                $(this).addClass('imagenMuralRecta');
+              }, function() {
+               //cuando sacas el mouse
+                  $(this).removeClass('imagenMuralRecta');
+             });
+        });
+        $('div#slimtest1').slimScroll({
+            height: '350px'
+        });
+        function testAnim(ids,x) {
+            $('#'+ids).removeClass().addClass(x + ' animated').one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function () {
+                $(this).removeClass();
+            });
+        };
+        function efectolink(id,anim) {
+           testAnim(id,anim);
+        };
+    </script>
+}

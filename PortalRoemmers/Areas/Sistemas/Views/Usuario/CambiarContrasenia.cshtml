@@ -1,0 +1,102 @@
+﻿@model PortalRoemmers.Areas.Sistemas.Models.Usuario.ChangePasswordModels
+@{
+    ViewBag.Title = "CambiarContrasenia";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <i class="mdi mdi-key-variant"></i> Cambiar contrase&ntildea
+        <p class="text-muted font-12">Se recomienda usar una contraseña segura que no uses para ningún otro sitio</p>
+    </div>
+
+    <div class="panel-wrapper collapse in">
+        @{ string v = ""; try { v = TempData["mensaje"].ToString(); } catch { }}
+        @(new HtmlString(v))
+        <div class="panel-body">
+            @using (Html.BeginForm("CambiarContrasenia", "Usuario", FormMethod.Post, new { @id = "formReset", @class = "form-horizontal form-material" }))
+            {
+                <div class="form-group">
+                    <label class="col-md-12">Actual  <span class="text-danger">*</span></label>
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.userpassA, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "", @type = "password" } })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">Nueva  <span class="text-danger">*</span></label>
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.userpassN, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "", @type = "password" } })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">Repetir contraseña nueva  <span class="text-danger">*</span></label>
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.userpassNR, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "", @type = "password" } })
+                    </div>
+                </div>
+
+
+                <button class="btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10">Guardar</button>
+
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script src="~/Areas/Sistemas/Scripts/Sistemas.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#formReset").submit(function (e) {
+                passNew();
+                var pass_1 = $('#userpassN').val();
+                var pass_2 = $('#userpassNR').val();
+
+
+                if (pass_1 == pass_2) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+
+            });
+
+            $("#userpassN").change(function () {
+                passNew();
+            });
+
+            $("#userpassNR").change(function () {
+                passNew();
+            });
+
+            function passNew() {
+                var pass_1 = $('#userpassN').val();
+                var _this_1 = $('#userpassN');
+
+                var pass_2 = $('#userpassNR').val();
+                var _this_2 = $('#userpassNR');
+
+                if (pass_1 != '' && pass_2 != '') {
+                    if (pass_1 == pass_2) {
+                        _this_1.attr('style', 'border-bottom: 1px solid #53e69d;');
+                        _this_2.attr('style', 'border-bottom: 1px solid #53e69d;');
+                        $("span.glyphicon").remove();
+                        _this_1.after("<span style='color: #3c763d;' class='glyphicon glyphicon-ok form-control-feedback'></span>");
+                        _this_2.after("<span style='color: #3c763d;' class='glyphicon glyphicon-ok form-control-feedback'></span>");
+                    } else {
+                        _this_1.attr('style', 'border-bottom: 1px solid #ff7676');
+                        _this_2.attr('style', 'border-bottom: 1px solid #ff7676');
+                        $("span.glyphicon").remove();
+                        _this_1.after("<span style='color: #a94442;' class='glyphicon glyphicon-remove form-control-feedback'></span>")
+                        _this_2.after("<span style='color: #a94442;' class='glyphicon glyphicon-remove form-control-feedback'></span>")
+                    }
+                }
+            }
+
+        });
+    </script>
+}

@@ -1,0 +1,34 @@
+﻿@model PortalRoemmers.Areas.Sistemas.Models.Usuario.UsuarioModels
+@using PortalRoemmers.Security
+@{
+    ViewBag.Title = "EliminarPersonal";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+    <div class="white-box p-l-20 p-r-20">
+        <h3 class="box-title m-b-0">Eliminar Usuario</h3>
+        <p class="text-muted m-b-30 font-13">¿Estás seguro que quieres eliminar esto?</p>
+       
+        @using (Html.BeginForm("Eliminar", "Usuario", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+        <dl class="dl-horizontal">
+            @Html.HiddenFor(model => model.idAcc)
+            <dt>
+                @Html.DisplayNameFor(model => model.email)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.email)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.username)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.username)
+            </dd>
+            <br />
+
+            <button class="btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10">Guardar</button>
+            @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-default btn-rounded btn-outline waves-effect waves-light" })
+        </dl>
+         }
+    </div>

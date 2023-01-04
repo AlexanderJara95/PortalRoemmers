@@ -1,0 +1,87 @@
+﻿
+@{
+    ViewBag.Title = "ReporteConteo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="row">
+    <div class="col-sm-12">
+    
+        <form class="form-material" id="FormReporte">
+            <div class="white-box">
+                <h3 class="box-title m-b-0 "><b>Reporte Conteo</b></h3>
+                <section id="wrapper" class="block1">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <h5 class="box-title m-t-30">Almacen</h5>
+                                @Html.DropDownList("almProInv", (SelectList)ViewBag.almProInv, "TODOS", htmlAttributes: new { @class = "form-control form-control-line" })
+
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <h5 class="box-title m-t-30">Grupo</h5>
+                                @Html.DropDownList("idgruInv", (SelectList)ViewBag.idgruInv, "TODOS", htmlAttributes: new { @class = "form-control form-control-line" })
+
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <h5 class="box-title m-t-30">Fabricante</h5>
+                                @Html.DropDownList("fabProInv", (SelectList)ViewBag.fabProInv, "TODOS", htmlAttributes: new { @class = "form-control form-control-line" })
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-right">
+                        <button type="submit" class="btn waves-effect waves-light btn-info m-r-10">Buscar</button>
+                    </div>
+                </section>
+
+            </div>
+        </form>
+  
+    </div>
+</div>
+@section scripts
+{
+    @Scripts.Render("~/Bundles/bloqueo_JS")
+    <script>
+
+        $("#FormReporte").submit(function (e) {
+
+             
+            Reporte();
+
+            return false;
+        });
+
+        function Reporte() {
+            block();
+            console.log($("#almProInv").val(), $("#idgruInv").val(), $("#fabProInv").val());
+            $.post('/ConteoCantidad/GenerarReporte', { almProInv: $("#almProInv").val(), idgruInv : $("#idgruInv").val(), fabProInv :  $("#fabProInv").val() }, function (data, status) {
+                if (status =="success") {
+                    url = "/Almacen/InventarioProducto/Reporte?ruta=" + data;
+                    window.open(url);
+                    unblock();
+                } else {
+                    alert("se genero error al generar");
+                }
+            });
+        }
+        function block() {
+            $('section.block1').block({
+                message: '<h4><img src="../../Content/plugins/images/busy.gif" /> Sólo un momento...</h4>'
+                , css: {
+                    border: '1px solid #fff'
+                }
+            });
+        }
+        function unblock() {
+            $('section.block1').unblock();
+        }
+    </script>
+}

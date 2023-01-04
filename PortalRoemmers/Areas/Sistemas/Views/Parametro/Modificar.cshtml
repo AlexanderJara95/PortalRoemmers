@@ -1,0 +1,194 @@
+﻿@model PortalRoemmers.Areas.Sistemas.Models.Global.ParametroModels
+@using PortalRoemmers.Security
+
+
+@{
+    ViewBag.Title = "Registrar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!--model detalle Parametro-->
+<div id="responsive-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <section id="wrapper" class="block1">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">Detalle de Parametro</h4>
+                </div>
+                <div class="modal-body">
+                    <div id='danger' class='alert alert-danger hidden'>Ingresar todos los campos</div>
+                    <form>
+                        <div class="form-group">
+                            <label for="idNombre" class="control-label">Nombre:</label>
+                            <input type="text" class="form-control" id="idNombre">
+                        </div>
+                        <div class="form-group">
+                            <label for="idValor" class="control-label">Valor:</label>
+                            <input type="text" class="form-control" id="idValor">
+                        </div>
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger waves-effect waves-light" id="btn_Agregar">Agregar</button>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<!--model detalle parametro-->
+
+<div class="white-box p-l-20 p-r-20">
+    <h3 class="box-title m-b-0"> Modificar Parametro</h3>
+    <p class="text-muted m-b-30 font-13">Completar todos los campos necesarios.</p>
+    <div class="row">
+        <div class="col-md-12">
+            @using (Html.BeginForm("Modificar", "Parametro", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal form-material" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.idPar)
+                @Html.HiddenFor(model => model.userCrePar)
+                @Html.HiddenFor(model => model.fchCrePar)
+            <div class="col-md-12">
+                <div class="panel-group" id="exampleAccordionDefault" aria-multiselectable="true" role="tablist">
+                    <div class="panel">
+                        <div class="panel-heading" id="exampleHeadingDefaultOne" role="tab"> <a class="panel-title" data-toggle="collapse" href="#exampleCollapseDefaultOne" data-parent="#exampleAccordionDefault" aria-expanded="true" aria-controls="exampleCollapseDefaultOne"> Datos de la Nueva Parametro </a> </div>
+                        <div class="panel-collapse collapse in" id="exampleCollapseDefaultOne" aria-labelledby="exampleHeadingDefaultOne" role="tabpanel">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="col-md-12">@Html.LabelFor(model => model.nomPar) </label>
+                                            <div class="col-md-12">
+                                                @Html.EditorFor(model => model.nomPar, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Nombre del Parametro", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                                                @Html.ValidationMessageFor(model => model.nomPar, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="col-md-12">@Html.LabelFor(model => model.rutPar) </label>
+                                            <div class="col-md-12">
+                                                @Html.EditorFor(model => model.rutPar, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Area/Controlador/Vista" } })
+                                                @Html.ValidationMessageFor(model => model.rutPar, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="col-md-12">@Html.LabelFor(model => model.observPar) </label>
+                                            <div class="col-md-12">
+                                                @Html.TextAreaFor(model => model.observPar, new { @class = "form-control form-control-line", @rows = 5, @placeholder = "Observación" })
+                                                @Html.ValidationMessageFor(model => model.observPar, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-heading" id="exampleHeadingDefaultTwo" role="tab"> <a class="panel-title collapsed" data-toggle="collapse" href="#exampleCollapseDefaultTwo" data-parent="#exampleAccordionDefault" aria-expanded="false" aria-controls="exampleCollapseDefaultTwo"> Detalle Parametro </a> </div>
+                        <div class="panel-collapse collapse" id="exampleCollapseDefaultTwo" aria-labelledby="exampleHeadingDefaultTwo" role="tabpanel">
+                            <div class="col-md-12">
+                                <a data-toggle="modal" title="Agregar detalle" class="btn btn-block btn-primary" href="#responsive-modal">
+                                    <span class="glyphicon glyphicon-plus"></span> AGREGAR DETALLE
+                                </a>
+                                <div class="table-responsive m-t-10" style="clear: both;">
+                                    <table class="table table-hover" id="tb_ParDetalle">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center">#</th>
+                                                <th class="text-center">Nombre</th>
+                                                <th class="text-center">Valor</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @{ string v = ""; try { v = @ViewBag.tb_ParDetalle; } catch { }}
+                                            @(new HtmlString(v))
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10" onclick="Hidden('pardet', 'tb_ParDetalle', '0|1|2|3', '|')">Guardar</button>
+                @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-default btn-rounded btn-outline waves-effect waves-light" })
+
+
+                <!--Cabecera-->
+                <input type="hidden" name="fchModPar" id="fchModPar" />
+                <input type="hidden" name="userModPar" id="userModPar" />
+                <!--Detalle-->
+                <input type="hidden" name="parametroD" id="pardet" />
+            </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script src="~/Areas/Sistemas/Scripts/Sistemas.js"></script>
+    <script src="~/Content/plugins/bower_components/sweetalert/sweetalert.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            //Agregar detalle de parametros
+            $('#btn_Agregar').on('click', function () {
+                var row = "";
+                //obtengo el id de la otra tabla
+                //var id = $("#tb_ParDetalle > tbody > tr:last > td:first").val();
+                var id = $("#tb_ParDetalle > tbody > tr").length;
+                //console.log(id+1);
+                var req1 = "";
+                var req2 = "";
+                req1 = $("#idNombre").val();
+                req2 = $("#idValor").val();
+                if (req1 != "" && req2 != "")
+                {
+                row = "<tr>";
+                row += "<td class='hidden'>" + " " + "</td>";
+                row += "<td class='text-center'>" + (id + 1) + "</td>";
+                row += "<td class='text-center'>" + $("#idNombre").val() + "</td>";
+                row += "<td class='text-center'>" + $("#idValor").val() + "</td>";
+                row += "<td class='delete' onclick='ActualizarIdFila(event)'><span class='glyphicon glyphicon-remove'></span></td>";
+                row += "</tr>";
+                $("#tb_ParDetalle > tbody:last").append(row);
+                }
+                else {
+                    $("div #danger").removeClass('hidden');
+                    setTimeout(function () { $("div #danger").fadeOut(2000).fadeIn(2000).fadeOut(1500).fadeIn(1500).fadeOut(500) }, 500);
+                    setTimeout(function () { $("div #danger").addClass('hidden'); }, 4000);
+                    return false;
+                }
+                $("#responsive-modal").modal('hide');
+                $("#idNombre").val("");
+                $("#idValor").val("");
+            });
+        });
+        function ActualizarIdFila(evt) {
+            //alert("entro");
+            /////////////
+            $(document).on("click", ".delete", function () {
+                var parent = $(this).parents().get(0);
+                $(parent).remove();
+                /////////////
+                var indice = 1;
+                $('#tb_ParDetalle tbody tr').each(function (index, element) {
+                $(element).find("td").eq(1).text(indice);
+                indice = indice + 1;
+                //var prueba = "";
+                //var Correlativo = $(element).find("td").eq(1).html();
+                //prueba += Correlativo + ",";
+                });
+            });
+        }
+    </script>
+}

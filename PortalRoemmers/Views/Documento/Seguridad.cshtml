@@ -1,0 +1,26 @@
+﻿@model List<PortalRoemmers.Areas.RRHH.Models.Documento.DocumentoRRHHModels>
+@{
+    ViewBag.Title = "Seguridad";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="white-box" style="border: 1px solid #dadce0; border-radius: 8px; TEXT-ALIGN: CENTER;">
+            <h1 class="box-title center" style="font-size: 30px;font-weight: 400;">SEGURIDAD Y SALUD EN EL TRABAJO MEGALABS</h1>
+        </div>
+    </div>
+
+    @foreach (var item in Model)
+    {
+        <div class="col-md-6 col-xs-12 col-sm-6">
+            <div class="white-box" style="border: 1px solid #dadce0;border-radius: 8px;">
+                <h3 class="box-title m-b-0">@item.nomDoc <a href="@item.rutaDoc" target="_blank"><i class="mdi mdi-file-pdf" title="Descargar documento @item.nomDoc" data-toggle="tooltip" style="font-size: 30px;"></i></a></h3>
+                <hr>
+                <p>
+                    @item.desDoc
+                </p>
+            </div>
+        </div>
+    }
+</div>

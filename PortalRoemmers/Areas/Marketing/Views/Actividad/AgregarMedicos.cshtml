@@ -1,0 +1,367 @@
+﻿@model PortalRoemmers.Areas.Marketing.Models.Actividad.ActividadModels
+@using PortalRoemmers.Security
+@{
+    ViewBag.Title = "AgregarMedicos";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section css {
+    @Styles.Render("~/Content/sweetalert_CSS")
+
+}
+
+<!--Importar-->
+<div id="responsive-modal-importar" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h2 class="modal-title">Importar Médicos</h2>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form id="ImportarMedicos" enctype="multipart/form-data" method="post">
+                        <div id='danger1' class='alert alert-danger hidden'>Ingresar un archivo para importar ...</div>
+                        <div class="col-sm-12">
+                            <div class="input-group">
+                                <div class="control-label text-right">Descarga el formato :</div>
+                                <span class="input-group-btn">
+                                    <a href="/Actividad/DownloadExcel/"><img src="~/Content/excel.ico" width="25" height="25" title="Descargar el formato de excel" alt="excel" /></a>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 white-box">
+                            <div class="input-group">
+                                <input type="file" id="FileUpload" name="FileUpload" class="form-control" placeholder="Buscar" required>
+                                <span class="input-group-btn">
+                                    <input type="submit" value="Adjuntar" id="btnSubmit" class="btn btn-primary" />
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="input-group text-center">
+                                <span class="input-group-btn">
+                                    <button id="btnLimpiar" type="button" class="btn btn-primary">Limpiar</button>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="table-responsive m-t-10" style="clear: both;">
+                                <div id="slimtest4I">
+                                    <div class="col-sm-12">
+                                        <table id="tb_medicosAct" class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-center">CMP</th>
+                                                    <th class="text-center">ESPECIALIDAD</th>
+                                                    <th class="text-left">APELLIDOS Y NOMBRES</th>
+                                                    <th class="text-left">OBSERVACION </th>
+                                                    <th class="text-center"></th>
+                                                    <th class="hidden"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-danger waves-effect waves-light" onclick="ImportarLista()" data-dismiss="modal">Importar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!---->
+<!--Agregar Individual-->
+<div id="responsive-modal-agregar" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <section id="wrapper" class="block1">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">Medicos </h4>
+                </div>
+                <div class="modal-body">
+                    <div id='danger' class='alert alert-danger hidden'></div>
+                    <div class="input-group">
+                        <input type="text" id="search" name="search" class="form-control" placeholder="Buscar">
+                        <span class="input-group-btn">
+                            <button class="btn waves-effect waves-light btn-info" onclick="SearchDetalle('tb_medico_Search','search','/Medico/SearchCliente')">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </span>
+                    </div>
+                    <div class="table-responsive m-t-10" style="clear: both;">
+                        <div id="slimtest4M">
+                            <table class="table table-hover" id="tb_medico_Search">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">CMP</th>
+                                        <th class="text-center">Nombre</th>
+                                        <th class="hidden"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{ string v = ""; try { v = @ViewBag.tbMedico; } catch { }}
+                                    @(new HtmlString(v))
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cerrar</button>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<!---->
+@{
+    var act = Model.nomActiv.ToString();
+}
+<h2>Agregar Medicos a la actividad : @act </h2>
+<hr />
+<div class="white-box p-l-20 p-r-20">
+    <h3 class="box-title m-b-0"> Lista de Medicos de la actividad </h3>
+    <p class="text-muted m-b-30 font-13">Usted puede visualizar y agregar medicos que van a participar en la actividad : </p>
+    @{string msg = ""; try { msg = TempData["mensaje"].ToString(); } catch { }}
+    @(new HtmlString(msg))
+    <div class="row">
+        <div class="row show-grid">
+            <div class="col-xs-12">
+                <div class="col-lg-6 col-sm-6 col-xs-12">
+                    <a data-toggle="modal" class="fcbtn btn btn-info btn-outline btn-1d btn-lg btn-block" href="#responsive-modal-importar"><i class="ti-import"></i>   Importar Médicos</a>
+                </div>
+                <div class="col-lg-6 col-sm-6 col-xs-12">
+                    <a data-toggle="modal" class="fcbtn btn btn-danger btn-outline btn-1d btn-lg btn-block" href="#responsive-modal-agregar"><i class="mdi mdi-account-plus"></i>   Agregar Médicos</a>
+                </div>
+            </div>
+        </div>
+        @using (Html.BeginForm("AgregarMedicos", "Actividad", FormMethod.Post, new { id = "AgregarMedicos", enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => model.idActiv)
+            @Html.HiddenFor(model => model.nomActiv)
+            <div class="col-md-12">
+                <div class="table-responsive m-t-10" style="clear: both;">
+                    <div class="col-sm-12">
+                        <table id="tb_medico" class="tablesaw table-bordered table-hover table" data-tablesaw-mode="swipe">
+                            <thead>
+                                <tr>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1" class="text-center">CMP</th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2" class="text-center">APELLIDOS Y NOMBRES</th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist"></th>
+                                    <th class="hidden"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{ string z = ""; try { z = @ViewBag.tb_medico; } catch { }}
+                                @(new HtmlString(z))
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="panel-group">
+                    <dt>
+                        <label id="cont" class="text-right"></label>
+                    </dt>
+                </div>
+                <div class="panel-group">
+                    <div class="col-md-6 tab-content">
+                        <div class="col-md-6 col-sm-4 panel-group">
+                            <button data-toggle="modal" class="btn btn-block btn-outline btn-rounded btn-info" onclick="Hidden('medico', 'tb_medico', '0|1|2', '|');"><i class="mdi mdi-account-card-details"></i>   Guardar</button>
+                        </div>
+                        <div class="col-md-6 col-sm-4 panel-group">
+                            @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-block btn-outline btn-rounded btn-default" })
+                        </div>
+                    </div>
+                </div>
+                <!--Detalle-->
+                <input type="hidden" name="medicoD" id="medico" />
+            </div>
+        }
+    </div>
+</div>
+
+@section scripts
+{
+    @Scripts.Render("~/Bundles/sweetalert_JS")
+    @Scripts.Render("~/Bundles/bloqueo_JS")
+    <script src="~/Areas/Sistemas/Scripts/Sistemas.js"></script>
+    <script src="~/Areas/Marketing/Scripts/Marketing.js"></script>
+    <script>
+        //------------------------------------------------------
+        //D O C U M E N T
+        //------------------------------------------------------
+        $(document).ready(function () {
+            //--Tabla Medicos - Agregar de manera individual
+            //medico
+            $('#slimtest4M').slimScroll({
+                color: '#00f'
+                , size: '10px'
+                , height: '250px'
+                , alwaysVisible: true
+            });
+            //--
+            $('#slimtest4I').slimScroll({
+                color: '#00f'
+                , size: '10px'
+                , height: '250px'
+                , alwaysVisible: true
+            });
+            //--
+            $('#tb_medico_Search tbody').on('click', 'tr', function () {
+                var duplicado = false;
+                var row = "";
+                //obtengo el id de la otra tabla
+                var id = $("#tb_medico > tbody > tr:last > td:first").text();
+
+                //verifico que no este en la tabla
+                var codigo = $(this).find("td").eq(2).text();
+                $('#tb_medico tbody tr').each(function (index) {
+                    if ($('#tb_medico tbody tr').eq(index).find("td").eq(parseInt(2)).html() == codigo) {
+                        duplicado = true;
+                    }
+                });
+
+                //si esta duplicado muestro un mensaje
+                if (duplicado == true) {
+                    $("div #danger").removeClass('hidden');
+                    $("div #danger").text('No se puede seleccionar el mismo elemento');
+                    setTimeout(function () { $("div #danger").fadeOut(2000).fadeIn(2000).fadeOut(1500).fadeIn(1500).fadeOut(500) }, 500);
+                    setTimeout(function () { $("div #danger").addClass('hidden'); }, 4000);
+                    return false;
+                }
+
+                row = "<tr>";
+                row += "<td class='text-center'>" + $(this).find("td").eq(0).text() + "</td>";
+                row += "<td class='text-center'>" + $(this).find("td").eq(1).text() + "</td>";
+                row += "<td class='hidden'>" + $(this).find("td").eq(2).text() + "</td>";
+                row += "<td class='elimfila'><span class='glyphicon glyphicon-remove'></span></td>";
+                row += "</tr>";
+                $("#tb_medico > tbody:last").append(row);
+
+                //$("#responsive-modal-medico").modal('hide');
+            });
+            //------------------------------------------------
+            $('#btnLimpiar').on('click', function () {
+                //console.log("Entro btnLimpiar");
+                $("#tb_medicosAct > tbody:last").empty();
+            });
+            //------------------------------------------------
+        });
+        //------------------------------------------------------
+        //F U N C I O N T S
+        //------------------------------------------------------
+        $("#ImportarMedicos").submit(function (e) {
+            $("#tb_medicosAct > tbody:last").empty();
+            UploadFile();
+            Contador();
+            return false;
+        });
+
+        function UploadFile() {
+            //Llamar al form - upload y crear un FormData con Key
+            var form = $('#ImportarMedicos')[0];
+            var dataString = new FormData(form);
+            //--------------------------
+            $.ajax({
+                url: '/Actividad/UploadExcel',  //Server script to process data
+                type: 'POST',
+                // Form data como data
+                data: dataString,
+                //Ajax events
+                success: function (result, status) {
+                    //console.log(result + "-" + status);
+                    if (result != "EXT" || result != "VACIO") {
+                        $.each(result, function (i, item) {
+                            //-----------------------------------------------------
+                            var id = $("#tb_medicosAct > tbody > tr").length;
+                            if(item.ver=='1')
+                            {
+                                row = "<tr class='danger'>";
+                            }
+                            if (item.ver == '2')
+                            {
+                                row = "<tr class='warning'>";
+                            }
+                            if (item.ver == '3')
+                            {
+                                row = "<tr class='success'>";
+                            }
+                            row += "<td class='text-center'>" + item.cmp + "</td>";
+                            row += "<td class='text-center'>" + item.nomEsp + "</td>";
+                            row += "<td class='text-left'>" + item.nomMedBD + "</td>";
+                            row += "<td class='text-left'>" + item.obs + "</td>";
+                            row += "<td class='elimfila'><span class='glyphicon glyphicon-remove'></span></td>";
+                            row += "<td class='hidden'>" + item.idCli + "</td>";
+                            row += "</tr>";
+                            $("#tb_medicosAct > tbody:last").append(row);
+                            //-----------------------------------------------------
+                        });
+                    }
+                    if (result == "EXT") {
+                        swal("Solo el formato Excel esta permitido ... ");
+                    }
+                    if (result == "VACIO") {
+                        swal("No adjunto archivo ... ");
+                    }
+                    //-----------------------------------
+                },
+                error: function (err) {
+                    alert(err.statusText);
+                },
+
+                //Options to tell jQuery not to process data or worry about content-type.
+                cache: false,
+                contentType: false,
+                processData: false
+            });
+
+            $("#FileUpload").val('');
+        };
+        //------------------------------------------------------
+        function ImportarLista() {
+            console.log("IMPORTAR LISTA");
+            $('#tb_medicosAct tbody tr').each(function (index) {
+                if ($('#tb_medicosAct tbody tr').eq(index).find("td").eq(parseInt(5)).html() != "") {
+                    //----------------------------------------------------
+                    var codigo = $('#tb_medicosAct tbody tr').eq(index).find("td").eq(parseInt(5)).text();
+                    var duplicado = false;
+                    $('#tb_medico tbody tr').each(function (index) {
+                        if ($('#tb_medico tbody tr').eq(index).find("td").eq(parseInt(2)).html() == codigo) {
+                            duplicado = true;
+                        }
+                    });
+                    if (!duplicado) {
+                        //***************************************************
+                        row = "<tr>";                       
+                        row += "<td class='text-center'>" + $(this).find("td").eq(0).text() + "</td>";
+                        row += "<td class='text-center'>" + $(this).find("td").eq(2).text() + "</td>";
+                        row += "<td class='hidden'>" + $(this).find("td").eq(5).text() + "</td>";
+                        row += "<td class='elimfila'><span class='glyphicon glyphicon-remove'></span></td>";
+                        row += "</tr>";
+                        $("#tb_medico > tbody:last").append(row);
+                        //***************************************************
+                    }
+                    //----------------------------------------------------
+                }
+
+            });
+            Contador();
+        };
+        //------------------------------------------------------
+        function Contador() {
+            var id = $("#tb_medicosAct > tbody > tr").length;
+            cont
+            $("#cont").val(id.toString() + " médicos ingresados");
+        };
+        //------------------------------------------------------
+    </script>
+
+}

@@ -1,0 +1,95 @@
+﻿@model PortalRoemmers.Areas.Sistemas.Models.Usuario.UsuarioModels
+@using PortalRoemmers.Security
+
+@{
+    ViewBag.Title = "FormularioUsuarios";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="white-box p-l-20 p-r-20">
+    <h3 class="box-title m-b-0"> Asignar Usuarios</h3>
+    <p class="text-muted m-b-30 font-13"><strong>@ViewBag.nom</strong> </p>
+    <div class="form-horizontal form-material">
+        @using (Html.BeginForm("AddUsers", "ForUsu", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <input id="id" name="id" type="hidden" value="@ViewBag.id">
+            <input id="nombre" name="nombre" type="hidden" value="@ViewBag.nom">
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-11">Personal Disponibles</label>
+                    <div class="col-md-11">
+                        <input id="filtrar" type="text" placeholder="Buscar" class="form-control">
+                    </div>
+                    <br />
+                    <div class="col-md-1">
+                        <button class="btn btn-primary btn-rounded waves-effect waves-light"><i class="fa fa-plus"></i></button>
+                    </div>
+                    <br />
+                    <div class="col-md-11">
+                        @Html.DropDownListFor(model => model.idAcc, (SelectList)ViewBag.usuario, htmlAttributes: new { @class = "form-control form-control-line", @multiple = "" })
+                    </div>
+                </div>
+            </div>
+        }
+
+        @using (Html.BeginForm("DelUsers", "ForUsu", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <input id="id" name="id" type="hidden" value="@ViewBag.id">
+            <input id="nombre" name="nombre" type="hidden" value="@ViewBag.nom">
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="col-md-11">Usuarios Asignados</label>
+                    <div class="col-md-11">
+                        <input id="filtrar2" type="text" placeholder="Buscar" class="form-control">
+                    </div>
+                    <br />
+                    <div class="col-md-1">
+                        <button class="btn btn-primary btn-rounded waves-effect waves-light"><i class="fa fa-minus"></i></button>
+                    </div>
+                    <br />
+                    <div class="col-md-11">
+                        @Html.DropDownListFor(model => model.idAccA, (SelectList)ViewBag.usuarioA, htmlAttributes: new { @class = "form-control form-control-line", @multiple = "" })
+                    </div>
+                </div>
+            </div>
+        }
+        <div class="form-group">
+            <div class="col-md-4">
+                <div class="col-xs-6 col-md-4">
+                    @Html.ActionLink("Volver", "Index", "Formulario", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-block btn-outline btn-rounded btn-default" })
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            $('#filtrar').keyup(function () {
+
+                var rex = new RegExp($(this).val(), 'i');
+
+                $('#idAcc option').hide();
+                $('#idAcc option').filter(function () {
+                    return rex.test($(this).text());
+                }).show();
+            })
+
+            $('#filtrar2').keyup(function () {
+
+                var rex = new RegExp($(this).val(), 'i');
+
+                $('#idAccA option').hide();
+                $('#idAccA option').filter(function () {
+                    return rex.test($(this).text());
+                }).show();
+            })
+
+        });
+
+    </script>
+}

@@ -1,0 +1,117 @@
+﻿@using PortalRoemmers.Security
+@model PortalRoemmers.Areas.RRHH.Models.Periodico.ContenidoSeccionModels
+@{
+    ViewBag.Title = "Modificar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section css {
+    @Styles.Render("~/Content/summernote_CSS")
+}
+
+<div class="white-box p-l-20 p-r-20">
+    <h3 class="box-title m-b-0"> Modificar Contenido</h3>
+    <p class="text-muted m-b-30 font-13">Completar todos los campos necesarios. </p>
+    <div class="row">
+        <div class="col-md-12">
+            @using (Html.BeginForm("Modificar", "Contenido", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal form-material" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.idConSec)
+                @Html.HiddenFor(model => model.rutConSec)
+                @Html.HiddenFor(model => model.desConSec)
+                @Html.HiddenFor(model => model.usufchCre)
+                @Html.HiddenFor(model => model.usuCre)
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.idConSec)</label>
+                    <div class="col-md-12">
+                        @Html.DisplayFor(model => model.perSec.titPerSec, new { htmlAttributes = new { @class = "form-control form-control-line" } })
+                        @Html.ValidationMessageFor(model => model.idConSec, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.titConSec)</label>
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.titConSec, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Título" } })
+                        @Html.ValidationMessageFor(model => model.titConSec, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.desConSec)</label>
+                    <div class="col-md-12">
+                        <div class="desConSec">
+                            @{ string w = ""; try { w = ViewBag.descripcion.ToString(); } catch { }}
+                            @(new HtmlString(w))
+                        </div>
+                        @Html.ValidationMessageFor(model => model.desConSec, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-xs-12 col-sm-4 white-box">
+                        @{string imagen = "../" + Model.rutConSec; }
+                        <img id="output" class="img-responsive" src="@imagen" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-12">@Html.LabelFor(model => model.rutConSec)</label>
+                    <div class="col-sm-12">
+                        <div class="fileinput input-group fileinput-new" data-provides="fileinput">
+                            <div class="form-control" data-trigger="fileinput"> <i class="glyphicon glyphicon-file fileinput-exists"></i> <span class="fileinput-filename">@Model.rutConSec.Split('/')[5]</span></div>
+                            <span class="input-group-addon btn btn-default btn-file">
+                                <span class="fileinput-new">Foto</span> <span class="fileinput-exists">Cambiar</span>
+                                <input type="hidden" value="" name="..."><input type="file" id="file" name="file" onchange="validateFileSelected(event)">
+                            </span> <a href="#" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">Remover</a>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10" onclick="guardarEnInput();">Guardar</button>
+                @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-default btn-rounded btn-outline waves-effect waves-light" })
+
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script src="~/Scripts/js/jasny-bootstrap.js"></script>
+    @Scripts.Render("~/Bundles/summernote_JS")
+    <script>
+        jQuery(document).ready(function () {
+            $('.desConSec').summernote({
+                height: 400, // set editor height
+                minHeight: null, // set minimum height of editor
+                maxHeight: null, // set maximum height of editor
+                focus: false // set focus to editable area after initializing summernote
+            });
+        });
+        function guardarEnInput() {
+            var infDes = $(".desConSec").code();
+            $("#desConSec").val(infDes);
+        }
+
+        function validateFileSelected(event) {
+            jQuery('#output').removeAttr('src')
+            if(($("#file"))[0].files[0]!=undefined){
+            var ext = $('#file').val().split('.').pop().toLowerCase();
+            var picsize = ($("#file"))[0].files[0].size;
+
+            if ($.inArray(ext, ['gif','png','jpg','jpeg']) == -1){
+        	    alert(" Extension no permitida :  " + ext);
+                $("#file").val('');
+                return false;
+	        };
+            // 10mb
+                if (picsize >= 10485760) {
+                alert("No puede sobre pasar el tamaño de 10mb ");
+                $("#file").val('');
+                return false;
+           }
+            var output = document.getElementById('output');
+            output.src = URL.createObjectURL(event.target.files[0]);
+           }
+            
+        };
+
+    </script>
+}

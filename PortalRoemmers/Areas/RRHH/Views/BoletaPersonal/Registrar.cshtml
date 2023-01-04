@@ -1,0 +1,123 @@
+﻿@model PortalRoemmers.Areas.RRHH.Models.Boleta.BoletaPersonalModels
+@using PortalRoemmers.Security
+
+@{
+    ViewBag.Title = "Registrar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Content/jQuery.filer 1.3/css/jquery.filer.css" rel="stylesheet" />
+
+
+
+<div class="white-box p-l-20 p-r-20">
+    <h3 class="box-title m-b-0"> Nueva Boletas</h3>
+    <p class="text-muted m-b-30 font-13">Completar todos los campos necesarios. </p>
+    <div class="row">
+        <div class="col-md-12">
+            @using (Html.BeginForm("Registrar", "BoletaPersonal", FormMethod.Post, new {@id="formBol" ,@enctype = "multipart/form-data", @class = "form-horizontal form-material"}))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.idBolPer)
+
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.titBolPer)</label>
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.titBolPer, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Título:Boletas Enero", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                        @Html.ValidationMessageFor(model => model.titBolPer, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.mesBolPer)</label>
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.mesBolPer, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Mes:ENERO", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                        @Html.ValidationMessageFor(model => model.mesBolPer, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.anioBolPer)</label>
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.anioBolPer, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Año:2020", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                        @Html.ValidationMessageFor(model => model.anioBolPer, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.rutBolPer)</label>
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.rutBolPer, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Ruta", @readonly = "readonly" } })
+                        @Html.ValidationMessageFor(model => model.rutBolPer, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-12">@Html.LabelFor(model => model.detalle)</label>
+                    <div class="col-md-12">
+                        <div id="slimtest4">
+                            <input type="file" name="filer_input" id="filer_input">
+                            @Html.ValidationMessageFor(model => model.detalle, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10">Guardar</button>
+                @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-default btn-rounded btn-outline waves-effect waves-light" })
+            }
+        </div>
+    </div>
+</div>
+
+
+
+@section scripts
+{
+    <script src="~/Areas/RRHH/Scripts/RRHH.js"></script>
+    <script src="~/Content/jQuery.filer 1.3/js/jquery.filer.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#filer_input').filer({
+                showThumbs: true,
+                addMore: true,
+                allowDuplicates: false
+            });
+
+            $('#slimtest4').slimScroll({
+                color: '#00f'
+                , size: '10px'
+                , height: '500px'
+                , alwaysVisible: true
+            });
+
+
+            $("#mesBolPer").change(function () {
+                if ($("#mesBolPer").val().length != 0 && $("#anioBolPer").val().length != 0) {
+                    $('#rutBolPer').val('~/Boletas/' + $("#anioBolPer").val() + '-' + $("#mesBolPer").val());
+                }
+            });
+            $("#anioBolPer").change(function () {
+                if ($("#mesBolPer").val().length != 0 && $("#anioBolPer").val().length != 0) {
+                    $('#rutBolPer').val('~/Boletas/' + $("#anioBolPer").val() + '-' + $("#mesBolPer").val());
+                }
+            });
+
+            $("#formBol").submit(function (e) {
+
+                if ((($("#filer_input"))[0].files.length == 0) || ($("#titBolPer").val().length == 0) || ($("#mesBolPer").val().length == 0) || ($("#anioBolPer").val().length == 0)) {
+                    swal({   
+                        title: "Campos vacios!",   
+                        text: "Debe llenar todos los campos",   
+                        timer: 3000,   
+                        showConfirmButton: false 
+                    });
+                    return false;
+                }
+
+             });
+
+        });
+
+    </script>
+}

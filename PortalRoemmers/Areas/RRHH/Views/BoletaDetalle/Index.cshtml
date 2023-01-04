@@ -1,0 +1,172 @@
+﻿@model List<PortalRoemmers.Areas.RRHH.Models.Boleta.BoletaDetalleModels>
+@using PortalRoemmers.Helpers
+@using PortalRoemmers.Security
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@section css {
+    @Styles.Render("~/Content/tablaExport_CSS")
+}
+
+
+<!--Visualizar Boleta-->
+<div id="responsive-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">Visualizar Boleta</h4>
+                <div id='success' class='alert alert-success hidden' style="font-weight: bold; font-size: 24px;"></div>
+            </div>
+            <div class="modal-body">
+                <object id="idContenedor" data="#" width="100%" height="600" type="application/pdf" style="color: rgb(49, 49, 49); font-size: 24px;">
+                    Si no puede ver el archivo,puede descargalo desde <a href="#" style="font-size: 36px; font-weight: bold; text-decoration-line: underline;">aquí</a>
+                </object>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cerrar</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!--Visualizar Boleta-->
+
+
+<div class="panel panel-default">
+    <div class="panel-heading box-title m-b-0"><h2>Usuarios sin confirmar boleta</h2></div>
+    <div class="panel-body">
+        <div class="form-group">
+            @{ string v = ""; try { v = TempData["mensaje"].ToString(); } catch { }}
+            @(new HtmlString(v))
+        </div>
+
+        <div class="row">
+            @using (Html.BeginForm("Index", "BoletaDetalle", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista }, FormMethod.Post, new { @class = "form-horizontal form-material" }))
+            {
+                <div class="row show-grid">
+                    <div class="col-xs-12">
+                        <div class="col-md-6 col-md-offset-3">
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <div class="col-md-7">
+                                        @Html.DropDownList("idBolPer", (SelectList)ViewBag.periodo, "Seleccionar Periodo", htmlAttributes: new { @class = "form-control form-control-line" })
+                                    </div>
+                                    <div class="col-md-3">
+                                        @Html.DropDownList("Value", (SelectList)ViewBag.visualizar, htmlAttributes: new { @class = "form-control form-control-line" })
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button class="btn waves-effect waves-light btn-info">
+                                            <i class="fa fa-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            <div class="col-sm-12">
+                <div class="table-responsive">
+                    <div class="table-responsive">
+                        <table id="example23" class="display nowrap" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>PERIODO</th>
+                                    <th>DNI</th>
+                                    <th>NOMBRE</th>
+                                    <th>FECHA</th>
+                                    <th>CORREO ENVIADO</th>
+                                    <th>
+                                        ARCHIVO
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <th>PERIODO</th>
+                                    <th>DNI</th>
+                                    <th>NOMBRE</th>
+                                    <th>FECHA</th>
+                                    <th>CORREO ENVIADO</th>
+                                    <th>
+                                        ARCHIVO
+                                    </th>
+                                </tr>
+                            </tfoot>
+                            <tbody>
+                                @{foreach (var item in Model)
+                                    {
+                                        <tr>
+
+
+                                            <td>
+                                                @item.Boleta.titBolPer
+                                            </td>
+                                            <td>
+                                                @item.nroDocBolDet
+                                            </td>
+                                            <td>
+                                                @item.nomBolDet.Split('-')[1].Split('.')[0]
+                                            </td>
+                                            <td>
+                                                @item.usufchVis
+                                            </td>
+                                            <td>
+                                                @if (item.estBolDet)
+                                                {<span>SI</span> }
+                                                else
+                                                {<span>NO</span>}
+                                            </td>
+
+                                            <td>
+                                                <a id="idVisualizar" data-toggle="modal" href="#responsive-modal" class="btn btn-info btn-outline btn-circle btn-lg m-r-10"
+                                                   data-rut="@item.rutBolDet" data-nom="@item.nomBolDet">
+                                                    <i class="fa fa-print">
+                                                    </i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <div class="panel-footer"></div>
+</div>
+
+@section scripts
+{
+    @Scripts.Render("~/Bundles/tablaExport_JS")
+    <script>
+        $(document).ready(function () {
+
+            $('#example23').DataTable({
+                dom: 'Bfrtip'
+                , buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+            });
+        });
+
+        $(document).on("click", "#idVisualizar", function () {
+            var link = $(this);
+            var parent = $('object#idContenedor').parent();
+            var newElement = '<object  type="application/pdf" id="idContenedor" data="' + $(this).data('rut') + '" width="100%" height="600">'
+                + 'Si no puede ver el archivo,puede descargalo desde  <a href="' + $(this).data('rut') + '" download="' + $(this).data('nom') + '">aquí</a> </object>';
+
+            $('object#idContenedor').remove();
+            parent.append(newElement);
+        });
+
+    </script>
+}

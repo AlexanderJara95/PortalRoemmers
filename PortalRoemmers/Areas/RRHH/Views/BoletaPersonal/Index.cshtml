@@ -1,0 +1,192 @@
+﻿@model  PortalRoemmers.ViewModels.IndexViewModel
+@using PortalRoemmers.Helpers
+@using PortalRoemmers.Security
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section css {
+    @Styles.Render("~/Content/tablaResponsive_CSS")
+}
+
+<!--Visualizar-->
+<div class="modal fade bs-example-modal-lg" id="visualizar">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h2>Personal sin envi&oacute de boleta</h2>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <table id="tb_user" class="tablesaw table-bordered table-hover table" data-tablesaw-mode="swipe">
+                            <thead>
+                                <tr>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist">Nombre</th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1">Dni</th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2">Periodo</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!---->
+
+
+
+<div class="panel panel-default">
+    <div class="panel-heading box-title m-b-0"><h2>Mantenimiento de Boletas</h2></div>
+    <section id="wrapper" class="block1">
+        <div id='success' class='alert alert-success hidden' style="font-weight: bold; font-size: 24px;"></div>
+        <div class="panel-body">
+            <div class="form-group">
+                @{string v = ""; try { v = TempData["mensaje"].ToString(); } catch { }}
+                @(new HtmlString(v))
+            </div>
+            @using (Html.BeginForm("Index", "BoletaPersonal", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista }, FormMethod.Post))
+            {
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="input-group">
+                            <input type="text" id="search" name="search" class="form-control" placeholder="Buscar" value="@ViewBag.search">
+                            <span class="input-group-btn">
+                                <button class="btn waves-effect waves-light btn-info">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            }
+            <br />
+            <div class="row">
+                <div class="col-xs-6">
+                    @Html.ActionLink("Crear", "Registrar", "BoletaPersonal", new { Area = "RRHH" }, new { @Class = "btn btn-info btn-rounded" })
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <table class="tablesaw table-bordered table-hover table" data-tablesaw-mode="swipe">
+                        <thead>
+                            <tr>
+                                <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist"></th>
+                                <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1">Código</th>
+                                <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2">Título</th>
+                                <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Mes</th>
+                                <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="4">A&ntildeo</th>
+                                <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="5">Documentos</th>
+                                <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="6">Enviados</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Boleta)
+                            {
+                                <tr>
+                                    <td class="text-nowrap">
+                                        <a href="@MyExtensions.ActionUrl("Modificar", "BoletaPersonal", new { Area = "RRHH", id = item.idBolPer })" data-toggle="tooltip" title="Editar"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a>
+                                        <a href="@MyExtensions.ActionUrl("Eliminar", "BoletaPersonal", new { Area = "RRHH", id = item.idBolPer })" data-toggle="tooltip" title="Eliminar"> <i class="fa fa-close text-danger m-r-10"></i> </a>
+                                        <a id="btnEnviar" data-toggle="tooltip" title="Enviar" data-idb="@item.idBolPer"> <i class="fa fa-envelope-o text-info m-r-10"></i> </a>
+                                        <a id="linkVisualizar" href="#visualizar" data-toggle="modal" title="Visualizar" class="open-proces m-r-10" data-det=" @Newtonsoft.Json.JsonConvert.SerializeObject(item.detalle.ToList().Where(x=>x.estBolDet==false).Select(x=>new { nroDocBolDet= x.nroDocBolDet,nomBolDet=x.nomBolDet }),  Newtonsoft.Json.Formatting.Indented) "><i class="fa fa-eye"></i></a>
+
+                                    </td>
+                                    <td>@Html.DisplayFor(modelItem => item.idBolPer)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.titBolPer)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.mesBolPer)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.anioBolPer)</td>
+                                    <td>@item.detalle.Count()</td>
+                                    <td>@item.detalle.Where(x => x.estBolDet == true).Count()</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-12">
+                    @{Html.RenderPartial("_paginador", Model);}
+                </div>
+            </div>
+        </div>
+    </section>
+        <div class="panel-footer"></div>
+</div>
+@section scripts
+{
+    @Scripts.Render("~/Bundles/tablaResponsive_JS")
+    <script src="~/Areas/RRHH/Scripts/RRHH.js"></script>
+    @Scripts.Render("~/Bundles/bloqueo_JS")
+    <script>
+
+        $(document).on("click", "#linkVisualizar", function () {
+            //armo la tabla firma
+
+            var det = JSON.parse($(this).data('det'));
+
+            var rowh = "";
+            $("#tb_user > thead:last").empty();
+             rowh = "<tr>";
+             rowh += "<th scope='col' data-tablesaw-sortable-col data-tablesaw-priority='persist'>Nombre</th>";
+             rowh += "<th scope='col' data-tablesaw-sortable-col data-tablesaw-priority='1'>Dni</th>";
+             rowh += " <th scope='col' data-tablesaw-sortable-col data-tablesaw-priority='2'>Periodo</th>";
+             rowh += "</tr>";
+            $("#tb_user > thead:last").append(rowh);
+
+          var row = "";
+          $("#tb_user > tbody:last").empty();
+          $.each(det, function (id, elem) {
+                 row = "<tr>";
+                 row += "<td>" + elem.nomBolDet.split("-")[1] + "</td>";
+                 row += "<td>" + elem.nroDocBolDet + "</td>";
+                 row += "<td>" + elem.nomBolDet.split("-")[2].split(".")[0] + "</td>";
+                 row += "</tr>";
+                 $("#tb_user > tbody:last").append(row);
+          });
+
+        });
+
+        $(document).on("click", "#btnEnviar", function () {
+            block();
+            var id = $(this).data('idb');
+            $.ajax({
+                     url: '@Url.Action("Enviar", "BoletaPersonal")',
+                     type: 'POST',
+                     cache: false,
+                     data: {id:id},
+                     success: function (result) {
+                         if (result == "") {
+                             $("div #success").removeClass('hidden');
+                             $("div #success").text('Se enviaron los mensajes satisfactoriamente');
+                             setTimeout(function () { $("div #success").fadeOut(5000); $("div #success").fadeIn(5000); }, 2000);
+                             setTimeout(function () { $("div #success").addClass('hidden');location.reload();}, 8000);
+                             unblock();
+                         } else {
+                             unblock();
+                             $("div #success").removeClass('hidden');
+                             $("div #success").text(result);
+                             setTimeout(function () { $("div #success").fadeOut(5000); $("div #success").fadeIn(5000); }, 2000);
+                             setTimeout(function () { $("div #success").addClass('hidden');location.reload();}, 8000);
+                         }
+                     },
+                     error: function (jqXHR, textStatus, error) {
+                         alert("Estado: Error inesperado");
+                         unblock();
+                     }
+            });
+        });
+
+    </script>
+
+}

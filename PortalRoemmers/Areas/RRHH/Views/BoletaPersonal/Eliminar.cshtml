@@ -1,0 +1,72 @@
+﻿@model PortalRoemmers.Areas.RRHH.Models.Boleta.BoletaPersonalModels
+@using PortalRoemmers.Security
+
+@{
+    ViewBag.Title = "Eliminar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+    <div class="white-box p-l-20 p-r-20">
+        <h3 class="box-title m-b-0"> Eliminar Boletas</h3>
+        <p class="text-muted m-b-30 font-13">¿Estás seguro que quieres eliminar esto?</p>
+        <div class="row">
+            <div class="col-md-12">
+                @using (Html.BeginForm("Eliminar", "BoletaPersonal", FormMethod.Post, new { @id = "formBol", enctype = "multipart/form-data", @class = "form-horizontal form-material" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(model => model.idBolPer)
+                    @Html.HiddenFor(model => model.titBolPer)
+                    @Html.HiddenFor(model => model.mesBolPer)
+                    @Html.HiddenFor(model => model.anioBolPer)
+                    @Html.HiddenFor(model => model.rutBolPer)
+                    @Html.HiddenFor(model => model.usuCre)
+                    @Html.HiddenFor(model => model.usufchCre)
+                    @Html.HiddenFor(model => model.usufchMod)
+                    @Html.HiddenFor(model => model.usuMod)
+
+                    <div class="form-group">
+                        <label class="col-md-12">@Html.LabelFor(model => model.titBolPer)</label>
+                        <div class="col-md-12">
+                            @Html.DisplayFor(model => model.titBolPer, new { htmlAttributes = new { @class = "form-control form-control-line" } })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-12">@Html.LabelFor(model => model.mesBolPer)</label>
+                        <div class="col-md-12">
+                            @Html.DisplayFor(model => model.mesBolPer, new { htmlAttributes = new { @class = "form-control form-control-line" } })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-12">@Html.LabelFor(model => model.anioBolPer)</label>
+                        <div class="col-md-12">
+                            @Html.DisplayFor(model => model.anioBolPer, new { htmlAttributes = new { @class = "form-control form-control-line" } })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-12">@Html.LabelFor(model => model.rutBolPer)</label>
+                        <div class="col-md-12">
+                            @Html.DisplayFor(model => model.rutBolPer, new { htmlAttributes = new { @class = "form-control form-control-line" } })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-12">Documentos adjuntos</label>
+                        <div class="col-md-12">
+
+                            @ViewBag.cantidad
+                        </div>
+                    </div>
+
+                    
+
+
+            <button class="btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10">Guardar</button>
+            @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-default btn-rounded btn-outline waves-effect waves-light" })
+        }
+            </div>
+        </div>
+    </div>
+

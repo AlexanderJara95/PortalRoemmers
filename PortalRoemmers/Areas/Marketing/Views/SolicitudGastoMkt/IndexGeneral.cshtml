@@ -1,0 +1,362 @@
+﻿@model IEnumerable<PortalRoemmers.Areas.Ventas.Models.SolicitudGasto.SolicitudGastoModels>
+@using PortalRoemmers.Helpers
+@using PortalRoemmers.Security
+@{
+ViewBag.Title = "IndexGeneral";
+Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section css {
+@Styles.Render("~/Content/tablaExport_CSS")
+@Styles.Render("~/Content/datepicker_CSS")
+@Styles.Render("~/Content/selectBusqueda_CSS")
+}
+<!--Cambiar Estado-->
+<div id="responsive-modal-Estado" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h2 class="modal-title">Cambiar Estado </h2>
+            </div>
+            <div class="modal-body">
+                <div id='successModal' class='alert alert-success hidden'></div>
+                <div id='dangerModal' class='alert alert-danger hidden'></div>
+                <div class="form-group">
+                    <h4 style="font-size:large;text-align:center;">Solicitud N° <label id="idSolGas" class="control-label" style="font-size:large;text-align:center;"></label></h4> <br>
+                </div>
+                <div class="form-group">
+                    <label for="idState" class="control-label">Estado Actual:</label>
+                    <input id="state" name="idEstState" type="hidden">
+                    <input id="idState" type="text" class="form-control" style="text-align:left;">
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Estado a Cambiar :<spam style="color: red;">*</spam></label>
+                    @Html.DropDownList("idEst", (SelectList)ViewBag.State, "Seleccionar....", htmlAttributes: new { @class = "form-control" })
+                </div>
+                <div class="form-group">
+                    <label for="obs" class="control-label">Observación:</label>
+                    <textarea id="obs" rows=5 class="form-control form-control-line" style="text-align:left;"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-danger waves-effect waves-light" onclick="modificarEstado();">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Cambiar Estado-->
+<!--Firmas-->
+<div id="responsive-modal-Firmas" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h2 class="modal-title">Firmas de la Solicitud</h2>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="table-responsive m-t-10" style="clear: both;">
+                            <table id="tb_firma" class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">N°</th>
+                                        <th class="text-center">Firm&oacute</th>
+                                        <th class="text-center">Fecha</th>
+                                        <th class="text-center">Estado</th>
+                                        <th class="text-center">Monto</th>
+                                        <th class="text-center">Observaci&oacuten</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Firmas-->
+<div class="panel panel-default">
+    <div class="panel-heading box-title m-b-0"><h2>Consulta Solicitudes de Marketing</h2></div>
+    <div class="panel-body">
+        <section id="wrapper" class="block1">
+            <div class="row">
+                <div id='success' class='alert alert-success hidden'></div>
+                @using (Html.BeginForm("IndexGeneral", "SolicitudGastoMkt", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista }, FormMethod.Post))
+                {
+                <div class="row show-grid">
+
+                    <div class="col-md-5">
+                        <div class="form-group">
+                            <label for="desMen">RESPONSABLE</label>
+                            @Html.DropDownList("solicitante", (SelectList)ViewBag.solicitante, "TODOS", htmlAttributes: new { @class = "form-control form-control-line" })
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="desMen">ESTADO</label>
+                            @Html.DropDownList("estado", (SelectList)ViewBag.estado, "TODOS", htmlAttributes: new { @class = "form-control form-control-line" })
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="desMen">DESDE</label>
+                            <input class="form-control form-control-line datepicker" id="fchEveSolGasI" name="fchEveSolGasI" placeholder="dd/mm/aaaa" autocomplete="off" value="@ViewBag.primero">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="desMen">HASTA</label>
+                            <input class="form-control form-control-line datepicker" id="fchEveSolGasF" name="fchEveSolGasF" placeholder="dd/mm/aaaa" autocomplete="off" value="@ViewBag.actual">
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="form-group">
+                            <span class="input-group-btn">
+                                <button class="btn waves-effect waves-light btn-info">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                }
+                <div class="col-sm-12">
+                    <div class="table-responsive">
+                        <table id="example23" class="display nowrap" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>C&oacutedigo</th>
+                                    <th>T.Gasto</th>
+                                    <th>Concepto</th>
+                                    <th>CUENTA CONTABLE</th>  <!--columna para prueba de codigo cuenta contable para reportes-->
+                                    <th>Responsable</th>
+                                    <th>Estado</th>
+                                    <th>F.Solicitud</th>
+                                    <th>Costo</th>
+                                    <th class="hidden">Moneda</th>
+                                    <th class="hidden">Soles</th>
+                                    <th class="hidden">Dolares</th>
+                                    <th class="hidden">T.C.</th>
+                                    <th class="hidden">Titulo</th>
+                                    <th class="hidden">Obs.</th>
+                                    <th class="hidden">DetFamilias</th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <th></th>
+                                    <th>C&oacutedigo</th>
+                                    <th>T.Gasto</th>
+                                    <th>Concepto</th>
+                                    <th>CUENTA CONTABLE</th>  <!--columna para prueba de codigo cuenta contable para reportes-->
+                                    <th>Responsable</th>
+                                    <th>Estado</th>
+                                    <th>F.Solicitud</th>
+                                    <th>Costo</th>
+                                    <th class="hidden">Moneda</th>
+                                    <th class="hidden">Soles</th>
+                                    <th class="hidden">Dolares</th>
+                                    <th class="hidden">T.C.</th>
+                                    <th class="hidden">Titulo</th>
+                                    <th class="hidden">Obs.</th>
+                                    <th class="hidden">DetFamilias</th>
+                                </tr>
+                            </tfoot>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                <tr>
+                                    <td class="jsgrid-align-center">
+                                        @{
+                                        //Firmas
+                                        var detFr = item.dFirma.OrderBy(x => x.usufchCrea).ToList();
+                                        var dfr = "";
+                                        if (detFr.Count != 0)
+                                        {
+                                        foreach (var f in detFr)
+                                        {
+                                        dfr += f.idSolGas + ";" + f.solicitante.username + ";" + f.usufchCrea + ";" + f.estado.nomEst + ";" + f.gasto.monSolGas + ";" + f.gasto.dFirma.Where(x => x.idAcc == f.solicitante.idAcc).Select(x => x.obsFirSol).FirstOrDefault() + "|";
+                                        }
+                                        dfr = dfr.Remove(dfr.Length - 1, 1);
+                                        }
+                                        }
+                                        <a href="@Url.Action(" Imprimir", "SolicitudGastoMkt" , new { Area="Marketing" , html=false, sol=item.idSolGas })" data-toggle="tooltip" title="Imprimir"> <i class="fa fa-print text-inverse m-r-10"></i> </a>
+                                        <a href="#responsive-modal-Firmas" data-toggle="modal" title="Firmas" class="open-firma m-r-10" data-detfr="@dfr"><i class="fa fa-list-ol"></i></a>
+                                        <a href="@MyExtensions.ActionUrl(" VisualizarGeneral", "SolicitudGastoMkt" , new { Area="Marketing" , id=item.idSolGas })" data-toggle="tooltip" title="Visualizar"> <i class="fa fa-eye text-inverse m-r-10"></i> </a>
+                                        @{
+                                        //Estado
+                                        var cambio = item.idSolGas + "|" + item.idEst + "|" + item.estado.nomEst + "|";
+                                        }
+                                        <a href="@Url.Action(" ModMovPres", "SolicitudGastoMkt" , new { Area="Marketing" , id=item.idSolGas })" data-toggle="tooltip" title="Presupuesto"> <i class="mdi mdi-file-powerpoint-box"></i> </a>
+                                        @{ if (ConstantesGlobales.administrator.Contains(SessionPersister.Username))
+                                        {
+                                        <a href="#responsive-modal-Estado" id="sa-estado" data-toggle="modal" title="Cambiar Estado" class="cambiar-estado m-r-12" data-detcamb="@cambio"><i class="mdi mdi-etsy"></i></a>
+                                        }
+                                        }
+                                    </td>
+                                    <td> @Html.DisplayFor(modelItem => item.idSolGas)</td>
+                                    <td> @Html.DisplayFor(modelItem => item.concepto.tipoGasto.nomTipGas)</td>
+                                    <td> @Html.DisplayFor(modelItem => item.concepto.nomConGas)</td>
+
+                                    <td> @Html.DisplayFor(modelItem => item.concepto.ctaContable)</td> <!--COLUMNA PARA AGREGAR NUMERO CUENTA CONTABLE A LA TABLA PARA REPORTE ANTES DEL EXCEL-->
+
+                                    <td> @Html.DisplayFor(modelItem => item.responsable.empleado.apePatEmp)  @Html.DisplayFor(modelItem => item.responsable.empleado.nom1Emp)</td>
+                                    <td> @Html.DisplayFor(modelItem => item.estado.nomEst)</td>
+                                    <td> @Html.DisplayFor(modelItem => item.usufchCrea)</td>
+                                    <td> @Html.DisplayFor(modelItem => item.moneda.simbMon) @Html.DisplayFor(modelItem => item.monSolGas)</td>
+                                    <td class="hidden"> @Html.DisplayFor(modelItem => item.idMon)</td>
+                                    @{
+                                    //--Ver importes en soles y dolares--
+                                    var moneda = item.idMon;
+                                    double importe = 0;
+                                    Double.TryParse(item.monNeto.ToString(), out importe);
+                                    var soles = 0.00;
+                                    var dolares = 0.00;
+                                    var tc = item.valtipCam;
+                                    if (moneda == ConstantesGlobales.monedaSol)
+                                    {
+                                    soles = importe;
+                                    }
+                                    else
+                                    {
+                                    soles = importe * tc;
+                                    }
+                                    if (moneda == ConstantesGlobales.monedaDol)
+                                    {
+                                    dolares = importe;
+                                    }
+                                    else
+                                    {
+                                    dolares = importe / tc;
+                                    }
+                                    //------------------------
+                                    }
+                                    <td class="hidden"> @soles.ToString("0.00")</td>
+                                    <td class="hidden"> @dolares.ToString("0.00")</td>
+                                    <td class="hidden"> @Html.DisplayFor(modelItem => item.valtipCam)</td>
+                                    <td class="hidden"> @Html.DisplayFor(modelItem => item.obsSolGas)</td>
+                                    <td class="hidden"> @Html.DisplayFor(modelItem => item.titSolGas)</td>
+                                    @{
+                                    //Familias
+                                    var detFam = item.dFam.OrderBy(x => x.idFamRoe).ToList();
+                                    var dfam = "";
+                                    if (detFam.Count != 0)
+                                    {
+                                    foreach (var f in detFam)
+                                    {
+                                    dfam += f.familia.nomFamRoe + " | ";
+                                    }
+                                    dfam = dfam.Remove(dfam.Length - 1, 1);
+                                    }
+                                    <td class="hidden"> @dfam.ToString()</td>
+                                    }
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <div class="panel-footer"></div>
+</div>
+@section scripts
+{
+@Scripts.Render("~/Bundles/tablaExport_JS")
+@Scripts.Render("~/Bundles/bloqueo_JS")
+@Scripts.Render("~/Bundles/datepicker_JS")
+@Scripts.Render("~/Bundles/selectBusqueda_JS")
+<script src="~/Areas/Sistemas/Scripts/Sistemas.js"></script>
+<script>
+    $(document).ready(function () {
+
+        $('#example23').DataTable({
+            dom: 'Bfrtip'
+            , buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+        });
+        $('.datepicker').datepicker({
+            dateFormat: 'dd/mm/yy'
+        });
+        $("#solicitante").select2();
+        $("#estado").select2();
+    });
+    $(document).on("click", ".cambiar-estado", function () {
+        //armo la tabla firma
+        //--------------------
+        var cam = $(this).data('detcamb');
+        console.log(cam);
+        var id = cam.split("|")[0];
+        var t = cam.split("|")[1];
+        var state = cam.split("|")[2];
+        //--------------------
+        $("#idState").val(state);
+        $("#idSolGas").text(id);
+        $("#state").text(t);
+        //--------------------
+    });
+    $(document).on("click", ".open-firma", function () {
+        //armo la tabla firma
+        var df = $(this).data('detfr');
+        var filas = df.split("|");
+        var row = "";
+        $("#tb_firma > tbody:last").empty();
+        if (filas != "") {
+            $.each(filas, function (id, elem) {
+                var col = elem.split(";");
+                row = "<tr>";
+                row += "<td>" + col[0] + "</td>";
+                row += "<td>" + col[1] + "</td>";
+                row += "<td>" + col[2] + "</td>";
+                row += "<td>" + col[3] + "</td>";
+                row += "<td>" + col[4] + "</td>";
+                row += "<td>" + col[5] + "</td>";
+                row += "</tr>";
+                $("#tb_firma > tbody:last").append(row);
+            });
+        }
+    });
+    function modificarEstado() {
+        var solicitud = $("#idSolGas").text();
+        var idNewEst = $("#idEst").val();
+        var idOldEst = $("#state").text();
+        var observacion = $("#obs").val();
+
+        let url = "/Ventas/SolicitudGasto/modificarEstado?sol=" + solicitud + "&idNewEst=" + idNewEst + "&idOldEst=" + idOldEst + "&obs=" + observacion;
+        $.ajax({
+            type: 'POST',
+            url: url,
+            processData: true,
+            success: function (data) {
+                if (data) {
+                    //$('#responsive-modal-Estado').modal('hide');
+                    $("div #successModal").removeClass('hidden');
+                    $("div #successModal").text('Se cambio el estado de  la solicitud');
+                    setTimeout(function () { $("div #success").fadeOut(25000).fadeIn(25000).fadeOut(20000).fadeIn(20000).fadeOut(5000) }, 500);
+                    setTimeout(function () { $("div #success").addClass('hidden'); }, 3000);
+                    //block();
+                    location.reload();
+                }
+                else {
+                    $("div #dangerModal").removeClass('hidden');
+                    $("div #dangerModal").text('No se efectuo el cambio de estado, consultar con el administrador');
+                    setTimeout(function () { $("div #danger").fadeOut(20000).fadeIn(20000).fadeOut(15000).fadeIn(15000).fadeOut(5000) }, 500);
+                    setTimeout(function () { $("div #danger").addClass('hidden'); }, 4000);
+                }
+            },
+            error: function (xhr) {
+                console.log(' Error:  >>>> ' + JSON.stringify(xhr));
+            }
+        });
+    };
+</script>
+}

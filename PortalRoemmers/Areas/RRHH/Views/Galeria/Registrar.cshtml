@@ -1,0 +1,92 @@
+﻿@using PortalRoemmers.Security
+@model PortalRoemmers.Areas.RRHH.Models.Galeria.GaleriaModels
+@{
+    ViewBag.Title = "Registrar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section css {
+    @Styles.Render("~/Content/selectBusqueda_CSS")
+}
+
+<div class="white-box p-l-20 p-r-20">
+    <h3 class="box-title m-b-0">Nuevo Galer&iacutea</h3>
+    <p class="text-muted m-b-30 font-13">Completar todos los campos necesarios. </p>
+    <div class="row">
+        <div class="col-md-12">
+            @using (Html.BeginForm("Registrar", "Galeria", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal form-material" }))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.titGaleria)</label>
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.titGaleria, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Título" } })
+                        @Html.ValidationMessageFor(model => model.titGaleria, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-12">@Html.LabelFor(model => model.rutaGaleria)</label>
+                    <div class="col-sm-12">
+                        <div class="fileinput input-group fileinput-new" data-provides="fileinput">
+                            <div class="form-control" data-trigger="fileinput"> <i class="glyphicon glyphicon-file fileinput-exists"></i> <span class="fileinput-filename"></span></div>
+                            <span class="input-group-addon btn btn-default btn-file">
+                                <span class="fileinput-new">Foto</span> <span class="fileinput-exists">Cambiar</span>
+                                <input type="hidden" value="" name="..."><input type="file" id="file" name="file" onchange="validateFileSelected(event)">
+                            </span> <a href="#" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">Remover</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-xs-12 col-sm-4 white-box">
+                        <img id="output" class="img-responsive" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.idTipGal)</label>
+                    <div class="col-md-12">
+                        @Html.DropDownListFor(model => model.idTipGal, (SelectList)ViewBag.tipgaleria, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                        @Html.ValidationMessageFor(model => model.idTipGal, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <button class="btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10">Guardar</button>
+                @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-default btn-rounded btn-outline waves-effect waves-light" })
+            }
+        </div>
+    </div>
+</div>
+
+
+@section scripts
+{
+    @Scripts.Render("~/Bundles/selectBusqueda_JS")
+    <script src="~/Scripts/js/jasny-bootstrap.js"></script>
+    <script>
+        $(document).ready(function () {
+         $("#idTipGal").select2();
+        });
+        function validateFileSelected(event) {
+            jQuery('#output').removeAttr('src')
+            if (($("#file"))[0].files[0] != undefined) {
+                var ext = $('#file').val().split('.').pop().toLowerCase();
+                var picsize = ($("#file"))[0].files[0].size;
+
+                if ($.inArray(ext, ['gif', 'png', 'jpg', 'jpeg']) == -1) {
+                    alert(" Extension no permitida :  " + ext);
+                    $("#file").val('');
+                    return false;
+                };
+                // 10mb
+                if (picsize >= 10485760) {
+                    alert("No puede sobre pasar el tamaño de 10mb ");
+                    $("#file").val('');
+                    return false;
+                }
+                var output = document.getElementById('output');
+                output.src = URL.createObjectURL(event.target.files[0]);
+            }
+        };
+    </script>
+}

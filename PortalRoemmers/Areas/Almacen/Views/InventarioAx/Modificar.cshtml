@@ -1,0 +1,116 @@
+﻿@using PortalRoemmers.Security
+@model PortalRoemmers.Areas.Almacen.Models.Inventario.InventarioAxModels
+
+@{
+    ViewBag.Title = "Modificar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="white-box p-l-20 p-r-20">
+    <h3 class="box-title m-b-0"> Modificar Inventario</h3>
+    <p class="text-muted m-b-30 font-13">Completar todos los campos necesarios.</p>
+    <div class="row">
+        <div class="col-md-12">
+            @using(Html.BeginForm("Modificar", "InventarioAx", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal form-material" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.usufchCrea)
+                @Html.HiddenFor(model => model.usuCrea)
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.nroLotInv) <i class="ti-key"></i></label>
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.nroLotInv, new { htmlAttributes = new { @class = "form-control form-control-line", @readonly = "true" } })
+                        @Html.ValidationMessageFor(model => model.nroLotInv, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.ubiProInv) <i class="ti-key"></i></label>
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.ubiProInv, new { htmlAttributes = new { @class = "form-control form-control-line", @readonly = "true" } })
+                        @Html.ValidationMessageFor(model => model.ubiProInv, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.idProInv) <i class="ti-key"></i></label>
+                    <div class="col-md-12">
+
+                        @Html.EditorFor(model => model.idProInv, new { htmlAttributes = new { @class = "form-control form-control-line", @readonly = "true" } })
+                        @Html.ValidationMessageFor(model => model.idProInv, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.desProInv)</label>
+                    <div class="col-md-12">
+
+                        @Html.EditorFor(model => model.desProInv, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Nombre Producto" } })
+                        @Html.ValidationMessageFor(model => model.desProInv, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.idgruInv)</label>
+                    <div class="col-md-12">
+
+                        @Html.EditorFor(model => model.idgruInv, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Grupo", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                        @Html.ValidationMessageFor(model => model.idgruInv, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.codBarInv)</label>
+                    <div class="col-md-12">
+
+                        @Html.EditorFor(model => model.codBarInv, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Código de Barra", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                        @Html.ValidationMessageFor(model => model.codBarInv, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.fabProInv)</label>
+                    <div class="col-md-12">
+
+                        @Html.EditorFor(model => model.fabProInv, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Fabricante", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                        @Html.ValidationMessageFor(model => model.fabProInv, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.almProInv)</label>
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.almProInv, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Almacén", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                        @Html.ValidationMessageFor(model => model.almProInv, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.fchVenInv)</label>
+                    <div class="col-md-12">
+
+                        @Html.EditorFor(model => model.fchVenInv, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Fecha Vencimiento", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                        @Html.ValidationMessageFor(model => model.fchVenInv, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.canProInv)</label>
+                    <div class="col-md-12">
+
+                        @Html.EditorFor(model => model.canProInv, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Cantidad", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                        @Html.ValidationMessageFor(model => model.canProInv, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+
+
+                <button class="btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10">Guardar</button>
+                @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-default btn-rounded btn-outline waves-effect waves-light" })
+            }
+        </div>
+    </div>
+</div>
+
+

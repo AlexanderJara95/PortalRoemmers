@@ -1,0 +1,71 @@
+﻿@using PortalRoemmers.Security
+@model PortalRoemmers.Areas.RRHH.Models.Formulario.FormularioModels
+
+@{
+    ViewBag.Title = "Eliminar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="white-box p-l-20 p-r-20">
+    <h3 class="box-title m-b-0"> Eliminar Formulario</h3>
+    <p class="text-muted m-b-30 font-13">Completar todos los campos necesarios. </p>
+    <div class="row">
+        <div class="col-md-12">
+            @using (Html.BeginForm("Eliminar", "Formulario", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal form-material" }))
+            {
+                @Html.AntiForgeryToken()
+
+                @Html.HiddenFor(model => model.idEst)
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.nomFor)</label>
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.nomFor, new { htmlAttributes = new { @class = "form-control form-control-line", @disabled = "disabled" } })
+                        @Html.ValidationMessageFor(model => model.nomFor, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.titFor)</label>
+                    <div class="col-md-12">
+
+                        @Html.EditorFor(model => model.titFor, new { htmlAttributes = new { @class = "form-control form-control-line", @disabled = "disabled" } })
+                        @Html.ValidationMessageFor(model => model.titFor, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.desFor)</label>
+                    <div class="col-md-12">
+
+                        @Html.EditorFor(model => model.desFor, new { htmlAttributes = new { @class = "form-control form-control-line", @disabled = "disabled" } })
+                        @Html.ValidationMessageFor(model => model.desFor, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.fchIniFor)</label>
+                    <div class="col-md-12">
+
+                        @Html.EditorFor(model => model.fchIniFor, new { htmlAttributes = new { @class = "form-control form-control-line", @disabled = "disabled" } })
+                        @Html.ValidationMessageFor(model => model.fchIniFor, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.fchFinFor)</label>
+                    <div class="col-md-12">
+
+                        @Html.EditorFor(model => model.fchFinFor, new { htmlAttributes = new { @class = "form-control form-control-line", @disabled = "disabled" } })
+                        @Html.ValidationMessageFor(model => model.fchFinFor, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <button class="btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10">Guardar</button>
+                @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-default btn-rounded btn-outline waves-effect waves-light" })
+
+            }
+        </div>
+    </div>
+</div>
+

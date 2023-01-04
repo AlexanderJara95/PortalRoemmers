@@ -1,0 +1,952 @@
+﻿@model PortalRoemmers.Areas.Marketing.Models.Estimacion.EstimacionModels
+@using PortalRoemmers.Security
+
+@{
+    ViewBag.Title = "Registrar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section css {
+    @Styles.Render("~/Content/AccordionWizard_CSS")
+    @Styles.Render("~/Content/selectBusqueda_CSS")
+    @Styles.Render("~/Content/sweetalert_CSS")
+}
+<!--model gastos-->
+<div id="responsive-modal-gasto" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <section id="wrapper" class="block1">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">Ingresar gastos estimados</h4>
+                </div>
+                <div class="modal-body">
+                    <div id='danger1' class='alert alert-danger hidden'>Ingresar todos los campos</div>
+                    <form>
+                        <input type="text" class="hidden" id="idGastoNew">
+                        <div class="form-group">
+                            <label for="idTipGasAct" class="control-label">Tipo de Gasto:</label>
+                            <div>
+                                @Html.DropDownList("idTipGasAct", (SelectList)ViewBag.tipoDeGastoAct, "Seleccionar", htmlAttributes: new { @class = "form-control form-control-line" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="idActGas" class="control-label">Gasto:</label>
+                            <div>
+                                @Html.DropDownList("idActGas", (SelectList)ViewBag.GastoAct, "Seleccionar", htmlAttributes: new { @class = "form-control form-control-line" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="cant" class="control-label">Cantidad de médicos:</label>
+                            <input type="text" class="form-control" id="cant">
+                        </div>
+                        <div class="form-group">
+                            <label for="punit" class="control-label">C. Prom:</label>
+                            <input type="text" class="form-control" id="pUnit">
+                        </div>
+                        <div class="form-group">
+                            <label for="ptotal" class="control-label">C. Total:</label>
+                            <input type="text" class="form-control" id="pTotal">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal" id="Cerrar_Gasto">Cerrar</button>
+                    <button type="button" class="btn btn-danger waves-effect waves-light" id="btn_AgregarGasto">Agregar Gasto</button>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<!--model gastos-->
+<!--model familia-->
+<div id="responsive-modal-familia" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <section id="wrapper" class="block1">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">Familia Productos</h4>
+                </div>
+                <div class="modal-body">
+                    <div id='danger1' class='alert alert-danger hidden'></div>
+                    <div class="input-group">
+                        <input type="text" id="search" name="search" class="form-control" placeholder="Buscar">
+                        <span class="input-group-btn">
+                            <button class="btn waves-effect waves-light btn-info" onclick="BusquedaDetalle('tb_Familia_Search', 'search', '/FamiliaRoe/SearchFamiliaAT')">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </span>
+                    </div>
+                    <div class="table-responsive m-t-10" style="clear: both;">
+                        <div id="slimtest4">
+                            <table class="table table-hover" id="tb_Familia_Search">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">Familia</th>
+                                        <th class="text-center">AT</th>
+                                        <th class="hidden"></th>
+                                        <th class="hidden"></th>
+                                        <th class="text-center"></th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cerrar</button>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<!--model familia-->
+
+<div class="white-box p-l-20 p-r-20">
+    <h3 class="box-title m-b-0"> Nueva Estimacion de Gastos</h3>
+    <p class="text-muted m-b-30 font-13">Completar todos los campos necesarios.</p>
+    <div id='danger' class='alert alert-danger hidden'></div>
+    @{string msg = ""; try { msg = TempData["mensaje"].ToString(); } catch { }}
+    @(new HtmlString(msg))
+    <div class="row">
+        <div class="col-md-12">
+            @using (Html.BeginForm("Registrar", "Estimacion", FormMethod.Post, new { id = "newEst", enctype = "multipart/form-data", @class = "form-horizontal form-material" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.idMon)
+                @Html.HiddenFor(model => model.monEstGas)
+                @Html.HiddenFor(model => model.idEst)
+
+                <div class="col-md-12">
+                    <section id="wrapper" class="block1">
+                        <div class="panel-group wiz-aco" id="accordion" aria-multiselectable="true" role="tablist">
+                            <div class="panel">
+                                <div class="panel-heading" id="exampleHeadingDefaultOne" role="tab"> <a class="panel-title" data-toggle="collapse" href="#exampleCollapseDefaultOne" data-parent="#exampleAccordionDefault" aria-expanded="true" aria-controls="exampleCollapseDefaultOne"> PASO # 1 - DATOS DE LA ESTIMACION </a> </div>
+                                <div class="panel-collapse collapse in" id="exampleCollapseDefaultOne" aria-labelledby="exampleHeadingDefaultOne" role="tabpanel">
+                                    <div class="panel-body">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label class="col-md-12">@Html.LabelFor(model => model.idAccRes) <span class="text-danger">*</span></label>
+                                                    <div class="col-md-12">
+                                                        @Html.DropDownListFor(model => model.idAccRes, (SelectList)ViewBag.responsable, "Seleccionar", htmlAttributes: new { @class = "form-control form-control-line" })
+                                                        @Html.ValidationMessageFor(model => model.idAccRes, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label class="col-md-12">@Html.LabelFor(model => model.idEsp) <span class="text-danger">*</span></label>
+                                                    <div class="col-md-12">
+                                                        @Html.DropDownListFor(model => model.idEsp, (SelectList)ViewBag.especialidad, "Seleccionar", htmlAttributes: new { @class = "form-control form-control-line" })
+                                                        @Html.ValidationMessageFor(model => model.idEsp, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label class="col-md-12">@Html.LabelFor(model => model.idActiv) <span class="text-danger">*</span></label>
+                                                    <div class="col-md-12">
+                                                        @Html.DropDownListFor(model => model.idActiv, (SelectList)ViewBag.actividad, "Seleccionar", htmlAttributes: new { @class = "form-control form-control-line" })
+                                                        @Html.ValidationMessageFor(model => model.idActiv, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label class="col-md-12">@Html.LabelFor(model => model.idTipGas) <span class="text-danger">*</span></label>
+                                                    <div class="col-md-12">
+                                                        @Html.DropDownListFor(model => model.idTipGas, (SelectList)ViewBag.tipgasto, "Seleccionar", htmlAttributes: new { @class = "form-control form-control-line" })
+                                                        @Html.ValidationMessageFor(model => model.idTipGas, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label class="col-md-12">@Html.LabelFor(model => model.idConGas) <span class="text-danger">*</span></label>
+                                                    <div class="col-md-12">
+                                                        @Html.DropDownListFor(model => model.idConGas, (SelectList)ViewBag.congasto, "Seleccionar", htmlAttributes: new { @class = "form-control form-control-line" })
+                                                        @Html.ValidationMessageFor(model => model.idConGas, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label class="col-md-12">@Html.LabelFor(model => model.idLin) </label>
+                                                    <div class="col-md-12">
+                                                        @Html.DropDownListFor(model => model.idLin, (SelectList)ViewBag.linea, "Seleccionar", htmlAttributes: new { @class = "form-control form-control-line" })
+                                                        @Html.ValidationMessageFor(model => model.idLin, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label class="col-md-12">@Html.LabelFor(model => model.idPres)</label>
+                                                    <div class="col-md-12">
+                                                        @Html.HiddenFor(model => model.procede)
+                                                        @Html.DropDownListFor(model => model.idPres, (SelectList)ViewBag.presupuesto, htmlAttributes: new { @multiple = "multiple", @class = "select2 m-b-10 select2-multiple " })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="col-md-12">Cantidad de medicos</label>
+                                                    <div class="col-md-12" style="padding-bottom: 10px; padding-top: 10px;">
+                                                        @Html.EditorFor(model => model.numAsist, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Número Asistentes" } })
+                                                        @Html.ValidationMessageFor(model => model.numAsist, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="col-md-12">Cantidad de Staff</label>
+                                                    <div class="col-md-12" style="padding-bottom: 10px; padding-top: 10px;">
+                                                        @Html.EditorFor(model => model.numStaff, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Número Staff" } })
+                                                        @Html.ValidationMessageFor(model => model.numStaff, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label class="col-md-12">@Html.LabelFor(model => model.obsEstGas)</label>
+                                                    <div class="col-md-12">
+                                                        @Html.TextAreaFor(model => model.obsEstGas, new { @class = "form-control form-control-line", @rows = 5, @placeholder = "Observación" })
+                                                        @Html.ValidationMessageFor(model => model.obsEstGas, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel">
+                                <div class="panel-heading" id="exampleHeadingDefaultTwo" role="tab"> <a class="panel-title collapsed" data-toggle="collapse" href="#exampleCollapseDefaultTwo" data-parent="#exampleAccordionDefault" aria-expanded="false" aria-controls="exampleCollapseDefaultTwo"> PASO # 2 - INGRESAR GASTOS </a> </div>
+                                <div class="panel-collapse collapse" id="exampleCollapseDefaultTwo" aria-labelledby="exampleHeadingDefaultTwo" role="tabpanel">
+                                    <div class="col-md-12">
+                                        <a data-toggle="modal" title="Agregar gasto" class="btn btn-block btn-primary" href="#responsive-modal-gasto">
+                                            <span class="glyphicon glyphicon-plus"></span>AGREGAR GASTO
+                                        </a>
+                                        <div class="table-responsive m-t-10" style="clear: both;">
+                                            <table class="table table-hover" id="tbGastoA">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="text-center">#</th>
+                                                        <th class="text-center">Tipo G.</th>
+                                                        <th class="text-center">Gasto</th>
+                                                        <th class="text-center">Cant.</th>
+                                                        <th class="text-center">C.Prom.</th>
+                                                        <th class="text-center">C.Total</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @{ string v1 = ""; try { v1 = @ViewBag.tb_gastoA; } catch { }}
+                                                    @(new HtmlString(v1))
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel">
+                                <div class="panel-heading" id="exampleHeadingDefaultThree" role="tab"> <a class="panel-title collapsed" data-toggle="collapse" href="#exampleCollapseDefaultThree" data-parent="#exampleAccordionDefault" aria-expanded="false" aria-controls="exampleCollapseDefaultThree"> PASO # 3 - INGRESAR PRODUCTOS </a> </div>
+                                <div class="panel-collapse collapse" id="exampleCollapseDefaultThree" aria-labelledby="exampleHeadingDefaultThree" role="tabpanel">
+                                    <div class="col-md-12">
+                                        <a data-toggle="modal" title="Agregar familia" class="btn btn-block btn-primary" href="#responsive-modal-familia">
+                                            <span class="glyphicon glyphicon-plus"></span> AGREGAR FAMILIA
+                                        </a>
+                                        <div class="table-responsive m-t-10" style="clear: both;">
+                                            <table class="table table-hover" id="tb_Familia">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="hidden"></th>
+                                                        <th class="text-center">Familia</th>
+                                                        <th class="text-center">Area Ter.</th>
+                                                        <th class="hidden"></th>
+                                                        <th class="text-center"></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @{ string v2 = ""; try { v2 = @ViewBag.tb_familiaP; } catch { }}
+                                                    @(new HtmlString(v2))
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel">
+                                <div class="panel-heading" id="exampleHeadingDefaultFour" role="tab"> <a class="panel-title collapsed" data-toggle="collapse" href="#exampleCollapseDefaultFour" data-parent="#exampleAccordionDefault" aria-expanded="false" aria-controls="exampleCollapseDefaultFour"> PASO # 4 - VERIFICAR GASTOS- RESUMEN </a> </div>
+                                <div class="panel-collapse collapse" id="exampleCollapseDefaultFour" aria-labelledby="exampleHeadingDefaultFour" role="tabpanel">
+                                    <div class="col-md-12">
+                                        <div class="table-responsive m-t-10" style="clear: both;">
+                                            <table class="table table-hover" id="tbResumen">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="text-center">Tipo Gasto</th>
+                                                        <th class="text-center">Total</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td class='text-center'>
+                                                            <label class="col-md-12">@Html.LabelFor(model => model.totalGM)</label>
+                                                        </td>
+                                                        <td class='text-center'>
+                                                            <input type="text" class="text-center" id="totalGM" name="totalGM" placeholder="0.00">
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class='text-center'>
+                                                            <label class="col-md-12">@Html.LabelFor(model => model.totalGS)</label>
+                                                        </td>
+                                                        <td class='text-center'>
+                                                            <input type="text" class="text-center" id="totalGS" name="totalGS" placeholder="0.00">
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class='text-center'>
+                                                            <label class="col-md-12">@Html.LabelFor(model => model.totalGV)</label>
+                                                        </td>
+                                                        <td class='text-center'>
+                                                            <input type="text" class="text-center" id="totalGV" name="totalGV" placeholder="0.00">
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class='text-center'>
+                                                            <label class="col-md-12">@Html.LabelFor(model => model.monEstGas)</label>
+                                                        </td>
+                                                        <td class='text-center'>
+                                                            <input type="text" class="text-center" id="monTotGas" name="monTotGas" placeholder="0.00">
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id='danger' class='alert alert-danger hidden'></div>
+                        <div class="panel-group">
+                            <div class="col-md-4 tab-content">
+                                <div class="col-lg-6 col-sm-4 panel-group">
+                                    <button class="btn btn-block btn-outline btn-rounded btn-info" onclick="Hidden('gasto', 'tbGastoA', '0|1|2|3|4|5|6|7|8', '|');Hidden('familia', 'tb_Familia', '0|1|2|3', '|')">Guardar</button>
+                                </div>
+                                <div class="col-lg-6 col-sm-4">
+                                    @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-block btn-outline btn-rounded btn-default" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--Cabecera-->
+                        <!-- -->
+                        <input type="hidden" name="valtipCam" id="valtipCam" value="@ViewBag.actual">
+                        <input type="hidden" name="userCreActiv" id="userCreActiv" />
+                        <input type="hidden" name="fchCreActiv" id="fchCreActiv" />
+                        <!--Detalle-->
+                        <input type="hidden" name="gastoD" id="gasto" />
+                        <input type="hidden" name="familiaD" id="familia" />
+                    </section>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    @Scripts.Render("~/Bundles/AccordionWizard_JS")
+    @Scripts.Render("~/Bundles/selectBusqueda_JS")
+    @Scripts.Render("~/Bundles/sweetalert_JS")
+    @Scripts.Render("~/Bundles/bloqueo_JS")
+    <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
+    <script src="~/Areas/Marketing/Scripts/Marketing.js"></script>
+    <script>
+        $(document).ready(function () {
+            //Activar funcion de sumar totales
+            SumarTotales();
+            //<!--------------------------------
+            //<!------------------------------
+            // Accordion Wizard
+            $('#accordion').wizard({
+                step: '[data-toggle="collapse"]'
+                , buttonsAppendTo: '.panel-collapse'
+                , templates: {
+                    buttons: function () {
+                        var options = this.options;
+                        return '<div class="panel-footer">'
+                            + '<ul class="pager">'
+                            + '<li class="previous">'
+                            + '<a href="#' + this.id + '" data-wizard="back" role="button">' + options.buttonLabels.back + '</a>'
+                            + '</li>'
+                            + '<li class="next">'
+                            + '<a id="nextButtonA" href="#' + this.id + '" data-wizard="next" role="button">' + options.buttonLabels.next + '</a>'
+                            + '</li>'
+                            + '</ul>'
+                            + '</div>';
+                    }
+                }
+                , onBeforeShow: function (step) {
+                    step.$pane.collapse('show');
+                    //swal("Message NEXT!");
+                }
+                , onBeforeHide: function (step) {
+                    step.$pane.collapse('hide');
+                    //swal("Message BEFORE!");
+                }
+            });
+            //------------------------------!>
+            //<!------------------------------
+            //cabecera///////////////////////////
+            //llenar especialidades por responsable
+            $("#idAccRes").change(function () {
+                //----**************************************************************************************---
+                if ($("#idAccRes").val() != "") {
+                    //------------------------------------------------------------------------
+                    //especialidad
+                    console.log("Entro .. buscarEspecialidad");
+                    var RolOptions = {};
+                    RolOptions.url = "/Estimacion/buscarEspecialidad";
+                    RolOptions.type = "POST";
+                    RolOptions.data = JSON.stringify({ idAccRes: $("#idAccRes").val() });
+                    RolOptions.datatype = "json";
+                    RolOptions.contentType = "application/json";
+                    RolOptions.success = function (data) {
+                        $("#idEsp").empty();
+
+                        $("#idEsp").append($("<option> </option>").val("").html("Seleccionar"));
+                        $.each(data, function (i, item) {
+                            $("#idEsp").append($("<option> </option>").val(item.value).html(item.text));
+                        });
+                        //Console.log("Entro"+data);
+                        $("#idEsp").prop("disabled", false);
+                        $("#idEsp").select2().select2("val", $(".select2 option:eq(1)").val());
+                    };
+                    RolOptions.error = function () { alert("Error in Getting Data!!"); };
+                    $.ajax(RolOptions);
+                    $("#idEsp").select2().select2("val", $(".select2 option:eq(1)").val());
+                    //------------------------------------------------------------------------
+                    //Linea
+                    console.log("Entro .. buscarLinea");
+                    var RolOptionsL = {};
+                    RolOptionsL.url = "/Estimacion/buscarLinea";
+                    RolOptionsL.type = "POST";
+                    RolOptionsL.data = JSON.stringify({ idAccRes: $("#idAccRes").val() });
+                    RolOptionsL.datatype = "json";
+                    RolOptionsL.contentType = "application/json";
+                    RolOptionsL.success = function (data) {
+                        $("#idLin").empty();
+                        console.log(data);
+                        $("#idLin").append($("<option> </option>").val("").html("Seleccionar"));
+                        $.each(data, function (i, item) {
+                            $("#idLin").append($("<option> </option>").val(item.value).html(item.text));
+                        });
+                        //Console.log("Entro"+data);
+                        $("#idLin").prop("disabled", false);
+                        $("#idLin").select2().select2("val", $(".select2 option:eq(1)").val());
+                    };
+                    RolOptionsL.error = function () { alert("Error in Getting Data!!"); };
+                    $.ajax(RolOptionsL);
+                    $("#idLin").select2().select2("val", $(".select2 option:eq(1)").val());
+                    //------------------------------------------------------------------------
+                    //Tipo de Gasto
+                    console.log("Entro .. buscarTipoDeGasto");
+                    var RolOptions = {};
+                    RolOptions.url = "/Estimacion/buscarTipoDeGasto";
+                    RolOptions.type = "POST";
+                    RolOptions.data = JSON.stringify({ idAccRes: $("#idAccRes").val() });
+                    RolOptions.datatype = "json";
+                    RolOptions.contentType = "application/json";
+                    RolOptions.success = function (data) {
+                        $("#idTipGas").empty();
+
+                        $("#idTipGas").append($("<option> </option>").val("").html("Seleccionar"));
+                        $.each(data, function (i, item) {
+                            $("#idTipGas").append($("<option> </option>").val(item.value).html(item.text));
+                        });
+                        //Console.log("Entro"+data);
+                        $("#idTipGas").prop("disabled", false);
+                        $("#idTipGas").select2().select2("val", $(".select2 option:eq(1)").val());
+                    };
+                    RolOptions.error = function () { alert("Error in Getting Data!!"); };
+                    $.ajax(RolOptions);
+                    $("#idTipGas").select2().select2("val", $(".select2 option:eq(1)").val());
+                    //------------------------------------------------------------------------
+                }
+                else {
+                    //------------------------------------------------------------------------
+                    $("#idEsp").empty();
+                    $("#idEsp").append($("<option> </option>").val("").html("Seleccionar"));
+                    $("#idEsp").prop("disabled", true);
+                    //------------------------------------------------------------------------
+                    $("#idLin").empty();
+                    $("#idLin").append($("<option> </option>").val("").html("Seleccionar"));
+                    $("#idLin").prop("disabled", true);
+                    //------------------------------------------------------------------------
+                    $("#idTipGas").empty();
+                    $("#idTipGas").append($("<option> </option>").val("").html("Seleccionar"));
+                    $("#idTipGas").prop("disabled", true);
+                    //------------------------------------------------------------------------
+                }
+                //*******************
+                $("#idActiv").empty();
+                $("#idActiv").append($("<option> </option>").val("").html("Seleccionar"));
+                $("#idActiv").select2("val", "");
+                console.log("Entro .. EMPTY ACTIVIDAD");
+
+                //$("#idActiv").prop("disabled", false);
+                //******************
+                $("#procede").val('true');//procede sin un presupuesto elegido
+                $("#idPres").empty();
+                $("#idPres").select2("val", "");
+                $("#idPres").append($("<option> </option>").val("").html("Seleccionar"));
+            });
+            //--------------------------------!>
+            //llenar actividades por especialidad
+            //<!------------------------------
+            $("#idEsp").change(function () {
+                var especialidad = $("#idEsp").val();
+                if (especialidad == null)
+                    especialidad = "";
+                var responsable = $("#idAccRes").val();
+                if (responsable == null)
+                    responsable = "";
+                console.log("Change idEsp : idEsp" + especialidad + "idAccRes" + responsable);
+                if ($("#idEsp").val() != "" && $("#idEsp").val() != "Seleccionar" && $("#idAccRes").val() != "" && $("#idAccRes").val() != "Seleccionar") {
+                    //actividad
+                    console.log("Entro .. buscarActividad" + especialidad +"-"+ responsable );
+                    var RolOptions = {};
+                    RolOptions.url = "/Estimacion/buscarActividad";
+                    RolOptions.type = "POST";
+                    RolOptions.data = JSON.stringify({ idEsp: $("#idEsp").val(), idAccRes: $("#idAccRes").val() });
+                    RolOptions.datatype = "json";
+                    RolOptions.contentType = "application/json";
+                    RolOptions.success = function (data) {
+                        $("#idActiv").empty();
+                        $("#idActiv").append($("<option> </option>").val("").html("Seleccionar"));
+                        $("#idActiv").select2("val", "");
+                        $.each(data, function (i, item) {
+                            $("#idActiv").append($("<option> </option>").val(item.value).html(item.text));
+                        });
+                        $("#idActiv").prop("disabled", false);
+                    };
+                    RolOptions.error = function () { alert("Error in Getting Data!!"); };
+                    $.ajax(RolOptions);
+                }
+                else {
+                    $("#idActiv").empty();
+                    $("#idActiv").append($("<option> </option>").val("").html("Seleccionar"));
+                    $("#idActiv").select2("val", "");
+                }
+            });
+
+            //llenar gasto por tipo de gasto
+            //<!------------------------------
+            $("#idTipGasAct").change(function () {
+                if ($("#idTipGasAct").val() != "") {
+                    //actividad
+                    var RolOptions = {};
+                    RolOptions.url = "/Estimacion/buscarGastoActividad";
+                    RolOptions.type = "POST";
+                    RolOptions.data = JSON.stringify({ idTipGasAct: $("#idTipGasAct").val() });
+                    RolOptions.datatype = "json";
+                    RolOptions.contentType = "application/json";
+                    RolOptions.success = function (data) {
+                        $("#idActGas").empty();
+                        console.log(data);
+                        $("#idActGas").append($("<option> </option>").val("").html("Seleccionar"));
+                        $.each(data, function (i, item) {
+                            $("#idActGas").append($("<option> </option>").val(item.value).html(item.text));
+                        });
+                        $("#idActGas").prop("disabled", false);
+                    };
+                    RolOptions.error = function () { alert("Error in Getting Data!!"); };
+                    $.ajax(RolOptions);
+                }
+                else {
+                    $("#idActGas").empty();
+                    $("#idActGas").append($("<option> </option>").val("").html("Seleccionar"));
+                    $("#idActGas").select2();
+                    $("#idActGas").prop("disabled", true);
+                }
+            });
+            ///////////////////////////////////////////////////////
+            //Evento Next Accordion
+            $("#nextButtonA").on("click", function () {
+                var req1 = "";
+                var req2 = "";
+                var req3 = "";
+                var req4 = "";
+                var req5 = "";
+                req1 = $("#idAccRes").val();
+                req2 = $("#idEsp").val();
+                req3 = $("#idActiv").val();
+                req4 = $("#idLin").val();
+                req5 = $("#idPres").val();
+                req6 = $("#numAsist").val();
+                req7 = $("#numStaff").val();
+
+                console.log(req1 + "-" + req2 + "-" + req3 + "-" + req4 + "-" + req5 + "-" + req6 + "-" + req7 +   "-entronext");
+                if (req1 == "" || req2 == "" || req3 == "" || req4 == "" || req5 == "" || req5 == null || req6 == "" || req7=="")
+                {
+                    $("div #danger").removeClass('hidden');
+                    swal("Ingresar todos los campos");
+                    setTimeout(function () { $("div #danger").fadeOut(2000).fadeIn(2000).fadeOut(1500).fadeIn(1500).fadeOut(500) }, 500);
+                    setTimeout(function () { $("div #danger").addClass('hidden'); }, 4000);
+                    return false;
+                }
+            });
+            ///////////////////////////////////////////////////////
+            //------------------------------!>
+            //Detalle/////////////////////////////////////////////////////
+            //<!------------------------------
+            $('#cant').change(function () {
+                var req3 = 0;
+                var req4 = 0;
+                req3 = $("#cant").val();
+                req4 = $("#pUnit").val();
+                var req5 = req3 * req4;
+                $("#pTotal").val(req5);
+            });
+            //------------------
+            $('#pUnit').change(function () {
+                var req3 = 0;
+                var req4 = 0;
+                req3 = $("#cant").val();
+                req4 = $("#pUnit").val();
+                var req5 = req3 * req4;
+                $("#pTotal").val(req5);
+            });
+            //------------------
+            $('#Cerrar_Gasto').on('click', function () {
+                $("#cant").val("0");
+                $("#pUnit").val("0");
+                $("#pTotal").val("0");
+                //<!--------------------------
+                //Tipo de Gasto al inicio
+                $("#idTipGasAct").find("option:first").prop("selected", true);
+                var resul = $("#idTipGasAct option:selected").text();
+                var valor = $("#idTipGasAct option:selected").val();
+                console.log("Entro If");
+                console.log(resul + "-" + valor);
+                $("#idTipGasAct").select2("data", { id: valor, text: resul });
+
+                var tipoDeGasto = $("#idTipGasAct");
+                console.log(tipoDeGasto)
+                //Gasto ninguno si no hay seleccion
+                $("#idActGas").empty();
+                $("#idActGas").append($("<option> </option>").val("").html("Seleccionar"));
+                $("#idActGas").select2();
+                //<!--------------------------
+            });
+            $('#btn_AgregarGasto').on('click', function () {
+                var row = "";
+                //obtengo el id de la otra tabla
+                var id = $("#tbGastoA > tbody > tr").length;
+                //-----------VERIFICAR DUPLICADO--------------
+                var duplicado = false;
+                //-----------VERIFICAR DUPLICADO--------------
+                //--------VALORES-----------------
+                var req1 = "";
+                var req2 = "";
+                var req3 = "";
+                var req4 = "";
+                req1 = $("#idTipGasAct").val();
+                req2 = $("#idActGas").val();
+                req3 = $("#cant").val();
+                req4 = $("#pUnit").val();
+                //--------VALORES-----------------
+                if (req1 != "" && req2 != "" && req3 != "" && req4 != "") {
+                    //-----------VERIFICAR DUPLICADO--------------
+                    //verifico que no este en la tabla
+                    console.log(req1 + "-" + req2 + "-" + req3 + "-" + req4 + "-");
+                    var tipoGas = $("#idTipGasAct option:selected").text();
+                    var gasAct = $("#idActGas option:selected").text();
+                    $('#tbGastoA tbody tr').each(function (index) {
+                        ////////////////////////////////////
+                        if ($('#tbGastoA tbody tr').eq(index).find("td").eq(parseInt(4)).html() == tipoGas) {
+                            if ($('#tbGastoA tbody tr').eq(index).find("td").eq(parseInt(5)).html() == gasAct) {
+                                duplicado = true;
+                            }
+                        }
+                    });
+                    //si esta duplicado muestro un mensaje
+                    if (duplicado == true) {
+                        $("div #danger1").removeClass('hidden');
+                        $("div #danger1").text('No se puede seleccionar el mismo elemento');
+                        setTimeout(function () { $("div #danger1").fadeOut(2000).fadeIn(2000).fadeOut(1500).fadeIn(1500).fadeOut(500) }, 500);
+                        setTimeout(function () { $("div #danger1").addClass('hidden'); }, 4000);
+                        return false;
+                    }
+                    //-----------VERIFICAR DUPLICADO--------------
+                    //<!------------------------------------------
+                    //-----------LLENAR TABLA DE GASTOS ----------
+                    row = "<tr>";
+                    row += "<td class='hidden'>" + " " + "</td>";
+                    row += "<td class='text-center'>" + (id + 1) + "</td>";
+                    row += "<td class='hidden'>" + $("#idTipGasAct").val() + "</td>";
+                    row += "<td class='hidden'>" + $("#idActGas").val() + "</td>";
+                    row += "<td class='text-center'>" + $("#idTipGasAct option:selected").text() + "</td>";
+                    row += "<td class='text-center'>" + $("#idActGas option:selected").text() + "</td>";
+                    row += "<td class='text-center'>" + $("#cant").val() + "</td>";
+                    row += "<td class='text-center'>" + $("#pUnit").val() + "</td>";
+                    row += "<td class='text-center'>" + $("#pTotal").val() + "</td>";
+                    row += "<td class='delete' onclick='ActualizarIdFila(event)'><span class='glyphicon glyphicon-remove'></span></td>";
+                    row += "</tr>";
+                    $("#tbGastoA > tbody:last").append(row);
+                    //-----------LLENAR TABLA DE GASTOS ----------
+                }
+                else {
+                    $("div #danger1").removeClass('hidden');
+                    setTimeout(function () { $("div #danger1").fadeOut(2000).fadeIn(2000).fadeOut(1500).fadeIn(1500).fadeOut(500) }, 500);
+                    setTimeout(function () { $("div #danger1").addClass('hidden'); }, 4000);
+                    return false;
+                }
+                //<!---------SUMAR A TOTALES -----------------
+                SumarTotales();
+                //----------*****************--------------!>
+                $("#responsive-modal-gasto").modal('hide');
+                $("#cant").val("0");
+                $("#pUnit").val("0");
+                $("#pTotal").val("0");
+                //<!--------------------------
+                //Tipo de Gasto al inicio
+                $("#idTipGasAct").find("option:first").prop("selected", true);
+                var resul = $("#idTipGasAct option:selected").text();
+                var valor = $("#idTipGasAct option:selected").val();
+                console.log("Entro If");
+                console.log(resul + "-" + valor);
+                $("#idTipGasAct").select2("data", { id: valor, text: resul });
+
+                var tipoDeGasto = $("#idTipGasAct");
+                console.log(tipoDeGasto)
+                //Gasto ninguno si no hay seleccion
+                $("#idActGas").empty();
+                $("#idActGas").append($("<option> </option>").val("").html("Seleccionar"));
+                $("#idActGas").select2();
+                //<!--------------------------
+            });
+            //-----
+            $('#tb_Familia_Search tbody').on('click', 'tr', function () {
+                var duplicado = false;
+                var row = "";
+                //obtengo el id de la otra tabla
+                var id = $("#tb_Familia > tbody > tr:last > td:first").text();
+
+                //verifico que no este en la tabla
+                var codigo = $(this).find("td").eq(0).text();
+                $('#tb_Familia tbody tr').each(function (index) {
+                    if ($('#tb_Familia tbody tr').eq(index).find("td").eq(parseInt(0)).html() == codigo) {
+                        duplicado = true;
+                    }
+                });
+
+                //si esta duplicado muestro un mensaje
+                if (duplicado == true) {
+                    $("div #danger1").removeClass('hidden');
+                    $("div #danger1").text('No se puede seleccionar el mismo elemento');
+                    setTimeout(function () { $("div #danger1").fadeOut(2000).fadeIn(2000).fadeOut(1500).fadeIn(1500).fadeOut(500) }, 500);
+                    setTimeout(function () { $("div #danger1").addClass('hidden'); }, 4000);
+                    return false;
+                }
+
+                 row = "<tr>";
+                row += "<td class='hidden'>" + $(this).find("td").eq(2).text() + "</td>";
+                row += "<td class='text-center'>" + $(this).find("td").eq(0).text() + "</td>";
+                row += "<td class='text-center'>" + $(this).find("td").eq(1).text() + "</td>";
+                row += "<td class='hidden'>" + $(this).find("td").eq(3).text() + "</td>";
+                row += "<td class='elimfila'><span class='glyphicon glyphicon-remove'></span></td>";
+                row += "</tr>";
+                $("#tb_Familia > tbody:last").append(row);
+
+                $("#responsive-modal-familia").modal('hide');
+            });
+
+            ///////////////////////////////////////////////////////
+            //Cambio Tipo de Gasto y Gasto
+            //llenar concepto de gasto por un tipo de gasto
+            $("#idTipGas").change(function () {
+                if ($("#idTipGas").val() != "") {
+                    $("#idConGas").prop("disabled", true);
+                    var RolOptions = {};
+                    RolOptions.url = "/SolicitudGasto/buscarConceptoTGasto";
+                    RolOptions.type = "POST";
+                    RolOptions.data = JSON.stringify({ idTipGas: $("#idTipGas").val() });
+                    RolOptions.datatype = "json";
+                    RolOptions.contentType = "application/json";
+                    RolOptions.success = function (data) {
+                        $("#idConGas").select2("val", "");
+                        $('#idConGas').empty();
+                        $("#idConGas").append($("<option> </option>").val("").html("Seleccionar"));
+                        $.each(data, function (i, item) {
+                            $("#idConGas").append($("<option> </option>").val(item.idConGas).html(item.nomConGas));
+                        });
+
+                    };
+                    RolOptions.error = function () { alert("Error in Getting States!!"); };
+                    $.ajax(RolOptions);
+                    $("#idConGas").prop("disabled", false);
+                }
+                else {
+                    $("#idConGas").empty();
+                    $("#idConGas").prop("disabled", true);
+                }
+            });
+
+            //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            $("#idAccRes").select2();
+            $("#idEsp").select2();
+            $("#idActiv").select2();
+            $("#idLin").select2();
+            $("#idPres").select2();
+            $("#idTipGasAct").select2();
+            $("#idActGas").select2();
+            $("#idTipGas").select2();
+            $("#idConGas").select2();
+            //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+            ///////////Presupuesto///////////////////////////////////////////
+            $("#idAccRes").change(function () {
+                cargaPresupuesto();
+            });
+
+            $("#idEsp").change(function () {
+                cargaPresupuesto();
+            });
+
+            $("#idTipGas").change(function () {
+                cargaPresupuesto();
+            });
+
+            $("#idConGas").change(function () {
+                cargaPresupuesto();
+            });
+
+            ///////////Presupuesto///////////////////////////////////////////
+            function cargaPresupuesto() {
+                var tipogasto = $("#idTipGas").val();
+                if (tipogasto == null)
+                    tipogasto == "";
+                var congasto = $("#idConGas").val();
+                if (congasto == null)
+                    congasto == "";
+                var especialidad = $("#idEsp").val();
+                if (especialidad == null)
+                    especialidad = "";
+                var responsable = $("#idAccRes").val();
+                if (responsable == null)
+                    responsable = "";
+                console.log("idEsp" +especialidad + "idAccRes"+responsable);
+                if (especialidad != "" && responsable != "" && especialidad != "Seleccionar" && responsable != "Seleccionar") {
+                    $.post('/Marketing/Estimacion/verificarPresupuestoMarketing', { resp: responsable, idEsp: especialidad, idTipGas: tipogasto , idConGas: congasto}, function (data, status) {
+                        $("#idPres").empty();
+                        $("#idPres").select2("val", "");
+                        $("#idPres").append($("<option> </option>").val("").html("Seleccionar"));
+
+                        if (data != "NO") {
+                            //$("#idPres").append($("<option> </option>").val("").html("Seleccionar...."));
+                            if (data != 'VACIO') {
+                                $.each(data, function (i, item) {
+                                    $("#idPres").append($("<option> </option>").val(item.codigo).html(item.nombre));
+                                });
+                                $("#idPres").select2().select2("val", $(".select2 option:eq(1)").val());
+                            }
+                            $("#procede").val('false');//procede con un presupuesto elegido
+                        } else {
+                            // $("#idPresN").append($("<option> </option>").val("").html(""));
+                            $("#procede").val('true');//procede sin presupuesto
+                        }
+                    });
+                } else {
+                    $("#procede").val('');//procede con un presupuesto elegido
+                    $("#idPres").empty();
+                    $("#idPres").select2("val", "");
+                    $("#idPres").append($("<option> </option>").val("").html("Seleccionar"));
+                    // $("#idPres").append($("<option> </option>").val("").html("Seleccionar...."));
+                }
+            }
+        });
+        ///////////Actualizar Fila///////////////////////////////////////////
+        //------------------
+        function ActualizarIdFila(evt) {
+            /////////////
+            $(document).on("click", ".delete", function () {
+                var parent = $(this).parents().get(0);
+                //console.log(parent);
+                /////////////
+                $(parent).remove();
+                /////////////
+                var indice = 1;
+                $('#tbGastoA tbody tr').each(function (index, element) {
+                    $(element).find("td").eq(1).text(indice);
+                    indice = indice + 1;
+                });
+                //<!---------SUMAR A TOTALES -----------------
+                SumarTotales();
+                //----------*****************--------------!>
+            });
+        }
+         //----<!----Funcion de Suma Front Totales -------------
+        function SumarTotales() {
+            //<!----------------------------------------------------
+            //Al iniciar el DOM del Modificar , ver TOTALES del Front
+            //<!------------------------------
+            //var totGM = $("#totalGM").val();
+            //var totGS = $("#totalGS").val();
+            //var totGV = $("#totalGV").val();
+            //--------------------------------
+            var totGM = 0;
+            var totGS = 0;
+            var totGV = 0;
+            //--------------------------------
+            //--------------------------------
+            $('#tbGastoA tbody tr').each(function (index) {
+                //<!-------------------------------
+                ////////////////////////////////////
+                if ($('#tbGastoA tbody tr').eq(index).find("td").eq(parseInt(2)).html() == @ConstantesGlobales.gasto_Medico) {
+                    var filGM = $('#tbGastoA tbody tr').eq(index).find("td").eq(parseInt(8)).html();
+                    totGM = totGM + parseFloat(filGM) ;
+                }
+                ////////////////////////////////////
+                if ($('#tbGastoA tbody tr').eq(index).find("td").eq(parseInt(2)).html() == @ConstantesGlobales.gasto_Staff) {
+                    var filGS = $('#tbGastoA tbody tr').eq(index).find("td").eq(parseInt(8)).html();
+                    totGS = totGS + parseFloat(filGS);
+                }
+                ////////////////////////////////////
+                if ($('#tbGastoA tbody tr').eq(index).find("td").eq(parseInt(2)).html() == @ConstantesGlobales.gasto_Varios) {
+                    var filGV = $('#tbGastoA tbody tr').eq(index).find("td").eq(parseInt(8)).html();
+                    totGV = totGV + parseFloat(filGV);
+                }
+                //---------------------------------!>
+            });
+            var TotalInicial = parseFloat(totGM) + parseFloat(totGS) + parseFloat(totGV);
+            console.log("Total : " + TotalInicial);
+            //--------------------------------
+            //Asignar los importes de totales en la ventana de modificar
+            var string1 = numeral(totGM).format('$ 0,0.00');
+            $("#totalGM").val(string1);
+            var string2 = numeral(totGS).format('$ 0,0.00');
+            $("#totalGS").val(string2);
+            var string3 = numeral(totGV).format('$ 0,0.00');
+            $("#totalGV").val(string3);
+            var string4 = numeral(TotalInicial).format('$ 0,0.00');
+            $("#monTotGas").val(string4);
+            $("#monEstGas").val(TotalInicial);
+            //----------------------------------!>
+        }
+        //----------------------------------------------------!>
+            //------------------------------!>
+            //valores fijos
+            $("#idMon").val('@ConstantesGlobales.monedaDol');
+            $("#idEst").val('@ConstantesGlobales.estadoRegistrado');
+            $("#usuCrea").val('@SessionPersister.Username');
+            $("#usufchCrea").val('@DateTime.Today');
+            $("#pTotal").prop("disabled", true);
+            $("#totalGM").prop("disabled", true);
+            $("#totalGS").prop("disabled", true);
+            $("#totalGV").prop("disabled", true);
+            $("#monTotGas").prop("disabled", true);
+    </script>
+}

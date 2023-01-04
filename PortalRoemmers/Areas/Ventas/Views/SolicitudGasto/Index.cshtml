@@ -1,0 +1,471 @@
+﻿@model  PortalRoemmers.ViewModels.IndexViewModel
+@using PortalRoemmers.Helpers
+@using PortalRoemmers.Security
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section css {
+    @Styles.Render("~/Content/tablaResponsive_CSS")
+    @Styles.Render("~/Content/sweetalert_CSS")
+    @Styles.Render("~/Content/datepicker_CSS")
+}
+<!--Visualizar-->
+<div class="modal fade bs-example-modal-lg" id="visualizar">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h2>SOLICITUD DE GASTO</h2>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">C&oacutedigo</label>
+                            <input type="text" id="data_cod" class="form-control" disabled />
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">F. Evento</label>
+                            <input type="text" id="data_fec" class="form-control" disabled />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">Responsable</label>
+                            <input type="text" id="data_res" class="form-control" disabled />
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">Tipo Gasto</label>
+                            <input type="text" id="data_tga" class="form-control" disabled />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">Concepto</label>
+                            <input type="text" id="data_con" class="form-control" disabled />
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">Zona</label>
+                            <input type="text" id="data_zon" class="form-control" disabled />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">Linea</label>
+                            <input type="text" id="data_lin" class="form-control" disabled />
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">Especialidad</label>
+                            <input type="text" id="data_esp" class="form-control" disabled />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">Título</label>
+                            <input type="text" id="data_tit" class="form-control" disabled />
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">Lugar</label>
+                            <input type="text" id="data_lug" class="form-control" disabled />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">U.Creaci&oacuten</label>
+                            <input type="text" id="data-usc" class="form-control" disabled />
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">U. Fecha Creaci&oacuten</label>
+                            <input type="text" id="data-ucf" class="form-control" disabled />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label class="control-label">Observaci&oacuten</label>
+                            <textarea id="data_obs" class="form-control" disabled></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label>Importe</label>
+                            <input type="text" id="data_mto" class="form-control" disabled />
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label>Moneda</label>
+                            <input type="text" id="data_mon" class="form-control" disabled />
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label>T.Cambio</label>
+                            <input type="text" id="data_cam" class="form-control" disabled />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h2> Familia de producto</h2>
+                        <table id="tb_familia" class="tablesaw table-bordered table-hover table" data-tablesaw-mode="swipe">
+                            <thead>
+                                <tr>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist">C&oacutedigo</th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1">Nombre</th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2">Descripci&oacuten</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h2> M&eacutedicos</h2>
+                        <table id="tb_medico" class="tablesaw table-bordered table-hover table" data-tablesaw-mode="swipe">
+                            <thead>
+                                <tr>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist">C&oacutedigo</th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1">Nombre</th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2">Descripci&oacuten</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h2> Responsable</h2>
+                        <table id="tb_responsable" class="tablesaw table-bordered table-hover table" data-tablesaw-mode="swipe">
+                            <thead>
+                                <tr>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist">C&oacutedigo</th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1">Nombre</th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2">Descripci&oacuten</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default waves-effect text-right" data-dismiss="modal" id="btnPrint">Imprimir</button>
+                <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!---->
+<!--Firmas-->
+<div id="responsive-modal-Firmas" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h2 class="modal-title">Firmas de la Solicitud</h2>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="table-responsive m-t-10" style="clear: both;">
+                            <table id="tb_firma" class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">N°</th>
+                                        <th class="text-center">Firm&oacute</th>
+                                        <th class="text-center">Fecha</th>
+                                        <th class="text-center">Estado</th>
+                                        <th class="text-center">Monto</th>
+                                        <th class="text-center">Observaci&oacuten</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Firmas-->
+<div class="panel panel-default">
+    <div class="panel-heading box-title m-b-0"><h2>Mantenimiento de Solicitud de Gasto</h2></div>
+    <div class="panel-body">
+        <div class="form-group">
+            @{ string v = ""; try { v = TempData["mensaje"].ToString(); } catch { }}
+            @(new HtmlString(v))
+        </div>
+        @using (Html.BeginForm("Index", "SolicitudGasto", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista }, FormMethod.Post))
+        {
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="form-group">
+                        <label for="search">NOMBRE o CÓDIGO</label>
+                        <input type="text" id="search" name="search" class="form-control" placeholder="Buscar" value="@ViewBag.search">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="desMen">DESDE</label>
+                        <input class="form-control form-control-line datepicker" id="fchEveSolGasI" name="fchEveSolGasI" placeholder="dd/mm/aaaa" autocomplete="off" value="@ViewBag.primero">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="desMen">HASTA</label>
+                        <input class="form-control form-control-line datepicker" id="fchEveSolGasF" name="fchEveSolGasF" placeholder="dd/mm/aaaa" autocomplete="off" value="@ViewBag.actual">
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <span class="input-group-btn">
+                        <button class="btn waves-effect waves-light btn-info">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </span>
+                </div>
+            </div>
+        }
+        <br />
+        <div class="row">
+            <div class="col-xs-6">
+                @Html.ActionLink("Crear Solicitud", "Registrar", "SolicitudGasto", new { Area = "Ventas" }, new { @Class = "btn btn-info btn-rounded" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <table class="tablesaw table-bordered table-hover table" data-tablesaw-mode="swipe">
+                    <thead>
+                        <tr>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist"></th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1">C&oacutedigo</th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2">T&iacutetulo</th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Evento</th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="4">Estado</th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="5">T.Gasto</th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="6">Monto</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.SolGasto)
+                        {
+                            <tr>
+                                <td class="text-nowrap">
+                                    @{
+                                        //Firmas
+                                        var detFr = item.dFirma.OrderBy(x => x.usufchCrea).ToList();
+                                        var dfr = "";
+                                        if (detFr.Count != 0)
+                                        {
+                                            foreach (var f in detFr)
+                                            {
+                                                dfr += f.idSolGas + ";" + f.solicitante.username + ";" + f.usufchCrea + ";" + f.estado.nomEst + ";" + f.gasto.monSolGas + ";" + f.gasto.dFirma.Where(x => x.idAcc == f.solicitante.idAcc).Select(x => x.obsFirSol).FirstOrDefault() + "|";
+                                            }
+                                            dfr = dfr.Remove(dfr.Length - 1, 1);
+                                        }
+                                    }
+                                    <a href="@Url.Action("Imprimir", "SolicitudGasto", new {Area="Ventas",html = false,sol=item.idSolGas })" data-toggle="tooltip" title="Imprimir"> <i class="fa fa-print text-inverse m-r-10"></i> </a>
+                                    <a href="#responsive-modal-Firmas" data-toggle="modal" title="Firmas" class="open-firma m-r-10" data-detfr="@dfr"><i class="fa fa-list-ol"></i></a>
+                                    <a href="@MyExtensions.ActionUrl("Visualizar", "SolicitudGasto", new {Area="Ventas", id = item.idSolGas})" data-toggle="tooltip" title="Visualizar"> <i class="fa fa-eye text-inverse m-r-10"></i> </a>
+                                    @{
+                                        //solo algunos lo ven
+                                        if (item.idEst == ConstantesGlobales.estadoRegistrado || item.idEst == ConstantesGlobales.estadoModificado)
+                                        {
+                                            <a href="@MyExtensions.ActionUrl("Modificar", "SolicitudGasto", new {Area="Ventas", id = item.idSolGas})" data-toggle="tooltip" title="Editar"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a>
+                                            <a data-toggle="tooltip" title="Anular" id="sa-params"> <i class="fa fa-close text-danger"></i> </a>
+                                        }
+                                    }
+
+                                </td>
+                                <td>@Html.DisplayFor(modelItem => item.idSolGas)</td>
+                                <td>@Html.DisplayFor(modelItem => item.titSolGas)</td>
+                                <td>@Html.DisplayFor(modelItem => item.fchEveSolGas)</td>
+                                <td>@Html.DisplayFor(modelItem => item.estado.nomEst)</td>
+                                <td>@Html.DisplayFor(modelItem => item.concepto.tipoGasto.nomTipGas)</td>
+                                <td>@Html.DisplayFor(modelItem => item.moneda.simbMon) @Html.DisplayFor(modelItem => item.monSolGas)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                @{Html.RenderPartial("_paginador", Model);}
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-footer"></div>
+</div>
+@section scripts
+{
+    @Scripts.Render("~/Bundles/tablaResponsive_JS")
+    @Scripts.Render("~/Bundles/sweetalert_JS")
+    @Scripts.Render("~/Bundles/datepicker_JS")
+
+    <script src="~/Areas/Ventas/Scripts/Ventas.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('table tbody tr a#sa-params').click(function () {
+                var idSolGas = $(this).parent().parents('tr').find('td').eq(1).text();
+                swal({
+                    title: "¿Estás seguro?",
+                    text: "¡No se podrá aprobar esta solicitud! \n",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Sí, anularlo!",
+                    cancelButtonText: "No, anularlo!",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                }, function (isConfirm) {
+                    if (isConfirm) {
+                        var Options = {};
+                        Options.url = "/SolicitudGasto/anularSolicitud";
+                        Options.type = "POST";
+                        Options.data = JSON.stringify({ idSolGas: idSolGas });
+                        Options.datatype = "json";
+                        Options.contentType = "application/json";
+                        Options.success = function (data) {
+
+                            if (data) {
+                                swal("Anulado!", "Tu solicitud ha sido anulada.", "success");
+                                setTimeout(function () { location.reload(); }, 2000);
+                            } else {
+                                swal("Ocurrio un problema!", "Tu solicitud no ha sido anulaa.", "error");
+                            }
+                        };
+                        Options.error = function () { alert("Error in Getting States!!"); unblock(); };
+                        $.ajax(Options);
+
+                    } else {
+                        swal("Cancelado", "Tu solicitud esta seguro.)", "error");
+                    }
+                });
+            });
+        });
+
+        $(document).on("click", ".open-proces", function () {
+            $("#data_res").val($(this).data('res'));
+            $("#data_con").val($(this).data('con'));
+            $("#data_tga").val($(this).data('tga'));
+            $("#data_zon").val($(this).data('zon'));
+            $("#data_lin").val($(this).data('lin'));
+            $("#data_esp").val($(this).data('esp'));
+            $("#data_tit").val($(this).data('tit'));
+            $("#data_lug").val($(this).data('lug'));
+            $("#data_fec").val($(this).data('fec'));
+            $("#data_obs").val($(this).data('obs'));
+            $("#data_cod").val($(this).data('cod'));
+            $("#data_mto").val($(this).data('mto'));
+            $("#data_mon").val($(this).data('mon'));
+            $("#data_cam").val($(this).data('cam'));
+            $("#data-usc").val($(this).data('usc'));
+            $("#data-ucf").val($(this).data('ucf'));
+            //armo la tabla familia
+            var df = $(this).data('detf');
+            var filas = df.split("|");
+            var row = "";
+            $("#tb_familia > tbody:last").empty();
+            if (filas != "") {
+                $.each(filas, function (id, elem) {
+                    var col = elem.split(";");
+                    row = "<tr>";
+                    row += "<td>" + col[0] + "</td>";
+                    row += "<td>" + col[1] + "</td>";
+                    row += "<td>" + col[2] + "</td>";
+                    row += "</tr>";
+                    $("#tb_familia > tbody:last").append(row);
+                });
+            }
+            //armo la tabla medico
+            var dm = $(this).data('detm');
+            var filasM = dm.split("|");
+            var rowM = "";
+            $("#tb_medico > tbody:last").empty();
+            if (filasM != "") {
+                $.each(filasM, function (id, elem) {
+                    var col = elem.split(";");
+                    rowM = "<tr>";
+                    rowM += "<td>" + col[0] + "</td>";
+                    rowM += "<td>" + col[1] + "</td>";
+                    rowM += "<td>" + col[2] + "</td>";
+                    rowM += "</tr>";
+                    $("#tb_medico > tbody:last").append(rowM);
+                });
+            }
+            //armo la tabla responsable
+            var dr = $(this).data('detr');
+            var filasR = dr.split("|");
+            var rowR = "";
+            $("#tb_responsable > tbody:last").empty();
+            if (filasR != "") {
+                $.each(filasR, function (id, elem) {
+                    var col = elem.split(";");
+                    rowR = "<tr>";
+                    rowR += "<td>" + col[0] + "</td>";
+                    rowR += "<td>" + col[1] + "</td>";
+                    rowR += "<td>" + col[2] + "</td>";
+                    rowR += "</tr>";
+                    $("#tb_responsable > tbody:last").append(rowR);
+                });
+            }
+        });
+        $(document).on("click", ".open-firma", function () {
+            //armo la tabla firma
+            var df = $(this).data('detfr');
+            var filas = df.split("|");
+            var row = "";
+            $("#tb_firma > tbody:last").empty();
+            if (filas != "") {
+                $.each(filas, function (id, elem) {
+                    var col = elem.split(";");
+                    row = "<tr>";
+                    row += "<td>" + col[0] + "</td>";
+                    row += "<td>" + col[1] + "</td>";
+                    row += "<td>" + col[2] + "</td>";
+                    row += "<td>" + col[3] + "</td>";
+                    row += "<td>" + col[4] + "</td>";
+                    row += "<td>" + col[5] + "</td>";
+                    row += "</tr>";
+                    $("#tb_firma > tbody:last").append(row);
+                });
+            }
+        });
+    </script>
+}

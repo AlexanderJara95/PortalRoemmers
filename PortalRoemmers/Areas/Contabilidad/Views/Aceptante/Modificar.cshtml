@@ -1,0 +1,76 @@
+﻿@model PortalRoemmers.Areas.Contabilidad.Models.Letra.AceptanteModels
+@using PortalRoemmers.Security
+@{
+    ViewBag.Title = "Modificar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="white-box p-l-20 p-r-20">
+    <h3 class="box-title m-b-0"> Modificar M&eacutedico</h3>
+    <p class="text-muted m-b-30 font-13">Completar todos los campos necesarios. </p>
+    <div class="row">
+        <div class="col-md-12">
+            @using (Html.BeginForm("Modificar", "Aceptante", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal form-material" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.idAcep)
+                @Html.HiddenFor(model => model.usuCrea)
+                @Html.HiddenFor(model => model.usufchCrea)
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.nomAceptante)</label>
+                    <div class="col-md-12">
+
+                        @Html.EditorFor(model => model.nomAceptante, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Razon Social o Nombre", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                        @Html.ValidationMessageFor(model => model.nomAceptante, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.niffAceptante)</label>
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.niffAceptante, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "RUC o DNI", @data_mask = "99999999999" } })
+                        @Html.ValidationMessageFor(model => model.niffAceptante, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.domAceptante)  <span class="text-danger">*</span></label>
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.domAceptante, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Domicilio", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                        @Html.ValidationMessageFor(model => model.domAceptante, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.locAceptante)</label>
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.locAceptante, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Localidad", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                        @Html.ValidationMessageFor(model => model.locAceptante, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.correoAceptante)</label>
+                    <div class="col-md-12">
+
+                        @Html.EditorFor(model => model.correoAceptante, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Correo", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                        @Html.ValidationMessageFor(model => model.correoAceptante, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.idEst)</label>
+                    <div class="col-md-12">
+                        @Html.DropDownListFor(model => model.idEst, (SelectList)ViewBag.estado, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                        @Html.ValidationMessageFor(model => model.idEst, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <button class="btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10">Guardar</button>
+                @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-default btn-rounded btn-outline waves-effect waves-light" })
+
+            }
+        </div>
+    </div>
+</div>
+
+

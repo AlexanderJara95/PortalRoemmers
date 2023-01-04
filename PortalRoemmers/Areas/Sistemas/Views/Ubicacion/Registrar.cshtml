@@ -1,0 +1,276 @@
+﻿@model PortalRoemmers.Areas.Sistemas.Models.Usuario.UbicacionModels
+@using PortalRoemmers.Security
+@{
+    ViewBag.Title = "Registrar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section css {
+    @Styles.Render("~/Content/autocompletado_CSS")
+}
+
+<div class="white-box p-l-20 p-r-20">
+    <h3 class="box-title m-b-0"> Nuevo Ubicacion</h3>
+    <p class="text-muted m-b-30 font-13">Completar todos los campos necesarios. </p>
+    <div class="row">
+        <div class="col-md-12">
+            @using (Html.BeginForm("Registrar", "Ubicacion", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal form-material" }))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="form-group">
+                    <div class="col-xs-12">
+                        <label class="col-md-12">@Html.LabelFor(model => model.cCod_Ubi)</label>
+                        <div class="col-md-12">
+
+                            @Html.EditorFor(model => model.cCod_Ubi, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Código", @onkeyup = "javascript:this.value=this.value.toUpperCase();", @readonly = "" } })
+                            @Html.ValidationMessageFor(model => model.cCod_Ubi, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-xs-6 b-r">
+                        <label class="col-md-12">@Html.LabelFor(model => model.cPais)</label>
+                        <div class="col-md-12">
+                            <div id="scrollable-dropdown-menu">
+                                @Html.EditorFor(model => model.cPais, new { htmlAttributes = new { @class = "typeahead form-control", @placeholder = "nombre", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.cPais, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <label class="col-md-12">@Html.LabelFor(model => model.cCod_Pais)</label>
+                        <div class="col-md-12">
+
+                            @Html.EditorFor(model => model.cCod_Pais, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Código", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                            @Html.ValidationMessageFor(model => model.cCod_Pais, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-xs-6 b-r">
+                        <label class="col-md-12">@Html.LabelFor(model => model.cDepartamento)</label>
+                        <div class="col-md-12">
+
+                            @Html.EditorFor(model => model.cDepartamento, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "nombre", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                            @Html.ValidationMessageFor(model => model.cDepartamento, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <label class="col-md-12">@Html.LabelFor(model => model.cCod_Dpto)</label>
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.cCod_Dpto, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Código", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                            @Html.ValidationMessageFor(model => model.cCod_Dpto, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-xs-6 b-r">
+                        <label class="col-md-12">@Html.LabelFor(model => model.cProvincia)</label>
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.cProvincia, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "nombre", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                            @Html.ValidationMessageFor(model => model.cProvincia, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <label class="col-md-12">@Html.LabelFor(model => model.cCod_Provincia)</label>
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.cCod_Provincia, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Código", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                            @Html.ValidationMessageFor(model => model.cCod_Provincia, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-xs-6 b-r">
+                        <label class="col-md-12">@Html.LabelFor(model => model.cDistrito)</label>
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.cDistrito, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "nombre", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                            @Html.ValidationMessageFor(model => model.cDistrito, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <label class="col-md-12">@Html.LabelFor(model => model.cCod_Distrito)</label>
+                        <div class="col-md-12">
+                            @Html.EditorFor(model => model.cCod_Distrito, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Código", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                            @Html.ValidationMessageFor(model => model.cCod_Distrito, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10">Guardar</button>
+                @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-default btn-rounded btn-outline waves-effect waves-light" })
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    @Scripts.Render("~/Bundles/autocompletado_JS")
+    <script>
+        $(document).ready(function () {
+            $("#cCod_Pais").change(function () {
+                $("#cCod_Ubi").val($("#cCod_Pais").val() + $("#cCod_Dpto").val() + $("#cCod_Provincia").val() + $("#cCod_Distrito").val());
+            });
+
+            $("#cCod_Dpto").change(function () {
+                $("#cCod_Ubi").val($("#cCod_Pais").val() + $("#cCod_Dpto").val() + $("#cCod_Provincia").val() + $("#cCod_Distrito").val());
+            });
+
+            $("#cCod_Provincia").change(function () {
+                $("#cCod_Ubi").val($("#cCod_Pais").val() + $("#cCod_Dpto").val() + $("#cCod_Provincia").val() + $("#cCod_Distrito").val());
+            });
+
+            $("#cCod_Distrito").change(function () {
+                $("#cCod_Ubi").val($("#cCod_Pais").val() + $("#cCod_Dpto").val() + $("#cCod_Provincia").val() + $("#cCod_Distrito").val());
+            });
+
+            $('#cPais').autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: '/Ubicacion/busquedaPais',
+                        dataType: 'json',
+                        type: 'GET',
+                        cache: false,
+                        data: {
+                            term: request.term
+                        },
+                        success: function (data) {
+                            // call autocomplete callback method with results
+                            response($.map(data, function (name, val) {
+                                return {
+                                    label: name,
+                                    value: name,
+                                    cCod_Pais: val
+                                }
+                            }));
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            console.log('error', textStatus, errorThrown);
+                        }
+                    });
+                },
+                minLength: 2,
+                select: function (event, ui) {
+                    $('#cPais').val(ui.item.label);
+                    $('#cCod_Pais').val(ui.item.cCod_Pais);
+                    $("#cCod_Ubi").val($("#cCod_Pais").val() + $("#cCod_Dpto").val() + $("#cCod_Provincia").val() + $("#cCod_Distrito").val());
+                    return false;
+                }
+            })
+
+            $('#cDepartamento').autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: '/Ubicacion/busquedaDepa',
+                        dataType: 'json',
+                        type: 'GET',
+                        cache: false,
+                        data: {
+                            term: request.term,
+                            pais: $('#cCod_Pais').val()
+                        },
+                        success: function (data) {
+                            // call autocomplete callback method with results
+                            response($.map(data, function (name, val) {
+                                return {
+                                    label: name,
+                                    value: name,
+                                    cCod_Dpto: val
+                                }
+                            }));
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            console.log('error', textStatus, errorThrown);
+                        }
+                    });
+                },
+                minLength: 2,
+                select: function (event, ui) {
+                    $('#cDepartamento').val(ui.item.label);
+                    $('#cCod_Dpto').val(ui.item.cCod_Dpto);
+                    $("#cCod_Ubi").val($("#cCod_Pais").val() + $("#cCod_Dpto").val() + $("#cCod_Provincia").val() + $("#cCod_Distrito").val());
+                    return false;
+                }
+            })
+
+            $('#cProvincia').autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: '/Ubicacion/busquedaProv',
+                        dataType: 'json',
+                        type: 'GET',
+                        cache: false,
+                        data: {
+                            term: request.term,
+                            pais: $('#cCod_Pais').val(),
+                            depa: $('#cCod_Dpto').val(),
+                        },
+                        success: function (data) {
+                            // call autocomplete callback method with results
+                            response($.map(data, function (name, val) {
+                                return {
+                                    label: name,
+                                    value: name,
+                                    cCod_Provincia: val
+                                }
+                            }));
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            console.log('error', textStatus, errorThrown);
+                        }
+                    });
+                },
+                minLength: 2,
+                select: function (event, ui) {
+                    $('#cProvincia').val(ui.item.label);
+                    $('#cCod_Provincia').val(ui.item.cCod_Provincia);
+                    $("#cCod_Ubi").val($("#cCod_Pais").val() + $("#cCod_Dpto").val() + $("#cCod_Provincia").val() + $("#cCod_Distrito").val());
+                    return false;
+                }
+            })
+
+            $('#cDistrito').autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: '/Ubicacion/busquedaDist',
+                        dataType: 'json',
+                        type: 'GET',
+                        cache: false,
+                        data: {
+                            term: request.term,
+                            pais: $('#cCod_Pais').val(),
+                            depa: $('#cCod_Dpto').val(),
+                            prov: $('#cCod_Provincia').val()
+                        },
+                        success: function (data) {
+                            // call autocomplete callback method with results
+                            response($.map(data, function (name, val) {
+                                return {
+                                    label: name,
+                                    value: name,
+                                    cCod_Distrito: val
+                                }
+                            }));
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            console.log('error', textStatus, errorThrown);
+                        }
+                    });
+                },
+                minLength: 2,
+                select: function (event, ui) {
+                    $('#cDistrito').val(ui.item.label);
+                    $('#cCod_Distrito').val(ui.item.cCod_Distrito);
+                    $("#cCod_Ubi").val($("#cCod_Pais").val() + $("#cCod_Dpto").val() + $("#cCod_Provincia").val() + $("#cCod_Distrito").val());
+                    return false;
+                }
+            })
+
+        });
+    </script>
+}
+

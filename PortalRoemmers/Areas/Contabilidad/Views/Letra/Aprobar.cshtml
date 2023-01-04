@@ -1,0 +1,273 @@
+﻿@model IEnumerable<PortalRoemmers.Areas.Contabilidad.Models.Letra.LetraModels>
+@using PortalRoemmers.Security
+@{
+    ViewBag.Title = "Aprobar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section css {
+    @Styles.Render("~/Content/tablaExport_CSS")
+}
+<!--Aprobar-->
+<div id="responsive-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h2 class="modal-title">Aprobar Letra </h2>
+            </div>
+            <div class="modal-body">
+                <div id='danger' class='alert alert-danger hidden'></div>
+                <div class="form-group">
+                    <label for="message-text" class="control-label">Observaci&oacuten:</label>
+                    <textarea class="form-control" id="idGlosaApro"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-danger waves-effect waves-light" onclick="aprobarLet()">Aprobar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!---->
+<!--Rechazar-->
+<div id="responsive-modal-rechazado" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h2 class="modal-title">Rechazar Letra</h2>
+            </div>
+            <div class="modal-body">
+                <div id='danger' class='alert alert-danger hidden'></div>
+                <div class="form-group">
+                    <label for="message-text" class="control-label">Observaci&oacuten:</label>
+                    <textarea class="form-control" id="idGlosaRecha"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-danger waves-effect waves-light" onclick="rechazarLet()">Rechazar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!---->
+<div class="panel panel-default">
+    <div class="panel-heading box-title m-b-0"><h2>Aprobaci&oacuten de letra</h2></div>
+    <div class="panel-body">
+        <section id="wrapper" class="block1">
+            <div class="row">
+                <div id='success' class='alert alert-success hidden'></div>
+                <div class="row show-grid">
+                    <div class="col-xs-12">
+                        <div class="col-lg-6 col-sm-6 col-xs-12">
+                            <a data-toggle="modal" class="fcbtn btn btn-info btn-outline btn-1d btn-lg btn-block" href="#responsive-modal"><i class="fa fa-thumbs-o-up"></i>   Aprobar</a>
+                        </div>
+                        <div class="col-lg-6 col-sm-6 col-xs-12">
+                            <a data-toggle="modal" class="fcbtn btn btn-danger btn-outline btn-1d btn-lg btn-block" href="#responsive-modal-rechazado"><i class="fa fa-thumbs-o-down"></i>   Rechazar</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="table-responsive">
+                        <table id="example23" class="display nowrap" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="chkParent" /></th>
+                                    <th class="hidden"></th>
+                                    <th>Cod. Letra</th>
+                                    <th>Referencia</th>
+                                    <th>Aceptante</th>
+                                    <th>Fecha Giro</th>
+                                    <th>Fecha Venc.</th>
+                                    <th>Monto</th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <th></th>
+                                    <th class="hidden"></th>
+                                    <th>Cod. Letra</th>
+                                    <th>Referencia</th>
+                                    <th>Aceptante</th>
+                                    <th>Fecha Giro</th>
+                                    <th>Fecha Venc.</th>
+                                    <th>Monto</th>
+                                </tr>
+                            </tfoot>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                <tr>
+                                    <td class="jsgrid-align-center">
+                                        @Html.EditorFor(modelItem => item.option)
+                                    </td>
+                                    <td class="hidden"> @Html.DisplayFor(modelItem => item.idLetra)</td>
+                                    <td> @Html.DisplayFor(modelItem => item.codLetra)</td>
+                                    <td> @Html.DisplayFor(modelItem => item.refLetra)</td>
+                                    <td> @Html.DisplayFor(modelItem => item.aceptante.nomAceptante)</td>
+                                    <td> @Html.DisplayFor(modelItem => item.fchGiroLet)</td>
+                                    <td> @Html.DisplayFor(modelItem => item.fchVencLet)</td>
+                                    <td> @Html.DisplayFor(modelItem => item.moneda.simbMon) @Html.DisplayFor(modelItem => item.impLetra)</td>
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="panel-footer"></div>
+</div>
+@section scripts
+{
+    @Scripts.Render("~/Bundles/tablaExport_JS")
+    @Scripts.Render("~/Bundles/bloqueo_JS")
+    <script>
+        $(document).ready(function () {
+            $('#example23').DataTable({
+                dom: 'Bfrtip'
+                , buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+            });
+            $('#chkParent').click(function () {
+                var isChecked = $(this).prop("checked");
+                $('#example23 tr:has(td)').find('input[type="checkbox"]').prop('checked', isChecked);
+            });
+            $('#example23 tr:has(td)').find('input[type="checkbox"]').click(function () {
+                var isChecked = $(this).prop("checked");
+                var isHeaderChecked = $("#chkParent").prop("checked");
+                if (isChecked == false &&  isHeaderChecked){
+                    $("#chkParent").prop('checked', isChecked);
+                }
+                else {
+                    $('#example23 tr:has(td)').find('input[type="checkbox"]').each(function () {
+                            if ($(this).prop("checked") == false)
+                                isChecked = false;
+                        });
+                        $("#chkParent").prop('checked', isChecked);
+                    }
+            });
+        });
+
+        function aprobarLet() {
+            var existe = false;
+            var letras = '';
+            $('#example23').DataTable().rows().iterator('row', function (context, index) {
+                if ($(this.row(index).node()).find('td').eq(0).find('input:checked').val()) {//capturamos los seleccionados
+                    letras += $.trim($(this.row(index).node()).find('td').eq(1).text()) + '|';
+                    existe = true;
+                }
+            });
+            //-------------------------------------
+            letras = letras.substr(0, letras.length - 1)
+            //-------------------------------------
+            var glosario = $("#idGlosaApro").val();
+            //-------------------------------------
+            //Validamos si existe aprobador seleccionado
+            if (glosario == "")
+            {
+                $("div #danger").removeClass('hidden');
+                $("div #danger").text('Debe escribir una observacion');
+                setTimeout(function () { $("div #danger").fadeOut(2000).fadeIn(2000).fadeOut(1500).fadeIn(1500).fadeOut(500) }, 500);
+                setTimeout(function () { $("div #danger").addClass('hidden'); }, 4000);
+                return false;
+            }
+            //debe seleccionar almenos una solicitud de la grilla
+            if (!existe) {
+                $("div #danger").removeClass('hidden');
+                $("div #danger").text('Debe seleccionar una letra');
+                setTimeout(function () { $("div #danger").fadeOut(2000).fadeIn(2000).fadeOut(1500).fadeIn(1500).fadeOut(500) }, 500);
+                setTimeout(function () { $("div #danger").addClass('hidden'); }, 4000);
+                return false;
+            }
+            //eligo el aprobador, observacion y estado
+            //-------------------------------------
+            var aprobador = @SessionPersister.UserId;
+
+            //-------------------------------------
+            var estado = @ConstantesGlobales.estadoAprobado;
+            //-------------------------------------
+            //mando a aprobador,observacion y estado
+            $.post('/Letra/aprobar_o_no_Letras', { let: letras, apr: aprobador, glo: glosario, est : estado}, function (data, status) {
+                if (status == "success") {
+                   if (data) {
+                        $('#responsive-modal').modal('hide');
+                        $("div #success").removeClass('hidden');
+                        $("div #success").text('Se aprobo la(s) letra(s)');
+                        setTimeout(function () { $("div #success").fadeOut(2500).fadeIn(2500).fadeOut(2000).fadeIn(2000).fadeOut(500) }, 500);
+                        setTimeout(function () { $("div #success").addClass('hidden'); }, 3000);
+                        block();
+                        location.reload();
+                        }
+                    else {
+                        $("div #danger").removeClass('hidden');
+                        $("div #danger").text('Se genero un error');
+                        setTimeout(function () { $("div #danger").fadeOut(2000).fadeIn(2000).fadeOut(1500).fadeIn(1500).fadeOut(500) }, 500);
+                        setTimeout(function () { $("div #danger").addClass('hidden'); }, 4000);
+                    }
+                }
+            });
+        }
+
+        function rechazarLet() {
+            var existe = false;
+            var letras = '';
+            $('#example23').DataTable().rows().iterator('row', function (context, index) {
+                if ($(this.row(index).node()).find('td').eq(0).find('input:checked').val()) {//capturamos los seleccionados
+                    letras += $.trim($(this.row(index).node()).find('td').eq(1).text()) + '|';
+                    existe = true;
+                }
+            });
+            letras = letras.substr(0, letras.length - 1);
+            //validar si selecciono al menos una solicitud
+            if (!existe) {
+                $("div #danger").removeClass('hidden');
+                $("div #danger").text('Debe seleccionar una letra');
+                setTimeout(function () { $("div #danger").fadeOut(2000).fadeIn(2000).fadeOut(1500).fadeIn(1500).fadeOut(500) }, 500);
+                setTimeout(function () { $("div #danger").addClass('hidden'); }, 4000);
+                return false;
+            }
+            //eligo el aprobador, observacion y estado
+            //-------------------------------------
+            var aprobador = @SessionPersister.UserId;
+            //-------------------------------------
+            var glosario = $("#idGlosaRecha").val();
+            //-------------------------------------
+            var estado = @ConstantesGlobales.estadoRechazado;
+            //-------------------------------------
+            $.post('/Letra/aprobar_o_no_Letras', { let: letras, apr: aprobador, glo: glosario, est: estado }, function (data, status) {
+                if (status == "success") {
+                    if (data) {
+                        $('#responsive-modal-rechazado').modal('hide');
+                        $("div #success").removeClass('hidden');
+                        $("div #success").text('Se rechazo la(s) letra(s)');
+                        setTimeout(function () { $("div #success").fadeOut(2500).fadeIn(2500).fadeOut(2000).fadeIn(2000).fadeOut(500) }, 500);
+                        setTimeout(function () { $("div #success").addClass('hidden'); block(); location.reload(); }, 3000);
+                    }
+                    else {
+                        $("div #danger").removeClass('hidden');
+                        $("div #danger").text('Se genero un error');
+                        setTimeout(function () { $("div #danger").fadeOut(2000).fadeIn(2000).fadeOut(1500).fadeIn(1500).fadeOut(500) }, 500);
+                        setTimeout(function () { $("div #danger").addClass('hidden'); }, 4000);
+                    }
+                }
+            });
+        }
+
+        function block() {
+            $('section.block1').block({
+                message: '<h4><img src="../../Content/plugins/images/busy.gif" /> Sólo un momento...</h4>'
+                , css: {
+                    border: '1px solid #fff'
+                }
+            });
+        }
+        function unblock() {
+            $('section.block1').unblock();
+        }
+
+    </script>
+}

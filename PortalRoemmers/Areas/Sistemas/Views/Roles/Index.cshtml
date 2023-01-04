@@ -1,0 +1,115 @@
+﻿@model  PortalRoemmers.ViewModels.IndexViewModel
+@using PortalRoemmers.Helpers
+@using PortalRoemmers.Security
+
+@{
+    ViewBag.Title = "Index";
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section css {
+    @Styles.Render("~/Content/tablaResponsive_CSS")
+}
+<div class="panel panel-default">
+    <div class="panel-heading box-title"><h2>Mantenimiento de Roles</h2></div>
+
+    <div class="panel-body">
+        <div class="form-group">
+            @{ string v = ""; try { v = TempData["mensaje"].ToString(); } catch { }}
+            @(new HtmlString(v))
+        </div>
+        @using (Html.BeginForm("Index", "Roles", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista }, FormMethod.Post))
+        {
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="input-group">
+                        <input type="text" id="search" name="search" class="form-control" placeholder="Buscar" value="@ViewBag.search">
+                        <span class="input-group-btn">
+                            <button class="btn waves-effect waves-light btn-info">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        }
+        <br />
+        <div class="row">
+            <div class="col-xs-6">
+                @Html.ActionLink("Crear Rol", "Registrar", "Roles", new { Area = "Sistemas", rol = ViewBag.rol }, new { @Class = "btn btn-info btn-rounded" })
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <table class="tablesaw table-bordered table-hover table" data-tablesaw-mode="swipe">
+                    <thead>
+                        <tr>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist"></th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1">
+                                Código
+                            </th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2">
+                                Título
+                            </th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">
+                                Tipo
+                            </th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="4">
+                                Relacionado
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Roles)
+                        {
+                            <tr>
+                                <td class="text-nowrap">
+                                    <a href="@MyExtensions.ActionUrl("Modificar", "Roles", new {Area="Sistemas", id = item.rolId, rol = ViewBag.rol})" data-toggle="tooltip" title="Editar"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a>
+                                    <a href="@MyExtensions.ActionUrl("Eliminar", "Roles", new {Area="Sistemas", id = item.rolId, rol = ViewBag.rol})" data-toggle="tooltip" title="Eliminar"> <i class="fa fa-close text-danger m-r-10"></i> </a>
+
+                                    @try
+                                    {
+                                        <a href="@Url.Action("Index", "Roles", new {menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search, Area = "Sistemas", id = item.Parent.ParentId })" data-toggle="tooltip" title="Regresar"> <i class="fa fa-rotate-left"></i> </a>
+                                    }
+                                    catch
+                                    { }
+                                    @if (item.rolTip != ConstantesGlobales.tipRol_Vista)
+                                    {
+                                        <a href="@Url.Action("Index", "Roles", new {menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = 1, search = SessionPersister.Search, Area = "Sistemas",  id = item.rolId })" data-toggle="tooltip" title="Siguiente"> <i class="fa fa-repeat"></i> </a>
+                                    }
+
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.rolId)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.roltitu)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.TipRol.nomTipRol)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Parent.roltitu)
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-12">
+                @{Html.RenderPartial("_paginador", Model);}
+            </div>
+        </div>
+    </div>
+    <div class="panel-footer"></div>
+</div>
+@section scripts
+{
+    @Scripts.Render("~/Bundles/tablaResponsive_JS")
+    <script src="~/Areas/Sistemas/Scripts/Sistemas.js"></script>
+}

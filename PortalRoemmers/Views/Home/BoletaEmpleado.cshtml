@@ -1,0 +1,166 @@
+﻿@model List<PortalRoemmers.Areas.RRHH.Models.Boleta.BoletaDetalleModels>
+@using PortalRoemmers.Helpers
+
+
+@{
+    ViewBag.Title = "BoletaEmpleado";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section css {
+    <link href="~/Content/plugins/bower_components/footable/css/footable.core.css" rel="stylesheet" />
+}
+
+
+<!--Visualizar Boleta-->
+<div id="responsive-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">Visualizar Boleta</h4>
+                <div id='success' class='alert alert-success hidden' style="font-weight: bold; font-size: 24px;"></div>
+            </div>
+            <div class="modal-body">
+                <object id="idContenedor" data="#" width="100%" height="600" type="application/pdf" style="color: rgb(49, 49, 49); font-size: 24px;">
+                    Si no puede ver el archivo,puede descargalo desde <a href="#" style="font-size: 36px; font-weight: bold; text-decoration-line: underline;">aquí</a>
+                </object>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cerrar</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!--Visualizar Boleta-->
+
+
+<div class="panel panel-default">
+    <div class="panel-heading box-title m-b-0"><h2>Boletas</h2></div>
+    <div class="panel-body">
+        <div class="row">
+           
+            <div class="col-sm-12">
+                <div class="table-responsive">
+                    <div class="right-page-header">
+                        <div class="pull-right">
+                            <input type="text" id="demo-input-search2" placeholder="Buscar" class="form-control">
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="scrollable">
+                        <div class="table-responsive">
+                            <table id="demo-foo-addrow" class="table m-t-30 table-hover contact-list" data-page-size="10">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                        </th>
+                                        <th>
+                                        </th>
+                                        <th>PERIODO</th>
+                                        <th>TITULO</th>
+                                        <th>ARCHIVO</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{ foreach (var item in Model)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <a id="idVisualizar" data-toggle="modal" href="#responsive-modal" class="btn btn-info btn-outline btn-circle btn-lg m-r-5"
+                                                       data-rut="@item.rutBolDet" data-nom="@item.nomBolDet" data-bol="@item.Boleta.idBolPer" data-nro="@item.nroDocBolDet" data-id="@item.idBolPer"
+                                                       data-visbol="@item.visBolDet" data-detbol="@Newtonsoft.Json.JsonConvert.SerializeObject(@item,  Newtonsoft.Json.Formatting.None)">
+                                                        <i class="fa fa-print">
+                                                        </i>                                                                                                            
+                                                    </a>
+                                                </td>
+                                                <td style=" vertical-align: inherit;">
+                                                    @{
+                                                        if (item.visBolDet == true)
+                                                        {
+                                                            <i id="@item.idBolPer" class="fa fa-star-o"></i>
+                                                        }
+                                                        else
+                                                        {
+                                                            <i id="@item.idBolPer" class="fa fa-star text-warning"></i>
+                                                        }
+                                                    }
+                                                </td>
+                                                <td style=" vertical-align: inherit;">@item.Boleta.anioBolPer - @item.Boleta.mesBolPer</td>
+                                                <td style=" vertical-align: inherit;">@item.Boleta.titBolPer</td>
+                                                <td style=" vertical-align: inherit;">@item.nomBolDet</td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="7">
+                                            <div class="text-left">
+                                                <ul class="pagination"> </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <div class="panel-footer"></div>
+</div>
+
+
+
+@section scripts
+{
+    <script src="~/Content/plugins/bower_components/footable/js/footable.all.min.js"></script>
+    <script src="~/Scripts/js/footable-init.js"></script>
+    <script src="~/Areas/Sistemas/Scripts/Sistemas.js"></script>
+
+    <script>
+       $(document).on("click", "#idVisualizar", function () {
+           var link = $(this);
+            var parent = $('object#idContenedor').parent(); 
+            var newElement = '<object  type="application/pdf" id="idContenedor" data="' + $(this).data('rut') + '" width="100%" height="600">'
+               + 'Si no puede ver el archivo,puede descargalo desde  <a href="'+$(this).data('rut') +'" download="'+$(this).data('nom')+'">aquí</a> </object>'; 
+
+            $('object#idContenedor').remove(); 
+           parent.append(newElement);
+
+           //Valido
+      
+           var atr = link.data('visbol');
+           var idatr = link.data('id');
+           if (atr.toLowerCase()==='false' ) {
+
+              $.ajax({
+                     url: '@Url.Action("verificarVisualizacion", "Home")',
+                     type: 'POST',
+                     cache: false,
+                     data: $(this).data('detbol'),
+                     success: function (result) {
+                         if (result) {
+                             $("div #success").removeClass('hidden');
+                             $("div #success").text('Estimado usuario: Usted ha visualizado su boleta por primera vez.');
+                             setTimeout(function () { $("div #success").fadeOut(5000); $("div #success").fadeIn(5000); }, 2000);
+                             setTimeout(function () { $("div #success").addClass('hidden'); $("#" + idatr).attr('class', 'fa fa-star-o');  }, 8000);
+                         }
+                     },
+                     error: function (jqXHR, textStatus, error) {
+                         alert("Estado: Error inesperado");
+                     }
+                 });
+           }
+
+       });
+    </script>
+}

@@ -1,0 +1,9 @@
+﻿ul{
+    list-style: none;
+}
+a:focus, a:hover {
+    color: #337ab7;
+}
+.noEditable {
+    background-color: #CFD8DC;
+}

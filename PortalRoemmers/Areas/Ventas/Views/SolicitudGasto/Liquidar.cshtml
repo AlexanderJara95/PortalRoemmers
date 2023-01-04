@@ -1,0 +1,258 @@
+﻿@model IEnumerable<PortalRoemmers.Areas.Ventas.Models.SolicitudGasto.SolicitudGastoModels>
+@{
+    ViewBag.Title = "Liquidar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section css {
+    @Styles.Render("~/Content/tablaExport_CSS")
+    @Styles.Render("~/Content/datepicker_CSS")
+}
+<!--Liquidacion-->
+<div id="responsive-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h2 class="modal-title">Liquidaci&oacuten </h2>
+            </div>
+            <input id="idpeso" name="idpeso" type="hidden" value="@ViewBag.Peso">
+            <div class="modal-body">
+                <div id='danger' class='alert alert-danger hidden'></div>
+
+                <div class="form-group">
+                    <label class="control-label">Tipo <spam style="color: red;">*</spam></label>
+                    @Html.DropDownList("idEst", (SelectList)ViewBag.Liqui, "Seleccionar....", htmlAttributes: new { @class = "form-control" })
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">Fecha <spam style="color: red;">*</spam></label>
+                    <input class="form-control datepicker" id="fchLiq" name="fchLiq" placeholder="dd/mm/aaaa" autocomplete="off" value="@ViewBag.fecha">
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">Observaci&oacuten <spam style="color: red;">*</spam></label>
+                    @Html.TextArea("obsLiq", new { @class = "form-control", @rows = 5, @placeholder = "Glosario" })
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">Monto <spam style="color: red;">*</spam></label>
+                    @Html.Editor("liqValRea", new { htmlAttributes = new { @class = "form-control", @placeholder = "0.0", @style = "max-width: 50%;" } })
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-danger waves-effect waves-light" onclick="LiquidarSol()">Atender</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!---->
+<div class="panel panel-default">
+    <div class="panel-heading box-title m-b-0"><h2>Liquidaci&oacuten de solicitudes atendidas</h2></div>
+    <div class="panel-body">
+        <div class="row">
+            <div id='success' class='alert alert-success hidden'></div>
+            @using (Html.BeginForm("Liquidar", "SolicitudGasto", FormMethod.Post))
+            {
+                <div class="row show-grid">
+                    <div class="col-md-5">
+                        <div class="form-group">
+                            <label for="desMen">TIPO</label>
+                            @Html.DropDownList("estado", (SelectList)ViewBag.FLiqui, htmlAttributes: new { @class = "form-control form-control-line" })
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="desMen">DESDE</label>
+                            <input class="form-control form-control-line datepicker" id="fchEveSolGasI" name="fchEveSolGasI" placeholder="dd/mm/aaaa" autocomplete="off" value="@ViewBag.primero">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="desMen">HASTA</label>
+                            <input class="form-control form-control-line datepicker" id="fchEveSolGasF" name="fchEveSolGasF" placeholder="dd/mm/aaaa" autocomplete="off" value="@ViewBag.actual">
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <span class="input-group-btn">
+                            <button class="btn waves-effect waves-light btn-info">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            }
+            <div class="row show-grid">
+                <div class="col-xs-12">
+                    <div class="col-md-6 col-md-offset-3">
+                        <a data-toggle="modal" class="fcbtn btn btn-primary btn-outline btn-1d btn-lg btn-block" href="#responsive-modal"><i class="fa fa-file-o"></i>   Liquidar</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="table-responsive">
+                    <table id="example23" class="display nowrap" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>C&oacutedigo</th>
+                                <th>T.Gasto</th>
+                                <th>Concepto</th>
+                                <th>Responsable</th>
+                                <th>F.Evento</th>
+                                <th>F.Solicitud</th>
+                                <th>Costo</th>
+                                <th class="hidden"></th>
+                                <th class="hidden"></th>
+                                <th class="hidden"></th>
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <th></th>
+                                <th>C&oacutedigo</th>
+                                <th>T.Gasto</th>
+                                <th>Concepto</th>
+                                <th>Responsable</th>
+                                <th>F.Evento</th>
+                                <th>F.Solicitud</th>
+                                <th>Costo</th>
+                                <th class="hidden"></th>
+                                <th class="hidden"></th>
+                                <th class="hidden"></th>
+                            </tr>
+                        </tfoot>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="jsgrid-align-center">
+                                        @{
+                                            if (item.idEst == ConstantesGlobales.estadoAtendido)
+                                            {
+                                                @Html.EditorFor(modelItem => item.option)
+                                            }
+                                        }
+                                    </td>
+                                    <td> @Html.DisplayFor(modelItem => item.idSolGas)</td>
+                                    <td> @Html.DisplayFor(modelItem => item.concepto.tipoGasto.nomTipGas)</td>
+                                    <td> @Html.DisplayFor(modelItem => item.concepto.nomConGas)</td>
+                                    <td> @Html.DisplayFor(modelItem => item.responsable.empleado.nomComEmp)</td>
+                                    <td> @Html.DisplayFor(modelItem => item.fchEveSolGas)</td>
+                                    <td> @Html.DisplayFor(modelItem => item.usufchCrea)</td>
+                                    <td> @Html.DisplayFor(modelItem => item.moneda.simbMon) @Html.DisplayFor(modelItem => item.monSolGas)</td>
+                                    <td class="hidden"> @Html.DisplayFor(modelItem => item.idPres)</td>
+                                    <td class="hidden"> @Html.DisplayFor(modelItem => item.idMon)</td>
+                                    <td class="hidden"> @Html.DisplayFor(modelItem => item.valtipCam)</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-footer"></div>
+</div>
+@section scripts
+{
+    @Scripts.Render("~/Bundles/tablaExport_JS")
+    @Scripts.Render("~/Bundles/bloqueo_JS")
+    @Scripts.Render("~/Bundles/datepicker_JS")
+    <script src="~/Areas/Sistemas/Scripts/Sistemas.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#example23').DataTable({
+                dom: 'Bfrtip'
+                , buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+            });
+            $('.datepicker').datepicker({
+                dateFormat: 'dd/mm/yy'
+            });
+
+            $("#idEst").change(function () {
+                var valorDTotal = '';
+                $("input[type=checkbox]:checked").each(function () {//capturamos los seleccionados
+                    valorDTotal = $.trim($(this).closest('td').siblings()[6].innerHTML);
+                });
+                valorDTotal = valorDTotal.replace("S/", "")
+                valorDTotal = valorDTotal.replace("$", "")
+                //=========================================
+               $("#liqValRea").prop('disabled', false);
+                $("#liqValRea").val('');
+                if( $("#idEst").val()==@ConstantesGlobales.estadoDTotal){
+                    $("#liqValRea").prop('disabled', true);
+                    $("#liqValRea").val(parseFloat(valorDTotal));
+                }
+            });
+
+
+        });
+
+        $("input:checkbox").on('click', function() {
+        // in the handler, 'this' refers to the box clicked on
+              var $box = $(this);
+              if ($box.is(":checked")) {
+                var group = "input:checkbox[name='" + $box.attr("name") + "']";
+                $(group).prop("checked", false);
+                $box.prop("checked", true);
+              } else {
+                $box.prop("checked", false);
+              }
+        });
+
+        function LiquidarSol() {
+            var existe = false;
+            var solicitud = '';
+            var idEst = $("#idEst").val();
+            var fchLiq = $("#fchLiq").val();
+            var obsLiq = $("#obsLiq").val();
+            var liqValRea = $("#liqValRea").val();
+
+            $("input[type=checkbox]:checked").each(function () {//capturamos los seleccionados
+                existe = true;
+                solicitud = $.trim($(this).closest('td').siblings()[0].innerHTML);
+            });
+
+            if (!existe) {
+                $("div #danger").removeClass('hidden');
+                $("div #danger").text('Debe seleccionar una solicitud');
+                setTimeout(function () { $("div #danger").fadeOut(2000).fadeIn(2000).fadeOut(1500).fadeIn(1500).fadeOut(500) }, 500);
+                setTimeout(function () { $("div #danger").addClass('hidden'); }, 4000);
+                return false;
+            }
+
+
+            if (idEst != "" && fchLiq != "" && obsLiq != "" && liqValRea != "") {
+                $.post('/SolicitudGasto/liquidarSolicitud', { solicitud: solicitud, idEst: idEst, fchLiq: fchLiq, obsLiq: obsLiq, liqValRea: liqValRea }, function (data, status) {
+                    if (status == "success") {
+                        if (data == "ok") {
+                            $('#responsive-modal').modal('hide');
+                            $("div #success").removeClass('hidden');
+                            $("div #success").text('Se liquidaron la(s) solicitud(es)');
+                            setTimeout(function () { $("div #success").fadeOut(2500).fadeIn(2500).fadeOut(2000).fadeIn(2000).fadeOut(500) }, 500);
+                            setTimeout(function () { $("div #success").addClass('hidden'); }, 3000);
+                            location.reload();
+                        }
+                        else {
+                            $("div #danger").removeClass('hidden');
+                            $("div #danger").text('Se genero un error');
+                            setTimeout(function () { $("div #danger").fadeOut(2000).fadeIn(2000).fadeOut(1500).fadeIn(1500).fadeOut(500) }, 500);
+                            setTimeout(function () { $("div #danger").addClass('hidden'); }, 4000);
+                        }
+                    }
+                });
+            } else {
+                $("div #danger").removeClass('hidden');
+                $("div #danger").text('Debe llenar los campos obligatorios (*)');
+                setTimeout(function () { $("div #danger").fadeOut(2000).fadeIn(2000).fadeOut(1500).fadeIn(1500).fadeOut(500) }, 500);
+                setTimeout(function () { $("div #danger").addClass('hidden'); }, 4000);
+                return false;
+            }
+        }
+
+
+    </script>
+}

@@ -1,0 +1,894 @@
+﻿@model  PortalRoemmers.ViewModels.IndexViewModel
+@using PortalRoemmers.Helpers
+@using PortalRoemmers.Security
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section css {
+    @Styles.Render("~/Content/tablaResponsive_CSS")
+    @Styles.Render("~/Content/Galeria_CSS")
+    @Styles.Render("~/Content/sweetalert_CSS")
+    @Styles.Render("~/Content/selectBusqueda_CSS")
+    @Styles.Render("~/Content/datepicker_CSS")
+
+}
+<!--Files Upload-->
+<div id="responsive-modal-Files" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h2 class="modal-title">Detalle de Files</h2>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form id="FormUpload" enctype="multipart/form-data" method="post">
+                        <input id="idSolGastoSelected" class="hidden">
+                        <div id='danger1' class='alert alert-danger hidden'>Ingresar todos los campos</div>
+                        <div class="col-sm-12 white-box">
+                            <div class="input-group">
+                                <input type="file" id="UploadedFile" name="UploadedFile" class="form-control" placeholder="Buscar" onchange="singleFileSelected(event)" required>
+                                <span class="input-group-btn">
+                                    <button id="AgregarFiles" class="btn waves-effect waves-light btn-info">
+                                        <i class="icon-pin"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="table-responsive m-t-10" style="clear: both;">
+                                <div class="col-sm-12">
+                                    <table id="tb_files" class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center">N°</th>
+                                                <th class="text-center">Nombre</th>
+                                                <th class="hidden"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <a href="" id="refimageselect" data-toggle="lightbox" data-gallery="multiimages" data-title="Documento">
+                                <div class="col-xs-12 col-sm-12 white-box">
+                                    <img class="img-responsive" id="imagenselect" src="">
+                                </div>
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Files Upload-->
+<!--Visualizar-->
+<div class="modal fade bs-example-modal-lg" id="visualizar">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h2>SOLICITUD DE GASTO</h2>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">C&oacutedigo</label>
+                            <input type="text" id="data_cod" class="form-control" disabled />
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">F. Evento</label>
+                            <input type="text" id="data_fec" class="form-control" disabled />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">Responsable</label>
+                            <input type="text" id="data_res" class="form-control" disabled />
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">Tipo Gasto</label>
+                            <input type="text" id="data_tga" class="form-control" disabled />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">Concepto</label>
+                            <input type="text" id="data_con" class="form-control" disabled />
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">Zona</label>
+                            <input type="text" id="data_zon" class="form-control" disabled />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">Linea</label>
+                            <input type="text" id="data_lin" class="form-control" disabled />
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">Especialidad</label>
+                            <input type="text" id="data_esp" class="form-control" disabled />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">Título</label>
+                            <input type="text" id="data_tit" class="form-control" disabled />
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">Lugar</label>
+                            <input type="text" id="data_lug" class="form-control" disabled />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">U.Creaci&oacuten</label>
+                            <input type="text" id="data-usc" class="form-control" disabled />
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">U. Fecha Creaci&oacuten</label>
+                            <input type="text" id="data-ucf" class="form-control" disabled />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label class="control-label">Observaci&oacuten</label>
+                            <textarea id="data_obs" class="form-control" disabled></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label>Importe</label>
+                            <input type="text" id="data_mto" class="form-control" disabled />
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label>Moneda</label>
+                            <input type="text" id="data_mon" class="form-control" disabled />
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <label>T.Cambio</label>
+                            <input type="text" id="data_cam" class="form-control" disabled />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h2> Familia de producto</h2>
+                        <table id="tb_familia" class="tablesaw table-bordered table-hover table" data-tablesaw-mode="swipe">
+                            <thead>
+                                <tr>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist">C&oacutedigo</th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1">Nombre</th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2">Descripci&oacuten</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h2> M&eacutedicos</h2>
+                        <table id="tb_medico" class="tablesaw table-bordered table-hover table" data-tablesaw-mode="swipe">
+                            <thead>
+                                <tr>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist">C&oacutedigo</th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1">Nombre</th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2">Descripci&oacuten</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h2> Responsable</h2>
+                        <table id="tb_responsable" class="tablesaw table-bordered table-hover table" data-tablesaw-mode="swipe">
+                            <thead>
+                                <tr>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist">C&oacutedigo</th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1">Nombre</th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2">Descripci&oacuten</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default waves-effect text-right" data-dismiss="modal" id="btnPrint">Imprimir</button>
+                <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!---->
+<!--Firmas-->
+<div id="responsive-modal-Firmas" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h2 class="modal-title">Firmas de la Solicitud</h2>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="table-responsive m-t-10" style="clear: both;">
+                            <table id="tb_firma" class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">N°</th>
+                                        <th class="text-center">Firm&oacute</th>
+                                        <th class="text-center">Fecha</th>
+                                        <th class="text-center">Estado</th>
+                                        <th class="text-center">Monto</th>
+                                        <th class="text-center">Observaci&oacuten</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Firmas-->
+<div class="panel panel-default">
+    <div class="panel-heading box-title m-b-0"><h2>Mantenimiento de Solicitud de Gasto</h2></div>
+    <div class="panel-body">
+        <div class="form-group">
+            @{ string v = ""; try { v = TempData["mensaje"].ToString(); } catch { }}
+            @(new HtmlString(v))
+        </div>
+        @using (Html.BeginForm("Index", "SolicitudGastoMkt", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista }, FormMethod.Post))
+        {
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="form-group">
+                        <label for="search">NOMBRE o CÓDIGO</label>
+                        <input type="text" id="search" name="search" class="form-control" placeholder="Buscar" value="@ViewBag.search">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="desMen">DESDE</label>
+                        <input class="form-control form-control-line datepicker" id="fchEveSolGasI" name="fchEveSolGasI" placeholder="dd/mm/aaaa" autocomplete="off" value="@ViewBag.primero">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="desMen">HASTA</label>
+                        <input class="form-control form-control-line datepicker" id="fchEveSolGasF" name="fchEveSolGasF" placeholder="dd/mm/aaaa" autocomplete="off" value="@ViewBag.actual">
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <span class="input-group-btn">
+                        <button class="btn waves-effect waves-light btn-info">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </span>
+                </div>
+            </div>
+        }
+        <br />
+
+        @using (Html.BeginForm("Registrar", "SolicitudGastoMkt", new { Area = "Marketing" }, FormMethod.Get))
+        {
+            <div class="col-sm-12">
+                <div class="col-sm-2"></div>
+                <div class="col-sm-8">
+                    <div class="user-btm-box">
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <dl>
+                                    <dt>INGRESE LA ACTIVIDAD POR RESPONSABLE</dt>
+                                    <dd>Estos datos son opcionales</dd>
+                                </dl>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="row col-md-6">
+                                <div class="form-group">
+                                    <label class="col-md-12">RESPONSABLE </label>
+                                    <div class="col-md-12">
+                                        @Html.DropDownList("idAccResGP", (SelectList)ViewBag.gerentesProd, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row col-md-6">
+                                <div class="form-group">
+                                    <label class="col-md-12">ACTIVIDAD EST. </label>
+                                    <div class="col-md-12">
+                                        @Html.DropDownList("idActividades", (SelectList)ViewBag.actividades, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <br>
+                                <button type="submit" class="btn btn-info btn-rounded">Crear Solicitud</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2"></div>
+            </div>
+        }
+        <div class="row">
+            <div class="row show-grid">
+                <div class="col-lg-1 col-sm-4 col-xs-12">
+                    <button id="btnExportar" type="submit" class="btn btn-block btn-outline btn-info">Exportar</button>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <table class="tablesaw table-bordered table-hover table" data-tablesaw-mode="swipe">
+                    <thead>
+                        <tr>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist"></th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1">C&oacutedigo</th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2">T&iacutetulo</th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Evento</th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="4">Estado</th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="5">T.Gasto</th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="6">Monto</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.SolGasto)
+                        {
+                            <tr>
+                                <td class="text-nowrap">
+                                    @{
+                                        //Firmas
+                                        var detFr = item.dFirma.OrderBy(x => x.usufchCrea).ToList();
+                                        var dfr = "";
+                                        if (detFr.Count != 0)
+                                        {
+                                            foreach (var f in detFr)
+                                            {
+                                                if (f.idEst == ConstantesGlobales.estadoLiquidado)
+                                                {
+                                                    dfr += f.idSolGas + ";" + f.solicitante.username + ";" + f.usufchCrea + ";" + f.estado.nomEst + "-" + f.gasto.liquidacion.estado.nomEst + ";" + f.gasto.liquidacion.liqValRea + ";" + f.gasto.dFirma.Where(x => x.idAcc == f.solicitante.idAcc).Select(x => x.obsFirSol).FirstOrDefault() + "|";
+                                                }
+                                                else
+                                                {
+                                                    dfr += f.idSolGas + ";" + f.solicitante.username + ";" + f.usufchCrea + ";" + f.estado.nomEst + ";" + f.gasto.monSolGas + ";" + f.gasto.dFirma.Where(x => x.idAcc == f.solicitante.idAcc).Select(x => x.obsFirSol).FirstOrDefault() + "|";
+                                                }
+                                            }
+                                            dfr = dfr.Remove(dfr.Length - 1, 1);
+                                        }
+
+                                        //Files
+                                        var detFile = item.dFil.OrderBy(x => x.idFile).ToList();
+                                        var dfl = "";
+                                        if (detFile.Count != 0)
+                                        {
+                                            foreach (var l in detFile)
+                                            {
+                                                dfl += l.nomFile + ";" + l.pathFile + "|";
+                                            }
+                                            dfl = dfl.Remove(dfl.Length - 1, 1);
+                                        }
+                                    }
+                                    <a href="@Url.Action("Imprimir", "SolicitudGastoMkt", new {Area="Marketing",html = false,sol=item.idSolGas })" data-toggle="tooltip" title="Imprimir"> <i class="fa fa-print text-inverse m-r-10"></i> </a>
+                                    <a href="#responsive-modal-Firmas" data-toggle="modal" title="Firmas" class="open-firma m-r-10" data-detfr="@dfr"><i class="fa fa-list-ol"></i></a>
+                                    <a href="@MyExtensions.ActionUrl("Visualizar", "SolicitudGastoMkt", new {Area="Marketing", id = item.idSolGas})" data-toggle="tooltip" title="Visualizar"> <i class="fa fa-eye text-inverse m-r-10"></i> </a>
+                                    @{
+                                        //solo algunos lo ven
+                                        if (item.idEst == ConstantesGlobales.estadoRegistrado || item.idEst == ConstantesGlobales.estadoModificado)
+                                        {
+                                            <a href="@MyExtensions.ActionUrl("Modificar", "SolicitudGastoMkt", new {Area="Marketing", id = item.idSolGas})" data-toggle="tooltip" title="Editar"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a>
+                                            <a data-toggle="tooltip" title="Anular" id="sa-params" data-pres="@item.idPres" data-mon="@item.monSolGas" data-mone="@item.idMon" data-cam="@item.valtipCam"> <i class="fa fa-close text-danger"></i> </a>
+                                        }
+                                    }
+                                    @{
+                                        if (item.idEst == ConstantesGlobales.estadoAtendido)
+                                        {
+                                            <a id="sa-files" href="#responsive-modal-Files" data-toggle="modal" title="Adjuntar archivos" class="open-file m-r-12" data-detFile="@dfl"><i class="mdi mdi-attachment"></i></a>
+                                        }
+                                    }
+
+                                </td>
+                                <td>@Html.DisplayFor(modelItem => item.idSolGas)</td>
+                                @{
+                                    var longitud = item.titSolGas.Length;
+                                    var titulo = "";
+                                    if (longitud > 50)
+                                    {
+                                        titulo = item.titSolGas.Substring(0, 50);
+                                    }
+                                    else
+                                    {
+                                        titulo = item.titSolGas;
+                                    }
+                                }
+                                <td>@titulo</td>
+                                <td>@Html.DisplayFor(modelItem => item.fchEveSolGas)</td>
+                                <td>@Html.DisplayFor(modelItem => item.estado.nomEst)</td>
+                                <td>@Html.DisplayFor(modelItem => item.concepto.tipoGasto.nomTipGas)</td>
+                                <td>@Html.DisplayFor(modelItem => item.moneda.simbMon) @Html.DisplayFor(modelItem => item.monSolGas)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                @{Html.RenderPartial("_paginador", Model);}
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-footer"></div>
+</div>
+@section scripts
+{
+    @Scripts.Render("~/Bundles/tablaResponsive_JS")
+    @Scripts.Render("~/Bundles/Galeria_JS")
+    @Scripts.Render("~/Bundles/sweetalert_JS")
+    @Scripts.Render("~/Bundles/selectBusqueda_JS")
+    @Scripts.Render("~/Bundles/datepicker_JS")
+    <script src="~/Areas/Marketing/Scripts/Marketing.js"></script>
+    <script src="~/Content/plugins/bower_components/gallery/js/animated-masonry-gallery.js"></script>
+    <script>
+        $(document).ready(function () {
+            ///////////////////////////////////
+            $("#idAccResGP").select2();
+            $("#idActividades").select2();
+
+
+            //llenar actividades segun Responsable
+            $("#idAccResGP").change(function () {
+                if ($("#idAccResGP").val() != "") {
+                    $("#idActividades").prop("disabled", true);
+                    var RolOptions = {};
+                    RolOptions.url = "/SolicitudGastoMkt/buscarActividades";
+                    RolOptions.type = "POST";
+                    RolOptions.data = JSON.stringify({ idAcc: $("#idAccResGP").val() });
+                    RolOptions.datatype = "json";
+                    RolOptions.contentType = "application/json";
+                    RolOptions.success = function (data) {
+                        $("#idActividades").select2("val", "");
+                        $('#idActividades').empty();
+                        $("#idActividades").append($("<option> </option>").val("").html("Seleccionar"));
+                        $.each(data, function (i, item) {
+                            $("#idActividades").append($("<option> </option>").val(item.idActiv).html(item.nomActiv));
+                        });
+
+                    };
+                    RolOptions.error = function () { alert("Error in Getting States!!"); };
+                    $.ajax(RolOptions);
+                    $("#idActividades").prop("disabled", false);
+                }
+            });
+
+            $('table tbody tr a#sa-params').click(function () {
+                var idSolGas = $(this).parent().parents('tr').find('td').eq(1).text();
+                var idPres = $(this).data('pres');
+                var monSolGas = $(this).data('mon');
+                var idMon = $(this).data('mone');
+                var valtipCam = $(this).data('cam');
+
+                swal({
+                    title: "¿Estás seguro?",
+                    text: "¡No se podrá aprobar esta solicitud! \n",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Sí, anularlo!",
+                    cancelButtonText: "No, anularlo!",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                }, function (isConfirm) {
+                    if (isConfirm) {
+                        var Options = {};
+                        Options.url = "/SolicitudGastoMkt/anularSolicitud";
+                        Options.type = "POST";
+                        Options.data = JSON.stringify({ idSolGas: idSolGas, idPres: idPres, monSolGas: monSolGas, idMon: idMon, valtipCam: valtipCam });
+                        Options.datatype = "json";
+                        Options.contentType = "application/json";
+                        Options.success = function (data) {
+
+                            if (data) {
+                                swal("Anulado!", "Tu solicitud ha sido anulada.", "success");
+                                setTimeout(function () {
+                                    location.reload();
+                                }, 2000);
+                            } else {
+                                swal("Ocurrio un problema!", "Tu solicitud no ha sido anulaa.", "error");
+                            }
+                        };
+                        Options.error = function () { alert("Error in Getting States!!"); unblock(); };
+                        $.ajax(Options);
+
+                    } else {
+                        swal("Cancelado", "Tu solicitud esta seguro.)", "error");
+                    }
+                });
+            });
+            //UPLOAD FILES
+            ///////////////////////////////////////////////////////
+            $('table tbody tr a#sa-files').click(function () {
+                var idSol = $(this).parent().parents('tr').find('td').eq(1).text();
+                $("#idSolGastoSelected").val(idSol);
+                //Llamar una funcion que busque la grilla para files
+                $("#imagenselect").attr("src", "");
+                $("#refimageselect").attr("href", "");
+
+                //Vaceo la tabla
+                $("#tb_files > tbody:last").empty();
+                //-----------------------------------
+                console.log("entro uploadfile success");
+                //-----------------------------------
+                //armo la tabla firma
+                $.post('/SolicitudGastoMkt/obtenerFiles', { id: idSol }, function (data, status) {
+                    if (status == "success") {
+                        $.each(data, function (i, item) {
+                            //-----------------------------------------------------
+                            var id = $("#tb_files > tbody > tr").length;
+                            row = "<tr>";
+                            row += "<td class='text-center'>" + (id + 1) + "</td>";
+                            row += "<td class='text-center'>" + item.nom + "</td>";
+                            row += "<td class='hidden'>" + item.path + "</td>";
+                            row += "<td class='hidden'>" + item.idFile + "</td>";
+                            row += "<td class='delete' onclick='ActualizarIdFila(event)'><span class='glyphicon glyphicon-remove'></span></td>";
+                            row += "<td class='visualizar text-nowrap' onclick='VisualizarDoc(event)'><i class='ti-search'></i></td>";
+                            row += "</tr>";
+                            $("#tb_files > tbody:last").append(row);
+                            //-----------------------------------------------------
+                        });
+                    }
+                });
+                //-----------------------------------------------
+            });
+            ///////////////////////////////////////////////////////
+            // delegate calls to data-toggle="lightbox"
+            $(document).delegate('*[data-toggle="lightbox"]:not([data-gallery="navigateTo"])', 'click', function (event) {
+                event.preventDefault();
+                return $(this).ekkoLightbox({
+                    onShown: function () {
+                        if (window.console) {
+                            return console.log('Checking our the events huh?');
+                        }
+                    }
+                    , onNavigate: function (direction, itemIndex) {
+                        if (window.console) {
+                            return console.log('Navigating ' + direction + '. Current item: ' + itemIndex);
+                        }
+                    }
+                });
+            });
+            //Programatically call
+            $('#open-image').click(function (e) {
+                e.preventDefault();
+                $(this).ekkoLightbox();
+            });
+            $('#open-youtube').click(function (e) {
+                e.preventDefault();
+                $(this).ekkoLightbox();
+            });
+            // navigateTo
+            $(document).delegate('*[data-gallery="navigateTo"]', 'click', function (event) {
+                event.preventDefault();
+                var lb;
+                return $(this).ekkoLightbox({
+                    onShown: function () {
+                        lb = this;
+                        $(lb.modal_content).on('click', '.modal-footer a', function (e) {
+                            e.preventDefault();
+                            lb.navigateTo(2);
+                        });
+                    }
+                });
+            });
+            //---------------------------------------------------------
+            $('#btnExportar').click(function () {
+                var buscar = $('#search').val();
+                url = "/Marketing/SolicitudGastoMkt/ExportSolicitudes?search=" + buscar;
+                window.open(url);
+            });
+            ///////////////////////--FIN DE DOCUMENT--////////////////////////////////
+        });
+        $(document).on("click", ".open-proces", function () {
+            $("#data_res").val($(this).data('res'));
+            $("#data_con").val($(this).data('con'));
+            $("#data_tga").val($(this).data('tga'));
+            $("#data_zon").val($(this).data('zon'));
+            $("#data_lin").val($(this).data('lin'));
+            $("#data_esp").val($(this).data('esp'));
+            $("#data_tit").val($(this).data('tit'));
+            $("#data_lug").val($(this).data('lug'));
+            $("#data_fec").val($(this).data('fec'));
+            $("#data_obs").val($(this).data('obs'));
+            $("#data_cod").val($(this).data('cod'));
+            $("#data_mto").val($(this).data('mto'));
+            $("#data_mon").val($(this).data('mon'));
+            $("#data_cam").val($(this).data('cam'));
+            $("#data-usc").val($(this).data('usc'));
+            $("#data-ucf").val($(this).data('ucf'));
+            //armo la tabla familia
+            var df = $(this).data('detf');
+            var filas = df.split("|");
+            var row = "";
+            $("#tb_familia > tbody:last").empty();
+            if (filas != "") {
+                $.each(filas, function (id, elem) {
+                    var col = elem.split(";");
+                    row = "<tr>";
+                    row += "<td>" + col[0] + "</td>";
+                    row += "<td>" + col[1] + "</td>";
+                    row += "<td>" + col[2] + "</td>";
+                    row += "</tr>";
+                    $("#tb_familia > tbody:last").append(row);
+                });
+            }
+            //armo la tabla medico
+            var dm = $(this).data('detm');
+            var filasM = dm.split("|");
+            var rowM = "";
+            $("#tb_medico > tbody:last").empty();
+            if (filasM != "") {
+                $.each(filasM, function (id, elem) {
+                    var col = elem.split(";");
+                    rowM = "<tr>";
+                    rowM += "<td>" + col[0] + "</td>";
+                    rowM += "<td>" + col[1] + "</td>";
+                    rowM += "<td>" + col[2] + "</td>";
+                    rowM += "</tr>";
+                    $("#tb_medico > tbody:last").append(rowM);
+                });
+            }
+            //armo la tabla responsable
+            var dr = $(this).data('detr');
+            var filasR = dr.split("|");
+            var rowR = "";
+            $("#tb_responsable > tbody:last").empty();
+            if (filasR != "") {
+                $.each(filasR, function (id, elem) {
+                    var col = elem.split(";");
+                    rowR = "<tr>";
+                    rowR += "<td>" + col[0] + "</td>";
+                    rowR += "<td>" + col[1] + "</td>";
+                    rowR += "<td>" + col[2] + "</td>";
+                    rowR += "</tr>";
+                    $("#tb_responsable > tbody:last").append(rowR);
+                });
+            }
+        });
+        $(document).on("click", ".open-firma", function () {
+            //armo la tabla firma
+            var df = $(this).data('detfr');
+            var filas = df.split("|");
+            var row = "";
+            $("#tb_firma > tbody:last").empty();
+            if (filas != "") {
+                $.each(filas, function (id, elem) {
+                    var col = elem.split(";");
+                    row = "<tr>";
+                    row += "<td>" + col[0] + "</td>";
+                    row += "<td>" + col[1] + "</td>";
+                    row += "<td>" + col[2] + "</td>";
+                    row += "<td>" + col[3] + "</td>";
+                    row += "<td>" + col[4] + "</td>";
+                    row += "<td>" + col[5] + "</td>";
+                    row += "</tr>";
+                    $("#tb_firma > tbody:last").append(row);
+                });
+            }
+        });
+        //------------------------------------------------------
+        $("#FormUpload").submit(function (e) {
+            UploadFile();
+            return false;
+        });
+
+        function singleFileSelected(evt) {
+            //var selectedFile = evt.target.files can use this  or select input file element
+            //and access it's files object
+            var selectedFile = ($("#UploadedFile"))[0].files[0];//FileControl.files[0];
+            //console.log("Archivo Seleccionado : " + selectedFile.size)
+            //Primera Validacion
+            var name = selectedFile.name;
+            //var ext = name.split('.').pop();
+            var ext = name.split('.').pop().toLowerCase();
+            console.log("Prueba de extension : " + ext);
+
+            if ($.inArray(ext, ['gif', 'png', 'jpg', 'jpeg']) == -1) {
+                alert(" Extension no permitida :  " + ext);
+                $("#UploadedFile").val('');
+                return false;
+            }
+            //Segunda Validacion
+            if (selectedFile) {
+                var FileSize = 0;
+                var imageType = /image.*/;
+                if (selectedFile.size > 52428800) {
+                    FileSize = Math.round(selectedFile.size * 100 / 1048576) / 100 + " MB";
+                    alert("Size en exceso. Peso: " + FileSize);
+                }
+            }
+        };
+        function UploadFile() {
+            //Llamar al form - upload y crear un FormData con Key
+            var form = $('#FormUpload')[0];
+            var dataString = new FormData(form);
+            var Sol = $("#idSolGastoSelected").val();
+            var nombre = $("#UploadedFile").get(0).files[0].name;
+            //--------------------------
+            //Agregar key al form data
+            dataString.append("solicitud", Sol);
+            //--------------------------
+            //console.log(form);
+            //console.log(dataString);
+            //console.log(nombre);
+            //--------------------------
+            $.ajax({
+                url: '/SolicitudGastoMkt/guardarFile',  //Server script to process data
+                type: 'POST',
+                // Form data como data
+                data: dataString,
+                //Ajax events
+                success: function (result) {
+                    //-----------------------------------
+                    //console.log("entro function uploadfile success : " + result);
+                    if (result == 'SI') {
+                        //------------Armo tabla Files-----------------------
+                        $.post('/SolicitudGastoMkt/obtenerFiles', { id: Sol }, function (data, status) {
+                            if (status == "success") {
+                                $("#tb_files > tbody:last").empty();
+                                $.each(data, function (i, item) {
+                                    //-----------------------------------------------------
+                                    var id = $("#tb_files > tbody > tr").length;
+                                    row = "<tr>";
+                                    row += "<td class='text-center'>" + (id + 1) + "</td>";
+                                    row += "<td class='text-center'>" + item.nom + "</td>";
+                                    row += "<td class='hidden'>" + item.path + "</td>";
+                                    row += "<td class='hidden'>" + item.idFile + "</td>";
+                                    row += "<td class='delete' onclick='ActualizarIdFila(event)'><span class='glyphicon glyphicon-remove'></span></td>";
+                                    row += "<td class='visualizar text-nowrap' onclick='VisualizarDoc(event)'><i class='ti-search'></i></td>";
+                                    row += "</tr>";
+                                    $("#tb_files > tbody:last").append(row);
+                                    //-----------------------------------------------------
+                                });
+                            }
+                        });
+                    }
+                    else {
+                        swal("El nombre del archivo se repite ...");
+                        return false;
+                    }
+                    //-----------------------------------
+                },
+                error: function (err) {
+                    alert(err.statusText);
+                },
+
+                //Options to tell jQuery not to process data or worry about content-type.
+                cache: false,
+                contentType: false,
+                processData: false
+            });
+            $("#UploadedFile").val('');
+        };
+        //--////////////-- Visualizar file --///////////////////////////////////////
+        function VisualizarDoc(evt) {
+
+            $(document).on("click", ".visualizar", function () {
+                var parent = $(this).parents().get(0);
+                console.log("Entrar visualizar doc" + parent);
+                /////////////Captar el path de la seleccion ////////////////
+                var sourceImg = "";
+                sourceImg = $(parent).find("td").eq(2).text();
+                //console.log("Entrar visualizar doc source : " + sourceImg);
+                //Pasar el path de las imagenes seleccionadas
+                $("#imagenselect").attr("src", sourceImg);
+                $("#refimageselect").attr("href", sourceImg);
+
+            });
+        };
+        ///////////-- Actualizar File --///////////////////////////////////////////
+        //------------------
+        function ActualizarIdFila(evt) {
+            console.log("Entro ActualizarIdFila");
+            /////////////
+            $(document).on("click", ".delete", function () {
+                console.log("Entro click delete");
+                var parent = $(this).parents().get(0);
+                //Captar el valor del idFile
+                var nombre = $(parent).find("td").eq(1).text();
+                var id = $(parent).find("td").eq(3).text();
+                var Sol = $("#idSolGastoSelected").val();
+                console.log("nombre es" + nombre + "y el id es " + id);
+
+                $.post('/SolicitudGastoMkt/eliminarFile', { idSolGas: Sol, idFile: id, filename: nombre }, function (data, status) {
+                    if (status == "success") {
+                        if (data = 'SI') {
+                            /////////////Eliminar del Front ///////////////////
+                            var parent = $(this).parents().get(0);
+                            $(parent).remove();
+                            ////////////**************************///////////////
+                            //<!---------------Llenar la grilla -----------------
+                            $.post('/SolicitudGastoMkt/obtenerFiles', { id: Sol }, function (data, status) {
+                                if (status == "success") {
+                                    $("#tb_files > tbody:last").empty();
+                                    $.each(data, function (i, item) {
+                                        //-----------------------------------------------------
+                                        var id = $("#tb_files > tbody > tr").length;
+                                        row = "<tr>";
+                                        row += "<td class='text-center'>" + (id + 1) + "</td>";
+                                        row += "<td class='text-center'>" + item.nom + "</td>";
+                                        row += "<td class='hidden'>" + item.path + "</td>";
+                                        row += "<td class='hidden'>" + item.idFile + "</td>";
+                                        row += "<td class='delete' onclick='ActualizarIdFila(event)'><span class='glyphicon glyphicon-remove'></span></td>";
+                                        row += "<td class='visualizar text-nowrap' onclick='VisualizarDoc(event)'><i class='ti-search'></i></td>";
+                                        row += "</tr>";
+                                        $("#tb_files > tbody:last").append(row);
+                                        //-----------------------------------------------------
+                                    });
+                                }
+                            });
+                            //----------*****************--------------!>
+                        }
+                        else {
+                            swal("No se elimino el archivo ...");
+                            return false;
+                        }
+                    }
+                });
+
+            });
+        };
+    </script>
+
+}

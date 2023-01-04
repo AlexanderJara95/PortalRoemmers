@@ -1,0 +1,103 @@
+﻿@model PortalRoemmers.Areas.Sistemas.Models.Presupuesto.PresupuestoModels
+@using PortalRoemmers.Security
+@{
+    ViewBag.Title = "Anular";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="white-box p-l-20 p-r-20">
+    <h3 class="box-title m-b-0"> Anular Presupuesto</h3>
+    <p class="text-muted m-b-30 font-13">¿Estás seguro que quieres anular esto?</p>
+    <div class="row">
+        <div class="col-md-12">
+            @using (Html.BeginForm("Anular", "Presupuesto", FormMethod.Post, new {  @class = "form-horizontal form-material" }))
+            {
+                @Html.HiddenFor(model => model.idPres)
+                @Html.HiddenFor(model => model.idAccJ)
+                @Html.HiddenFor(model => model.idEsp)
+                @Html.HiddenFor(model => model.idConGas)
+                @Html.HiddenFor(model => model.idEst)
+                @Html.HiddenFor(model => model.refIdPres)
+                @Html.HiddenFor(model => model.Monto)
+                @Html.HiddenFor(model => model.Saldo)
+                @Html.HiddenFor(model => model.Estim)
+                @Html.HiddenFor(model => model.usuCrea)
+                @Html.HiddenFor(model => model.usufchCrea)
+                @Html.AntiForgeryToken()
+
+                <dl class="dl-horizontal">
+                    <dt>
+                        @Html.DisplayNameFor(model => model.idTipoPres) :
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.tipospres.nomTipPres)
+                        @Html.HiddenFor(model => model.idTipoPres)
+                    </dd>
+                    <dt>
+                        Fecha :
+                    </dt>
+                    <dd>
+                        Desde @Html.DisplayFor(model => model.fchIniVigencia)  hasta  @Html.DisplayFor(model => model.fchFinVigencia)
+                    </dd>
+                    <dt>
+                        Usuario :
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.responsable.empleado.nomComEmp)
+                        @Html.HiddenFor(model => model.idAccRes)
+                    </dd>
+                    @{
+                        //solo algunos lo ven
+                        if (Model.idTipoPres == ConstantesGlobales.plan_Trab)
+                        {
+                            <dt>
+                                Zona :
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.zona.nomZon)
+                                @Html.HiddenFor(model => model.idZon)
+                            </dd>
+                            <dt>
+                                Linea :
+                            </dt>
+                            <dd>
+                                @Html.DisplayFor(model => model.linea.nomLin)
+                                @Html.HiddenFor(model => model.idLin)
+                            </dd>
+                            <dt>
+                                Aprobador :
+                            </dt>
+                            <dd>
+                                @Html.DisplayFor(model => model.aprobador.empleado.nomComEmp)
+                                @Html.HiddenFor(model => model.idAccRes)
+                            </dd>
+                        }
+                        else
+                        {
+                            <dt>
+                                Concepto :
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.concepto.nomConGas)
+                            </dd>
+                            <dt>
+                                Especialidad :
+                            </dt>
+
+                            <dd>
+                                @Html.DisplayFor(model => model.especialidad.nomEsp)
+                            </dd>
+                        }
+                    }
+                    <br />
+                    <button class="btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10">Guardar</button>
+                    @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-default btn-rounded btn-outline waves-effect waves-light" })
+                </dl>
+            }
+        </div>
+    </div>
+</div>

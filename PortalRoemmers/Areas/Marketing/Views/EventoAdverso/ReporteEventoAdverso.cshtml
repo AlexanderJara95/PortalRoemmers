@@ -1,0 +1,417 @@
+﻿@model List<PortalRoemmers.Areas.Marketing.Models.FarmacoVigilancia.EventoAdversoModels>
+
+@using PortalRoemmers.Security
+
+@{
+    ViewBag.Title = "ReporteEventoAdverso";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section css {
+    @Styles.Render("~/Content/tablaExport_CSS")
+    @Styles.Render("~/Content/datepicker_CSS")
+
+    <style>
+        @@media screen {
+            #printSection {
+                display: none;
+            }
+        }
+
+        @@media print {
+            body * {
+                visibility: hidden;
+            }
+
+            #printSection, #printSection * {
+                visibility: visible;
+            }
+
+            #printSection {
+                position: absolute;
+                left: 0;
+                top: 0;
+            }
+        }
+
+        .form-control {
+            height: 30px;
+        }
+
+    </style>
+}
+
+<!--Visualizar-->
+<div id="printThis">
+    <div class="modal fade bs-example-modal-lg" id="visualizar">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <label id="data_fchcre"></label>
+                    <h2 class="box-title text-center" style="font-size: 20px;font-weight: 400;">FORMATO NOTIFICACI&OacuteN  DE EVENTOS ADVERSOS - <label id="data_ideve"></label> </h2>
+                </div>
+                <div class="modal-body" style="font-size: 10px;">
+                    <div class="row">
+                        <input type="hidden" id="idEveAdvH" />
+                        <input type="hidden" id="usuVis" />
+                        <h3 class="box-title text-center" style="font-size: 16px;font-weight: 400;"><strong>1. DATOS DEL PACIENTE</strong> </h3>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="control-label">NOMBRES Y APELLIDOS O INICIALES:</label>
+                                <input type="text" id="data_nomapepac" class="form-control" disabled />
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="control-label">EDAD:</label>
+                                <input type="text" id="data_edadpac" class="form-control" disabled />
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="control-label">SEXO:</label>
+                                <input type="text" id="data_genepac" class="form-control" disabled />
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="control-label">TELÉFONO DE CONTACTO :</label>
+                                <input type="text" id="data_nropac" class="form-control" disabled />
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="control-label">EMAIL DE CONTACTO:</label>
+                                <input type="text" id="data_emapac" class="form-control" disabled />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <h3 class="box-title text-center" style="font-size: 16px;font-weight: 400;"><strong>2. INFORMACIÓN DEL MEDICAMENTO</strong> </h3>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="control-label">NOMBRE DEL MEDICAMENTO PRINCIPAL:</label>
+                                <input type="text" id="data_despro" class="form-control" disabled />
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="control-label">LOTE:</label>
+                                <input type="text" id="data_nrolote" class="form-control" disabled />
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="control-label">FECHA DE VENCIMIENTO:</label>
+                                <input type="text" id="data_fchven" class="form-control" disabled />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <h3 class="box-title text-center" style="font-size: 16px;font-weight: 400;"><strong>3. EVENTO ADVERSO</strong> </h3>
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label class="control-label">DESCRIPCIÓN DEL EVENTO ADVERSO:</label>
+                                <textarea id="data_desadv" class="form-control" disabled></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <h3 class="box-title text-center" style="font-size: 16px;font-weight: 400;"><strong>4. DATOS DEL REPORTANTE</strong> </h3>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="control-label">NOMBRES Y APELLIDOS O INICIALES:</label>
+                                <input type="text" id="data_nomaperep" class="form-control" disabled />
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="control-label">TELÉFONO DE CONTACTO O EMAIL:</label>
+                                <input type="text" id="data_nrorep" class="form-control" disabled />
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="control-label">EMAIL DE CONTACTO:</label>
+                                <input type="text" id="data_emarep" class="form-control" disabled />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <h3 class="box-title text-center" style="font-size: 16px;font-weight: 400;"><strong>5. DATOS ADICIONALES</strong> </h3>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="control-label">NOMBRES DEL MEDICO TRATANTE:</label>
+                                <input type="text" id="data_nomapemed" class="form-control" disabled />
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="control-label">TELÉFONO DE CONTACTO O EMAIL:</label>
+                                <input type="text" id="data_nromed" class="form-control" disabled />
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label class="control-label">NOMBRE DE LA INSTITUCION DE SALUD:</label>
+                                <input type="text" id="data_inssal" class="form-control" disabled />
+                            </div>
+                        </div>
+                    </div>
+                    <div id='successM' class='alert alert-success hidden' style="font-weight: bold; font-size: 24px;"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-info waves-effect text-left" id="imprime">Imprimir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!---->
+
+
+
+    <div class="panel panel-default">
+        <div class="panel-heading box-title m-b-0"><h2>Reporte Eventos Adversos</h2></div>
+        <div class="panel-body">
+            <section id="wrapper" class="block1">
+                <div id='danger' class='alert alert-danger hidden'></div>
+                <div id='success' class='alert alert-success hidden'></div>
+                <div class="row">
+                    @using (Html.BeginForm("Index", "", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista }, FormMethod.Post, new { @class = "form-horizontal form-material" }))
+                    {
+                        <div class="row show-grid">
+                            <div class="col-xs-12">
+                                <div class="col-md-6 col-md-offset-3">
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            <div class="col-md-5">
+                                                <div class="form-group">
+                                                    <label class="col-md-12">Fecha Inicio</label>
+                                                    <div class="col-md-12">
+                                                        @Html.Editor("fchIni", new { htmlAttributes = new { @class = "form-control form-control-line datepicker", @placeholder = "dd/mm/aaaa", @value = @ViewBag.fchIni } })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-5">
+                                                <div class="form-group">
+                                                    <label class="col-md-12">Fecha Fin</label>
+                                                    <div class="col-md-12">
+                                                        @Html.Editor("fchFin", new { htmlAttributes = new { @class = "form-control form-control-line datepicker", @placeholder = "dd/mm/aaaa", @value = @ViewBag.fchFin } })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <button class="btn waves-effect waves-light btn-info">
+                                                    <i class="fa fa-search"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-6 col-sm-4"></div>
+                                    <div class="col-xs-6 col-sm-4"><a class="btn btn-file btn-rounded" href="@Url.Action("ExportRepEvento", "EventoAdverso", new { Area = "Marketing",fchIni= @ViewBag.fchIni, fchFin = @ViewBag.fchFin  })"> <img src="~/Content/icono/excel.png" /></a></div>
+                                    <div class="col-xs-6 col-sm-4"></div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <div class="col-sm-12">
+                        <div class="table-responsive">
+                            <div class="table-responsive">
+                                <table id="example23" class="display nowrap" cellspacing="0" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>CODIGO</th>
+                                            <th>PRODUCTO</th>
+                                            <th>USUARIO</th>
+                                            <th>PACIENTE</th>
+                                            <th>MEDICO</th>
+                                        </tr>
+                                    </thead>
+                                    <tfoot>
+                                        <tr>
+                                            <th></th>
+                                            <th>CODIGO</th>
+                                            <th>PRODUCTO</th>
+                                            <th>USUARIO</th>
+                                            <th>PACIENTE</th>
+                                            <th>MEDICO</th>
+                                        </tr>
+                                    </tfoot>
+                                    <tbody>
+                                        @{foreach (var item in Model)
+                                            {
+                                                <tr>
+                                                    <td class="jsgrid-align-center">
+
+                                                        @{
+                                                            if (item.usuVis == null)
+                                                            {
+                                                                <i id="@item.idEveAdv" class="fa fa-bell text-warning m-r-10"></i>
+
+                                                            }
+                                                            else
+                                                            {
+                                                                <i id="@item.idEveAdv" class="fa fa-bell-o m-r-10"></i>
+                                                            }
+                                                        }
+
+                                                        <a href="#visualizar" data-toggle="modal" title="Visualizar" class="open-proces m-r-10" id="lnkVisualiza"
+                                                           @{ 
+                                                               string gen = item.gene == null ? "SIN GENERO" : item.gene.nomGen;
+                                                           }
+                                                           
+                                                           data-ideve="@item.idEveAdv"
+                                                           data-nomapepac="@item.nomApePacEveAdv"
+                                                           data-edadpac="@item.edaPacEveAdv"
+                                                           data-genepac="@gen"
+                                                           data-nropac="@item.nroPacEveAdv"
+                                                           data-emapac="@item.emailPacEveAdv"
+                                                           data-despro="@item.desProEveAdv"
+                                                           data-nrolote="@item.nroLteEveAdv"
+                                                           data-fchven="@item.fchVenEveAdv"
+                                                           data-desadv="@item.desAdvEveAdv"
+                                                           data-nomaperep="@item.nomApeRepEveAdv"
+                                                           data-nrorep="@item.nroRepEveAdv"
+                                                           data-emarep="@item.emailRepEveAdv"
+                                                           data-nomapemed="@item.nomApeMedEveAdv"
+                                                           data-nromed="@item.nroMedEveAdv"
+                                                           data-inssal="@item.insSalEveAdv"
+                                                           data-usuvis="@item.usuVis"
+                                                           data-fchcre="@item.usufchCrea"
+                                                           ><i class="fa fa-eye"></i></a>
+                                                    </td>
+                                                    <td>
+                                                        @item.idEveAdv
+                                                    </td>
+                                                    <td>
+                                                        @item.desProEveAdv
+                                                    </td>
+                                                    <td>
+                                                        @item.nomComEmp
+                                                    </td>
+                                                    <td>
+                                                        @item.nomApePacEveAdv
+                                                    </td>
+                                                    <td>
+                                                        @item.nomApeMedEveAdv
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+        </div>
+
+        <div class="panel-footer"></div>
+    </div>
+
+    @section scripts
+{
+        @Scripts.Render("~/Bundles/tablaExport_JS")
+        @Scripts.Render("~/Bundles/datepicker_JS")
+        <script src="~/Scripts/jquery.printarea.js"></script>
+        <script>
+            $(document).ready(function () {
+                $('.datepicker').datepicker({
+                    dateFormat: 'dd/mm/yy'
+                });
+
+                $('#example23').DataTable({
+                    dom: 'Bfrtip'
+                    , buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                });
+
+                $('#chkParent').click(function () {
+                    var isChecked = $(this).prop("checked");
+                    $('#example23').DataTable().rows().iterator('row', function (context, index) {
+                        $(this.row(index).node()).find('td').eq(0).find('input[type="checkbox"]').prop('checked', isChecked);
+                    });
+                });
+
+                document.getElementById("imprime").onclick = function () {
+                    printElement(document.getElementById("printThis"));
+                }
+
+                function printElement(elem) {
+                    var domClone = elem.cloneNode(true);
+
+                    var $printSection = document.getElementById("printSection");
+
+                    if (!$printSection) {
+                        var $printSection = document.createElement("div");
+                        $printSection.id = "printSection";
+                        document.body.appendChild($printSection);
+                    }
+
+                    $printSection.innerHTML = "";
+                    $printSection.appendChild(domClone);
+                    window.print();
+                }
+
+                $(document).on("click", "#lnkVisualiza", function () {
+                    
+                    $("#idEveAdvH").val($(this).data('ideve'));
+                    $("#usuVis").val($(this).data('usuvis'));
+                    $("#data_ideve").text($(this).data('ideve'));
+                    $("#data_nomapepac").val($(this).data('nomapepac'));
+                    $("#data_edadpac").val($(this).data('edadpac'));
+                    $("#data_genepac").val($(this).data('genepac'));
+                    $("#data_nropac").val($(this).data('nropac'));
+                    $("#data_emapac").val($(this).data('emapac'));
+                    $("#data_despro").val($(this).data('despro'));
+                    $("#data_nrolote").val($(this).data('nrolote'));
+                    $("#data_fchven").val($(this).data('fchven'));
+                    $("#data_desadv").val($(this).data('desadv'));
+                    $("#data_nomaperep").val($(this).data('nomaperep'));
+                    $("#data_nrorep").val($(this).data('nrorep'));
+                    $("#data_emarep").val($(this).data('emarep'));
+                    $("#data_nomapemed").val($(this).data('nomapemed'));
+                    $("#data_nromed").val($(this).data('nromed'));
+                    $("#data_inssal").val($(this).data('inssal'));
+                    $("#data_fchcre").text($(this).data('fchcre'));
+                });
+
+                $(document).on("click", "#imprime", function () {
+                    var idatr = $("#idEveAdvH").val();
+                    
+                    if ($("#" + idatr).attr("class") !=='fa fa-bell-o m-r-10') {
+                         $.ajax({
+                         url: '@Url.Action("actualizarVisualizar", "EventoAdverso")',
+                         type: 'POST',
+                         cache: false,
+                        data: { idEveAdv: $("#idEveAdvH").val()},
+                         success: function (result) {
+                             if (result) {
+                                 $("div #successM").removeClass('hidden');
+                                 $("div #successM").text('Estimado usuario: Usted ha visualizado el documento por primera vez.');
+                                 setTimeout(function () { $("div #successM").fadeOut(5000); $("div #successM").fadeIn(5000); }, 2000);
+                                 setTimeout(function () { $("div #successM").addClass('hidden'); $("#" + idatr).attr('class', 'fa fa-bell-o m-r-10');  }, 8000);
+                             }
+                         },
+                         error: function (jqXHR, textStatus, error) {
+                             alert("Estado: Error inesperado");
+                         }
+                    });
+                    }
+
+
+                });
+
+            });
+
+        </script>
+    }

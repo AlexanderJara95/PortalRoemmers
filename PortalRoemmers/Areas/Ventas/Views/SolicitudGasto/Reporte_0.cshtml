@@ -1,0 +1,143 @@
+﻿@using PortalRoemmers.Security
+@{
+    ViewBag.Title = "";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!--Generar primer reporte-->
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <i class="mdi mdi-book-open-page-variant"></i>       REPORTES DE GASTOS Y PRESUPUESTO
+            </div>
+            <div class="panel-wrapper collapse in" aria-expanded="true">
+                <div class="panel-body">
+                    @using (Html.BeginForm("Reporte_1", "SolicitudGasto", FormMethod.Post, new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, enctype = "multipart/form-data", @class = "form-horizontal form-bordered" }))
+                    {
+                        <div class="form-body">
+                            <div class="form-group">
+                                <label class="control-label col-md-3">REPORTE</label>
+                                <div class="col-md-6">
+                                    <select class="form-control" id="idRep" name="idRep">
+                                        <option value="0">SELECCIONAR....</option>
+                                        <option value="1">REPORTE GENERAL</option>
+                                        <option value="2">REPORTE RESUMEN</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3">SUPERVISOR</label>
+                                <div class="col-md-6">
+                                    @Html.DropDownList("idAcc", (SelectList)ViewBag.aprobador, "TODOS", htmlAttributes: new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3">LINEA</label>
+                                <div class="col-md-6">
+                                    @Html.DropDownList("idLin", (SelectList)ViewBag.lineas, "TODOS", htmlAttributes: new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3">ZONA</label>
+                                <div class="col-md-6">
+                                    @Html.DropDownList("idZon", (SelectList)ViewBag.zonas, "TODOS", htmlAttributes: new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3" for="desMen">DESDE</label>
+                                <div class="col-md-6">
+                                    <input class="form-control datepicker" style="text-align:center;"  id="fchEveSolGasI" name="fchEveSolGasI" placeholder="dd/mm/aaaa" autocomplete="off" value="@ViewBag.primero">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3" for="desMen">HASTA</label>
+                                <div class="col-md-6">
+                                    <input class="form-control datepicker" style="text-align:center;"  id="fchEveSolGasF" name="fchEveSolGasF" placeholder="dd/mm/aaaa" autocomplete="off" value="@ViewBag.actual">
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-sm-offset-1 col-sm-9 text-center">
+                                                <button type="submit" class="btn btn-success"> <i class="fa fa-check"></i>Generar</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts
+{
+    <script>
+            $(document).ready(function () {
+                //llenar lineas y zonas por aprobador
+                $("#idAcc").change(function () {
+                if ($("#idAcc").val() != "") {
+               
+                //Lineas
+                $("#idLin").prop("disabled", true);
+                var RolOptionsL = {};
+                RolOptionsL.url = "/SolicitudGasto/buscarLineaReporte";
+                RolOptionsL.type = "POST";
+                RolOptionsL.data = JSON.stringify({ idAcc: $("#idAcc").val() });
+                RolOptionsL.datatype = "json";
+                RolOptionsL.contentType = "application/json";
+                RolOptionsL.success = function (data) {
+                    //$("#idLin").select2("val", "");
+                    $("#idLin").empty();
+                    $("#idLin").append($("<option> </option>").val("").html("TODOS"));
+                    console.log("linea: "+data);
+                    $.each(data, function (i, item) {
+                        $("#idLin").append($("<option> </option>").val(item.value).html(item.text));
+                        console.log(item.idLin+"-"+item.nomLin);
+                    });
+                };
+                RolOptionsL.error = function () { alert("Error in Getting States!!"); };
+                $.ajax(RolOptionsL);
+                $("#idLin").prop("disabled", false);
+
+                //Zonas
+                $("#idZon").prop("disabled", true);
+                var RolOptionsZ = {};
+                RolOptionsZ.url = "/SolicitudGasto/buscarZonaReporte";
+                RolOptionsZ.type = "POST";
+                RolOptionsZ.data = JSON.stringify({ idAcc: $("#idAcc").val() });
+                RolOptionsZ.datatype = "json";
+                RolOptionsZ.contentType = "application/json";
+                RolOptionsZ.success = function (data) {
+                    //$("#idZon").select2("val", "");
+                    $("#idZon").empty();
+                    $("#idZon").append($("<option> </option>").val("").html("TODOS"));
+                    console.log("zona: "+data);
+                    $.each(data, function (i, item) {
+                        $("#idZon").append($("<option> </option>").val(item.value).html(item.text));
+                        console.log(item.idZon+"-"+item.nomZon);
+                    });
+
+                    };
+                    RolOptionsZ.error = function () { alert("Error in Getting States!!"); };
+                    $.ajax(RolOptionsZ);
+                    $("#idZon").prop("disabled", false);
+                }
+                else {
+
+                //$("#idLin").select2("val", "");
+                //$("#idLin").prop("disabled", true);
+
+                //$("#idZon").select2("val", "");
+                //$("#idZon").prop("disabled", true);
+
+                }
+                //------------------------------
+            });
+        });
+    </script>
+    
+}

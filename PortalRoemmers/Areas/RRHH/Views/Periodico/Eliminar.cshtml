@@ -1,0 +1,52 @@
+﻿@using PortalRoemmers.Security
+@model PortalRoemmers.Areas.RRHH.Models.Periodico.PeriodicoSeccionModels
+@{
+    ViewBag.Title = "Eliminar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="white-box p-l-20 p-r-20">
+    <h3 class="box-title m-b-0"> Eliminar Peri&oacutedico</h3>
+    <p class="text-muted m-b-30 font-13">¿Estás seguro que quieres eliminar esto? </p>
+    <div class="row">
+        <div class="col-md-12">
+            @using (Html.BeginForm("Eliminar", "Periodico", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal form-material" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.idPerSec)
+                @Html.HiddenFor(model => model.rutPerSec)
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.titPerSec)</label>
+                    <div class="col-md-12">
+                        @Html.DisplayFor(model => model.titPerSec, new { htmlAttributes = new { @class = "form-control form-control-line" } })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.tarPerSec)</label>
+                    <div class="col-md-12">
+                        @Html.DisplayFor(model => model.tarPerSec, new { htmlAttributes = new { @class = "form-control form-control-line" } })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.idEfeIma)</label>
+                    <div class="col-md-12">
+                        @Html.DisplayFor(model => model.efecIma.titEfeIma, new { htmlAttributes = new { @class = "form-control form-control-line" } })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-xs-12 col-sm-4 white-box">
+                        @{string imagen = "../" + @Model.rutPerSec;}
+                        <img id="output" class="img-responsive" src="@imagen" />
+                    </div>
+                </div>
+
+                <button class="btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10">Guardar</button>
+                @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-default btn-rounded btn-outline waves-effect waves-light" })
+
+            }
+        </div>
+    </div>
+</div>
+

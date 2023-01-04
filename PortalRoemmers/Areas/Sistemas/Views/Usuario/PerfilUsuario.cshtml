@@ -1,0 +1,1046 @@
+﻿@model PortalRoemmers.Areas.Sistemas.Models.Usuario.UsuarioModels
+@using PortalRoemmers.Security
+@{
+    ViewBag.Title = "PerfilUsuario";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section css {
+    @Styles.Render("~/Content/Magnific_CSS")
+    @Styles.Render("~/Content/selectBusqueda_CSS")
+}
+
+<!--ESTUDIO-->
+<div id="responsive-modal-estudio" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">Nuevo Estudio</h4>
+            </div>
+            <div class="modal-body">
+                <div id='danger' class='alert alert-danger hidden'></div>
+                <div id='successD' class='alert alert-success hidden'></div>
+
+                <div class="form-horizontal form-material">
+
+
+                    <div class="form-group ">
+                        <div class="col-md-6">
+                            <label class="col-md-12">Instituci&oacuten Educativa<span style="color:red;">*</span></label>
+                            <div class="col-md-12">
+                                @Html.Editor("nomInsEstu", new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Institución educativa ", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="col-md-12">Nivel de Estudio<span style="color:red;">*</span></label>
+                            <div class="col-md-12">
+                                @Html.DropDownList("idNivEstu", (SelectList)ViewBag.nivelEstudio, "Seleccionar...", htmlAttributes: new { @class = "form-control form-control-line" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group ">
+                        <div class="col-md-6">
+                            <label class="col-md-12">Nombre de Estudio <span style="color:red;">*</span></label>
+                            <div class="col-md-12">
+                                @Html.Editor("carProEstu", new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Carrera y/o profesión ", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="col-md-12">Cursando Actualmente?</label>
+                            <div class="col-md-12">
+                                @Html.DropDownList("curActEstu", (SelectList)ViewBag.curAct, "Seleccionar...", htmlAttributes: new { @class = "form-control form-control-line" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group ">
+                        <div class="col-md-6">
+                            <label class="col-md-12">Desde Mes <span style="color:red;">*</span></label>
+                            <div class="col-md-12">
+                                @Html.DropDownList("mesDesEstu", (SelectList)ViewBag.desAnio, "Seleccionar...", htmlAttributes: new { @class = "form-control form-control-line" })
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="col-md-12">Desde A&ntildeo</label>
+                            <div class="col-md-12">
+                                @Html.Editor("anioDesEstu", new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Desde Año", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group ">
+                        <div class="col-md-6">
+                            <label class="col-md-12">Hasta Mes <span style="color:red;">*</span></label>
+                            <div class="col-md-12">
+                                @Html.DropDownList("mesHasEstu", (SelectList)ViewBag.hasAnio, "Seleccionar...", htmlAttributes: new { @class = "form-control form-control-line" })
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="col-md-12">Hasta A&ntildeo</label>
+                            <div class="col-md-12">
+                                @Html.Editor("anioHasEstu", new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Hasta Año ", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <input type="hidden" id="index" />
+                <a id="btn-guarEstu" class="btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10">Guardar</a>
+                <a id="btn-modEstu" class="btn btn-success btn-rounded btn-outline waves-effect waves-light m-r-10">Modificar</a>
+                <button type="button" class="btn btn-danger btn-rounded waves-effect text-leftt" data-dismiss="modal">Cerrar</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!--FAMILIA-->
+<div id="responsive-modal-familia" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">Nuevo Familiar</h4>
+            </div>
+            <div class="modal-body">
+                <div id='danger' class='alert alert-danger hidden'></div>
+                <div id='successD' class='alert alert-success hidden'></div>
+                <div class="form-horizontal form-material">
+                    <div class="form-group ">
+                        <div class="col-md-6">
+                            <label class="col-md-12">DNI<span style="color:red;">*</span></label>
+                            <div class="col-md-12">
+                                @Html.Editor("dniEmpFam", new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "DNI ", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="col-md-12">Nombre completo<span style="color:red;">*</span></label>
+                            <div class="col-md-12">
+                                @Html.Editor("nomComEmpFam", new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Nombre completo", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group ">
+                        <div class="col-md-6">
+                            <label class="col-md-12">Fecha nacimiento <span style="color:red;">*</span></label>
+                            <div class="col-md-12">
+                                @Html.Editor("fchNacEmpFam", new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Fecha nacimiento ", @onkeyup = "javascript:this.value=this.value.toUpperCase();" , @data_mask = "99/99/9999" } })
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="col-md-12">Tipo</label>
+                            <div class="col-md-12">
+                                @Html.DropDownList("idTipFam", (SelectList)ViewBag.tipoFamilia, "Seleccionar...", htmlAttributes: new { @class = "form-control form-control-line" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group ">
+                        <div class="col-md-6">
+                            <label class="col-md-12">Ocupaci&oacuten <span style="color:red;">*</span></label>
+                            <div class="col-md-12">
+                                @Html.Editor("ocuEmpFam", new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Ocupación ", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <input type="hidden" id="indexF" />
+                <a id="btn-guarFami" class="btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10">Guardar</a>
+                <a id="btn-modFami" class="btn btn-success btn-rounded btn-outline waves-effect waves-light m-r-10">Modificar</a>
+                <button type="button" class="btn btn-danger btn-rounded waves-effect text-leftt" data-dismiss="modal">Cerrar</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+@using (Html.BeginForm("PerfilUsuario", "Usuario", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div class="col-md-2 col-xs-12">
+        @{ string v = ""; try { v = TempData["mensaje"].ToString(); } catch { }}
+        @(new HtmlString(v))
+        <div class="white-box">
+            <div class="row el-element-overlay m-b-40">
+                <div class="el-card-item">
+                    <div class="el-card-avatar el-overlay-1">
+                        <img id="output" class="img-responsive" src="@Url.Action("convertirImagen", "Usuario", new {idAcc =Model.idAcc})" />
+                        <div class="el-overlay">
+                            <ul class="el-info">
+                                <li><a class="btn default btn-outline image-popup-vertical-fit" href="@Url.Action("convertirImagen", "Usuario", new {idAcc =Model.idAcc})"><i class="icon-magnifier"></i></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="el-card-content">
+                        @{
+                            string cargo = "";
+                            try
+                            {
+                                cargo = Model.empleado.cargo.desCarg;
+                            }
+                            catch (Exception e)
+                            {
+                                cargo = "NINGUNO";
+                            }
+                        }
+                        <h3 class="box-title">@Model.empleado.nomComEmp  </h3> <small>@cargo</small>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="col-sm-12">@Html.LabelFor(model => model.rutaImgPer)</label>
+                    <div class="col-sm-12">
+                        <div class="fileinput input-group fileinput-new" data-provides="fileinput">
+                            <div class="form-control" data-trigger="fileinput"> <i class="glyphicon glyphicon-file fileinput-exists"></i> <span class="fileinput-filename">Foto.jpeg</span></div>
+                            <span class="input-group-addon btn btn-default btn-file">
+                                <span class="fileinput-new">Foto</span> <span class="fileinput-exists">Cambiar</span>
+                                <input type="hidden" value="" name="..."><input type="file" name="file" onchange="loadFile(event)">
+                            </span> <a href="#" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">Remover</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-10 col-xs-12">
+        <div class="white-box">
+            <ul class="nav nav-tabs tabs customtab">
+                <li class="tab active">
+                    <a href="#personal" data-toggle="tab" aria-expanded="false"> <span class="visible-xs"><i class="fa fa-user"></i></span> <span class="hidden-xs">Datos Personales</span> </a>
+                </li>
+                <li class="tab ">
+                    <a href="#laboral" data-toggle="tab" aria-expanded="true"> <span class="visible-xs"><i class="fa fa-home"></i></span> <span class="hidden-xs">Datos Laborales</span> </a>
+                </li>
+                <li class="tab">
+                    <a href="#estudio" data-toggle="tab" aria-expanded="false"> <span class="visible-xs"><i class="fa fa-cog"></i></span> <span class="hidden-xs">Datos Estudios</span> </a>
+                </li>
+                <li class="tab">
+                    <a href="#familia" data-toggle="tab" aria-expanded="true"> <span class="visible-xs"><i class="fa fa-suitcase"></i></span> <span class="hidden-xs">Datos Familiares</span> </a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <!--Usuario-->
+
+                @Html.HiddenFor(model => model.idAcc)
+                @Html.HiddenFor(model => model.idEmp)
+                @Html.HiddenFor(model => model.email)
+                @Html.HiddenFor(model => model.username)
+                @Html.HiddenFor(model => model.userpass)
+                @Html.HiddenFor(model => model.confirmPassword)
+                @Html.HiddenFor(model => model.confirmEmail)
+                @Html.HiddenFor(model => model.idNapro)
+                @Html.HiddenFor(model => model.fchCreUsu)
+                @Html.HiddenFor(model => model.userCreUsu)
+                @Html.HiddenFor(model => model.idEst)
+                @Html.HiddenFor(model => model.idMen)
+
+                <!--Empleado-->
+                @Html.HiddenFor(model => model.empleado.idEmp)
+                @Html.HiddenFor(model => model.empleado.cesfchEmp)
+                @Html.HiddenFor(model => model.empleado.idEmpJ)
+                @Html.HiddenFor(model => model.empleado.idAreRoe)
+                @Html.HiddenFor(model => model.empleado.idCarg)
+                @Html.HiddenFor(model => model.empleado.ingfchEmp)
+                @Html.HiddenFor(model => model.empleado.idAfp)
+                @Html.HiddenFor(model => model.empleado.fchCreUsu)
+                @Html.HiddenFor(model => model.empleado.userCreUsu)
+                @Html.HiddenFor(model => model.empleado.idEst)
+
+                <div class="tab-pane active" id="personal">
+                    <div class="form-horizontal form-material">
+                        <div class="form-group m-b-30">
+                            <div class="col-lg-4 b-r">
+                                <label class="col-md-12">@Html.LabelFor(model => model.empleado.apePatEmp)</label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.empleado.apePatEmp, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Apellido Paterno", @style = "text-transform:uppercase;", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                                    @Html.ValidationMessageFor(model => model.empleado.apePatEmp, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 b-r">
+                                <label class="col-md-12">@Html.LabelFor(model => model.empleado.apeMatEmp)</label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.empleado.apeMatEmp, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Apellido Paterno", @style = "text-transform:uppercase;", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                                    @Html.ValidationMessageFor(model => model.empleado.apeMatEmp, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-lg-4 b-r">
+                                <label class="col-md-12">@Html.LabelFor(model => model.empleado.nom1Emp)</label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.empleado.nom1Emp, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Primer Nombre", @style = "text-transform:uppercase;", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                                    @Html.ValidationMessageFor(model => model.empleado.nom1Emp, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group m-b-30">
+                            <div class="col-lg-4 b-r">
+                                <label class="col-md-12">@Html.LabelFor(model => model.empleado.nom2Emp)</label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.empleado.nom2Emp, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Segundo Nombre", @style = "text-transform:uppercase;", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                                    @Html.ValidationMessageFor(model => model.empleado.nom2Emp, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 b-r">
+                                <label class="col-md-12">@Html.LabelFor(model => model.empleado.idTipDoc)</label>
+                                <div class="col-md-12">
+                                    @Html.DropDownListFor(model => model.empleado.idTipDoc, (SelectList)ViewBag.tipDoc, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                                    @Html.ValidationMessageFor(model => model.empleado.idTipDoc, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-lg-4 b-r">
+                                <label class="col-md-12">@Html.LabelFor(model => model.empleado.nroDocEmp)</label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.empleado.nroDocEmp, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Documento Identidad" } })
+                                    @Html.ValidationMessageFor(model => model.empleado.nroDocEmp, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="form-group m-b-30">
+                            <div class="col-lg-4 b-r">
+                                <label class="col-md-12">@Html.LabelFor(model => model.empleado.idEstCiv)</label>
+                                <div class="col-md-12">
+                                    @Html.DropDownListFor(model => model.empleado.idEstCiv, (SelectList)ViewBag.estado, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                                    @Html.ValidationMessageFor(model => model.empleado.idEstCiv, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-lg-4 b-r">
+                                <label class="col-md-12">@Html.LabelFor(model => model.empleado.idGen)</label>
+                                <div class="col-md-12">
+                                    @Html.DropDownListFor(model => model.empleado.idGen, (SelectList)ViewBag.sexoUsu, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                                    @Html.ValidationMessageFor(model => model.empleado.idGen, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-lg-4 b-r">
+                                <label class="col-md-12">@Html.LabelFor(model => model.empleado.idPais)</label>
+                                <div class="col-md-12">
+                                    @Html.DropDownListFor(model => model.empleado.idPais, (SelectList)ViewBag.nacio, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                                    @Html.ValidationMessageFor(model => model.empleado.idPais, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group m-b-30">
+                            <div class="col-lg-4 b-r">
+                                <label class="col-md-12">@Html.LabelFor(model => model.empleado.nacEmp)</label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.empleado.nacEmp, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "dd/mm/aaaa", @data_mask = "99/99/9999" } })
+                                    @Html.ValidationMessageFor(model => model.empleado.nacEmp, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-lg-4 b-r">
+                                <label class="col-md-12">@Html.LabelFor(model => model.empleado.lugNacEmp)</label>
+                                <div class="col-md-12">
+                                    @Html.TextAreaFor(model => model.empleado.lugNacEmp, new { @class = "form-control form-control-line", @rows = 2, @style = "text-transform:uppercase;", @onkeyup = "javascript:this.value=this.value.toUpperCase();" })
+                                    @Html.ValidationMessageFor(model => model.empleado.lugNacEmp, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-lg-4 b-r">
+                                <label class="col-md-12">@Html.LabelFor(model => model.empleado.idSan)</label>
+                                <div class="col-md-12">
+                                    @Html.DropDownListFor(model => model.empleado.idSan, (SelectList)ViewBag.sangre, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                                    @Html.ValidationMessageFor(model => model.empleado.idSan, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group m-b-30">
+                            <div class="col-lg-4 b-r">
+                                <label class="col-md-12">@Html.LabelFor(model => model.empleado.cCod_Pais)</label>
+                                <div class="col-md-12">
+                                    @Html.DropDownListFor(model => model.empleado.cCod_Pais, (SelectList)ViewBag.pais, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                                    @Html.ValidationMessageFor(model => model.empleado.cCod_Pais, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-lg-4 b-r">
+                                <label class="col-md-12">@Html.LabelFor(model => model.empleado.cCod_Dpto)</label>
+                                <div class="col-md-12">
+                                    @Html.DropDownListFor(model => model.empleado.cCod_Dpto, (SelectList)ViewBag.departamento, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                                    @Html.ValidationMessageFor(model => model.empleado.cCod_Dpto, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 b-r">
+                                <label class="col-md-12">@Html.LabelFor(model => model.empleado.cCod_Provincia)</label>
+                                <div class="col-md-12">
+                                    @Html.DropDownListFor(model => model.empleado.cCod_Provincia, (SelectList)ViewBag.provincia, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                                    @Html.ValidationMessageFor(model => model.empleado.cCod_Provincia, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group m-b-30">
+                            <div class="col-lg-4 b-r">
+                                <label class="col-md-12">@Html.LabelFor(model => model.empleado.cCod_Ubi)</label>
+                                <div class="col-md-12">
+                                    @Html.DropDownListFor(model => model.empleado.cCod_Ubi, (SelectList)ViewBag.ubicacion, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                                    @Html.ValidationMessageFor(model => model.empleado.cCod_Ubi, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-lg-4 b-r">
+                                <label class="col-md-12">@Html.LabelFor(model => model.empleado.dirEmp)</label>
+                                <div class="col-md-12">
+                                    @Html.TextAreaFor(model => model.empleado.dirEmp, new { @class = "form-control form-control-line", @rows = 2, @style = "text-transform:uppercase;", @onkeyup = "javascript:this.value=this.value.toUpperCase();" })
+                                    @Html.ValidationMessageFor(model => model.empleado.dirEmp, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-lg-4 b-r">
+                                <label class="col-md-12">@Html.LabelFor(model => model.empleado.refDirEmp)</label>
+                                <div class="col-md-12">
+                                    @Html.TextAreaFor(model => model.empleado.refDirEmp, new { @class = "form-control form-control-line", @rows = 2, @style = "text-transform:uppercase;", @onkeyup = "javascript:this.value=this.value.toUpperCase();" })
+                                    @Html.ValidationMessageFor(model => model.empleado.refDirEmp, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group m-b-30">
+                            <div class="col-lg-4 b-r">
+                                <label class="col-md-12">@Html.LabelFor(model => model.empleado.numTeleEmp)</label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.empleado.numTeleEmp, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Telefono" } })
+                                    @Html.ValidationMessageFor(model => model.empleado.numTeleEmp, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-lg-4 b-r">
+                                <label class="col-md-12">@Html.LabelFor(model => model.empleado.numCelEmp)</label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.empleado.numCelEmp, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Celular" } })
+                                    @Html.ValidationMessageFor(model => model.empleado.numCelEmp, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-lg-4 b-r">
+                                <label class="col-md-12">@Html.LabelFor(model => model.empleado.emailPerEmp)</label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.empleado.emailPerEmp, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Wjave@pe.roemmers.com", @style = "text-transform:uppercase;", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                                    @Html.ValidationMessageFor(model => model.empleado.emailPerEmp, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group m-b-30">
+                            <div class="col-lg-4 b-r">
+                                <label class="col-md-12">@Html.LabelFor(model => model.empleado.perConEmp)</label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.empleado.perConEmp, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Nombre contacto", @style = "text-transform:uppercase;", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                                    @Html.ValidationMessageFor(model => model.empleado.perConEmp, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-lg-4 b-r">
+                                <label class="col-md-12">@Html.LabelFor(model => model.empleado.celConEmp)</label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.empleado.celConEmp, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Celular contacto", @style = "text-transform:uppercase;", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                                    @Html.ValidationMessageFor(model => model.empleado.celConEmp, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-lg-4 b-r">
+                                <label class="col-md-12">@Html.LabelFor(model => model.empleado.corConEmp)</label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.empleado.corConEmp, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Correo Usuario", @style = "text-transform:uppercase;", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                                    @Html.ValidationMessageFor(model => model.empleado.corConEmp, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group m-b-30">
+                            <div class="col-lg-4 b-r">
+                                <label class="col-md-12">@Html.LabelFor(model => model.empleado.vivConPadEmp)</label>
+                                <div class="col-md-12">
+                                    @Html.DropDownListFor(model => model.empleado.vivConPadEmp, (SelectList)ViewBag.vivPad, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                                    @Html.ValidationMessageFor(model => model.empleado.vivConPadEmp, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-lg-4 b-r">
+                                <label class="col-md-12">@Html.LabelFor(model => model.empleado.hijTieEmp)</label>
+                                <div class="col-md-12">
+                                    @Html.DropDownListFor(model => model.empleado.hijTieEmp, (SelectList)ViewBag.vivPad, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                                    @Html.ValidationMessageFor(model => model.empleado.hijTieEmp, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane " id="laboral">
+                    <div class="form-horizontal form-material">
+                        <div class="form-group m-b-30">
+                            <div class="col-lg-4 b-r">
+                                <label class="col-md-12">@Html.LabelFor(model => model.empleado.idEmp)</label>
+                                <div class="col-md-12">
+                                    @Html.DisplayFor(model => model.empleado.idEmp)
+                                </div>
+                            </div>
+                            <div class="col-lg-4 b-r">
+                                <label class="col-md-12">@Html.LabelFor(model => model.empleado.idAreRoe)</label>
+                                <div class="col-md-12">
+                                    @Html.DisplayFor(model => model.empleado.area.nomAreRoe)
+                                </div>
+                            </div>
+                            <div class="col-lg-4 b-r">
+                                <label class="col-md-12">@Html.LabelFor(model => model.empleado.idCarg)</label>
+                                <div class="col-md-12">
+                                    @Html.DisplayFor(model => model.empleado.cargo.desCarg)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group m-b-30">
+                            <div class="col-lg-4 b-r">
+                                <label class="col-md-12">@Html.LabelFor(model => model.empleado.ingfchEmp)</label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.empleado.ingfchEmp, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "dd/mm/aaaa", @data_mask = "99/99/9999" } })
+                                    @Html.ValidationMessageFor(model => model.empleado.ingfchEmp, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-lg-4 b-r">
+                                <label class="col-md-12">@Html.LabelFor(model => model.empleado.idAfp)</label>
+                                <div class="col-md-12">
+                                    @Html.DropDownListFor(model => model.empleado.idAfp, (SelectList)ViewBag.Afp, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                                    @Html.ValidationMessageFor(model => model.empleado.idAfp, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-lg-4 b-r">
+                                <label class="col-md-12">@Html.LabelFor(model => model.empleado.codAfiEmp)</label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.empleado.codAfiEmp, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Codigo Afiliado", @style = "text-transform:uppercase;", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                                    @Html.ValidationMessageFor(model => model.empleado.codAfiEmp, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group m-b-30">
+                            <div class="col-lg-4 b-r">
+                                <label class="col-md-12">@Html.LabelFor(model => model.empleado.fchIngAfiEmp)</label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.empleado.fchIngAfiEmp, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "dd/mm/aaaa", @data_mask = "99/99/9999" } })
+                                    @Html.ValidationMessageFor(model => model.empleado.fchIngAfiEmp, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-lg-4 b-r">
+                                <label class="col-md-12">@Html.LabelFor(model => model.empleado.comAfiEmp)</label>
+                                <div class="col-md-12">
+                                    @Html.DropDownListFor(model => model.empleado.comAfiEmp, (SelectList)ViewBag.tipcomi, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                                    @Html.ValidationMessageFor(model => model.empleado.comAfiEmp, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-lg-4 b-r">
+                                <label class="col-md-12">@Html.LabelFor(model => model.empleado.segSalEmp)</label>
+                                <div class="col-md-12">
+                                    @Html.DropDownListFor(model => model.empleado.segSalEmp, (SelectList)ViewBag.tipseg, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                                    @Html.ValidationMessageFor(model => model.empleado.segSalEmp, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group m-b-30">
+                            <div class="col-lg-4 b-r">
+                                <label class="col-md-12">@Html.LabelFor(model => model.empleado.idBansuel)</label>
+                                <div class="col-md-12">
+                                    @Html.DropDownListFor(model => model.empleado.idBansuel, (SelectList)ViewBag.bancosuel, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                                    @Html.ValidationMessageFor(model => model.empleado.idBansuel, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-lg-4 b-r">
+                                <label class="col-md-12">@Html.LabelFor(model => model.empleado.nroCtaSueEmp)</label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.empleado.nroCtaSueEmp, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Nro de cta sueldo", @style = "text-transform:uppercase;", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                                    @Html.ValidationMessageFor(model => model.empleado.nroCtaSueEmp, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-lg-4 b-r">
+                                <label class="col-md-12">@Html.LabelFor(model => model.empleado.nroCtaInEmp)</label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.empleado.nroCtaInEmp, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Nro de cta interbancario", @style = "text-transform:uppercase;", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                                    @Html.ValidationMessageFor(model => model.empleado.nroCtaInEmp, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group m-b-30">
+                            <div class="col-lg-4 b-r">
+                                <label class="col-md-12">@Html.LabelFor(model => model.empleado.idBancts)</label>
+                                <div class="col-md-12">
+                                    @Html.DropDownListFor(model => model.empleado.idBancts, (SelectList)ViewBag.bancocts, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                                    @Html.ValidationMessageFor(model => model.empleado.idBancts, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-lg-4 b-r">
+                                <label class="col-md-12">@Html.LabelFor(model => model.empleado.idMon)</label>
+                                <div class="col-md-12">
+                                    @Html.DropDownListFor(model => model.empleado.idMon, (SelectList)ViewBag.moneda, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                                    @Html.ValidationMessageFor(model => model.empleado.idMon, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-lg-4 b-r">
+                                <label class="col-md-12">@Html.LabelFor(model => model.empleado.cod_sede)</label>
+                                <div class="col-md-12">
+                                    @Html.DropDownListFor(model => model.empleado.cod_sede, (SelectList)ViewBag.sede, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                                    @Html.ValidationMessageFor(model => model.empleado.cod_sede, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane" id="estudio">
+                    <div class="form-group m-b-30">
+                        <div class="col-md-12">
+                            <a data-toggle="modal" title="Agregar Estudio" class="btn btn-block btn-primary" href="#responsive-modal-estudio" id="urlAgregar">
+                                <span class="glyphicon glyphicon-plus"></span> AGREGAR ESTUDIO
+                            </a>
+                            <div class="table-responsive m-t-10" style="clear: both;">
+                                <table class="table table-hover" id="tb_estudio">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">Nro</th>
+                                            <th class="text-center">Instituci&oacuten Educativa</th>
+                                            <th class="text-center">Nivel de Estudio</th>
+                                            <th class="text-center">Carrera y/o prefesión</th>
+                                            <th class="text-center"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{string tb = ""; try { tb = @ViewBag.tbEstudio; } catch { }}
+                                        @(new HtmlString(tb))
+                                    </tbody>
+                                </table>
+                            </div>
+                            <hr>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane" id="familia">
+                    <div class="form-group m-b-30">
+                        <div class="col-md-12">
+                            <a data-toggle="modal" title="Agregar Familia" class="btn btn-block btn-primary" href="#responsive-modal-familia" id="urlAgregarF">
+                                <span class="glyphicon glyphicon-plus"></span> AGREGAR FAMILIAR
+                            </a>
+                            <div class="table-responsive m-t-10" style="clear: both;">
+                                <table class="table table-hover" id="tb_Familia">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">Nro</th>
+                                            <th class="text-center">Dni</th>
+                                            <th class="text-center">Nombre</th>
+                                            <th class="text-center">Tipo</th>
+                                            <th class="text-center">Ocupaci&oacuten</th>
+                                            <th class="text-center"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{string tbf = ""; try { tbf = @ViewBag.tb_Familia; } catch { }}
+                                        @(new HtmlString(tbf))
+                                    </tbody>
+                                </table>
+                            </div>
+                            <hr>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="user-btm-box">
+                <div class="col-sm-12">
+                    <button class="btn btn-success btn-rounded" onclick="Hidden('estDet', 'tb_estudio', '0|1|2|4|5|6|7|8|9', '|'); Hidden('famDet', 'tb_Familia', '1|2|3|4|6', '|')">Actualizar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--detalle-->
+    <input type="hidden" name="estudioDet" id="estDet" />
+    <input type="hidden" name="familiaDet" id="famDet" />
+}
+@section scripts
+{
+    @Scripts.Render("~/Bundles/selectBusqueda_JS")
+    @Scripts.Render("~/Bundles/Magnific_JS")
+    @Scripts.Render("~/Bundles/mascara_JS")
+    <script src="~/Scripts/js/jasny-bootstrap.js"></script>
+    <script src="~/Areas/Sistemas/Scripts/Sistemas.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#empleado_idPais").select2();
+            $("#empleado_cCod_Dpto").select2();
+            $("#empleado_cCod_Provincia").select2();
+            $("#empleado_cCod_Ubi").select2();
+            $("#empleado_idBancts").select2();
+            $("#empleado_idBansuel").select2();
+            $("#empleado_cod_sede").select2();
+
+
+            //  $("#cCod_Dpto").prop("disabled", true);
+            $("#empleado_cCod_Pais").change(function () {
+                if ($("#empleado_cCod_Pais").val() != "") {
+                    var RolOptions = {};
+                    RolOptions.url = "/Sistemas/Usuario/depaUsu";
+                    RolOptions.type = "POST";
+                    RolOptions.data = JSON.stringify({ cCod_Pais: $("#empleado_cCod_Pais").val() });
+                    RolOptions.datatype = "json";
+                    RolOptions.contentType = "application/json";
+                    RolOptions.success = function (data) {
+                        $("#empleado_cCod_Dpto").empty();
+
+                        $("#empleado_cCod_Dpto").append($("<option> </option>").val("").html("Seleccionar"));
+                        $.each(data, function (i, item) {
+                            $("#empleado_cCod_Dpto").append($("<option> </option>").val(item.cCod_Dpto).html(item.cDepartamento));
+                        });
+                        $("#empleado_cCod_Dpto").prop("disabled", false);
+                    };
+                    RolOptions.error = function () { alert("Error in Getting States!!"); };
+                    $.ajax(RolOptions);
+
+                }
+                else {
+                    $("#empleado_cCod_Dpto").empty();
+                    $("#empleado_cCod_Dpto").prop("disabled", true);
+                }
+            });
+
+            // $("#cCod_Provincia").prop("disabled", true);
+            $("#empleado_cCod_Dpto").change(function () {
+                if ($("#empleado_cCod_Dpto").val() != "") {
+                    var RolOptions = {};
+                    RolOptions.url = "/Sistemas/Usuario/provUsu";
+                    RolOptions.type = "POST";
+                    RolOptions.data = JSON.stringify({ cCod_Pais: $("#empleado_cCod_Pais").val(), cCod_Dpto: $("#empleado_cCod_Dpto").val() });
+                    RolOptions.datatype = "json";
+                    RolOptions.contentType = "application/json";
+                    RolOptions.success = function (data) {
+                        $("#empleado_cCod_Provincia").empty();
+                        $("#empleado_cCod_Provincia").append($("<option> </option>").val("").html("Seleccionar"));
+                        $.each(data, function (i, item) {
+                            $("#empleado_cCod_Provincia").append($("<option> </option>").val(item.cCod_Provincia).html(item.cProvincia));
+                        });
+                        $("#empleado_cCod_Provincia").prop("disabled", false);
+                    };
+                    RolOptions.error = function () { alert("Error in Getting States!!"); };
+                    $.ajax(RolOptions);
+
+                }
+                else {
+                    $("#empleado_cCod_Provincia").empty();
+                    $("#empleado_cCod_Provincia").prop("disabled", true);
+                }
+            });
+
+            // $("#cCod_Distrito").prop("disabled", true);
+            $("#empleado_cCod_Provincia").change(function () {
+                if ($("#empleado_cCod_Provincia").val() != "") {
+                    var RolOptions = {};
+                    RolOptions.url = "/Sistemas/Usuario/distUsu";
+                    RolOptions.type = "POST";
+                    RolOptions.data = JSON.stringify({ cCod_Pais: $("#empleado_cCod_Pais").val(), cCod_Dpto: $("#empleado_cCod_Dpto").val(), cCod_Provincia: $("#empleado_cCod_Provincia").val() });
+                    RolOptions.datatype = "json";
+                    RolOptions.contentType = "application/json";
+                    RolOptions.success = function (data) {
+                        $("#empleado_cCod_Ubi").empty();
+                        $("#empleado_cCod_Ubi").append($("<option> </option>").val("").html("Seleccionar"));
+                        $.each(data, function (i, item) {
+                            $("#empleado_cCod_Ubi").append($("<option> </option>").val(item.cCod_Ubi).html(item.cDistrito));
+                        });
+                        $("#empleado_cCod_Ubi").prop("disabled", false);
+                    };
+                    RolOptions.error = function () { alert("Error in Getting States!!"); };
+                    $.ajax(RolOptions);
+
+                }
+                else {
+                    $("#empleado_cCod_Ubi").empty();
+                    $("#empleado_cCod_Ubi").prop("disabled", true);
+                }
+            });
+
+            //guardar estudio
+            $('#btn-guarEstu').on('click', function () {
+                var row = "";
+                //obtengo el tamaño de la tabla
+                var id = $("#tb_estudio > tbody > tr").length;
+
+                var insEdu = $("#nomInsEstu").val();
+                var nivEst = $("#idNivEstu option:selected").val();
+                var carPro = $("#carProEstu").val();
+                var curAct = $("#curActEstu option:selected").val();
+                var desMes = $("#mesDesEstu option:selected").val();
+                var desAnio = $("#anioDesEstu").val();
+                var hasMes = $("#mesHasEstu option:selected").val();
+                var hasAnio = $("#anioHasEstu").val();
+
+                if ($("#nomInsEstu").val().length != 0 && $("#idNivEstu").val().length != 0 && $("#carProEstu").val().length != 0 && $("#curActEstu").val().length != 0 && $("#mesDesEstu").val().length != 0 && $("#anioDesEstu").val().length != 0 && $("#mesHasEstu").val().length != 0 && $("#anioHasEstu").val().length != 0) {
+                    row = "<tr>";
+                    row += "<td class='text-center'>" + (id + 1) + "</td>";
+                    row += "<td class='text-center'>" + insEdu + "</td>";
+                    row += "<td class='hidden'>" + nivEst + "</td>";
+                    row += "<td class='text-center'>" + $("#idNivEstu option:selected").text() + "</td>";
+                    row += "<td class='text-center'>" + carPro + "</td>";
+                    row += "<td class='hidden'>" + curAct + "</td>";
+                    row += "<td class='hidden'>" + desMes + "</td>";
+                    row += "<td class='hidden'>" + desAnio + "</td>";
+                    row += "<td class='hidden'>" + hasMes + "</td>";
+                    row += "<td class='hidden'>" + hasAnio + "</td>";
+                    row += "<td class='update'><span class='glyphicon glyphicon-edit'></span></td>";
+                    row += "<td class='delete' onclick='ActualizarIdFila(event)'><span class='glyphicon glyphicon-remove'></span></td>";
+                    row += "</tr>";
+                    $("#tb_estudio > tbody:last").append(row);
+                    //limpio los campos
+
+                    $("div #successD").removeClass('hidden');
+                    $("div #successD").text('Se agrego la información a la tabla de estudios');
+                    setTimeout(function () { $("div #successD").fadeOut(2000).fadeIn(2000).fadeOut(1500).fadeIn(1500).fadeOut(500) }, 500);
+                    setTimeout(function () {
+                        $("div #successD").addClass('hidden');
+                        $("#nomInsEstu").val('');
+                        $("#carProEstu").val('');
+                        $("#anioDesEstu").val('');
+                        $("#anioHasEstu").val('');
+                        $('#idNivEstu')[0].selectedIndex = 0;
+                        $('#curActEstu')[0].selectedIndex = 0;
+                        $('#mesDesEstu')[0].selectedIndex = 0;
+                        $('#mesHasEstu')[0].selectedIndex = 0;
+                    }, 4000);
+                }
+                else {
+                    $("div #danger").removeClass('hidden');
+                    $("div #danger").text('Ingresar todos los campos requeridos');
+                    setTimeout(function () { $("div #danger").fadeOut(5000); $("div #danger").fadeIn(5000); }, 2000);
+                    setTimeout(function () { $("div #danger").addClass('hidden'); }, 8000);
+                    return false;
+                }
+            });
+
+            //guardar familia
+            $('#btn-guarFami').on('click', function () {
+                var row = "";
+                var duplicado = false;
+                //obtengo el tamaño de la tabla
+                var id = $("#tb_Familia > tbody > tr").length;
+
+                var dniEmp = $("#dniEmpFam").val();
+                var nomCom = $("#nomComEmpFam").val();
+                var fchNac = $("#fchNacEmpFam").val();
+                var idtip = $("#idTipFam option:selected").val();
+                var ocuEmp = $("#ocuEmpFam").val();
+
+                if ($("#dniEmpFam").val().length != 0 && $("#nomComEmpFam").val().length != 0 && $("#fchNacEmpFam").val().length != 0 && $("#idTipFam option:selected").val().length != 0 && $("#ocuEmpFam").val().length != 0) {
+
+                    //valido dni repetidos
+                    var codigo = $("#dniEmpFam").val();
+                    $('#tb_Familia tbody tr').each(function (index) {
+                        console.log("ver " + $('#tb_Familia tbody tr').eq(index).find("td").eq(parseInt(0)).html())
+                        if ($('#tb_Familia tbody tr').eq(index).find("td").eq(parseInt(0)).html() == codigo) {
+                            duplicado = true;
+                        }
+                    });
+
+
+                    //si esta duplicado muestro un mensaje
+                    if (duplicado == true) {
+                        $("div #danger").removeClass('hidden');
+                        $("div #danger").text('Ya existe el dni ingresado');
+                        setTimeout(function () { $("div #danger").fadeOut(2000).fadeIn(2000).fadeOut(1500).fadeIn(1500).fadeOut(500) }, 500);
+                        setTimeout(function () { $("div #danger").addClass('hidden'); }, 4000);
+                        return false;
+                    }
+
+                    row = "<tr>";
+                    row += "<td class='text-center'>" + (id + 1) + "</td>";
+                    row += "<td class='text-center'>" + dniEmp + "</td>";
+                    row += "<td class='text-center'>" + nomCom + "</td>";
+                    row += "<td class='hidden'>" + fchNac + "</td>";
+                    row += "<td class='hidden'>" + idtip + "</td>";
+                    row += "<td class='text-center'>" + $("#idTipFam option:selected").text() + "</td>";
+                    row += "<td class='text-center'>" + ocuEmp + "</td>";
+                    row += "<td class='updateF'><span class='glyphicon glyphicon-edit'></span></td>";
+                    row += "<td class='delete' onclick='ActualizarIdFila(event)'><span class='glyphicon glyphicon-remove'></span></td>";
+                    row += "</tr>";
+                    $("#tb_Familia > tbody:last").append(row);
+                    //limpio los campos
+
+                    $("div #successD").removeClass('hidden');
+                    $("div #successD").text('Se agrego la información a la tabla de estudios');
+                    setTimeout(function () { $("div #successD").fadeOut(2000).fadeIn(2000).fadeOut(1500).fadeIn(1500).fadeOut(500) }, 500);
+                    setTimeout(function () {
+                        $("div #successD").addClass('hidden');
+                        $("#dniEmpFam").val('');
+                        $("#nomComEmpFam").val('');
+                        $("#fchNacEmpFam").val('');
+                        $("#ocuEmpFam").val('');
+                        $('#idTipFam')[0].selectedIndex = 0;
+                    }, 4000);
+
+                }
+                else {
+                    $("div #danger").removeClass('hidden');
+                    $("div #danger").text('Ingresar todos los campos requeridos');
+                    setTimeout(function () { $("div #danger").fadeOut(5000); $("div #danger").fadeIn(5000); }, 2000);
+                    setTimeout(function () { $("div #danger").addClass('hidden'); }, 8000);
+                    return false;
+                }
+            });
+
+
+        });
+
+        function ActualizarIdFila(evt) {
+            $(document).on("click", ".delete", function () {
+                var parent = $(this).parents().get(0);
+                $(parent).remove();
+                /////////////
+                var indice = 1;
+                $('#tb_estudio tbody tr').each(function (index, element) {
+                    $(element).find("td").eq(0).text(indice);
+                    indice = indice + 1;
+                });
+            });
+        }
+
+        var loadFile = function (event) {
+            var output = document.getElementById('output');
+            output.src = URL.createObjectURL(event.target.files[0]);
+        };
+
+
+        //actualizar
+        $(document).on("click", ".update", function () {
+
+            $("#btn-guarEstu").addClass("hidden");
+            $("#btn-modEstu").removeClass("hidden");
+
+            $("#responsive-modal-estudio").modal("show");
+           
+            $("#index").val($(this).parents().get(0).cells[0].innerHTML);
+            $("#nomInsEstu").val($(this).parents().get(0).cells[1].innerHTML);
+            $("#idNivEstu").val($(this).parents().get(0).cells[2].innerHTML);
+            $("#carProEstu").val($(this).parents().get(0).cells[4].innerHTML);
+            $("#curActEstu").val($(this).parents().get(0).cells[5].innerHTML);
+            $("#mesDesEstu").val($(this).parents().get(0).cells[6].innerHTML)
+            $("#anioDesEstu").val($(this).parents().get(0).cells[7].innerHTML)
+            $("#mesHasEstu").val($(this).parents().get(0).cells[8].innerHTML)
+            $("#anioHasEstu").val($(this).parents().get(0).cells[9].innerHTML)
+        });
+
+        $(document).on("click", ".updateF", function () {
+            $("#btn-guarFami").addClass("hidden");
+            $("#btn-modFami").removeClass("hidden");
+
+            $("#responsive-modal-familia").modal("show");
+
+            $("#indexF").val($(this).parents().get(0).cells[0].innerHTML);
+            $("#dniEmpFam").val($(this).parents().get(0).cells[1].innerHTML);
+            $("#nomComEmpFam").val($(this).parents().get(0).cells[2].innerHTML);
+            $("#fchNacEmpFam").val($(this).parents().get(0).cells[3].innerHTML);
+            $("#idTipFam").val($(this).parents().get(0).cells[4].innerHTML);
+            $("#ocuEmpFam").val($(this).parents().get(0).cells[6].innerHTML);
+
+
+        });
+
+        $(document).on("click", "#urlAgregar", function () {
+            $("#btn-modEstu").addClass("hidden");
+            $("#btn-guarEstu").removeClass("hidden");
+
+            $("#index").val("");
+            $("#nomInsEstu").val("");
+            $("#idNivEstu").val("");
+            $("#carProEstu").val("");
+            $("#curActEstu").val("");
+            $("#mesDesEstu").val("")
+            $("#anioDesEstu").val("")
+            $("#mesHasEstu").val("")
+            $("#anioHasEstu").val("")
+        });
+
+        $(document).on("click", "#urlAgregarF", function () {
+            $("#btn-modFami").addClass("hidden");
+            $("#btn-guarFami").removeClass("hidden");
+
+            $("#indexF").val("");
+            $("#dniEmpFam").val("");
+            $("#nomComEmpFam").val("");
+            $("#fchNacEmpFam").val("");
+            $("#idTipFam").val("");
+            $("#ocuEmpFam").val("");
+        });
+
+        
+        $(document).on("click", "#btn-modEstu", function () {
+            var insEdu = $("#nomInsEstu").val();
+            var nivEst = $("#idNivEstu option:selected").val();
+            var carPro = $("#carProEstu").val();
+            var curAct = $("#curActEstu option:selected").val();
+            var desMes = $("#mesDesEstu option:selected").val();
+            var desAnio = $("#anioDesEstu").val();
+            var hasMes = $("#mesHasEstu option:selected").val();
+            var hasAnio = $("#anioHasEstu").val();
+
+            var iNum = parseInt($("#index").val());
+
+            if ($("#nomInsEstu").val().length != 0 && $("#idNivEstu").val().length != 0 && $("#carProEstu").val().length != 0 && $("#curActEstu").val().length != 0 && $("#mesDesEstu").val().length != 0 && $("#anioDesEstu").val().length != 0 && $("#mesHasEstu").val().length != 0 && $("#anioHasEstu").val().length != 0) {
+
+                $("#tb_estudio > tbody").find("tr").eq(iNum - 1).find("td").eq(1).text(insEdu);
+                $("#tb_estudio > tbody").find("tr").eq(iNum - 1).find("td").eq(2).text(nivEst);
+                $("#tb_estudio > tbody").find("tr").eq(iNum - 1).find("td").eq(3).text($("#idNivEstu option:selected").text());
+                $("#tb_estudio > tbody").find("tr").eq(iNum - 1).find("td").eq(4).text(carPro);
+                $("#tb_estudio > tbody").find("tr").eq(iNum - 1).find("td").eq(5).text(curAct);
+                $("#tb_estudio > tbody").find("tr").eq(iNum - 1).find("td").eq(6).text(desMes);
+                $("#tb_estudio > tbody").find("tr").eq(iNum - 1).find("td").eq(7).text(desAnio);
+                $("#tb_estudio > tbody").find("tr").eq(iNum - 1).find("td").eq(8).text(hasMes);
+                $("#tb_estudio > tbody").find("tr").eq(iNum - 1).find("td").eq(9).text(hasAnio);
+
+                $("#responsive-modal-estudio").modal('hide');
+            }
+             else {
+                    $("div #danger").removeClass('hidden');
+                    $("div #danger").text('Ingresar todos los campos requeridos');
+                    setTimeout(function () { $("div #danger").fadeOut(5000); $("div #danger").fadeIn(5000); }, 2000);
+                    setTimeout(function () { $("div #danger").addClass('hidden'); }, 8000);
+                    return false;
+            }
+
+        });
+
+
+        $(document).on("click", "#btn-modFami", function () {
+            var dniEmp = $("#dniEmpFam").val();
+            var nomCom = $("#nomComEmpFam").val();
+            var fchNac = $("#fchNacEmpFam").val();
+            var idtip = $("#idTipFam option:selected").val();
+            var ocuEmp = $("#ocuEmpFam").val();
+            var iNum = parseInt($("#indexF").val());
+
+            if ($("#dniEmpFam").val().length != 0 && $("#nomComEmpFam").val().length != 0 && $("#fchNacEmpFam").val().length != 0 && $("#idTipFam option:selected").val().length != 0 && $("#ocuEmpFam").val().length != 0) {
+
+                
+                $("#tb_Familia > tbody").find("tr").eq(iNum - 1).find("td").eq(1).text(dniEmp);
+                $("#tb_Familia > tbody").find("tr").eq(iNum - 1).find("td").eq(2).text(nomCom);
+                $("#tb_Familia > tbody").find("tr").eq(iNum - 1).find("td").eq(3).text(fchNac);
+                $("#tb_Familia > tbody").find("tr").eq(iNum - 1).find("td").eq(4).text(idtip);
+                $("#tb_Familia > tbody").find("tr").eq(iNum - 1).find("td").eq(5).text($("#idTipFam option:selected").text());
+                $("#tb_Familia > tbody").find("tr").eq(iNum - 1).find("td").eq(6).text(ocuEmp);
+
+                $("#responsive-modal-familia").modal('hide');
+            }
+            else {
+                $("div #danger").removeClass('hidden');
+                $("div #danger").text('Ingresar todos los campos requeridos');
+                setTimeout(function () { $("div #danger").fadeOut(5000); $("div #danger").fadeIn(5000); }, 2000);
+                setTimeout(function () { $("div #danger").addClass('hidden'); }, 8000);
+                return false;
+            }
+
+        });
+
+    </script>
+}
+

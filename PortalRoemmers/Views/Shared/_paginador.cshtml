@@ -1,0 +1,71 @@
+﻿@using PortalRoemmers.Security
+@model PortalRoemmers.Models.BaseModelo
+
+@{
+    var cantidadPaginas = (int)Math.Ceiling((double)Model.TotalDeRegistros / Model.RegistrosPorPagina);
+}
+<div style="width: 100%;">
+
+    <!--Funcionalidad: Páginas-->
+    @{
+        int Inicial = 1;
+        var radio = 3;
+        var cantidadMaximaDePaginas = radio * 2 + 1;
+        int Final = (cantidadPaginas > cantidadMaximaDePaginas) ? cantidadMaximaDePaginas : cantidadPaginas;
+        if (Model.PaginaActual > radio + 1)
+        {
+            Inicial = Model.PaginaActual - radio;
+            if (cantidadPaginas > Model.PaginaActual + radio)
+            {
+                Final = Model.PaginaActual + radio;
+            }
+            else
+            {
+                Final = cantidadPaginas;
+            }
+        }
+    }
+
+    <ul class="pagination pagination-warning">
+        <!--Final-->
+        <li>@Html.ActionLink("«", null, new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = 1, search = SessionPersister.Search,fchEveSolGasI=SessionPersister.FchEveSolGasI,fchEveSolGasF = SessionPersister.FchEveSolGasF })</li>
+
+        @if (Model.PaginaActual == 1)
+        {
+            <li>@Html.ActionLink("❮", null, new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = 1, search = SessionPersister.Search,fchEveSolGasI=SessionPersister.FchEveSolGasI,fchEveSolGasF = SessionPersister.FchEveSolGasF }, new { @class = "paginate_button previous", @style = "pointer-events: none;cursor: default;opacity: 0.5;" })</li>
+
+        }
+        else
+        {
+            <li>@Html.ActionLink("❮", null, new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = Model.PaginaActual - 1, search = SessionPersister.Search,fchEveSolGasI=SessionPersister.FchEveSolGasI,fchEveSolGasF = SessionPersister.FchEveSolGasF }, new { @class = "paginate_button previous" })</li>
+        }
+
+        <!--Listar los numeritos-->
+        @for (int i = Inicial; i <= Final; i++)
+        {
+            if (i == Model.PaginaActual)
+            {
+                <li class="active">@Html.ActionLink(i.ToString(), null, new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = i, search = SessionPersister.Search,fchEveSolGasI=SessionPersister.FchEveSolGasI,fchEveSolGasF = SessionPersister.FchEveSolGasF })</li>
+            }
+            else
+            {
+                <li>@Html.ActionLink(i.ToString(), null, new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = i, search = SessionPersister.Search,fchEveSolGasI=SessionPersister.FchEveSolGasI,fchEveSolGasF = SessionPersister.FchEveSolGasF })</li>
+            }
+        }
+
+        <!--siguiente-->
+        @if (Model.PaginaActual == cantidadPaginas)
+        {
+            <li>@Html.ActionLink("❯", null, new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = cantidadPaginas, search = SessionPersister.Search,fchEveSolGasI=SessionPersister.FchEveSolGasI,fchEveSolGasF = SessionPersister.FchEveSolGasF }, new { @class = "paginate_button next", @style = "pointer-events: none;cursor: default;opacity: 0.5;" })</li>
+
+        }
+        else
+        {
+            <li>@Html.ActionLink("❯", null, new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = Model.PaginaActual + 1, search = SessionPersister.Search,fchEveSolGasI=SessionPersister.FchEveSolGasI,fchEveSolGasF = SessionPersister.FchEveSolGasF }, new { @class = "paginate_button next" })</li>
+
+        }
+
+        <!--Ultimo-->
+        <li>@Html.ActionLink("»", null, new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = cantidadPaginas, search = SessionPersister.Search,fchEveSolGasI=SessionPersister.FchEveSolGasI,fchEveSolGasF = SessionPersister.FchEveSolGasF })</li>
+    </ul>
+</div>

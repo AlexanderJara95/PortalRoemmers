@@ -1,0 +1,213 @@
+﻿@model PortalRoemmers.Areas.Sistemas.Models.Menu.MenuModels
+@using PortalRoemmers.Security
+@{
+    ViewBag.Title = "Registrar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section css {
+    @Styles.Render("~/Content/selectBusqueda_CSS")
+}
+<div id="responsive-modal-icons" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <section id="wrapper" class="block1">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">Iconos</h4>
+                </div>
+                <div class="modal-body">
+                    <div id='danger' class='alert alert-danger hidden'></div>
+                    <div class="col-sm-12">
+                        @Html.DropDownList("idTipIco", (SelectList)ViewBag.tipIcon, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="white-box">
+                                <section>
+                                    <h3 class="box-title">20 New Icons in 4.5</h3>
+                                    <div id="idlist" class="icon-list-demo clearfix">
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+
+
+<div class="white-box p-l-20 p-r-20">
+    <h3 class="box-title m-b-0"> Nuevo Menu</h3>
+    <p class="text-muted m-b-30 font-13">Completar todos los campos necesarios. </p>
+    <div class="row">
+        <div class="col-md-12">
+            @using (Html.BeginForm("Registrar", "Menu", new { rol = ViewBag.rol }, FormMethod.Post, new { @class = "form-horizontal form-material" }))
+            {
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.idTipMen)</label>
+                    <div class="col-md-12">
+                        @Html.DropDownListFor(model => model.idTipMen, (SelectList)ViewBag.id, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                        @Html.ValidationMessageFor(model => model.idTipMen, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.tiMen)</label>
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.tiMen, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "" } })
+                        @Html.ValidationMessageFor(model => model.tiMen, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.desMen)</label>
+                    <div class="col-md-12">
+                        @Html.TextAreaFor(model => model.desMen, new { @class = "form-control form-control-line", @rows = 5 })
+                        @Html.ValidationMessageFor(model => model.desMen, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.urlMen)</label>
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.urlMen, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "" } })
+                        @Html.ValidationMessageFor(model => model.urlMen, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">
+                        @Html.LabelFor(model => model.imgMen)
+                        <a data-toggle="modal" title="Agregar responsable" class="btn btn-info btn-circle" href="#responsive-modal-icons">
+                            <span class="glyphicon glyphicon-plus"></span>
+                        </a>
+                        <br>
+                        <i id="img" class=""></i>
+                    </label>
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.imgMen, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "" } })
+                        @Html.ValidationMessageFor(model => model.imgMen, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.ParentId)</label>
+                    <div class="col-md-12">
+                        <select id="ParentId" class="form-control" name="ParentId"></select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.ordMen)</label>
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.ordMen, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "0" } })
+                        @Html.ValidationMessageFor(model => model.ordMen, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <button class="btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10">Guardar</button>
+                @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-default btn-rounded btn-outline waves-effect waves-light" })
+
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    @Scripts.Render("~/Bundles/selectBusqueda_JS")
+    <script>
+        $(document).ready(function () {
+            $("#ParentId").prop("disabled", true);
+            $("#urlMen").prop("disabled", true);
+
+            $("#idTipMen").change(function () {
+                if ($("#idTipMen").val() != "" && $("#idTipMen").val() != "01") {
+                    var RolOptions = {};
+                    RolOptions.url = "/Menu/menuCondicion";
+                    RolOptions.type = "POST";
+                    RolOptions.data = JSON.stringify({ idTipMen: $("#idTipMen").val() });
+                    RolOptions.datatype = "json";
+                    RolOptions.contentType = "application/json";
+                    RolOptions.success = function (data) {
+                        $("#ParentId").empty();
+
+                        $("#ParentId").append($("<option> </option>").val("").html("Seleccionar"));
+                        $.each(data, function (i, item) {
+                            $("#ParentId").append($("<option> </option>").val(item.idMen).html(item.tiMen));
+                        });
+                        $("#ParentId").prop("disabled", false);
+                    };
+                    RolOptions.error = function () { alert("Error in Getting States!!"); };
+                    $.ajax(RolOptions);
+
+                }
+                else {
+                    $("#ParentId").empty();
+                    $("#ParentId").prop("disabled", true);
+                }
+
+                switch ($("#idTipMen").val()) {
+                    case "01":
+                        $("#urlMen").val('');
+                        $("#urlMen").prop("disabled", true);
+                        break;
+                    case "02":
+                        $("#urlMen").val('');
+                        $("#urlMen").prop("disabled", true);
+                        break;
+                    case "03":
+                        $("#urlMen").val('');
+                        $("#urlMen").prop("disabled", true);
+                        break;
+                    case "04":
+                        $("#urlMen").prop("disabled", false);
+                        break;
+                     case "05":
+                        $("#urlMen").prop("disabled", false);
+                        break;
+                }
+            });
+
+            $("#ParentId").select2();
+
+
+            $("#idTipIco").change(function () {
+                if ($("#idTipIco").val() != "") {
+                    var RolOptions = {};
+                    RolOptions.url = "/Menu/cargarIcons";
+                    RolOptions.type = "POST";
+                    RolOptions.data = JSON.stringify({ idTipIco: parseInt($("#idTipIco").val()) });
+                    RolOptions.datatype = "json";
+                    RolOptions.contentType = "application/json";
+                    RolOptions.success = function (data) {
+                        $("#idlist").empty();
+                        $.each(data, function (i, item) {
+
+                            $("#idlist").append("<div id='" + item.idIco + "' onclick='elegirIcono(" + item.idIco + ");' class='col-sm-6 col-md-4 col-lg-3'><i class='" + item.nomIco + "'></i>" + item.nomIco + "</div>");
+                        });
+                    };
+                    RolOptions.error = function () { alert("Error in Getting States!!"); };
+                    $.ajax(RolOptions);
+                }
+                else {
+                    $("#idlist").empty();
+                }
+            });
+
+        });
+
+        function elegirIcono(id) {
+            $("#imgMen").val($("#" + id).text() + " fa-fw");
+            $('#responsive-modal-icons').modal('hide');
+            $("#img").attr("class", $("#" + id).text());
+        }
+
+    </script>
+}

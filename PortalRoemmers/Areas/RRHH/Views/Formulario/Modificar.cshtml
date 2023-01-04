@@ -1,0 +1,126 @@
+﻿@using PortalRoemmers.Security
+@model PortalRoemmers.Areas.RRHH.Models.Formulario.FormularioModels
+
+@{
+    ViewBag.Title = "Modificar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!--model Campo-->
+<div id="responsive-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <section id="wrapper" class="block1">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">Familia Productos</h4>
+                </div>
+                <div class="modal-body">
+                    <div id='danger' class='alert alert-danger hidden'></div>
+                    
+                   
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<!--model Campo-->
+
+
+
+<div class="white-box p-l-20 p-r-20">
+    <h3 class="box-title m-b-0"> Modificar Formulario</h3>
+    <p class="text-muted m-b-30 font-13">Completar todos los campos necesarios. </p>
+    <div class="row">
+        <div class="col-md-12">
+            @using (Html.BeginForm("Modificar", "Formulario", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal form-material" }))
+            {
+                @Html.AntiForgeryToken()
+
+                @Html.HiddenFor(model => model.idFor)
+                @Html.HiddenFor(model => model.idEst)
+                @Html.HiddenFor(model => model.usuCrea)
+                @Html.HiddenFor(model => model.usufchCrea)
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.nomFor)</label>
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.nomFor, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Nombre" } })
+                        @Html.ValidationMessageFor(model => model.nomFor, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.titFor)</label>
+                    <div class="col-md-12">
+
+                        @Html.EditorFor(model => model.titFor, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Título" } })
+                        @Html.ValidationMessageFor(model => model.titFor, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.desFor)</label>
+                    <div class="col-md-12">
+
+                        @Html.EditorFor(model => model.desFor, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Descripción" } })
+                        @Html.ValidationMessageFor(model => model.desFor, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.fchIniFor)</label>
+                    <div class="col-md-12">
+
+                        @Html.EditorFor(model => model.fchIniFor, new { htmlAttributes = new { @class = "form-control form-control-line", @readonly = "readonly" } })
+                        @Html.ValidationMessageFor(model => model.fchIniFor, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.fchFinFor)</label>
+                    <div class="col-md-12">
+
+                        @Html.EditorFor(model => model.fchFinFor, new { htmlAttributes = new { @class = "form-control form-control-line", @readonly = "readonly" } })
+                        @Html.ValidationMessageFor(model => model.fchFinFor, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+
+                <div class="col-md-12">
+                    <hr />
+                    <a data-toggle="modal" title="Agregar campos" class="btn btn-block btn-primary" href="#responsive-modal">
+                        <span class="glyphicon glyphicon-plus"></span> AGREGAR CAMPO
+                    </a>
+                    <div class="table-responsive m-t-10" style="clear: both;">
+                        <table class="table table-hover" id="tb_campo">
+                            <thead>
+                                <tr>
+                                    <th class="hidden"></th>
+                                    <th class="text-center">Título</th>
+                                    <th class="text-center">Tipo</th>
+                                    <th class="text-center">Obligatorio</th>
+                                    <th class="hidden"></th>
+                                    <th class="text-center"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{ string v = ""; try { v = @ViewBag.tbCampo; } catch { }}
+                                @(new HtmlString(v))
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+
+                <button class="btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10">Guardar</button>
+                @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-default btn-rounded btn-outline waves-effect waves-light" })
+
+            }
+        </div>
+    </div>
+</div>
+

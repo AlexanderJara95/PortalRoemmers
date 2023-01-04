@@ -1,0 +1,336 @@
+﻿@model  PortalRoemmers.ViewModels.IndexViewModel
+@using PortalRoemmers.Helpers
+@using PortalRoemmers.Security
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section css {
+    @Styles.Render("~/Content/tablaResponsive_CSS")
+    @Styles.Render("~/Content/sweetalert_CSS")
+}
+<!--Links Upload-->
+<div id="responsive-modal-Ruta" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h2 class="modal-title">Detalle de Adjuntos</h2>
+            </div>
+            <div class="modal-body">
+                <div id='danger2' class='alert alert-success hidden'></div>
+                <div class="row">
+                    <form id="Form1" enctype="multipart/form-data" method="post">
+                        <input id="idBienFotoSelected" class="hidden">
+                        <div class="col-sm-12">
+                            <div class="table-responsive m-t-10" style="clear: both;">
+                                <div class="col-sm-12">
+                                    <table id="tb_rutas" class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center">N°</th>
+                                                <th class="text-center">Nombre</th>
+                                                <th class="hidden"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div id="visualDoc" class="col-sm-12 hidden" >
+                            <div class="col-xs-12 col-sm-12 white-box">
+                                <img class="img-responsive" id="imagenselect" src="">
+                            </div>
+                            <div class="col-xs-12 col-sm-12 form-group">
+                                <label class="col-md-12">Link</label>
+                                <div class="col-xs-12 col-sm-12">
+                                    <input id="idBien" name="idBien" class="hidden" />
+                                    <input id="idFotBien" name="idFotBien" class="hidden" />
+                                    <input type="text" id="link" name="link" class="form-control" placeholder="Link de enlace" />
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-sm-12 form-group text-center">
+                                <br />
+                                <button id="btnGuardarLink" type="button" class="btn btn-success waves-effect" onclick="GuardarLink();">Guardar</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Files Upload-->
+<div class="panel panel-default">
+    <div class="panel-heading box-title m-b-0"><h2>Mantenimiento de Bienvenida</h2></div>
+    <div class="panel-body">
+        <div class="form-group">
+            @{ string v = ""; try { v = TempData["mensaje"].ToString(); } catch { }}
+            @(new HtmlString(v))
+        </div>
+        @using (Html.BeginForm("Index", "Bienvenida", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista }, FormMethod.Post))
+        {
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="input-group">
+                        <input type="text" id="search" name="search" class="form-control" placeholder="Buscar" value="@ViewBag.search">
+                        <span class="input-group-btn">x`
+                            <button class="btn waves-effect waves-light btn-info">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        }
+        <br />
+        <div class="row">
+            <div class="col-xs-6">
+                @Html.ActionLink("Crear", "Registrar", "Bienvenida", new { Area = "RRHH" }, new { @Class = "btn btn-info btn-rounded" })
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <table class="tablesaw table-bordered table-hover table" data-tablesaw-mode="swipe">
+                    <thead>
+                        <tr>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist"></th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1">Código</th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2">Nombre</th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Activo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Bienvenida)
+                        {
+                            <tr>
+                                <td class="text-nowrap">
+                                    <a href="@MyExtensions.ActionUrl("Modificar", "Bienvenida", new {Area="RRHH", id = item.idbien})" data-toggle="tooltip" title="Editar"> <i class="fa fa-pencil text-inverse m-r-5"></i> </a>
+                                    <a href="@MyExtensions.ActionUrl("Eliminar", "Bienvenida", new {Area="RRHH",id = item.idbien})" data-toggle="tooltip" title="Eliminar"> <i class="fa fa-close text-danger m-r-5"></i> </a>
+                                    <a data-toggle="tooltip" title="Activar" id="sa-params"> <i class="fa fa-star text-justify m-r-5"></i> </a>
+                                    @{
+                                        var detRuta = item.fotos.ToList();
+                                        var drta = "";
+                                        if (detRuta.Count != 0)
+                                        {
+                                            foreach (var l in detRuta)
+                                            {
+                                                drta += l.idFotBie + ";" + l.linkFotBie + "|";
+                                            }
+                                            drta = drta.Remove(drta.Length - 1, 1);
+                                        }
+                                    }
+                                    <a id="sa-rutas" href="#responsive-modal-Ruta" data-toggle="modal" title="Agrega detalle" class="open-file m-r-12" data-detFile="@drta"><i class="mdi mdi-attachment"></i></a>
+                                </td>
+                                <td>@Html.DisplayFor(modelItem => item.idbien)</td>
+                                <td>@Html.DisplayFor(modelItem => item.nombien)</td>
+                                <td>
+                                    @{ if (item.actbien == true)
+                                        {
+                                            <span>SI</span>
+                                        }
+                                        else
+                                        {
+                                            <span>NO</span>
+                                        }
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                @{Html.RenderPartial("_paginador", Model);}
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-footer"></div>
+</div>
+@section scripts
+{
+    @Scripts.Render("~/Bundles/sweetalert_JS")
+    @Scripts.Render("~/Bundles/tablaResponsive_JS")
+    <script src="~/Areas/RRHH/Scripts/RRHH.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('table tbody tr a#sa-params').click(function () {
+                var idbien = $(this).parent().parents('tr').find('td').eq(1).text();
+                swal({
+                    title: "¿Estás seguro?",
+                    text: "¡Deseas activar esta bienvenida! \n",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Sí,activar!",
+                    cancelButtonText: "No,activar!",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                }, function (isConfirm) {
+                    if (isConfirm) {
+                        var Options = {};
+                        Options.url = "/Bienvenida/activarBienvenida";
+                        Options.type = "POST";
+                        Options.data = JSON.stringify({ idbien: idbien });
+                        Options.datatype = "json";
+                        Options.contentType = "application/json";
+                        Options.success = function (data) {
+                            var bool_valueT = (JSON.stringify(data) == 'true') ? true : false;
+
+                            if (bool_valueT) {
+                                swal("Activado!", "Se activo la bienvenida", "success");
+                                setTimeout(function () { location.reload(); }, 2000);
+                            }
+                            else {
+                                var bool_valueF = JSON.stringify(data) == "false" ? false : true;
+                                if (!bool_valueF) {
+                                    swal("Ocurrio un problema!", "La bienvenida no ha sido activada.", "error");
+                                } else {
+                                    swal("Ocurrio un problema!", data, "error");
+                                }
+                            }
+
+
+                        };
+                        Options.error = function () { alert("Error in Getting States!!"); unblock(); };
+                        $.ajax(Options);
+
+                    } else {
+                        swal("Cancelado", "La bienvenida no se activo.", "error");
+                    }
+                });
+            });
+            $('table tbody tr a#sa-rutas').click(function () {
+                //--
+                $("#visualDoc").addClass("hidden");
+                //--
+                var idBien = $(this).parent().parents('tr').find('td').eq(1).text();
+                $("#idBienFotoSelected").val(idBien);
+                //Llamar una funcion que busque la grilla para files
+                $("#imagenselect").attr("src", "");
+                $("#refimageselect").attr("href", "");
+
+                //Vaceo la tabla
+                $("#tb_rutas > tbody:last").empty();
+                //-----------------------------------
+                console.log("entro sa-rutas success " + idBien);
+                //-----------------------------------
+                //armo la tabla firma
+                $.post('/Bienvenida/obtenerFilesLinks', { id: idBien }, function (data, status) {
+                    if (status == "success") {
+                        $.each(data, function (i, item) {
+                            //-----------------------------------------------------
+                            var id = $("#tb_rutas > tbody > tr").length;
+                            row = "<tr>";
+                            row += "<td class='text-center'>" + (id + 1) + "</td>";
+                            row += "<td class='text-center'>" + item.id + "</td>";
+                            row += "<td class='hidden'>" + item.path + "</td>";
+                            row += "<td class='hidden'>" + item.link + "</td>";
+                            row += "<td class='hidden'>" + idBien + "</td>";
+                            row += "<td class='visualizar text-nowrap' onclick='VisualizarDoc(event)'><i class='ti-search'></i></td>";
+                            row += "</tr>";
+                            $("#tb_rutas > tbody:last").append(row);
+                            //-----------------------------------------------------
+                        });
+                    }
+                    else {
+                            $("div #danger2").removeClass('hidden');
+                            $("div #danger2").text(data);
+                            setTimeout(function () { $("div #danger2").fadeOut(2000).fadeIn(2000).fadeOut(1500).fadeIn(1500).fadeOut(500) }, 500);
+                            setTimeout(function () { $("div #danger2").addClass('hidden'); }, 4000);
+                    }
+                });
+                //-----------------------------------------------
+            });
+        });
+        //--////////////-- Visualizar file --///////////////////////////////////////
+        function VisualizarDoc(evt) {
+            //----------------------------------
+            $("#visualDoc").removeClass("hidden");
+            //----------------------------------
+            $(document).on("click", ".visualizar", function () {
+                var parent = $(this).parents().get(0);
+                console.log("Entrar visualizar fotos bien" + parent);
+                /////////////Captar el path de la seleccion ////////////////
+                var sourceImg = "";
+                sourceImg = $(parent).find("td").eq(2).text();
+                var sourceLink = "";
+                sourceLink = $(parent).find("td").eq(3).text();
+                var idBien = "";
+                idBien = $(parent).find("td").eq(4).text();
+                var idFotBien = "";
+                idFotBien = $(parent).find("td").eq(1).text();
+                //--------------------------------------
+                $("#imagenselect").attr("src", sourceImg);
+                $("#refimageselect").attr("href", sourceImg);
+                if (sourceLink == "null") {
+                    console.log("El objeto LINK se ve asi : " + sourceLink);
+                    $("#link").val('')
+                }
+                else {
+                    $("#link").val(sourceLink);
+                }
+                $("#idBien").val(idBien);
+                $("#idFotBien").val(idFotBien);
+                //$("#link").val(sourceLink);
+                //console.log("El objeto LINK se ve asi : " + sourceLink);
+                //console.log("El valor de idBien es "+$("#idBien").val());
+                //console.log("El valor de idFotBien es "+$("#idFotBien").val());
+
+            });
+        };
+        //////////////////////////////////////////////////////////////////////////////
+        //------------------------------------------------------
+        /*$("#Form1").submit(function (e) {
+            GuardarLink();
+          
+            //return false;
+        });*/
+        //------------------------------------------------------
+        function GuardarLink() {
+            //-----------------------
+            //Llamar el dato y guardar
+            var Link = $("#link").val();
+            var idB = $("#idBien").val();
+            var idFB = $("#idFotBien").val();
+            //--------------------------
+            $.post('/Bienvenida/guardarLink', { idBien: idB, idFotoB: idFB, link: Link }, function (data, status) {
+                console.log("guardarlink es : " + data);
+                if (status == 'success') {
+                    if (data == true) {
+                        console.log("entro el data de guardar link");
+                        //----------------------------------
+                        $("div #visualDoc").addClass("hidden");
+                        $("#link").val("");
+                        $("div #danger2").removeClass('hidden');
+                        $("div #danger2").text('Se guardo link....');
+                        setTimeout(function () { $("div #danger2").fadeOut(2000).fadeIn(2000).fadeOut(1500).fadeIn(1500).fadeOut(500) }, 500);
+                        setTimeout(function () { $("div #danger2").addClass('hidden'); }, 4000);
+                        //----------------------------------
+                    }
+                }
+                else {
+                        $("div #danger2").removeClass('hidden');
+                        $("div #danger2").text(data);
+                        setTimeout(function () { $("div #danger2").fadeOut(2000).fadeIn(2000).fadeOut(1500).fadeIn(1500).fadeOut(500) }, 500);
+                        setTimeout(function () { $("div #danger2").addClass('hidden'); }, 4000);
+                }
+
+            });
+            //--------------------------
+        };
+         //------------------------------------------------------
+    </script>
+}

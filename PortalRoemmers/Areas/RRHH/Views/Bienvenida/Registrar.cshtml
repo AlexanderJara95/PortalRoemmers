@@ -1,0 +1,163 @@
+﻿@using PortalRoemmers.Security
+@model PortalRoemmers.Areas.RRHH.Models.Bienvenida.BienvenidaModels
+
+
+@{
+    ViewBag.Title = "Registrar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section css {
+    @Styles.Render("~/Content/summernote_CSS")
+}
+
+<div class="white-box p-l-20 p-r-20">
+    <h3 class="box-title m-b-0"> Nuevo Bienvenida</h3>
+    <p class="text-muted m-b-30 font-13">Completar todos los campos necesarios. </p>
+
+    @{string msg = ""; try { msg = TempData["mensaje"].ToString(); } catch { }}
+    @(new HtmlString(msg))
+    <div class="row">
+        <div class="col-md-12">
+            @using (Html.BeginForm("Registrar", "Bienvenida", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.titbien)
+                @Html.HiddenFor(model => model.desbien)
+            <div class="row">
+
+                <div class="col-sm-12">
+                    <label class="col-md-12">@Html.LabelFor(model => model.nombien)</label>
+                    <div class="white-box">
+                        @Html.EditorFor(model => model.nombien, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Nombre" } })
+                        @Html.ValidationMessageFor(model => model.nombien, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="col-sm-12">
+                    <label class="col-md-12">@Html.LabelFor(model => model.titbien)</label>
+                    <div class="white-box">
+                        <div class="titbien">
+                            @{ string v = ""; try { v = ViewBag.titulo.ToString(); } catch { }}
+                            @(new HtmlString(v))
+                        </div>
+                        @Html.ValidationMessageFor(model => model.titbien, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <label class="col-md-12">@Html.LabelFor(model => model.desbien)</label>
+                    <div class="white-box">
+                        <div class="desbien">
+                            @{ string w = ""; try { w = ViewBag.descripcion.ToString(); } catch { }}
+                            @(new HtmlString(w))
+                        </div>
+                        @Html.ValidationMessageFor(model => model.desbien, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <label class="col-sm-12">@Html.LabelFor(model => model.fotos)</label>
+                    <div class="white-box">
+                        <input id="images" type="file" name="file" class="form-control" onchange="validateFileSelected(event)" multiple>
+                    </div>
+                </div>
+                
+                <div class="col-sm-12">
+                    <table class="table table-hover" id="tb_ruta">
+                        <thead>
+                            <tr>
+                                <th class="text-center">#</th>
+                                <th class="text-center">Imagen</th>
+                                <th class="text-center">Ruta</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+                <button class="btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10" onclick="guardarEnInput();">Guardar</button>
+                @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-default btn-rounded btn-outline waves-effect waves-light" })
+
+
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script src="~/Areas/RRHH/Scripts/RRHH.js"></script>
+    <script src="~/Scripts/js/jasny-bootstrap.js"></script>
+    @Scripts.Render("~/Bundles/summernote_JS")
+    <script>
+        jQuery(document).ready(function () {
+            $('.titbien').summernote({
+                height: 100, // set editor height
+                minHeight: null, // set minimum height of editor
+                maxHeight: null, // set maximum height of editor
+                focus: false // set focus to editable area after initializing summernote
+            });
+
+            $('.desbien').summernote({
+                height: 400, // set editor height
+                minHeight: null, // set minimum height of editor
+                maxHeight: null, // set maximum height of editor
+                focus: false // set focus to editable area after initializing summernote
+            });
+        });
+        function guardarEnInput() {
+            var infTit = $(".titbien").code();
+            $("#titbien").val(infTit);
+
+            var infDes = $(".desbien").code();
+            $("#desbien").val(infDes);
+        }
+
+        /*var loadFile = function (event) {
+            console.log("entro aylas");
+            $("#image_preview").empty();
+            var total_file = document.getElementById("images").files.length;
+            for (var i = 0; i < total_file; i++) {
+                $('#image_preview').append("<div class='col-xs-12 col-sm-2 white-box'><img class='img-responsive' src='" + URL.createObjectURL(event.target.files[i]) + "'></div>");
+            }
+        };*/
+
+        function validateFileSelected(event) {
+            $("#image_preview").empty();
+            var filesObj = document.getElementById("images").files;
+
+            var filesArray = Object.keys(filesObj).map(function (key) {
+                return filesObj[key];
+            });
+
+            filesArray.forEach(function (file) {
+
+                var ext = file.name.split('.').pop().toLowerCase();
+
+                if (file.size > 10485760) {
+                    alert("No puede sobre pasar el tamaño de 10mb " + file.name);
+                    $("#images").val('');
+                    return false;
+                }   
+
+                if ($.inArray(ext, ['gif', 'png', 'jpg', 'jpeg']) == -1) {
+                    alert(" Extension no permitida :  "+ext+" "+ file.name);
+                    $("#images").val('');
+                    return false;
+                };
+
+            });
+            var total_file = document.getElementById("images").files.length;
+            $('#image_preview').append("<div class='col-xs-12 col-sm-2 white-box'><img class='img-responsive' src='" + URL.createObjectURL(event.target.files[i]) + "'></div>");
+            /*for (var i = 0; i < total_file; i++) {
+                    row = "<tr>";
+                    row += "<td class='text-center'>" + (i + 1) + "</td>";
+                    row += "<td class='text-center' style='width:20%;'>" + "<img class='img-responsive' src='" + URL.createObjectURL(event.target.files[i]) + "'>"+ "</td>";
+                    row += "<td class='text-center' style='width:80%;'>" + "<input class='form-control form-control-line text-box single-line' id='nomdetbien' name='nomdetbien' type='text' value='#'>" + "</td>";
+                    row += "</tr>";
+                    $("#tb_ruta > tbody:last").append(row);
+            }*/
+        };
+
+    </script>
+}

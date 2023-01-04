@@ -1,0 +1,91 @@
+﻿@using PortalRoemmers.Security
+@model PortalRoemmers.Areas.Almacen.Models.Inventario.InventarioProductoModels
+
+@{
+    ViewBag.Title = "Eliminar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="white-box p-l-20 p-r-20">
+    <h3 class="box-title m-b-0"> Eliminar Conteo</h3>
+    <p class="text-muted m-b-30 font-13">¿Estás seguro que quieres eliminar esto?</p>
+    <div class="row">
+        <div class="col-md-12">
+            @using (Html.BeginForm("Eliminar", "InventarioProducto", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal form-material" }))
+            {
+                @Html.AntiForgeryToken()
+
+                @Html.HiddenFor(model => model.fabInvCon)
+                @Html.HiddenFor(model => model.almInvCon)
+                @Html.HiddenFor(model => model.usuCrea)
+                @Html.HiddenFor(model => model.usufchCrea)
+
+                @Html.HiddenFor(model => model.nroInvCon)
+                @Html.HiddenFor(model => model.codBarCon)
+                @Html.HiddenFor(model => model.nroLotCon)
+                @Html.HiddenFor(model => model.ubiProCon)
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.nroInvCon)</label>
+                    <div class="col-md-12">
+                        @Html.TextBox("nroInvConR", "Conteo: " + Model.nroInvCon, new { @class = "form-control form-control-line", @readonly = "true" })
+                        @Html.ValidationMessageFor(model => model.nroInvCon, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.ubiProCon)</label>
+                    <div class="col-md-12">
+                        @Html.TextBox("ubiProConR", "Ubi.:" + Model.ubiProCon, new { @class = "form-control form-control-line", @readonly = "true" })
+                        @Html.ValidationMessageFor(model => model.ubiProCon, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.codProCon)</label>
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.codProCon, new { htmlAttributes = new { @class = "form-control form-control-line", @readonly = "true" } })
+                        @Html.ValidationMessageFor(model => model.codProCon, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.desProCon)</label>
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.desProCon, new { htmlAttributes = new { @class = "form-control form-control-line", @readonly = "true" } })
+                        @Html.ValidationMessageFor(model => model.desProCon, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.nroLotCon)</label>
+                    <div class="col-md-12">
+                        @Html.TextBox("nroLotConR", "Nro.:" + Model.nroLotCon, new { @class = "form-control form-control-line", @readonly = "true" })
+                        @Html.ValidationMessageFor(model => model.nroLotCon, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.canInvCon)</label>
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.canInvCon, new { htmlAttributes = new { @class = "form-control form-control-line", @readonly = "true" } })
+                        @Html.ValidationMessageFor(model => model.canInvCon, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.obsInvCon)</label>
+                    <div class="col-md-12">
+                        @Html.TextAreaFor(model => model.obsInvCon, new { @class = "form-control form-control-line", @rows = 5, @readonly = "true" })
+                        @Html.ValidationMessageFor(model => model.obsInvCon, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+
+                <button class="btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10">Guardar</button>
+                @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-default btn-rounded btn-outline waves-effect waves-light" })
+            }
+        </div>
+    </div>
+</div>

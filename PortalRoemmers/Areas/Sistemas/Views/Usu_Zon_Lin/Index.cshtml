@@ -1,0 +1,96 @@
+﻿@model PortalRoemmers.ViewModels.IndexViewModel
+@using PortalRoemmers.Helpers
+@using PortalRoemmers.Security
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section css {
+    @Styles.Render("~/Content/tablaResponsive_CSS")
+}
+<div class="panel panel-default">
+    <div class="panel-heading box-title m-b-0">
+        <h2>Mantenimiento Usuarios-Zona-Linea</h2>
+        <code> Este mantenimiento solo se podr&aacute crear, activar e inactivar.</code>
+    </div>
+    <div class="panel-body">
+        <div class="form-group">
+            @{ string v = ""; try { v = TempData["mensaje"].ToString(); } catch { }}
+            @(new HtmlString(v))
+        </div>
+        @using (Html.BeginForm("Index", "Usu_Zon_Lin", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista }, FormMethod.Post))
+        {
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="input-group">
+                        <input type="text" id="search" name="search" class="form-control" placeholder="Buscar" value="@ViewBag.search">
+                        <span class="input-group-btn">
+                            <button class="btn waves-effect waves-light btn-info">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        }
+        <br />
+        <div class="row">
+            <div class="col-xs-6">
+                @Html.ActionLink("Crear Trilogía", "Registrar", "Usu_Zon_Lin", new { Area = "Sistemas" }, new { @Class = "btn btn-info btn-rounded" })
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <table class="tablesaw table-bordered table-hover table" data-tablesaw-mode="swipe">
+                    <thead>
+                        <tr>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist"></th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1">Usuario</th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2">Linea</th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Zona</th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.UZL)
+                        {
+                            <tr>
+                                <td class="text-nowrap">
+                                    @{
+                                        if (item.idEst != ConstantesGlobales.estadoInactivo)
+                                        {
+                                            <a href="@MyExtensions.ActionUrl("Eliminar", "Usu_Zon_Lin", new {Area="Sistemas",usu = item.idAcc,lin=item.idLin,zon=item.idZon})" data-toggle="tooltip" title="Anular"> <i class="fa fa-close text-danger m-r-10"></i> </a>
+                                        }
+                                        if (item.idEst != ConstantesGlobales.estadoActivo)
+                                        {
+                                            <a href="@MyExtensions.ActionUrl("Activar", "Usu_Zon_Lin", new {Area="Sistemas",usu = item.idAcc,lin=item.idLin,zon=item.idZon})" data-toggle="tooltip" title="Activar"> <i class="fa fa-check text-success m-r-10"></i> </a>
+                                        }
+                                    }
+                                </td>
+                                <td>@Html.DisplayFor(modelItem => item.user.empleado.nomComEmp)  </td>
+                                <td>@Html.DisplayFor(modelItem => item.linea.nomLin)</td>
+                                <td>@Html.DisplayFor(modelItem => item.zona.nomZon)</td>
+                                <td>@Html.DisplayFor(modelItem => item.estado.nomEst)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                @{Html.RenderPartial("_paginador", Model);}
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-footer"></div>
+</div>
+@section scripts
+{
+    @Scripts.Render("~/Bundles/tablaResponsive_JS")
+    <script src="~/Areas/Sistemas/Scripts/Sistemas.js"></script>
+}

@@ -1,0 +1,810 @@
+﻿@model PortalRoemmers.Areas.Ventas.Models.SolicitudGasto.SolicitudGastoModels
+@using PortalRoemmers.Security
+
+@{
+    ViewBag.Title = "Registrar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section css {
+    @Styles.Render("~/Content/autocompletado_CSS")
+    @Styles.Render("~/Content/selectBusqueda_CSS")
+    @Styles.Render("~/Content/datepicker_CSS")
+
+}
+<!--model familia-->
+<div id="responsive-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <section id="wrapper" class="block1">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">Familia Productos</h4>
+                </div>
+                <div class="modal-body">
+                    <div id='danger' class='alert alert-danger hidden'></div>
+                    <div class="input-group">
+                        <input type="text" id="search" name="search" class="form-control" placeholder="Buscar">
+                        <span class="input-group-btn">
+                            <button class="btn waves-effect waves-light btn-info" onclick="BusquedaDetalle('tb_Familia_Search','search','/FamiliaRoe/SearchFamiliaAT')">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </span>
+                    </div>
+                    <div class="table-responsive m-t-10" style="clear: both;">
+                        <div id="slimtest4">
+                            <table class="table table-hover" id="tb_Familia_Search">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">Familia</th>
+                                        <th class="text-center">AT</th>
+                                        <th class="hidden"></th>
+                                        <th class="hidden"></th>
+                                        <th class="text-center"></th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<!--model familia-->
+<!--model Medicos-->
+<div id="responsive-modal-medico" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <section id="wrapper" class="block1">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">Medicos </h4>
+                </div>
+                <div class="modal-body">
+                    <div id='danger' class='alert alert-danger hidden'></div>
+                    <div class="input-group">
+                        <input type="text" id="search2" name="search2" class="form-control" placeholder="Buscar">
+                        <span class="input-group-btn">
+                            <button class="btn waves-effect waves-light btn-info" onclick="Search('tb_medico_Search','search2','/Medico/SearchCliente')">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </span>
+                    </div>
+                    <div class="table-responsive m-t-10" style="clear: both;">
+                        <div id="slimtest4M">
+                            <table class="table table-hover" id="tb_medico_Search">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">#</th>
+                                        <th class="text-center">Nombre</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<!--model Medicos-->
+<!--model Responsable-->
+<div id="responsive-modal-responsable" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <section id="wrapper" class="block1">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">Responsable</h4>
+                </div>
+                <div class="modal-body">
+                    <div id='danger' class='alert alert-danger hidden'></div>
+                    <div class="input-group">
+                        <input type="text" id="search3" name="search3" class="form-control" placeholder="Buscar">
+                        <span class="input-group-btn">
+                            <button class="btn waves-effect waves-light btn-info" onclick="Search('tb_responsable_Search','search3','/Empleado/SearchResponsable')">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </span>
+                    </div>
+                    <div class="table-responsive m-t-10" style="clear: both;">
+                        <div id="slimtest4R">
+                            <table class="table table-hover" id="tb_responsable_Search">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">#</th>
+                                        <th class="text-center">Nombre</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<!--model Responsable-->
+
+<div class="white-box p-l-20 p-r-20">
+    <h3 class="box-title m-b-0"> Nueva Solicitud de Gasto</h3>
+    <p class="text-muted m-b-30 font-13">Completar todos los campos necesarios.</p>
+    <div id='danger' class='alert alert-danger hidden'></div>
+    @{string msg = ""; try { msg = TempData["mensaje"].ToString(); } catch { }}
+    @(new HtmlString(msg))
+    <div class="row">
+        <div class="col-md-12">
+            @using (Html.BeginForm("Registrar", "SolicitudGasto", FormMethod.Post, new { id = "newSol", enctype = "multipart/form-data", @class = "form-horizontal form-material" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="col-md-12">
+                    <div class="panel-group" id="exampleAccordionDefault" aria-multiselectable="true" role="tablist">
+                        <div class="panel">
+                            <div class="panel-heading" id="exampleHeadingDefaultOne" role="tab"> <a class="panel-title" data-toggle="collapse" href="#exampleCollapseDefaultOne" data-parent="#exampleAccordionDefault" aria-expanded="true" aria-controls="exampleCollapseDefaultOne"> Datos de la Solicitud </a> </div>
+                            <div class="panel-collapse collapse in" id="exampleCollapseDefaultOne" aria-labelledby="exampleHeadingDefaultOne" role="tabpanel">
+                                @Html.HiddenFor(model => model.monDes)
+                                @Html.HiddenFor(model => model.idAccSol)
+                                @Html.HiddenFor(model => model.idTipPag)
+                                @Html.HiddenFor(model => model.idTipSol)
+                                @Html.HiddenFor(model => model.idEst)
+                                @Html.HiddenFor(model => model.usuCrea)
+                                @Html.HiddenFor(model => model.usufchCrea)
+
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="col-md-12">@Html.LabelFor(model => model.idAccRes) </label>
+                                                <div class="col-md-12">
+                                                    @Html.DropDownListFor(model => model.idAccRes, (SelectList)ViewBag.responsable, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                                                    @Html.ValidationMessageFor(model => model.idAccRes, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="col-md-12">@Html.LabelFor(model => model.idAccApro) </label>
+                                                <div class="col-md-12">
+                                                    @Html.DropDownListFor(model => model.idAccApro, (SelectList)ViewBag.aprobador, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                                                    @Html.ValidationMessageFor(model => model.idAccApro, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="col-md-12">@Html.LabelFor(model => model.idTipGas) </label>
+                                                <div class="col-md-12">
+                                                    @Html.DropDownListFor(model => model.idTipGas, (SelectList)ViewBag.tipogasto, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                                                    @Html.ValidationMessageFor(model => model.idTipGas, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="col-md-12">@Html.LabelFor(model => model.idConGas)</label>
+                                                <div class="col-md-12">
+                                                    @Html.DropDownListFor(model => model.idConGas, (SelectList)ViewBag.congasto, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                                                    @Html.ValidationMessageFor(model => model.idConGas, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="col-md-12">@Html.LabelFor(model => model.idZon) </label>
+                                                <div class="col-md-12">
+                                                    @Html.DropDownListFor(model => model.idZon, (SelectList)ViewBag.zona, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                                                    @Html.ValidationMessageFor(model => model.idZon, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="col-md-12">@Html.LabelFor(model => model.idLin) </label>
+                                                <div class="col-md-12">
+                                                    @Html.DropDownListFor(model => model.idLin, (SelectList)ViewBag.linea, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                                                    @Html.ValidationMessageFor(model => model.idLin, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="col-md-12">@Html.LabelFor(model => model.idEsp) </label>
+                                                <div class="col-md-12">
+                                                    @Html.DropDownListFor(model => model.idEsp, (SelectList)ViewBag.especialidad, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                                                    @Html.ValidationMessageFor(model => model.idEsp, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="col-md-12">@Html.LabelFor(model => model.titSolGas)</label>
+                                                <div class="col-md-12">
+                                                    @Html.EditorFor(model => model.titSolGas, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Título" } })
+                                                    @Html.ValidationMessageFor(model => model.titSolGas, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="col-md-12">@Html.LabelFor(model => model.lugSolGas)</label>
+                                                <div class="col-md-12">
+                                                    @Html.EditorFor(model => model.lugSolGas, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Título" } })
+                                                    @Html.ValidationMessageFor(model => model.lugSolGas, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 ">
+                                            <div class="form-group">
+                                                <label class="col-md-12">@Html.LabelFor(model => model.fchEveSolGas)</label>
+                                                <div class="col-md-12">
+                                                    <input class="form-control form-control-line datepicker" id="fchEveSolGas" name="fchEveSolGas" placeholder="dd/mm/aaaa" autocomplete="off" value="@ViewBag.fecha">
+                                                    @Html.ValidationMessageFor(model => model.fchEveSolGas, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label class="col-md-12">@Html.LabelFor(model => model.obsSolGas)</label>
+                                                <div class="col-md-12">
+                                                    @Html.TextAreaFor(model => model.obsSolGas, new { @class = "form-control form-control-line", @rows = 5, @placeholder = "Observación" })
+                                                    @Html.ValidationMessageFor(model => model.obsSolGas, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label class="col-md-12">@Html.LabelFor(model => model.idPres)</label>
+                                                <div class="col-md-12">
+                                                    @Html.HiddenFor(model => model.procede)
+                                                    <select id="idPres" name="idPres" multiple="multiple" class="select2 m-b-10 select2-multiple">
+                                                        @{
+
+                                                            if ((SelectList)ViewBag.presupuesto != null)
+                                                            {
+                                                                foreach (var p in (SelectList)ViewBag.presupuesto)
+                                                                {
+                                                                    var sp = new List<string>();
+                                                                    if(Model != null)
+                                                                    {
+                                                                        if (Model.idPres != null)
+                                                                        {
+                                                                            sp = Model.idPres;
+                                                                        }
+                                                                    }
+
+                                                                    if (sp.Contains(p.Value))
+                                                                    {
+                                                                        <option value="@p.Value" selected>@p.Text</option>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <option value="@p.Value">@p.Text</option>
+                                                                    }
+
+                                                                }
+                                                            }
+                                                        }
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <div class="col-md-12">
+                                                    <div class="col-md-4" style="padding-bottom: 10px; padding-top: 10px;">
+                                                        <label>Monto</label>
+                                                        @Html.EditorFor(model => model.monSolGas, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "0.00" } })
+                                                        @Html.ValidationMessageFor(model => model.monSolGas, "", new { @class = "text-danger" })
+                                                    </div>
+
+                                                    <div class="col-md-4" style="padding-bottom: 10px; padding-top: 10px;">
+                                                        <label>Moneda</label>
+                                                        @Html.DropDownListFor(model => model.idMon, (SelectList)ViewBag.moneda, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                                                        @Html.ValidationMessageFor(model => model.idMon, "", new { @class = "text-danger" })
+                                                    </div>
+
+
+                                                    <div class="col-md-4" style="padding-bottom: 10px; padding-top: 10px;">
+                                                        <label>T.Cambio</label>
+                                                        @Html.EditorFor(model => model.valtipCam, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Tipo de cambio", @readonly = "readonly" } })
+                                                        @Html.ValidationMessageFor(model => model.valtipCam, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="panel">
+                            <div class="panel-heading" id="exampleHeadingDefaultTwo" role="tab"> <a class="panel-title collapsed" data-toggle="collapse" href="#exampleCollapseDefaultTwo" data-parent="#exampleAccordionDefault" aria-expanded="false" aria-controls="exampleCollapseDefaultTwo"> Detalle Familia </a> </div>
+                            <div class="panel-collapse collapse" id="exampleCollapseDefaultTwo" aria-labelledby="exampleHeadingDefaultTwo" role="tabpanel">
+                                <div class="col-md-12">
+                                    <a data-toggle="modal" title="Agregar familia" class="btn btn-block btn-primary" href="#responsive-modal">
+                                        <span class="glyphicon glyphicon-plus"></span> AGREGAR FAMILIA
+                                    </a>
+                                    <div class="table-responsive m-t-10" style="clear: both;">
+                                        <table class="table table-hover" id="tb_Familia">
+                                            <thead>
+                                                <tr>
+                                                    <th class="hidden"></th>
+                                                    <th class="text-center">Familia</th>
+                                                    <th class="text-center">Area Ter.</th>
+                                                    <th class="hidden"></th>
+                                                    <th class="text-center"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @{ string v = ""; try { v = @ViewBag.tbFamilia; } catch { }}
+                                                @(new HtmlString(v))
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel">
+                            <div class="panel-heading" id="exampleHeadingDefaultThree" role="tab"> <a class="panel-title collapsed" data-toggle="collapse" href="#exampleCollapseDefaultThree" data-parent="#exampleAccordionDefault" aria-expanded="false" aria-controls="exampleCollapseDefaultThree"> Detalle Medico </a> </div>
+                            <div class="panel-collapse collapse" id="exampleCollapseDefaultThree" aria-labelledby="exampleHeadingDefaultThree" role="tabpanel">
+                                <div class="col-md-12">
+                                    <a data-toggle="modal" title="Agregar familia" class="btn btn-block btn-primary" href="#responsive-modal-medico">
+                                        <span class="glyphicon glyphicon-plus"></span> AGREGAR MEDICO
+                                    </a>
+                                    <div class="table-responsive m-t-10" style="clear: both;">
+                                        <table class="table table-hover" id="tb_medico">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-center">#</th>
+                                                    <th class="text-center">Nombre</th>
+                                                    <th class="text-center">Matricula</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @{ string v1 = ""; try { v1 = @ViewBag.tbMedico; } catch { }}
+                                                @(new HtmlString(v1))
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel">
+                            <div class="panel-heading" id="exampleHeadingDefaultFour" role="tab"> <a class="panel-title collapsed" data-toggle="collapse" href="#exampleCollapseDefaultFour" data-parent="#exampleAccordionDefault" aria-expanded="false" aria-controls="exampleCollapseDefaultFour"> Detalle Responsable </a> </div>
+                            <div class="panel-collapse collapse" id="exampleCollapseDefaultFour" aria-labelledby="exampleHeadingDefaultFour" role="tabpanel">
+                                <div class="col-md-12">
+                                    <a data-toggle="modal" title="Agregar responsable" class="btn btn-block btn-primary" href="#responsive-modal-responsable">
+                                        <span class="glyphicon glyphicon-plus"></span> AGREGAR RESPONSABLE
+                                    </a>
+                                    <div class="table-responsive m-t-10" style="clear: both;">
+                                        <table class="table table-hover" id="tb_responsable">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-center">#</th>
+                                                    <th class="text-center">Nombre</th>
+                                                    <th class="text-center">DNI</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @{ string v2 = ""; try { v2 = @ViewBag.tbResponsable; } catch { }}
+                                                @(new HtmlString(v2))
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="danger" class="alert alert-danger hidden"></div>
+                    <div class="panel-group">
+                        <div class="col-md-4 tab-content">
+                            <div class="col-lg-6 col-sm-4 panel-group">
+                                <button class="btn btn-block btn-outline btn-rounded btn-info" onclick="Hidden('familia', 'tb_Familia', '0|1|2|3', '|');Hidden('medico', 'tb_medico', '0|1|2', '|');Hidden('responsable', 'tb_responsable', '0|1|2', '|')">Guardar</button>
+                            </div>
+                            <div class="col-lg-6 col-sm-4">
+                                @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-block btn-outline btn-rounded btn-default" })
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!--Detalle-->
+                    <input type="hidden" name="familiaD" id="familia" />
+                    <input type="hidden" name="medicoD" id="medico" />
+                    <input type="hidden" name="responsableD" id="responsable" />
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    @Scripts.Render("~/Bundles/autocompletado_JS")
+    @Scripts.Render("~/Bundles/selectBusqueda_JS")
+    @Scripts.Render("~/Bundles/datepicker_JS")
+    @Scripts.Render("~/Bundles/bloqueo_JS")
+    <script src="~/Areas/Sistemas/Scripts/Sistemas.js"></script>
+    <script src="~/Content/plugins/bower_components/sweetalert/sweetalert.min.js"></script>
+    <script>
+        $(document).ready(function () {
+        //cabecera/////////////////////////////////////////////////////
+
+        //valores fijos
+            $("#idAccSol").val('@SessionPersister.UserId');
+            $("#idTipPag").val('@ConstantesGlobales.tipPag_tran');
+            $("#idTipSol").val('@ConstantesGlobales.tipSol_Ren');
+            $("#idEst").val('@ConstantesGlobales.estadoRegistrado');
+            $("#valtipCam").val('@ViewBag.tipocambio');
+            $("#usuCrea").val('@SessionPersister.Username');
+            $("#usufchCrea").val('@DateTime.Now');
+
+        //para que tengan la opcion de buscar en el combobox
+            $("#idAccRes").select2();
+            $("#idTipGas").select2();
+            $("#idEsp").select2();
+            $("#idLin").select2();
+            $("#idZon").select2();
+            $("#idConGas").select2();
+            $("#idAccApro").select2();
+            $("#idPres").select2();
+            //para la fecha
+            $('.datepicker').datepicker({
+                dateFormat: 'dd/mm/yy'
+            });
+
+
+            //llenar concepto de gasto por un tipo de gasto
+            $("#idTipGas").change(function () {
+                if ($("#idTipGas").val() != "") {
+                    $("#idConGas").prop("disabled", true);
+                    var RolOptions = {};
+                    RolOptions.url = "/SolicitudGasto/buscarConceptoTGasto";
+                    RolOptions.type = "POST";
+                    RolOptions.data = JSON.stringify({ idTipGas: $("#idTipGas").val() });
+                    RolOptions.datatype = "json";
+                    RolOptions.contentType = "application/json";
+                    RolOptions.success = function (data) {
+                        $("#idConGas").select2("val", "");
+                        $('#idConGas').empty();
+                        $("#idConGas").append($("<option> </option>").val("").html("Seleccionar"));
+                        $.each(data, function (i, item) {
+                            $("#idConGas").append($("<option> </option>").val(item.idConGas).html(item.nomConGas));
+                        });
+
+                    };
+                    RolOptions.error = function () { alert("Error in Getting States!!"); };
+                    $.ajax(RolOptions);
+                    $("#idConGas").prop("disabled", false);
+                }
+                else {
+                    $("#idConGas").empty();
+                    $("#idConGas").prop("disabled", true);
+                }
+                //----
+                cargaPresupuesto();
+                //----
+            });
+            //llenar aprobadorres por responsable
+            $("#idAccRes").change(function () {
+                if ($("#idAccRes").val() != "") {
+                    //aprobadores
+                    $("#idAccApro").prop("disabled", true);
+                    var RolOptions = {};
+                    RolOptions.url = "/SolicitudGasto/buscarAprobadores";
+                    RolOptions.type = "POST";
+                    RolOptions.data = JSON.stringify({ idAccRes: $("#idAccRes").val() });
+                    RolOptions.datatype = "json";
+                    RolOptions.contentType = "application/json";
+                    RolOptions.success = function (data) {
+                        console.log("data "+data);
+                        $("#idAccApro").select2("val", "");
+                        $('#idAccApro').empty();
+                        $("#idAccApro").append($("<option> </option>").val("").html("Seleccionar"));
+                        $.each(data, function (i, item) {
+                             console.log("item.idAccApro "+item.idAccApro);
+                            $("#idAccApro").append($("<option> </option>").val(item.idAccApro).html(item.nom));
+                        });
+                    };
+                    RolOptions.error = function () { alert("Error in Getting States!!"); };
+                    $.ajax(RolOptions);
+                    $("#idAccApro").prop("disabled", false);
+                    //Linea
+                    $("#idLin").prop("disabled", true);
+                    var RolOptionsL = {};
+                    RolOptionsL.url = "/SolicitudGasto/buscarLinea";
+                    RolOptionsL.type = "POST";
+                    RolOptionsL.data = JSON.stringify({ idAccRes: $("#idAccRes").val() });
+                    RolOptionsL.datatype = "json";
+                    RolOptionsL.contentType = "application/json";
+                    RolOptionsL.success = function (data) {
+                        $("#idLin").select2("val", "");
+                        $("#idLin").empty();
+                        $("#idLin").append($("<option> </option>").val("").html("Seleccionar"));
+                        $.each(data, function (i, item) {
+                            $("#idLin").append($("<option> </option>").val(item.value).html(item.text));
+                        });
+
+                    };
+                    RolOptionsL.error = function () { alert("Error in Getting States!!"); };
+                    $.ajax(RolOptionsL);
+                    $("#idLin").prop("disabled", false);
+                    //Zona
+                    $("#idZon").prop("disabled", true);
+                    var RolOptionsZ = {};
+                    RolOptionsZ.url = "/SolicitudGasto/buscarZona";
+                    RolOptionsZ.type = "POST";
+                    RolOptionsZ.data = JSON.stringify({ idAccRes: $("#idAccRes").val() });
+                    RolOptionsZ.datatype = "json";
+                    RolOptionsZ.contentType = "application/json";
+                    RolOptionsZ.success = function (data) {
+                        $("#idZon").select2("val", "");
+                        $("#idZon").empty();
+                        $("#idZon").append($("<option> </option>").val("").html("Seleccionar"));
+                        $.each(data, function (i, item) {
+                            $("#idZon").append($("<option> </option>").val(item.value).html(item.text));
+                        });
+
+                    };
+                    RolOptionsZ.error = function () { alert("Error in Getting States!!"); };
+                    $.ajax(RolOptionsZ);
+                    $("#idZon").prop("disabled", false);
+                    //Tipo De Gasto
+                    $("#idTipGas").prop("disabled", true);
+                    var RolOptionsZ = {};
+                    RolOptionsZ.url = "/SolicitudGasto/buscarTipoDeGasto";
+                    RolOptionsZ.type = "POST";
+                    RolOptionsZ.data = JSON.stringify({ idAccRes: $("#idAccRes").val() });
+                    RolOptionsZ.datatype = "json";
+                    RolOptionsZ.contentType = "application/json";
+                    RolOptionsZ.success = function (data) {
+                        $("#idTipGas").select2("val", "");
+                        $("#idTipGas").empty();
+                        $("#idTipGas").append($("<option> </option>").val("").html("Seleccionar"));
+                        $.each(data, function (i, item) {
+                            $("#idTipGas").append($("<option> </option>").val(item.value).html(item.text));
+                        });
+
+                    };
+                    RolOptionsZ.error = function () { alert("Error in Getting States!!"); };
+                    $.ajax(RolOptionsZ);
+                    $("#idTipGas").prop("disabled", false);
+                    //-----------------------------------------
+                    $("#idConGas").select2("val", "");
+                    $("#idConGas").prop("disabled", true);
+                    //-----------------------------------------
+                }
+                else {
+                    $("#idAccApro").select2("val", "");
+                    $("#idAccApro").prop("disabled", true);
+
+                    $("#idLin").select2("val", "");
+                    $("#idLin").prop("disabled", true);
+
+                    $("#idZon").select2("val", "");
+                    $("#idZon").prop("disabled", true);
+
+                    $("#idTipGas").select2("val", "");
+                    $("#idTipGas").prop("disabled", true);
+                    //-----------------------------------------
+                    $("#idConGas").select2("val", "");
+                    $("#idConGas").prop("disabled", true);
+                    //-----------------------------------------
+
+                }
+                //------------------------------
+                //---- Ver presupuesto --------
+                cargaPresupuesto();
+                //------------------------------
+            });
+
+
+
+            //Detalle/////////////////////////////////////////////////////
+            //familia
+            $('#slimtest4').slimScroll({
+                color: '#00f'
+                , size: '10px'
+                , height: '250px'
+                , alwaysVisible: true
+            });
+            $('#tb_Familia_Search tbody').on('click', 'tr', function () {
+                var duplicado = false;
+                var row = "";
+                //obtengo el id de la otra tabla
+                var id = $("#tb_Familia > tbody > tr:last > td:first").text();
+
+                //verifico que no este en la tabla
+                var codigo = $(this).find("td").eq(2).text();
+                var at = $(this).find("td").eq(3).text();
+                //console.log("Es" + codigo + "-" + at);
+                $('#tb_Familia tbody tr').each(function (index) {
+                    if ($('#tb_Familia tbody tr').eq(index).find("td").eq(parseInt(0)).html() == codigo && $('#tb_Familia tbody tr').eq(index).find("td").eq(parseInt(3)).html() == at ) {
+                        duplicado = true;
+                    }
+                });
+
+                //si esta duplicado muestro un mensaje
+                if (duplicado == true) {
+                    $("div #danger").removeClass('hidden');
+                    $("div #danger").text('No se puede seleccionar el mismo elemento');
+                    setTimeout(function () { $("div #danger").fadeOut(2000).fadeIn(2000).fadeOut(1500).fadeIn(1500).fadeOut(500) }, 500);
+                    setTimeout(function () { $("div #danger").addClass('hidden'); }, 4000);
+                    return false;
+                }
+
+                 row = "<tr>";
+                row += "<td class='hidden'>" + $(this).find("td").eq(2).text() + "</td>";
+                row += "<td class='text-center'>" + $(this).find("td").eq(0).text() + "</td>";
+                row += "<td class='text-center'>" + $(this).find("td").eq(1).text() + "</td>";
+                row += "<td class='hidden'>" + $(this).find("td").eq(3).text() + "</td>";
+                row += "<td class='elimfila'><span class='glyphicon glyphicon-remove'></span></td>";
+                row += "</tr>";
+                $("#tb_Familia > tbody:last").append(row);
+
+                //$("#responsive-modal").modal('hide');
+            });
+
+            //medico
+            $('#slimtest4M').slimScroll({
+                color: '#00f'
+                , size: '10px'
+                , height: '250px'
+                , alwaysVisible: true
+            });
+            $('#tb_medico_Search tbody').on('click', 'tr', function () {
+                var duplicado = false;
+                var row = "";
+                //obtengo el id de la otra tabla
+                var id = $("#tb_medico > tbody > tr:last > td:first").text();
+
+                //verifico que no este en la tabla
+                var codigo = $(this).find("td").eq(0).text();
+                $('#tb_medico tbody tr').each(function (index) {
+                    if ($('#tb_medico tbody tr').eq(index).find("td").eq(parseInt(0)).html() == codigo) {
+                        duplicado = true;
+                    }
+                });
+
+                //si esta duplicado muestro un mensaje
+                if (duplicado == true) {
+                    $("div #danger").removeClass('hidden');
+                    $("div #danger").text('No se puede seleccionar el mismo elemento');
+                    setTimeout(function () { $("div #danger").fadeOut(2000).fadeIn(2000).fadeOut(1500).fadeIn(1500).fadeOut(500) }, 500);
+                    setTimeout(function () { $("div #danger").addClass('hidden'); }, 4000);
+                    return false;
+                }
+
+                row = "<tr>";
+                row += "<td class='text-center'>" + $(this).find("td").eq(0).text() + "</td>";
+                row += "<td class='text-center'>" + $(this).find("td").eq(1).text() + "</td>";
+                row += "<td class='text-center'>" + $(this).find("td").eq(2).text() + "</td>";
+                row += "<td class='elimfila'><span class='glyphicon glyphicon-remove'></span></td>";
+                row += "</tr>";
+                $("#tb_medico > tbody:last").append(row);
+
+                //$("#responsive-modal-medico").modal('hide');
+            });
+
+            //responsable
+            $('#slimtest4R').slimScroll({
+                color: '#00f'
+                , size: '10px'
+                , height: '250px'
+                , alwaysVisible: true
+            });
+            $('#tb_responsable_Search tbody').on('click', 'tr', function () {
+                var duplicado = false;
+                var row = "";
+                //obtengo el id de la otra tabla
+                var id = $("#tb_responsable > tbody > tr:last > td:first").text();
+
+                //verifico que no este en la tabla
+                var codigo = $(this).find("td").eq(0).text();
+                $('#tb_responsable tbody tr').each(function (index) {
+                    if ($('#tb_responsable tbody tr').eq(index).find("td").eq(parseInt(0)).html() == codigo) {
+                        duplicado = true;
+                    }
+                });
+
+                //si esta duplicado muestro un mensaje
+                if (duplicado == true) {
+                    $("div #danger").removeClass('hidden');
+                    $("div #danger").text('No se puede seleccionar el mismo elemento');
+                    setTimeout(function () { $("div #danger").fadeOut(2000).fadeIn(2000).fadeOut(1500).fadeIn(1500).fadeOut(500) }, 500);
+                    setTimeout(function () { $("div #danger").addClass('hidden'); }, 4000);
+                    return false;
+                }
+
+                row = "<tr>";
+                row += "<td class='text-center'>" + $(this).find("td").eq(0).text() + "</td>";
+                row += "<td class='text-center'>" + $(this).find("td").eq(1).text() + "</td>";
+                row += "<td class='text-center'>" + $(this).find("td").eq(2).text() + "</td>";
+                row += "<td class='elimfila'><span class='glyphicon glyphicon-remove'></span></td>";
+                row += "</tr>";
+                $("#tb_responsable > tbody:last").append(row);
+
+                //$("#responsive-modal-responsable").modal('hide');
+            });
+            //Detalle/////////////////////////////////////////////////////
+            $("#monSolGas").change(function () {
+                var total = 0;
+                if ($.isNumeric($("#monSolGas").val())) {
+                    total = parseFloat($("#monSolGas").val());
+                }
+              $("#monSolGas").val(total);
+            });
+            ///////////Presupuesto///////////////////////////////////////////
+            //para que tengan la opcion de buscar en el combobox el Pto
+            //----------------------------
+            //----------------------------
+            $("#idLin").change(function () {
+                cargaPresupuesto();
+            });
+
+            $("#idZon").change(function () {
+                cargaPresupuesto();
+             });
+
+            $("#idAccApro").change(function () {
+                cargaPresupuesto();
+             });
+
+            $("#idConGas").change(function () {
+                cargaPresupuesto();
+            });
+
+            $("#idEsp").change(function () {
+                cargaPresupuesto();
+            });
+            ///////////Presupuesto///////////////////////////////////////////
+        });
+
+         function cargaPresupuesto(){
+                var linea = $("#idLin").val();
+                var zona = $("#idZon").val();
+                var aprueba = $("#idAccApro").val();
+                var responsable = $("#idAccRes").val();
+                var tipo = $("#idTipGas").val();
+                var gasto = $("#idConGas").val();
+                var espec = $("#idEsp").val();
+             if (responsable != "") {
+                 $.post('/Ventas/SolicitudGasto/verificarPresupuesto', { resp: responsable, apro: aprueba, lin: linea, zon: zona ,tip: tipo, gas: gasto, esp : espec}, function (data, status) {
+                     //**********************************
+                     $("#idPres").select2("val", "");
+                     $('#idPres').empty();
+                     $("#idPres").append($("<option> </option>").val("").html("Seleccionar"));
+                     //************************************
+                     if (data != "NO") {
+                         if (data != 'VACIO') {
+                             $.each(data, function (i, item) {
+                                 $("#idPres").append($("<option> </option>").val(item.value).html(item.text));
+                             });
+                         }
+                         $("#procede").val('false');//procede con un presupuesto elegido
+                     } else {
+                         $("#procede").val('true');//procede sin presupuesto
+                     }
+                 });
+             } else {
+                 $("#procede").val('');//procede con un presupuesto elegido
+                 $("#idPres").select2("val", "");
+                 $('#idPres').empty();
+                 $("#idPres").append($("<option> </option>").val("").html("Seleccionar"));
+             }
+         }
+    </script>
+}

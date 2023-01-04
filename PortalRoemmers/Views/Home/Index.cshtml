@@ -1,0 +1,118 @@
+﻿@model PortalRoemmers.Areas.RRHH.Models.Bienvenida.BienvenidaModels
+@using PortalRoemmers.Helpers
+@using PortalRoemmers.Security
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.titulo</title>
+    <link href="~/Content/StyleRoemmers.css" rel="stylesheet" />
+    <link href="~/Content/plugins/bower_components/toast-master/css/jquery.toast.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="panel panel-default">
+        @{ string v = ""; try { v = TempData["mensaje"].ToString(); } catch { }}
+        @(new HtmlString(v))
+        <div class="panel-heading">
+            @{ string t = ""; try { t = Model.titbien; } catch { }}
+            @(new HtmlString(t))
+        </div>
+        <div class="panel-wrapper collapse in">
+            <div class="panel-body">
+                @{ string d = ""; try { d = Model.desbien; } catch { }}
+                @(new HtmlString(d))
+                <div class="row">
+                    <div class="col-md-6 col-md-offset-3">
+                        <div class="white-box">
+                            <!--Aca es el carousel-->
+                            <div id="carousel-example-captions" data-ride="carousel" class="carousel slide text-center" style="margin-top: 30px;text-align:center;">
+                                <ol class="carousel-indicators">
+                                    @{
+                                        int i = 0;
+                                        foreach (var f in Model.fotos)
+                                        {
+                                            string act = "";
+                                            if (f.actFotBie)
+                                            {
+                                                act = "active";
+                                            }
+
+                                            <li data-target="#carousel-example-captions" data-slide-to="@i" class="@act"></li>
+                                            i++;
+                                        }
+                                    }
+                                </ol>
+                                <div role="listbox" class="carousel-inner">
+                                    @{
+                                        foreach (var f in Model.fotos)
+                                        {
+                                            string activo = "";
+                                            string link = f.linkFotBie;
+
+                                            if (f.actFotBie)
+                                            {
+                                                activo = "active";
+                                            }
+                                            <div class="item @activo">
+                                                @{
+                                                    if (link == "NULL" || link == "")
+                                                    {
+                                                        <a href="#">
+                                                            <img src="@f.rutaFotBie">
+                                                        </a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a href="@f.linkFotBie" target="_blank">
+                                                            <img src="@f.rutaFotBie">
+                                                        </a>
+                                                    }
+                                                }
+                                            </div>
+                                        }
+                                    }
+                                </div>
+                                <a href="#carousel-example-captions" role="button" data-slide="prev" class="left carousel-control"> <span aria-hidden="true" class="fa fa-angle-left"></span> <span class="sr-only">Previous</span> </a>
+                                <a href="#carousel-example-captions" role="button" data-slide="next" class="right carousel-control"> <span aria-hidden="true" class="fa fa-angle-right"></span> <span class="sr-only">Next</span> </a>
+                            </div>
+                            <!--Aca es el carousel-->
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+@section scripts
+{
+    <script src="~/Content/plugins/bower_components/toast-master/js/jquery.toast.js"></script>
+
+    <script>
+        $(document).ready(function () {
+             $.toast({
+                heading: 'Bienvenido'
+                , text: 'No olvidar de actualizar su información en <a href="@MyExtensions.ActionUrl("PerfilUsuario", "Usuario", new { Area = "Sistemas",idAcc=@SessionPersister.UserId })">Ver Perfil</a>'
+                , position: 'top-right'
+                , loaderBg: '#FFFFFF'
+                , bgColor: '#43B02A'
+                , icon: 'warning'
+                , hideAfter: 4500
+                , stack: false
+            })
+
+
+            $("div #success").fadeOut(2500).fadeIn(5000).fadeOut(2000).fadeIn(4500).fadeOut(500);
+            $("div #danger").fadeOut(2500).fadeIn(5000).fadeOut(2000).fadeIn(4500).fadeOut(500);
+            $("div #info").fadeOut(2500).fadeIn(5000).fadeOut(2000).fadeIn(4500).fadeOut(500);
+            $("div #warning").fadeOut(2500).fadeIn(5000).fadeOut(2000).fadeIn(4500).fadeOut(500);
+        });
+    </script>
+
+
+}

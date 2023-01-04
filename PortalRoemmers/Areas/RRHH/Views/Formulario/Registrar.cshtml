@@ -1,0 +1,257 @@
+﻿@using PortalRoemmers.Security
+@model PortalRoemmers.Areas.RRHH.Models.Formulario.FormularioModels
+
+@{
+    ViewBag.Title = "Registrar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="responsive-modal-campo" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">Nuevo Campo</h4>
+            </div>
+            <div class="modal-body">
+                <div id='danger' class='alert alert-danger hidden'></div>
+
+                <div class="form-horizontal form-material">
+
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label class="col-md-12">Tipo <span style="color:red;">*</span></label>
+                            <div class="col-md-12">
+                                @Html.DropDownList("tipAtrHtml", (SelectList)ViewBag.AtrHtml, "Seleccionar Atributo", htmlAttributes: new { @class = "form-control form-control-line" })
+                            </div>
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label class="col-md-12">¿Campo obligatorio?<span style="color:red;">*</span></label>
+                            <div class="col-md-12">
+                                @Html.DropDownList("tipObl", (SelectList)ViewBag.opcion, "Seleccionar Valor", htmlAttributes: new { @class = "form-control form-control-line" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label class="col-md-12">Nombre <span style="color:red;">*</span></label>
+                            <div class="col-md-12">
+                                @Html.Editor("nomProce", new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Nombre", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                            </div>
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label class="col-md-12">Descripci&oacuten</label>
+                            <div class="col-md-12">
+                                @Html.Editor("descProce", new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Descripción", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row hidden" id="idMultiple" >
+                        <div class="form-group col-md-12 field_wrapper">
+                            <label class="col-md-12">Opciones</label>
+                            <div class="col-md-12">
+                                <div class="col-md-6">
+                                    <input type="text" name="field_name" value="" class="form-control form-control-line" />
+                                </div>
+                                <div class="col-md-1">
+                                    <a href="javascript:void(0);" class="add_button" title="Add field"><i class="fa fa-plus"></i></a>
+                                </div>
+                                <div class="col-md-2">
+                                    ¿Mostrar Input oculto?
+                                    <input name="chxInpOcu" id="chxInpOcu" type="checkbox" />
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.Editor("nomOcu", new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Título Input oculto", @onkeyup = "javascript:this.value=this.value.toUpperCase();", @disabled="true" } })
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <a id="btn-sendForm" class="btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10" >Guardar</a>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger waves-effect text-leftt" data-dismiss="modal">Cerrar</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="white-box p-l-20 p-r-20">
+    <h3 class="box-title m-b-0"> Registrar Formulario</h3>
+    <p class="text-muted m-b-30 font-13">Completar todos los campos necesarios. </p>
+    <div class="row">
+        <div class="col-md-12">
+            @using (Html.BeginForm("Registrar", "Formulario", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal form-material" }))
+            {
+                @Html.AntiForgeryToken()
+
+                @Html.HiddenFor(model => model.idEst, new { Value = ConstantesGlobales.estadoActivo })
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.nomFor)</label>
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.nomFor, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Nombre" } })
+                        @Html.ValidationMessageFor(model => model.nomFor, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.titFor)</label>
+                    <div class="col-md-12">
+
+                        @Html.EditorFor(model => model.titFor, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Título" } })
+                        @Html.ValidationMessageFor(model => model.titFor, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.desFor)</label>
+                    <div class="col-md-12">
+
+                        @Html.EditorFor(model => model.desFor, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Descripción" } })
+                        @Html.ValidationMessageFor(model => model.desFor, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.fchIniFor)</label>
+                    <div class="col-md-12">
+
+                        @Html.EditorFor(model => model.fchIniFor, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "dd/mm/aaaa", @autocomplete = "off" } })
+                        @Html.ValidationMessageFor(model => model.fchIniFor, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.fchFinFor)</label>
+                    <div class="col-md-12">
+
+                        @Html.EditorFor(model => model.fchFinFor, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "dd/mm/aaaa", @autocomplete = "off" } })
+                        @Html.ValidationMessageFor(model => model.fchFinFor, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <hr>
+                <div class="col-md-12">
+
+                    <a data-toggle="modal" title="Agregar familia" class="btn btn-block btn-primary" href="#responsive-modal-campo">
+                        <span class="glyphicon glyphicon-plus"></span> AGREGAR CAMPOS
+                    </a>
+                    <div class="table-responsive m-t-10" style="clear: both;">
+                        <table class="table table-hover" id="tb_Familia">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">Nombre</th>
+                                    <th class="text-center">Tipo.</th>
+                                    <th class="text-center">Obligatorio</th>
+                                    <th class="hidden"></th>
+                                    <th class="text-center"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{ string v = ""; try { v = @ViewBag.tbFamilia; } catch { }}
+                                @(new HtmlString(v))
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <hr>
+                </div>
+
+
+                <button class="btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10">Guardar</button>
+                @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-default btn-rounded btn-outline waves-effect waves-light" })
+
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script type="text/javascript">
+
+        $(document).ready(function(){
+            var maxField = 10; //Input fields increment limitation
+            var addButton = $('.add_button'); //Add button selector
+            var wrapper = $('.field_wrapper'); //Input field wrapper
+            var fieldHTML = '<div class="col-md-12"> <div class="col-md-6"><input type="text" name="field_name" value="" class="form-control form-control-line" /></div><div class="col-md-3"><a href="javascript:void(0);" class="remove_button" title="Add field"><i class="fa fa-minus"></i></a></div></div>'; //New input field html
+            var x = 1; //Initial field counter is 1
+
+            //Once add button is clicked
+            $(addButton).click(function(){
+                //Check maximum number of input fields
+                if(x < maxField){
+                    x++; //Increment field counter
+                    $(wrapper).append(fieldHTML); //Add field html
+                }
+            });
+
+            //Once remove button is clicked
+            $(wrapper).on('click', '.remove_button', function(e){
+                e.preventDefault();
+                $(this).parent().parent('div').remove(); //Remove field html
+                x--; //Decrement field counter
+            });
+
+            //agregar linea al detalle
+            $('#btn-sendForm').on('click', function () {
+                var tipo = $('#tipAtrHtml').val();
+                var separado = tipo.split("-");
+                var detalleVacio = false;
+                //recorro todo los inputs
+                if (separado[1] == 'True') {
+                    $("input[name=field_name]").each(function () {
+                        if ($(this).val()=='') {
+                            detalleVacio = true;
+                        }
+                    });
+                }
+
+                if ($('#tipAtrHtml').val() == "" || $('#tipObl').val() == "" || $('#nomProce').val() == "" || detalleVacio) {
+                    $("#danger").removeClass('hidden');
+                    $("#danger").text('No puede existir campos en blancos en los campos con *');
+                    setTimeout(function () { $("#danger").fadeOut(5000); $("#danger").fadeIn(5000); }, 2000);
+                    setTimeout(function () { $("#danger").addClass('hidden'); }, 8000);
+                } else {
+
+
+                }
+
+
+            });
+
+            //habilito o escondo los valores multiples
+            $("#tipAtrHtml").change(function () {
+                var tipo = $('#tipAtrHtml').val();
+                var separado = tipo.split("-");
+                //recorro todo los inputs
+                if (separado[1]=='True') {
+                    $("#idMultiple").removeClass("hidden");
+                }
+                if (separado[1] == 'False') {
+                    $("#idMultiple").addClass("hidden");
+                }
+            });
+
+            $("#chxInpOcu").change(function () {
+                if ($("#chxInpOcu").prop("checked") == true) {
+                    $("#nomOcu").prop('disabled', false);
+                } else {
+                    $("#nomOcu").prop('disabled', true);
+                }
+            });
+            
+
+
+        });
+    </script>
+}
+

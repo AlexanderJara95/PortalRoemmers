@@ -1,0 +1,370 @@
+﻿@model PortalRoemmers.Areas.Sistemas.Models.Usuario.EmpleadoModels
+@using PortalRoemmers.Security
+
+@{
+    ViewBag.Title = "Modificar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!--Roemmers-->
+@section css {
+    @Styles.Render("~/Content/selectBusqueda_CSS")
+}
+
+<div class="white-box p-l-20 p-r-20">
+    <h3 class="box-title m-b-0"> Modificar Empleado </h3>
+    <p class="text-muted m-b-30 font-13">Completar todos los campos necesarios. </p>
+    <div class="row">
+        <div class="col-md-12">
+            @using (Html.BeginForm("Modificar", "Empleado", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal form-material" }))
+            {
+                <ul class="nav nav-tabs tabs customtab">
+                    <li class="tab active">
+                        <a href="#home" data-toggle="tab" aria-expanded="false"> <span class="visible-xs"><i class="fa fa-user"></i></span> <span class="hidden-xs">Datos Personales</span> </a>
+                    </li>
+                    <li class="tab ">
+                        <a href="#profile" data-toggle="tab" aria-expanded="true"> <span class="visible-xs"><i class="fa fa-home"></i></span> <span class="hidden-xs">Dirección</span> </a>
+                    </li>
+                    <li class="tab">
+                        <a href="#messages" data-toggle="tab" aria-expanded="true"> <span class="visible-xs"><i class="fa fa-suitcase"></i></span> <span class="hidden-xs">Laboral</span> </a>
+                    </li>
+                    <li class="tab">
+                        <a href="#settings" data-toggle="tab" aria-expanded="true"> <span class="visible-xs"><i class="fa fa-cog"></i></span> <span class="hidden-xs">Adicional</span> </a>
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(model => model.idEmp)
+                    @Html.HiddenFor(model => model.idEmpJ)
+                    @Html.HiddenFor(model => model.cesfchEmp)
+                    @Html.HiddenFor(model => model.fchCreUsu)
+                    @Html.HiddenFor(model => model.userCreUsu)
+                    @Html.HiddenFor(model => model.cod_sede)
+
+                    <div class="tab-pane active" id="home">
+                        <div class="form-horizontal form-material">
+                            <div class="form-group">
+                                <label class="col-md-12">@Html.LabelFor(model => model.apePatEmp)  <span class="text-danger">*</span></label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.apePatEmp, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Apellido Paterno", @style = "text-transform:uppercase;", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                                    @Html.ValidationMessageFor(model => model.apePatEmp, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-12">@Html.LabelFor(model => model.apeMatEmp)  <span class="text-danger">*</span></label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.apeMatEmp, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Apellido Materno", @style = "text-transform:uppercase;", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                                    @Html.ValidationMessageFor(model => model.apeMatEmp, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-12">@Html.LabelFor(model => model.nom1Emp)  <span class="text-danger">*</span></label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.nom1Emp, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Primer Nombre", @style = "text-transform:uppercase;", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                                    @Html.ValidationMessageFor(model => model.nom1Emp, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-12">@Html.LabelFor(model => model.nom2Emp)</label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.nom2Emp, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Segundo Nombre", @style = "text-transform:uppercase;", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                                    @Html.ValidationMessageFor(model => model.nom2Emp, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-12">@Html.LabelFor(model => model.idTipDoc)  <span class="text-danger">*</span></label>
+                                <div class="col-md-12">
+                                    @Html.DropDownListFor(model => model.idTipDoc, (SelectList)ViewBag.tipDoc, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                                    @Html.ValidationMessageFor(model => model.idTipDoc, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-12">@Html.LabelFor(model => model.nroDocEmp)  <span class="text-danger">*</span></label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.nroDocEmp, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Documento Identidad" } })
+                                    @Html.ValidationMessageFor(model => model.nroDocEmp, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-12">@Html.LabelFor(model => model.emailPerEmp)  </label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.emailPerEmp, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Correo Personal", @style = "text-transform:uppercase;", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                                    @Html.ValidationMessageFor(model => model.emailPerEmp, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-12">@Html.LabelFor(model => model.nacEmp)<span class="text-danger">*</span></label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.nacEmp, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "dd/mm/aaaa", @data_mask = "99/99/9999" } })
+                                    @Html.ValidationMessageFor(model => model.nacEmp, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-12">@Html.LabelFor(model => model.idEstCiv)</label>
+                                <div class="col-md-12">
+                                    @Html.DropDownListFor(model => model.idEstCiv, (SelectList)ViewBag.estado, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                                    @Html.ValidationMessageFor(model => model.idEstCiv, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-12">@Html.LabelFor(model => model.numTeleEmp)</label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.numTeleEmp, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Telefono" } })
+                                    @Html.ValidationMessageFor(model => model.numTeleEmp, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-12">@Html.LabelFor(model => model.numCelEmp)</label>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.numCelEmp, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Celular" } })
+                                    @Html.ValidationMessageFor(model => model.numCelEmp, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-12">@Html.LabelFor(model => model.idGen)</label>
+                                <div class="col-md-12">
+                                    @Html.DropDownListFor(model => model.idGen, (SelectList)ViewBag.sexoUsu, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                                    @Html.ValidationMessageFor(model => model.idGen, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="tab-pane " id="profile">
+                        <div class="form-horizontal form-material">
+                            <div class="form-group">
+                                <label class="col-md-12">@Html.LabelFor(model => model.cCod_Pais)</label>
+                                <div class="col-md-12">
+                                    @Html.DropDownListFor(model => model.cCod_Pais, (SelectList)ViewBag.pais, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                                    @Html.ValidationMessageFor(model => model.cCod_Pais, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-12">@Html.LabelFor(model => model.cCod_Dpto)</label>
+                                <div class="col-md-12">
+                                    @Html.DropDownListFor(model => model.cCod_Dpto, (SelectList)ViewBag.departamento, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                                    @Html.ValidationMessageFor(model => model.cCod_Dpto, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-12">@Html.LabelFor(model => model.cCod_Provincia)</label>
+                                <div class="col-md-12">
+                                    @Html.DropDownListFor(model => model.cCod_Provincia, (SelectList)ViewBag.provincia, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                                    @Html.ValidationMessageFor(model => model.cCod_Provincia, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-12">@Html.LabelFor(model => model.cCod_Ubi)</label>
+                                <div class="col-md-12">
+                                    @Html.DropDownListFor(model => model.cCod_Ubi, (SelectList)ViewBag.ubicacion, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                                    @Html.ValidationMessageFor(model => model.cCod_Ubi, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-12">@Html.LabelFor(model => model.dirEmp)</label>
+                                <div class="col-md-12">
+                                    @Html.TextAreaFor(model => model.dirEmp, new { @class = "form-control form-control-line", @rows = 5, @style = "text-transform:uppercase;", @onkeyup = "javascript:this.value=this.value.toUpperCase();", @placeholder = "Dirección" })
+                                    @Html.ValidationMessageFor(model => model.dirEmp, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="messages">
+                        <div class="form-group">
+                            <label class="col-md-12">@Html.LabelFor(model => model.idAreRoe)</label>
+                            <div class="col-md-12">
+                                @Html.DropDownListFor(model => model.idAreRoe, (SelectList)ViewBag.area, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                                @Html.ValidationMessageFor(model => model.idAreRoe, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-12">@Html.LabelFor(model => model.idCarg)</label>
+                            <div class="col-md-12">
+                                @Html.DropDownListFor(model => model.idCarg, (SelectList)ViewBag.cargo, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                                @Html.ValidationMessageFor(model => model.idCarg, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label class="col-md-12">
+                                @Html.DisplayNameFor(model => model.idEmpJ)
+                            </label>
+
+                            <div class="col-md-12">
+                                <p class="text-muted">@Html.DisplayFor(model => model.jefe.nom1Emp) @Html.DisplayFor(model => model.jefe.nom2Emp) @Html.DisplayFor(model => model.jefe.apePatEmp) </p>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label class="col-md-12">@Html.LabelFor(model => model.ingfchEmp)</label>
+                            <div class="col-md-12">
+                                @Html.EditorFor(model => model.ingfchEmp, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "dd/mm/aaaa", @data_mask = "99/99/9999" } })
+                                @Html.ValidationMessageFor(model => model.ingfchEmp, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-12">@Html.LabelFor(model => model.idEst)</label>
+                            <div class="col-md-12">
+                                @Html.DropDownListFor(model => model.idEst, (SelectList)ViewBag.EstU, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                                @Html.ValidationMessageFor(model => model.idEst, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-12">@Html.LabelFor(model => model.idAfp)</label>
+                            <div class="col-md-12">
+                                @Html.DropDownListFor(model => model.idAfp, (SelectList)ViewBag.Afp, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                                @Html.ValidationMessageFor(model => model.idAfp, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="settings">
+                        <div class="form-group">
+                            <label class="col-md-12">@Html.LabelFor(model => model.perConEmp)</label>
+                            <div class="col-md-12">
+                                @Html.EditorFor(model => model.perConEmp, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Nombre contacto", @style = "text-transform:uppercase;", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                                @Html.ValidationMessageFor(model => model.perConEmp, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-12">@Html.LabelFor(model => model.celConEmp)</label>
+                            <div class="col-md-12">
+                                @Html.EditorFor(model => model.celConEmp, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Celular contacto", @style = "text-transform:uppercase;", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                                @Html.ValidationMessageFor(model => model.celConEmp, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-12">@Html.LabelFor(model => model.corConEmp)</label>
+                            <div class="col-md-12">
+                                @Html.EditorFor(model => model.corConEmp, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Correo Usuario", @style = "text-transform:uppercase;", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                                @Html.ValidationMessageFor(model => model.corConEmp, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <button class="btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10">Guardar</button>
+                @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-default btn-rounded btn-outline waves-effect waves-light" })
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    @Scripts.Render("~/Bundles/selectBusqueda_JS")
+    @Scripts.Render("~/Bundles/mascara_JS")
+    <script src="~/Areas/Sistemas/Scripts/Sistemas.js"></script>
+    <script>
+        $(document).ready(function () {
+            //  $("#cCod_Dpto").prop("disabled", true);
+            $("#cCod_Pais").change(function () {
+                if ($("#cCod_Pais").val() != "") {
+                    var RolOptions = {};
+                    RolOptions.url = "/Usuario/depaUsu";
+                    RolOptions.type = "POST";
+                    RolOptions.data = JSON.stringify({ cCod_Pais: $("#cCod_Pais").val() });
+                    RolOptions.datatype = "json";
+                    RolOptions.contentType = "application/json";
+                    RolOptions.success = function (data) {
+                        $("#cCod_Dpto").empty();
+
+                        $("#cCod_Dpto").append($("<option> </option>").val("").html("Seleccionar"));
+                        $.each(data, function (i, item) {
+                            $("#cCod_Dpto").append($("<option> </option>").val(item.cCod_Dpto).html(item.cDepartamento));
+                        });
+                        $("#cCod_Dpto").prop("disabled", false);
+                    };
+                    RolOptions.error = function () { alert("Error in Getting States!!"); };
+                    $.ajax(RolOptions);
+
+                }
+                else {
+                    $("#cCod_Dpto").empty();
+                    $("#cCod_Dpto").prop("disabled", true);
+                }
+            });
+
+            // $("#cCod_Provincia").prop("disabled", true);
+            $("#cCod_Dpto").change(function () {
+                if ($("#cCod_Dpto").val() != "") {
+                    var RolOptions = {};
+                    RolOptions.url = "/Usuario/provUsu";
+                    RolOptions.type = "POST";
+                    RolOptions.data = JSON.stringify({ cCod_Pais: $("#cCod_Pais").val(), cCod_Dpto: $("#cCod_Dpto").val() });
+                    RolOptions.datatype = "json";
+                    RolOptions.contentType = "application/json";
+                    RolOptions.success = function (data) {
+                        $("#cCod_Provincia").empty();
+                        $("#cCod_Provincia").append($("<option> </option>").val("").html("Seleccionar"));
+                        $.each(data, function (i, item) {
+                            $("#cCod_Provincia").append($("<option> </option>").val(item.cCod_Provincia).html(item.cProvincia));
+                        });
+                        $("#cCod_Provincia").prop("disabled", false);
+                    };
+                    RolOptions.error = function () { alert("Error in Getting States!!"); };
+                    $.ajax(RolOptions);
+
+                }
+                else {
+                    $("#cCod_Provincia").empty();
+                    $("#cCod_Provincia").prop("disabled", true);
+                }
+            });
+
+            // $("#cCod_Distrito").prop("disabled", true);
+            $("#cCod_Provincia").change(function () {
+                if ($("#cCod_Provincia").val() != "") {
+                    var RolOptions = {};
+                    RolOptions.url = "/Usuario/distUsu";
+                    RolOptions.type = "POST";
+                    RolOptions.data = JSON.stringify({ cCod_Pais: $("#cCod_Pais").val(), cCod_Dpto: $("#cCod_Dpto").val(), cCod_Provincia: $("#cCod_Provincia").val() });
+                    RolOptions.datatype = "json";
+                    RolOptions.contentType = "application/json";
+                    RolOptions.success = function (data) {
+                        $("#cCod_Ubi").empty();
+                        $("#cCod_Ubi").append($("<option> </option>").val("").html("Seleccionar"));
+                        $.each(data, function (i, item) {
+                            $("#cCod_Ubi").append($("<option> </option>").val(item.cCod_Ubi).html(item.cDistrito));
+                        });
+                        $("#cCod_Ubi").prop("disabled", false);
+                    };
+                    RolOptions.error = function () { alert("Error in Getting States!!"); };
+                    $.ajax(RolOptions);
+
+                }
+                else {
+                    $("#cCod_Ubi").empty();
+                    $("#cCod_Ubi").prop("disabled", true);
+                }
+            });
+
+            $("#idCarg").select2();
+        });
+
+    </script>
+}

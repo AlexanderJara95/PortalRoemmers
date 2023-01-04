@@ -1,0 +1,97 @@
+﻿@model  PortalRoemmers.ViewModels.IndexViewModel
+@using PortalRoemmers.Helpers
+@using PortalRoemmers.Security
+
+
+@section css {
+    @Styles.Render("~/Content/Bootstrap_CSS")
+}
+
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="panel panel-default">
+    <div class="panel-heading box-title m-b-0"><h2>Mantenimiento de Conteo</h2></div>
+    <div class="panel-body">
+        <div class="form-group">
+            @{ string v = ""; try { v = TempData["mensaje"].ToString(); } catch { }}
+            @(new HtmlString(v))
+        </div>
+        @using(Html.BeginForm("Index", "InventarioProducto", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista }, FormMethod.Post))
+        {
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="input-group">
+                        <input type="text" id="search" name="search" class="form-control" placeholder="Buscar" value="@ViewBag.search">
+                        <span class="input-group-btn">
+                            <button class="btn waves-effect waves-light btn-info">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        }
+        <br />
+        <div class="row">
+            <div class="col-xs-12">
+                @Html.ActionLink("C. Barras", "Registrar", "InventarioProducto", new { Area = "Almacen" }, new { @Class = "btn btn-info btn-rounded m-r-10" })
+                @Html.ActionLink("C. Descripción", "RegistrarDes", "InventarioProducto", new { Area = "Almacen" }, new { @Class = "btn btn-info btn-rounded m-r-10" })
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-sm-12">
+                <table data-toggle="table" class="table">
+                    <thead>
+                        <tr>
+                            <th> </th>
+                            <th> Conteo </th>
+                            <th> Código </th>
+                            <th> Producto </th>
+                            <th> Almacen </th>
+                            <th> Nro. Lote </th>
+                            <th> Ubicación </th>
+                            <th> cantidad </th>
+                        </tr>
+                    </thead>
+                    @foreach(var item in Model.Conteo)
+                    {
+                    <tr>
+                        <td class="text-nowrap">
+                            <a href="@MyExtensions.ActionUrl("Modificar", "InventarioProducto", new {Area="Almacen", codBar = item.codProCon,nrolot = item.nroLotCon,ubiPro = item.ubiProCon,nroCon = item.nroInvCon})" data-toggle="tooltip" title="Editar"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a>
+                            <a href="@MyExtensions.ActionUrl("Eliminar", "InventarioProducto", new {Area="Almacen",codBar = item.codProCon,nrolot = item.nroLotCon,ubiPro = item.ubiProCon,nroCon = item.nroInvCon})" data-toggle="tooltip" title="Eliminar"> <i class="fa fa-close text-danger m-r-10"></i> </a>
+                        </td>
+                        <td>@Html.DisplayFor(modelItem => item.nroInvCon)</td>
+                        <td>@Html.DisplayFor(modelItem => item.codProCon)</td>
+                        <td>@Html.DisplayFor(modelItem => item.desProCon)</td>
+                        <td>@Html.DisplayFor(modelItem => item.almInvCon)</td>
+                        <td>@Html.DisplayFor(modelItem => item.nroLotCon)</td>
+                        <td>@Html.DisplayFor(modelItem => item.ubiProCon)</td>
+                        <td>@Html.DisplayFor(modelItem => item.canInvCon)</td>
+                    </tr>
+                    }
+
+                </table>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                @{Html.RenderPartial("_paginador", Model);}
+            </div>
+        </div>
+
+
+    </div>
+
+    <div class="panel-footer"></div>
+</div>
+@section scripts
+{
+    <script src="~/Areas/Sistemas/Scripts/Sistemas.js"></script>
+    @Scripts.Render("~/Bundles/Bootstrap_JS")
+}

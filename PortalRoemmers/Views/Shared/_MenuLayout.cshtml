@@ -1,0 +1,118 @@
+﻿@model List<PortalRoemmers.Areas.Sistemas.Models.Menu.MenuModels>
+@using PortalRoemmers.Security
+
+
+
+<div class="navbar-default sidebar" role="navigation">
+    <div class="sidebar-nav slimscrollsidebar">
+        <div class="sidebar-head">
+            <h3>
+                <span class="fa-fw open-close"><i class="ti-close ti-menu"></i></span>
+                <span class="hide-menu">Navegaci&oacuten</span>
+            </h3>
+        </div>
+
+        <!--logica-->
+        <ul class="nav" id="side-menu">
+            @{ string codigo = SessionPersister.UserMenu; }
+            @{try
+                {
+                    foreach(var m in Model)
+                    {
+                        if(m.idTipMen == ConstantesGlobales.tMenu_Menu && m.ParentId == codigo)
+                        {
+                            string activado = "";
+                            if(SessionPersister.ActiveMenu == m.idMen) { activado = "active"; }
+                            <li>
+                                <a href="#" class="waves-effect @activado"><i class="@m.imgMen" ></i> <span class="hide-menu"> @m.tiMen <span class="fa arrow"></span> </span></a>
+                                <ul class="nav nav-second-level">
+                                    @foreach(var d in Model.Where(x => x.ParentId == m.idMen))
+                                    {
+                                        string codigoD = d.ParentId;
+                                        if(d.idTipMen == ConstantesGlobales.tMenu_Sub)
+                                        {
+                                            <li>
+                                                <a href="javascript:void(0)" class="waves-effect"><i class="@d.imgMen"></i> <span class="hide-menu">@d.tiMen</span><span class="fa arrow"></span></a>
+                                                <ul class="nav nav-third-level">
+                                                    @foreach(var d1 in Model.Where(x => x.ParentId == d.idMen))
+                                                    {
+                                                        if(d1.idTipMen == ConstantesGlobales.tMenu_Vista)
+                                                        {
+                                                            string activado1 = "";
+                                                            if(SessionPersister.ActiveVista == d1.idMen) { activado1 = "active"; }
+
+                                                            //substrings[1] area //substrings[2]  controlador  //substrings[3] vista
+                                                            string[] substrings = d1.urlMen.Split('/');
+                                                            <li>
+                                                                <a href="@Url.Action(substrings[2], substrings[1], new { Area = substrings[0], menuArea = m.idMen, menuVista = d1.idMen })" class="@activado1"><i class="@d1.imgMen"></i> <span class="hide-menu">@d1.tiMen</span></a>
+                                                            </li>
+
+                                                        }
+                                                        if(d1.idTipMen == ConstantesGlobales.tMenu_LinPar)
+                                                        {
+                                                            string activado1 = "";
+                                                            if(SessionPersister.ActiveVista == d1.idMen) { activado1 = "active"; }
+                                                            <li>
+                                                                <a href="@m.urlMen" class="@activado1"><i class="@d1.imgMen"></i> <span class="hide-menu">@d1.tiMen</span></a>
+                                                            </li>
+                                                        }
+                                                    }
+                                                </ul>
+                                            </li>
+                                        }
+                                        else if(d.idTipMen == ConstantesGlobales.tMenu_Vista && d.ParentId == codigoD)
+                                        {
+                                            string activado1 = "";
+                                            if(SessionPersister.ActiveVista == d.idMen) { activado1 = "active"; }
+                                            //substrings[1] area //substrings[2]  controlador  //substrings[3] vista
+                                            string[] substrings = d.urlMen.Split('/');
+                                            <li>
+                                                <a href="@Url.Action(substrings[2], substrings[1], new { Area = substrings[0], menuArea = m.idMen, menuVista = d.idMen })" class="@activado1"><i class="@d.imgMen"></i> <span class="hide-menu">@d.tiMen</span></a>
+                                            </li>
+                                        }
+                                        else if(d.idTipMen == ConstantesGlobales.tMenu_LinPar && d.ParentId == codigoD)
+                                        {
+                                            string activado1 = "";
+                                            if(SessionPersister.ActiveVista == d.idMen) { activado1 = "active"; }
+                                            <li>
+                                                <a href="@m.urlMen" class="@activado1"><i class="@d.imgMen"></i> <span class="hide-menu">@d.tiMen</span></a>
+                                            </li>
+                                        }
+                                    }
+                                </ul>
+                            </li>
+                        }
+                        else if(m.idTipMen == ConstantesGlobales.tMenu_Vista && m.ParentId == codigo)
+                        {
+                            //substrings[1] area //substrings[2]  controlador  //substrings[3] vista
+                            string[] substrings = m.urlMen.Split('/');
+                            <li>
+                                <a href="@Url.Action(substrings[2], substrings[1], new { Area = substrings[0] })"><i class="@m.imgMen"></i> <span class="hide-menu">@m.tiMen</span></a>
+                            </li>
+                        }
+                        else if(m.idTipMen == ConstantesGlobales.tMenu_LinPar && m.ParentId == codigo)
+                        {
+                          
+                                /// Encripta una cadena
+                                string result = string.Empty;
+                                string user = SessionPersister.Username;
+
+                                if(!string.IsNullOrEmpty(user))
+                                {
+                                    byte[] encryted = System.Text.Encoding.Unicode.GetBytes(user);
+                                    result = Convert.ToBase64String(encryted);
+                                }
+                                
+                            <li>
+                                <a href="@m.urlMen+@result"><i class="@m.imgMen"></i> <span class="hide-menu">@m.tiMen</span></a>
+                            </li>
+                        }
+                    }
+                }
+                catch { }
+            }
+        </ul>
+
+        <!--logica-->
+    </div>
+</div>

@@ -1,0 +1,60 @@
+﻿@using PortalRoemmers.Security
+@model PortalRoemmers.Areas.Sistemas.Models.Gasto.TipGastDeActivModels
+@{
+    ViewBag.Title = "Modificar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="white-box p-l-20 p-r-20">
+    <h3 class="box-title m-b-0"> Modificar Tipo Gasto de Actividad</h3>
+    <p class="text-muted m-b-30 font-13">Completar todos los campos necesarios. </p>
+    <div class="row">
+        <div class="col-md-12">
+            @using (Html.BeginForm("Modificar", "TipGastDeActiv", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal form-material" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.idTipGasAct)
+                @Html.HiddenFor(model => model.userCreTipGastActiv)
+                @Html.HiddenFor(model => model.fchCreTipGastActiv)
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.nomTipGasAct)</label>
+                    <div class="col-md-12">
+
+                        @Html.EditorFor(model => model.nomTipGasAct, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Nombre", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                        @Html.ValidationMessageFor(model => model.nomTipGasAct, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.abrTipGasAct)</label>
+                    <div class="col-md-12">
+
+                        @Html.EditorFor(model => model.abrTipGasAct, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Descripción", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                        @Html.ValidationMessageFor(model => model.abrTipGasAct, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                
+                <button class="btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10">Guardar</button>
+                @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-default btn-rounded btn-outline waves-effect waves-light" })
+
+                <!--Ocultos-->
+                <input type="hidden" name="userModTipGastActiv" id="userModTipGastActiv" />
+                <input type="hidden" name="fchModTipGastActiv" id="fchModTipGastActiv" />
+                <!--Ocultos-->
+            }
+        </div>
+    </div>
+</div>
+
+
+@section scripts
+{
+    <script src="~/Areas/Sistemas/Scripts/Sistemas.js"></script>
+    <script src="~/Content/plugins/bower_components/sweetalert/sweetalert.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#userModTipGastActiv").val('@SessionPersister.Username');
+            $("#fchModTipGastActiv").val('@DateTime.Now');
+        });
+    </script>
+}

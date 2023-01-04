@@ -1,0 +1,101 @@
+﻿@model List<PortalRoemmers.Areas.Sistemas.Models.Usuario.EmpleadoModels>
+@{
+    ViewBag.Title = "Cumpleanio";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section css {
+    <link href="~/Content/plugins/bower_components/footable/css/footable.core.css" rel="stylesheet" />
+}
+    <div class="panel panel-default">
+        <div class="panel-heading box-title m-b-0"><h2 style="text-align: center;color: #000;font-size: 30px;">Cumplea&ntildeos @ViewBag.mes</h2>
+                                                   <ul class="pager">
+
+                                                       @{ int actual = @ViewBag.actualElegido;}
+                                                       <li class="previous"> <a style="border-radius: 60px;" href="@Url.Action("Cumpleanio", "Empleado", new { Area = "Sistemas", mes = actual - 1 } )">← Atr&aacutes</a> </li>
+                                                       <li class="next"> <a style="border-radius: 60px;" href="@Url.Action("Cumpleanio", "Empleado", new { Area = "Sistemas", mes = actual + 1  } )">Siguiente →</a> </li>
+                                                   </ul>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="white-box p-0">
+                        <div class="table-responsive">
+                            <div class="right-page-header">
+                                <div class="pull-right">
+                                    <input type="text" id="demo-input-search2" placeholder="Buscar colaborador" class="form-control">
+                                </div>
+                                <h3>Colaboradores</h3>
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="scrollable">
+                                <div class="table-responsive">
+                                    <table id="demo-foo-addrow" class="table m-t-30 table-hover contact-list" data-page-size="10">
+                                        <thead>
+                                            <tr>
+                                                <th>Nombre</th>
+                                                <th>Cargo</th>
+                                                <th>Area</th>
+                                                <th>Lugar</th>
+                                                <th>Dia</th>
+
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @{foreach (var item in Model)
+                                                {
+
+                                                    string codigo = "";
+                                                    string cargo = "NINGUNO";
+                                                    string area = "NINGUNO";
+                                                    try
+                                                    {
+                                                        codigo = item.usuarios.Where(x => x.idEst != ConstantesGlobales.estadoCesado).Select(x => x.idAcc).FirstOrDefault();
+                                                        cargo = item.cargo.desCarg;
+                                                        area = item.area.nomAreRoe;
+                                                    }
+                                                    catch (Exception e) {
+
+                                                    }
+                                                    <tr>
+                                                        <td>
+                                                            <img height="35" src="@Url.Action("convertirImagen", "Usuario", new {Area="Sistemas",idAcc = codigo})" alt="user" class="img-circle" /> @item.nomComEmp
+                                                        </td>
+                                                        <td><span class="label label-info">@cargo</span></td>
+                                                        <td>@area</td>
+                                                        <td>
+                                                            @{ try
+                                                                { @item.ubicacion.cDistrito }
+                                                            catch
+                                                            {<spa>VACIO</spa> }
+                                                            }
+                                                        </td>
+                                                        <td>@item.nacEmp.Day</td>
+                                                    </tr>
+                                                }
+                                            }
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td colspan="7">
+                                                    <div class="text-left">
+                                                        <ul class="pagination"> </ul>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel-footer"></div>
+    </div>
+@section scripts
+{
+    <script src="~/Content/plugins/bower_components/footable/js/footable.all.min.js"></script>
+    <script src="~/Scripts/js/footable-init.js"></script>
+}

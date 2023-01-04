@@ -1,0 +1,271 @@
+﻿@model  PortalRoemmers.ViewModels.IndexViewModel
+@using PortalRoemmers.Helpers
+@using PortalRoemmers.Security
+
+
+@section css {
+    @Styles.Render("~/Content/Bootstrap_CSS")
+    @Styles.Render("~/Content/sweetalert_CSS")
+}
+
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<!--Importar-->
+<div id="responsive-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <section id="wrapper" class="block1">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h2 class="modal-title">Cargar Inventario Final </h2>
+                </div>
+                <input id="idpeso" name="idpeso" type="hidden" value="@ViewBag.Peso">
+                <div class="modal-body">
+
+                    <form id="FormUpload" enctype="multipart/form-data" method="post">
+
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="fileinput input-group fileinput-new" data-provides="fileinput">
+                                    <div class="form-control" data-trigger="fileinput"> <i class="glyphicon glyphicon-file fileinput-exists"></i> <span class="fileinput-filename"></span></div>
+                                    <span class="input-group-addon btn btn-default btn-file">
+                                        <span class="fileinput-new">Archivo</span> <span class="fileinput-exists">Cambiar</span>
+                                        <input type="hidden" value="" name="..."><input id="inputGroupFile04" type="file" name="file" onchange="validateFileSelected(event)">
+                                    </span> <a href="#" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">Remover</a>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-md-offset-3">
+                                <button class="btn btn-outline btn-primary btn-lg btn-block" type="submit" id="inputGroupFileAddon04">Cargar</button>
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+<!---->
+
+<div class="panel panel-default">
+    <div class="panel-heading box-title m-b-0"><h2>Mantenimiento de Historial</h2></div>
+    <div id='success' class='alert alert-success hidden' style="font-weight: bold; font-size: 24px;"></div>
+    <div class="panel-body">
+        <div class="form-group">
+            @{ string v = ""; try { v = TempData["mensaje"].ToString(); } catch { }}
+            @(new HtmlString(v))
+        </div>
+        @using (Html.BeginForm("Index", "HistoriaInventario", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista }, FormMethod.Post))
+        {
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="input-group">
+                        <input type="text" id="search" name="search" class="form-control" placeholder="Buscar" value="@ViewBag.search">
+                        <span class="input-group-btn">
+                            <button class="btn waves-effect waves-light btn-info">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        }
+        <br />
+        <div class="row">
+            <div class="col-xs-12">
+                <a data-toggle="modal" class="btn btn-primary btn-rounded m-r-10" href="#responsive-modal">1. Importar</a>
+                <a data-toggle="modal" class="btn btn-danger btn-rounded m-r-10" href="#" id="idFinal">2. Finalizar</a>
+                @Html.ActionLink("Plantilla", "PlantillaHistorial", "HistoriaInventario", new { Area = "Almacen" }, new { @Class = "btn btn-default btn-rounded m-r-10" })
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-sm-12">
+                <table data-toggle="table" class="table">
+                    <thead>
+                        <tr>
+                            <th> Codigo </th>
+                            <th> Descripcion </th>
+                            <th> Nro. Lote </th>
+                            <th> Grupo </th>
+                        </tr>
+                    </thead>
+                    @foreach (var item in Model.HistoriaInv)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.codProConHis)</td>
+                            <td>@Html.DisplayFor(modelItem => item.desProConHis)</td>
+                            <td>@Html.DisplayFor(modelItem => item.nroLotConHis)</td>
+                            <td>@Html.DisplayFor(modelItem => item.idGruConHis)</td>
+                        </tr>
+                    }
+
+                </table>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                @{Html.RenderPartial("_paginador", Model);}
+            </div>
+        </div>
+
+
+    </div>
+
+    <div class="panel-footer"></div>
+</div>
+
+@section scripts
+{
+    <script src="~/Areas/Sistemas/Scripts/Sistemas.js"></script>
+    <script src="~/Scripts/js/jasny-bootstrap.js"></script>
+    @Scripts.Render("~/Bundles/Bootstrap_JS")
+    @Scripts.Render("~/Bundles/bloqueo_JS")
+    @Scripts.Render("~/Bundles/sweetalert_JS")
+    <script>
+        $("#FormUpload").submit(function (e) {
+            UploadFile();
+            return false;
+        });
+
+
+        $("#idFinal").click(function () {
+   
+            swal({
+                title: "¿Estás seguro?",
+                text: "¡Se limpiaran todos los registros de Inventario Ax e Inventario Producto ! \n",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Sí, finalizar!",
+                cancelButtonText: "No finalizar!",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            }, function (isConfirm) {
+                if (isConfirm) {
+                    var Options = {};
+                    Options.url = "/HistoriaInventario/finalizarInventario";
+                    Options.type = "POST";
+                    Options.datatype = "json";
+                    Options.contentType = "application/json";
+                    Options.success = function (data) {
+                        var bool_valueT = JSON.stringify(data) == "true" ? true : false;
+                        if (bool_valueT) {
+                            swal("Finalizado!", "Se limpiaron todos los registros.", "success");
+                            setTimeout(function () { location.reload(); }, 2000);
+                        } else {
+                            var bool_valueF = JSON.stringify(data) == "false" ? false : true;
+                            if (!bool_valueF) {
+                                swal("Ocurrio un problema!", "No se limpió ningún registro.", "error");
+                            } else {
+                                swal("Ocurrio un problema!", data, "error");
+                            }
+                        }
+                    };
+                    Options.error = function () { alert("Error in Getting States!!"); };
+                    $.ajax(Options);
+
+                } else {
+                    swal("Cancelado", "No se realizó ningún cambio.)", "error");
+                }
+            });
+        });
+
+
+
+        function validateFileSelected(event) {
+            if (($("#inputGroupFile04"))[0].files[0] != undefined) {
+                var ext = $('#inputGroupFile04').val().split('.').pop().toLowerCase();
+                var picsize = ($("#inputGroupFile04"))[0].files[0].size;
+
+                if ($.inArray(ext, ['xls', 'xlsx', 'xlsm', 'xlsb']) == -1) {
+                    alert(" Extension no permitida :  " + ext);
+                    $("#inputGroupFile04").val('');
+                    return false;
+                };
+                // 10mb
+                if (picsize >= 10485760) {
+                    alert("No puede sobre pasar el tamaño de 10mb ");
+                    $("#inputGroupFile04").val('');
+                    return false;
+                }
+            }
+        };
+
+        function UploadFile() {
+
+            var data = new FormData();
+            var files = $("#inputGroupFile04").get(0).files;
+            data.append("file", files[0])
+
+            block();
+            $.ajax({
+                url: '@Url.Action("saveFile", "HistoriaInventario")',
+                type: 'POST',
+                data: data,
+                success: function (result) {
+
+                    if (result) {
+                        $.post('/Almacen/HistoriaInventario/importData', function (data, status) {
+                            if (status == "success") {
+                                if (data.indexOf("Import") > -1) {//valido que envie una ruta, no solo texto
+                                    $("#idCarga").addClass("d-none");
+                                    url = "/Almacen/HistoriaInventario/Resultado?ruta=" + data;
+                                    window.open(url, "_blank");
+                                    location.reload();
+                                }
+                                else {
+                                    $('#responsive-modal').modal('hide')
+                                    $("div #success").removeClass('hidden');
+                                    $("div #success").text(data);
+                                    setTimeout(function () { $("div #success").fadeOut(5000); $("div #success").fadeIn(5000); }, 2000);
+                                    setTimeout(function () { $("div #success").addClass('hidden'); }, 8000);
+                                }
+                                unblock();
+                            }
+                            console.log("status " + status);
+                        });
+                    } else {
+                        alert("se genero error al guardar");
+                        $("#idCarga").addClass("d-none");
+                        unblock();
+                    }
+
+                },
+                error: function (err) {
+                    alert(err.statusText);
+                    unblock();
+                    $("#idCarga").addClass("d-none");
+
+                },
+                //Options to tell jQuery not to process data or worry about content-type.
+                cache: false,
+                contentType: false,
+                processData: false
+            });
+        }
+
+        function block() {
+            $('section.block1').block({
+                message: '<h4><img src="../../Content/plugins/images/busy.gif" /> Sólo un momento...</h4>'
+                , css: {
+                    border: '1px solid #fff'
+                }
+            });
+        }
+        function unblock() {
+            $('section.block1').unblock();
+        }
+
+    </script>
+}

@@ -1,0 +1,74 @@
+﻿@using PortalRoemmers.Security
+@model PortalRoemmers.Areas.Sistemas.Models.Equipo.ProcesadorModels
+@{
+    ViewBag.Title = "Modificar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="white-box p-l-20 p-r-20">
+    <h3 class="box-title m-b-0"> Modificar Procesador</h3>
+    <p class="text-muted m-b-30 font-13">Completar todos los campos necesarios. </p>
+    <div class="row">
+        <div class="col-md-12">
+            @using (Html.BeginForm("Modificar", "Procesador", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal form-material" }))
+            {
+                @Html.AntiForgeryToken()
+
+                @Html.HiddenFor(model => model.idProce)
+                @Html.HiddenFor(model => model.usuCrea)
+                @Html.HiddenFor(model => model.usufchCrea)
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.nomProce)</label>
+                    <div class="col-md-12">
+
+                        @Html.EditorFor(model => model.nomProce, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Nombre", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                        @Html.ValidationMessageFor(model => model.nomProce, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.descProce)</label>
+                    <div class="col-md-12">
+
+                        @Html.EditorFor(model => model.descProce, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Descripción", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                        @Html.ValidationMessageFor(model => model.descProce, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.velCpuProce)</label>
+                    <div class="col-md-12">
+
+                        @Html.EditorFor(model => model.velCpuProce, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Velocidad", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                        @Html.ValidationMessageFor(model => model.velCpuProce, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.nroNucProce)</label>
+                    <div class="col-md-12">
+
+                        @Html.EditorFor(model => model.nroNucProce, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Número", @type = "number" } })
+                        @Html.ValidationMessageFor(model => model.nroNucProce, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.nroNucLogProce)</label>
+                    <div class="col-md-12">
+
+                        @Html.EditorFor(model => model.nroNucLogProce, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Número", @type = "number" } })
+                        @Html.ValidationMessageFor(model => model.nroNucLogProce, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+
+                <button class="btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10">Guardar</button>
+                @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-default btn-rounded btn-outline waves-effect waves-light" })
+
+            }
+        </div>
+    </div>
+</div>
+

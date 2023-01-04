@@ -1,0 +1,75 @@
+﻿@using PortalRoemmers.Security
+@{
+    ViewBag.Title = "";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!--Generar primer reporte-->
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <i class="mdi mdi-book-open-page-variant"></i>       REPORTES DE GASTOS Y PRESUPUESTO
+            </div>
+            <div class="panel-wrapper collapse in" aria-expanded="true">
+                <div class="panel-body">
+                    @using (Html.BeginForm("Reporte_1", "SolicitudGastoMkt", FormMethod.Post, new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista,enctype = "multipart/form-data", @class = "form-horizontal form-bordered" }))
+                    {
+                    <div class="form-body">
+                        <div class="form-group">
+                            <label class="control-label col-md-3">REPORTE</label>
+                            <div class="col-md-6">
+                                <select class="form-control" id="idRep" name="idRep">
+                                    <option value="0">SELECCIONAR....</option>
+                                    <option value="1">REPORTE GENERAL</option>
+                                    <option value="2">REPORTE RESUMEN</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3">RESPONSABLE</label>
+                            <div class="col-md-6">
+                                @Html.DropDownList("idAcc", (SelectList)ViewBag.responsable, "TODOS", htmlAttributes: new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3">TIPO DE GASTO</label>
+                            <div class="col-md-6">
+                                @Html.DropDownList("idTipGas", (SelectList)ViewBag.tipConcepto, "TODOS", htmlAttributes: new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3">CONCEPTO</label>
+                            <div class="col-md-6">
+                                @Html.DropDownList("idCon", (SelectList)ViewBag.concepto, "TODOS", htmlAttributes: new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3" for="desMen">DESDE</label>
+                            <div class="col-md-6">
+                                <input class="form-control datepicker" style="text-align:center;" id="fchEveSolGasI" name="fchEveSolGasI" placeholder="dd/mm/aaaa" autocomplete="off" value="@ViewBag.primero">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3" for="desMen">HASTA</label>
+                            <div class="col-md-6">
+                                <input class="form-control datepicker" style="text-align:center;" id="fchEveSolGasF" name="fchEveSolGasF" placeholder="dd/mm/aaaa" autocomplete="off" value="@ViewBag.actual">
+                            </div>
+                        </div>
+                    </div>
+                        <div class="form-actions">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-sm-offset-1 col-sm-9 text-center">
+                                            <button type="submit" class="btn btn-success"> <i class="fa fa-check"></i>Generar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

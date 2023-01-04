@@ -1,0 +1,88 @@
+﻿@model PortalRoemmers.Areas.Contabilidad.Models.Letra.LetraModels
+@using PortalRoemmers.Security
+@{
+    ViewBag.Title = "Modificar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="white-box p-l-20 p-r-20">
+    <h3 class="box-title m-b-0"> Nueva Letra</h3>
+    <p class="text-muted m-b-30 font-13">Completar todos los campos necesarios. </p>
+    <div class="row">
+        <div class="col-md-12">
+            @using (Html.BeginForm("Modificar", "Letra", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal form-material" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.idLetra)
+                @Html.HiddenFor(model => model.idEst)
+                @Html.HiddenFor(model => model.usuCrea)
+                @Html.HiddenFor(model => model.usufchCrea)
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.codLetra)</label>
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.codLetra, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Código", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                        @Html.ValidationMessageFor(model => model.codLetra, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.refLetra)</label>
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.refLetra, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Referencia Letra", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                        @Html.ValidationMessageFor(model => model.refLetra, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.idAcep)</label>
+                    <div class="col-md-12">
+                        @Html.DropDownListFor(model => model.idAcep, (SelectList)ViewBag.aceptantes, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                        @Html.ValidationMessageFor(model => model.idAcep, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.fchGiroLet)</label>
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.fchGiroLet, new { htmlAttributes = new { @class = "form-control form-control-line datepicker", @placeholder = "dd/mm/aaaa", @autocomplete = "off" } })
+                        @Html.ValidationMessageFor(model => model.fchGiroLet, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.fchVencLet)</label>
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.fchVencLet, new { htmlAttributes = new { @class = "form-control form-control-line datepicker", @placeholder = "dd/mm/aaaa", @autocomplete = "off" } })
+                        @Html.ValidationMessageFor(model => model.fchVencLet, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.lugGiroLet)</label>
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.lugGiroLet, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Lugar", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                        @Html.ValidationMessageFor(model => model.lugGiroLet, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.impLetra)</label>
+                    <div class="col-md-6">
+                        @Html.EditorFor(model => model.impLetra, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "0.00" } })
+                        @Html.ValidationMessageFor(model => model.impLetra, "", new { @class = "text-danger" })
+                    </div>
+                    <br />
+                    <div class="col-md-6">
+                        @Html.DropDownListFor(model => model.idMon, (SelectList)ViewBag.moneda, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                        @Html.ValidationMessageFor(model => model.idMon, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.cantEnLetras)</label>
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.cantEnLetras, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "00/100 SOLES O DOLARES" } })
+                        @Html.ValidationMessageFor(model => model.cantEnLetras, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                //boton
+                <button class="btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10">Guardar</button>
+                @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-default btn-rounded btn-outline waves-effect waves-light" })
+
+            }
+        </div>
+    </div>
+</div>

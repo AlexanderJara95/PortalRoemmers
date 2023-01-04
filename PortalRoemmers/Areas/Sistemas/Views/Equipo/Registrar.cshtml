@@ -1,0 +1,502 @@
+﻿@model PortalRoemmers.Areas.Sistemas.Models.Equipo.EquipoModels
+@using PortalRoemmers.Security
+@{
+    ViewBag.Title = "RegistrarEquipo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@section css {
+    @Styles.Render("~/Content/selectBusqueda_CSS")
+    @Styles.Render("~/Content/datepicker_CSS")
+}
+
+<!--model Procesador-->
+<div id="responsive-modal-pro" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">Nuevo Procesador</h4>
+            </div>
+            <div class="modal-body">
+                <div id='danger' class='alert alert-danger hidden'></div>
+                @using(Html.BeginForm("Registrar", "Procesador", FormMethod.Post, new { @class = "form-horizontal form-material", @id = "pro-form" }))
+                {
+                    <div class="form-group">
+                        <label class="col-md-12">Nombre <span style="color:red;">*</span></label>
+                        <div class="col-md-12">
+                            @Html.Editor("nomProce", new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Nombre", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-12">Descripci&oacuten</label>
+                        <div class="col-md-12">
+                            @Html.Editor("descProce", new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Descripción", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-12">Velocidad CPU <span style="color:red;">*</span></label>
+                        <div class="col-md-12">
+                            @Html.Editor("velCpuProce", new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Velocidad", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-12">N&uacutemero de Nucleo <span style="color:red;">*</span></label>
+                        <div class="col-md-12">
+                            @Html.Editor("nroNucProce", new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Número", @type = "number" } })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-12">N&uacutemero de Nucleo L&oacutegico <span style="color:red;">*</span></label>
+                        <div class="col-md-12">
+                            @Html.Editor("nroNucLogProce", new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Número", @type = "number" } })
+                        </div>
+                    </div>
+
+                    <a id="btn-sendForm" class="btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10" href="#">Guardar</a>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cerrar</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!--model Procesador-->
+<!--model Modelo equipo-->
+<div id="responsive-modal-modelE" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">Nuevo Modelo</h4>
+            </div>
+            <div class="modal-body">
+                <div id='danger' class='alert alert-danger hidden'></div>
+                @using(Html.BeginForm("Registrar", "ModeloE", FormMethod.Post, new { @class = "form-horizontal form-material", @id = "mo-form" }))
+                {
+
+                    <div class="form-group">
+                        <label class="col-md-12">Nombre <span style="color:red;">*</span></label>
+                        <div class="col-md-12">
+                            @Html.Editor("nomMolEq", new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Nombre" } })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-12">Descripci&oacuten</label>
+                        <div class="col-md-12">
+                            @Html.Editor("descMolEq", new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Descripción" } })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-12">F&aacutebrica <span style="color:red;">*</span></label>
+                        <div class="col-md-12">
+                            @Html.DropDownList("idFabrica", (SelectList)ViewBag.fabricante, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line", @id = "idFabricaC" })
+                        </div>
+                    </div>
+
+                    <a id="btn-sendFormM" class="btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10" href="#">Guardar</a>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cerrar</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!--model Modelo equipo-->
+
+<div class="white-box p-l-20 p-r-20">
+    <h3 class="box-title m-b-0"> Nuevo Equipo</h3>
+    <p class="text-muted m-b-30 font-13">Completar todos los campos necesarios.  <spam style="font-size: 14px; font-weight: 400; color: #d93025;">*Campos Obligatorio</spam></p>
+
+    <div class="row">
+        <div class="col-md-12">
+            @using (Html.BeginForm("Registrar", "Equipo", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal form-material" }))
+            {
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.idFabrica) <span class="text-danger">*</span></label>
+                    <div class="col-md-12">
+                        @Html.DropDownListFor(model => model.idFabrica, (SelectList)ViewBag.fabricante, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                        @Html.ValidationMessageFor(model => model.idFabrica, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.idMolEq) <span class="text-danger">*</span></label>
+                    <div class="col-md-11">
+                        @Html.DropDownListFor(model => model.idMolEq, (SelectList)ViewBag.modelEqui, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                        @Html.ValidationMessageFor(model => model.idMolEq, "", new { @class = "text-danger" })
+                    </div>
+                    <br />
+                    <div class="col-md-1">
+                        <a data-toggle="modal" href="#responsive-modal-modelE"><span class="circle circle-sm bg-success di"><i class="ti-plus"></i></span></a>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.idProce) <span class="text-danger">*</span></label>
+                    <div class="col-md-11">
+                        @Html.DropDownListFor(model => model.idProce, (SelectList)ViewBag.procesador, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                        @Html.ValidationMessageFor(model => model.idProce, "", new { @class = "text-danger" })
+                    </div>
+                    <br />
+                    <div class="col-md-1">
+                        <a data-toggle="modal" href="#responsive-modal-pro"><span class="circle circle-sm bg-success di"><i class="ti-plus"></i></span></a>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.memEqui) <span class="text-danger">*</span></label>
+                    <div class="col-md-2">
+                        @Html.EditorFor(model => model.memEqui, new { htmlAttributes = new { @class = "form-control form-control-line", @type = "number", @placeholder = "Tamaño" } })
+                        @Html.ValidationMessageFor(model => model.memEqui, "", new { @class = "text-danger" })
+                    </div>
+                    <br />
+                    <div class="col-md-4">
+                        @Html.DropDownListFor(model => model.tamMen, (SelectList)ViewBag.tamMemoria, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                        @Html.ValidationMessageFor(model => model.tamMen, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-4">
+                        @Html.DropDownListFor(model => model.idTipRam, (SelectList)ViewBag.tipRam, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                        @Html.ValidationMessageFor(model => model.idTipRam, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-2">
+                        @Html.EditorFor(model => model.canRam, new { htmlAttributes = new { @class = "form-control form-control-line", @type = "number", @placeholder = "Número de ranuras" } })
+                        @Html.ValidationMessageFor(model => model.canRam, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.discEqui) <span class="text-danger">*</span></label>
+                    <div class="col-md-2">
+                        @Html.EditorFor(model => model.discEqui, new { htmlAttributes = new { @class = "form-control form-control-line", @type = "number", @placeholder = "Tamaño" } })
+                        @Html.ValidationMessageFor(model => model.discEqui, "", new { @class = "text-danger" })
+                    </div>
+                    <br />
+                    <div class="col-md-4">
+                        @Html.DropDownListFor(model => model.tamDis, (SelectList)ViewBag.tamdisco, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                        @Html.ValidationMessageFor(model => model.tamDis, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-4">
+                        @Html.DropDownListFor(model => model.idTipDis, (SelectList)ViewBag.tipDisco, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                        @Html.ValidationMessageFor(model => model.idTipDis, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-2">
+                        @Html.EditorFor(model => model.canDis, new { htmlAttributes = new { @class = "form-control form-control-line", @type = "number", @placeholder = "Número de discos" } })
+                        @Html.ValidationMessageFor(model => model.canDis, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.detDis)</label>
+                    <div class="col-md-12">
+                        @Html.TextAreaFor(model => model.detDis, new { @class = "form-control form-control-line", @rows = 5, @style = "text-transform:uppercase;", @onkeyup = "javascript:this.value=this.value.toUpperCase();", @placeholder = "Ejm:Disco C " })
+                        @Html.ValidationMessageFor(model => model.detDis, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.idTipEqui) <span class="text-danger">*</span></label>
+                    <div class="col-md-12">
+                        @Html.DropDownListFor(model => model.idTipEqui, (SelectList)ViewBag.tipEqui, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                        @Html.ValidationMessageFor(model => model.idTipEqui, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.idAreRoe) <span class="text-danger">*</span></label>
+                    <div class="col-md-12">
+                        @Html.DropDownListFor(model => model.idAreRoe, (SelectList)ViewBag.area, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                        @Html.ValidationMessageFor(model => model.idAreRoe, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.idSo) <span class="text-danger">*</span></label>
+                    <div class="col-md-12">
+                        @Html.DropDownListFor(model => model.idSo, (SelectList)ViewBag.sisOp, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                        @Html.ValidationMessageFor(model => model.idSo, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.arqSis) <span class="text-danger">*</span></label>
+                    <div class="col-md-12">
+
+                        @Html.DropDownListFor(model => model.arqSis, (SelectList)ViewBag.aquitectiura, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                        @Html.ValidationMessageFor(model => model.arqSis, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.fchInsEqui)</label>
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.fchInsEqui, new { htmlAttributes = new { @class = "form-control form-control-line datepicker", @placeholder = "dd/mm/aaaa", @autocomplete = "off" } })
+                        @Html.ValidationMessageFor(model => model.fchInsEqui, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.comEqui)</label>
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.comEqui, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Ejm:19043(21H1)" } })
+                        @Html.ValidationMessageFor(model => model.comEqui, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.idEmp) <span class="text-danger">*</span></label>
+                    <div class="col-md-12">
+                        @Html.DropDownListFor(model => model.idEmp, (SelectList)ViewBag.usuario, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                        @Html.ValidationMessageFor(model => model.idEmp, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.nomPcEqui) <span class="text-danger">*</span></label>
+                    <div class="col-md-11">
+                        @Html.EditorFor(model => model.nomPcEqui, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Ejm:REWK001LIM", @style = "text-transform:uppercase;", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                        @Html.ValidationMessageFor(model => model.nomPcEqui, "", new { @class = "text-danger" })
+                    </div>
+                    <br />
+                    <div class="col-md-1">
+                        <a style="cursor:pointer;" onclick="buscarEDisponible();"><span class="circle circle-sm bg-info di"><i class="ti-search"></i></span></a>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.idEst)</label>
+                    <div class="col-md-12">
+                        @Html.DropDownListFor(model => model.idEst, (SelectList)ViewBag.estEqui, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line", @style = "text-transform:uppercase;", @onkeyup = "javascript:this.value=this.value.toUpperCase();" })
+                        @Html.ValidationMessageFor(model => model.idEst, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.nroSerEqui) <span class="text-danger">*</span></label>
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.nroSerEqui, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Ejm:MXL50714FJ", @style = "text-transform:uppercase;", @onkeyup = "javascript:this.value=this.value.toUpperCase();" } })
+                        @Html.ValidationMessageFor(model => model.nroSerEqui, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.nroAnyEqui)</label>
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.nroAnyEqui, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Ejm:355991775" } })
+                        @Html.ValidationMessageFor(model => model.nroAnyEqui, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.detEqui)</label>
+                    <div class="col-md-12">
+                        @Html.TextAreaFor(model => model.detEqui, new { @class = "form-control form-control-line", @rows = 5, @style = "text-transform:uppercase;", @onkeyup = "javascript:this.value=this.value.toUpperCase();", @placeholder = "Ejm:Ok" })
+                        @Html.ValidationMessageFor(model => model.detEqui, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                //boton
+                <button class="btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10">Guardar</button>
+                @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-default btn-rounded btn-outline waves-effect waves-light" })
+
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    @Scripts.Render("~/Bundles/selectBusqueda_JS")
+    @Scripts.Render("~/Bundles/datepicker_JS")
+
+    <script>
+        $(document).ready(function () {
+            //para la fecha
+            $('.datepicker').datepicker({
+                dateFormat: 'dd/mm/yy'
+            });
+            $("#idFabrica").change(function () {
+                if ($("#idFabrica").val() != "") {
+                    var RolOptions = {};
+                    RolOptions.url = "/Equipo/modelxFabri";
+                    RolOptions.type = "POST";
+                    RolOptions.data = JSON.stringify({ idFabrica: $("#idFabrica").val() });
+                    RolOptions.datatype = "json";
+                    RolOptions.contentType = "application/json";
+                    RolOptions.success = function (data) {
+                        $("#idMolEq").empty();
+                        $("#idMolEq").append($("<option> </option>").val("").html("Seleccionar"));
+                        $.each(data, function (i, item) {
+                            $("#idMolEq").append($("<option> </option>").val(item.idMolEq).html(item.nomMolEq));
+                        });
+                        $("#idMolEq").prop("disabled", false);
+                        $("#idFabricaC").val($("#idFabrica").val());
+                    };
+                    RolOptions.error = function () { alert("Error in Getting States!!"); };
+                    $.ajax(RolOptions);
+
+                }
+                else {
+                    $("#idMolEq").empty();
+                    $("#idMolEq").prop("disabled", true);
+                }
+            });
+            $("#idAreRoe").change(function () {
+                if ($("#idAreRoe").val() != "") {
+                    var RolOptions = {};
+                    RolOptions.url = "/Equipo/areaxPer";
+                    RolOptions.type = "POST";
+                    RolOptions.data = JSON.stringify({ idAreRoe: $("#idAreRoe").val() });
+                    RolOptions.datatype = "json";
+                    RolOptions.contentType = "application/json";
+                    RolOptions.success = function (data) {
+                        $("#idEmp").empty();
+                        $("#idEmp").append($("<option> </option>").val("").html("Seleccionar"));
+                        $.each(data, function (i, item) {
+                            $("#idEmp").append($("<option> </option>").val(item.idEmp).html(item.nombre));
+                        });
+                        $("#idEmp").prop("disabled", false);
+                    };
+                    RolOptions.error = function () { alert("Error in Getting States!!"); };
+                    $.ajax(RolOptions);
+                }
+                else {
+                    $("#idEmp").empty();
+                    $("#idEmp").prop("disabled", true);
+                }
+            });
+            $("#idEmp").select2();
+            $("#idMolEq").select2();
+            $("#idProce").select2();
+        });
+        $('#btn-sendForm').click(function () {
+             var formContainer = $('#pro-form');
+             if ($("#nomProce").val() != "" && $("#velCpuProce").val() != "" && $("#nroNucProce").val() != "" && $("#nroNucLogProce").val() != "") {
+                 $.ajax({
+                     url: '@Url.Action("CreateProcesador", "Equipo")',
+                     type: 'POST',
+                     cache: false,
+                     data: formContainer.serialize(),
+                     success: function (result) {
+                         if (result == 'ok') {
+                             cargarProcesador();
+                             $("#responsive-modal-pro").modal('hide');
+                             $("#nomProce").empty();
+                             $("#descProce").empty();
+                             $("#velCpuProce").empty();
+                             $("#nroNucProce").empty();
+                             $("#nroNucLogProce").empty();
+                         } else {
+                             $("div #danger").removeClass('hidden');
+                             $("div #danger").text('Error al crear el procesador');
+                             setTimeout(function () { $("div #danger").fadeOut(2000).fadeIn(2000).fadeOut(1500).fadeIn(1500).fadeOut(500) }, 500);
+                             setTimeout(function () { $("div #danger").addClass('hidden'); }, 4000);
+                             return false;
+                         }
+                     },
+                     error: function (jqXHR, textStatus, error) {
+                         alert("Estado: Error inesperado");
+                     }
+                 });
+             } else {
+                 $("div #danger").removeClass('hidden');
+                 $("div #danger").text('Debe completar todos los campos obligatorios (*)');
+                 setTimeout(function () { $("div #danger").fadeOut(2000).fadeIn(2000).fadeOut(1500).fadeIn(1500).fadeOut(500) }, 500);
+                 setTimeout(function () { $("div #danger").addClass('hidden'); }, 4000);
+                 return false;
+             }
+        });
+        $('#btn-sendFormM').click(function () {
+            var formContainer = $('#mo-form');
+            if ($("#nomMolEq").val() != ""  && $("#idFabricaC").val() != "") {
+                 $.ajax({
+                     url: '@Url.Action("CreateModeloE", "Equipo")',
+                     type: 'POST',
+                     cache: false,
+                     data: formContainer.serialize(),
+                     success: function (result) {
+                         if (result == 'ok') {
+                             cargarModeloE();
+                             $("#responsive-modal-modelE").modal('hide');
+                             $("#nomMolEq").empty();
+                             $("#descMolEq").empty();
+                         } else {
+                             $("div #danger").removeClass('hidden');
+                             $("div #danger").text('Error al crear el Modelo');
+                             setTimeout(function () { $("div #danger").fadeOut(2000).fadeIn(2000).fadeOut(1500).fadeIn(1500).fadeOut(500) }, 500);
+                             setTimeout(function () { $("div #danger").addClass('hidden'); }, 4000);
+                             return false;
+                         }
+                     },
+                     error: function (jqXHR, textStatus, error) {
+                         alert("Estado: Error inesperado");
+                     }
+                 });
+             } else {
+                 $("div #danger").removeClass('hidden');
+                 $("div #danger").text('Debe completar todos los campos obligatorios (*)');
+                 setTimeout(function () { $("div #danger").fadeOut(2000).fadeIn(2000).fadeOut(1500).fadeIn(1500).fadeOut(500) }, 500);
+                 setTimeout(function () { $("div #danger").addClass('hidden'); }, 4000);
+                 return false;
+             }
+        });
+        function cargarProcesador() {
+            var RolOptions = {};
+            RolOptions.url = "/Equipo/cargarProcesador";
+            RolOptions.type = "POST";
+            RolOptions.datatype = "json";
+            RolOptions.contentType = "application/json";
+            RolOptions.success = function (data) {
+                $("#idProce").empty();
+                $("#idProce").append($("<option> </option>").val("").html("Seleccionar"));
+                $.each(data, function (i, item) {
+                    $("#idProce").append($("<option> </option>").val(item.idProce).html(item.nomProce));
+                });
+            };
+            RolOptions.error = function () { alert("Error in Getting States!!"); };
+            $.ajax(RolOptions);
+        }
+        function buscarEDisponible(){
+            $.ajax({
+                     url: '@Url.Action("searchEquipoDisponible", "Equipo")',
+                     type: 'POST',
+                     cache: false,
+                     success: function (result) {
+                        $("#nomPcEqui").val(result);
+                     },
+                     error: function (jqXHR, textStatus, error) {
+                         alert("Estado: Error inesperado");
+                     }
+                 });
+        }
+        function cargarModeloE() {
+            var RolOptions = {};
+            RolOptions.url = "/Equipo/cargarModeloE";
+            RolOptions.type = "POST";
+            RolOptions.data = JSON.stringify({ idFabrica: $("#idFabrica").val() });
+            RolOptions.datatype = "json";
+            RolOptions.contentType = "application/json";
+            RolOptions.success = function (data) {
+                $("#idMolEq").empty();
+                $("#idMolEq").append($("<option> </option>").val("").html("Seleccionar"));
+                $.each(data, function (i, item) {
+                    $("#idMolEq").append($("<option> </option>").val(item.idMolEq).html(item.nomMolEq));
+                });
+            };
+            RolOptions.error = function () { alert("Error in Getting States!!"); };
+            $.ajax(RolOptions);
+        }
+    </script>
+}
+

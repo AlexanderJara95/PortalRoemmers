@@ -1,0 +1,651 @@
+﻿@model PortalRoemmers.Areas.Sistemas.Models.Presupuesto.PresupuestoModels
+@using PortalRoemmers.Security
+
+
+@{
+    ViewBag.Title = "Registrar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section css {
+    @Styles.Render("~/Content/datepicker_CSS")
+    @Styles.Render("~/Content/sweetalert_CSS")
+    @Styles.Render("~/Content/AccordionWizard_CSS")
+    @Styles.Render("~/Content/selectBusqueda_CSS")
+}
+
+
+<div class="white-box p-l-20 p-r-20">
+    <div id='danger' class='alert alert-danger hidden'>Ingresar todos los campos</div>
+    <h3 class="box-title m-b-0"> Nuevo Presupuesto de Gastos</h3>
+    <p class="text-muted m-b-30 font-13"></p>
+    <div class="row">
+        <div class="col-md-12">
+            @using (Html.BeginForm("Registrar", "Presupuesto", FormMethod.Post, new { id = "neoPres", enctype = "multipart/form-data", @class = "form-horizontal form-material" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="col-md-12">
+                    <section id="wrapper" class="block1">
+                        <div class="panel-group wiz-aco" id="accordion" aria-multiselectable="true" role="tablist">
+                            <div class="panel">
+                                <div class="panel-heading" id="exampleHeadingDefaultOne" role="tab"> <a class="panel-title" data-toggle="collapse" href="#exampleCollapseDefaultOne" data-parent="#exampleAccordionDefault" aria-expanded="true" aria-controls="exampleCollapseDefaultOne"> Datos del Presupuesto </a> </div>
+                                <div class="panel-collapse collapse in" id="exampleCollapseDefaultOne" aria-labelledby="exampleHeadingDefaultOne" role="tabpanel">
+
+                                    <div class="panel-body">
+                                        <div class="row">
+                                            <div class="row show-grid">
+                                                <div class="col-md-4">
+                                                    <div class="form-group col-md-12">
+                                                        <label>TIPO</label>
+                                                        @Html.DropDownListFor(model => model.idTipoPres, (SelectList)ViewBag.TipoPres, "Seleccionar", htmlAttributes: new { @class = "form-control form-control-line" })
+                                                        @Html.ValidationMessageFor(model => model.idTipoPres, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group col-md-12">
+                                                        <label>DESDE</label>
+                                                        <input class="form-control form-control-line datepicker" id="fchIniVigencia" name="fchIniVigencia" placeholder="dd/mm/aaaa" autocomplete="off" value="@ViewBag.actual">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group col-md-12">
+                                                        <label>HASTA</label>
+                                                        <input class="form-control form-control-line datepicker" id="fchFinVigencia" name="fchFinVigencia" placeholder="dd/mm/aaaa" autocomplete="off" value="@ViewBag.actual">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel">
+                                <div class="panel-heading" id="exampleHeadingDefaultTwo" role="tab"> <a class="panel-title collapsed" data-toggle="collapse" href="#exampleCollapseDefaultTwo" data-parent="#exampleAccordionDefault" aria-expanded="false" aria-controls="exampleCollapseDefaultTwo"> Detalle Presupuesto </a> </div>
+                                <div class="panel-collapse collapse" id="exampleCollapseDefaultTwo" aria-labelledby="exampleHeadingDefaultTwo" role="tabpanel">
+                                    <div class="panel-body">
+                                        <div class="row hidden" id="PtoCom1">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label class="col-md-12">@Html.LabelFor(model => model.idAccRes) </label>
+                                                    <div class="col-md-12">
+                                                        @Html.DropDownListFor(model => model.idAccRes, (SelectList)ViewBag.responsable, "Seleccionar", htmlAttributes: new { @class = "form-control form-control-line" })
+                                                        @Html.ValidationMessageFor(model => model.idAccRes, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row hidden" id="PtoVtas">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label class="col-md-12">@Html.LabelFor(model => model.idZon) </label>
+                                                    <div class="col-md-12">
+                                                        @Html.DropDownListFor(model => model.idZon, (SelectList)ViewBag.zona, "Seleccionar", htmlAttributes: new { @class = "form-control form-control-line" })
+                                                        @Html.ValidationMessageFor(model => model.idZon, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label class="col-md-12">@Html.LabelFor(model => model.idLin) </label>
+                                                    <div class="col-md-12">
+                                                        @Html.DropDownListFor(model => model.idLin, (SelectList)ViewBag.linea, "Seleccionar", htmlAttributes: new { @class = "form-control form-control-line" })
+                                                        @Html.ValidationMessageFor(model => model.idLin, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label class="col-md-12">@Html.LabelFor(model => model.idAccJ)</label>
+                                                    <div class="col-md-12">
+                                                        @Html.DropDownListFor(model => model.idAccJ, (SelectList)ViewBag.Jefes, "Seleccionar", htmlAttributes: new { @class = "form-control form-control-line" })
+                                                        @Html.ValidationMessageFor(model => model.idAccJ, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row hidden" id="PtoMkt">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label class="col-md-12">@Html.LabelFor(model => model.idEsp) </label>
+                                                    <div class="col-md-12">
+                                                        @Html.DropDownListFor(model => model.idEsp, (SelectList)ViewBag.especialidad, "Seleccionar", htmlAttributes: new { @class = "form-control form-control-line" })
+                                                        @Html.ValidationMessageFor(model => model.idEsp, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label class="col-md-12">@Html.LabelFor(model => model.idTipGas) </label>
+                                                    <div class="col-md-12">
+                                                        @Html.DropDownListFor(model => model.idTipGas, (SelectList)ViewBag.tipgasto, "Seleccionar", htmlAttributes: new { @class = "form-control form-control-line" })
+                                                        @Html.ValidationMessageFor(model => model.idTipGas, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label class="col-md-12">@Html.LabelFor(model => model.idConGas) </label>
+                                                    <div class="col-md-12">
+                                                        @Html.DropDownListFor(model => model.idConGas, (SelectList)ViewBag.congasto, "Seleccionar", htmlAttributes: new { @class = "form-control form-control-line" })
+                                                        @Html.ValidationMessageFor(model => model.idConGas, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="row hidden" id="PtoCom2">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label class="col-md-12">@Html.LabelFor(model => model.idMon)</label>
+                                                    <div class="col-md-12" style="padding-bottom: 10px; padding-top: 10px;">
+                                                        @Html.DropDownListFor(model => model.idMon, (SelectList)ViewBag.moneda, "Seleccionar", htmlAttributes: new { @class = "form-control form-control-line" })
+                                                        @Html.ValidationMessageFor(model => model.idMon, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label class="col-md-12">@Html.LabelFor(model => model.Monto)</label>
+                                                    <div class="col-md-12" style="padding-bottom: 10px; padding-top: 10px;">
+                                                        @Html.EditorFor(model => model.Monto, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "0.00" } })
+                                                        @Html.ValidationMessageFor(model => model.Monto, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label class="col-md-12">@Html.LabelFor(model => model.obsPtoGas)</label>
+                                                    <div class="col-md-12" style="padding-bottom: 10px; padding-top: 10px;">
+                                                        @Html.TextAreaFor(model => model.obsPtoGas, new { @class = "form-control form-control-line", @rows = 5, @placeholder = "Observación" })
+                                                        @Html.ValidationMessageFor(model => model.obsPtoGas, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <button class="btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10">Guardar</button>
+                @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-default btn-rounded btn-outline waves-effect waves-light" })
+            }
+
+        </div>
+    </div>
+</div>
+
+
+
+
+@section scripts
+{
+    @Scripts.Render("~/Bundles/datepicker_JS")
+    @Scripts.Render("~/Bundles/sweetalert_JS")
+    @Scripts.Render("~/Bundles/AccordionWizard_JS")
+    @Scripts.Render("~/Bundles/selectBusqueda_JS")
+    @Scripts.Render("~/Bundles/bloqueo_JS")
+
+    <script src="~/Areas/Sistemas/Scripts/Sistemas.js"></script>
+    <script src="~/Content/plugins/bower_components/sweetalert/sweetalert.min.js"></script>
+    <script>
+        // Date Picker
+        $('.datepicker').datepicker({
+            dateFormat: 'dd/mm/yy',
+            autoclose: true
+        });
+        // Accordion Wizard
+        $('#accordion').wizard({
+            step: '[data-toggle="collapse"]'
+            , buttonsAppendTo: '.panel-collapse'
+            , templates: {
+                buttons: function () {
+                    var options = this.options;
+                    return '<div class="panel-footer">'
+                        + '<ul class="pager">'
+                        + '<li class="previous">'
+                        + '<a href="#' + this.id + '" data-wizard="back" role="button">' + options.buttonLabels.back + '</a>'
+                        + '</li>'
+                        + '<li class="next">'
+                        + '<a id="nextButtonA" href="#' + this.id + '" data-wizard="next" role="button">' + options.buttonLabels.next + '</a>'
+                        + '</li>'
+                        + '</ul>'
+                        + '</div>';
+                }
+            }
+            , onBeforeShow: function (step) {
+                step.$pane.collapse('show');
+                //swal("Message NEXT!");
+            }
+            , onBeforeHide: function (step) {
+                step.$pane.collapse('hide');
+                //swal("Message BEFORE!");
+            }
+            , onFinish: function () {
+                swal("Dar click en Guardar!!!");
+            }
+
+        });
+        var PtoVtas = false;
+        function launchPtoVtas() {
+            PtoVtas = true;
+        }
+        function delayPtoVtas() {
+            PtoVtas = false;
+        }
+        //ACTIVA EL DOM//------------------------------------------------------
+        $(document).ready(function () {
+            ///////////////////////////////////////////////////////
+            $("#idTipoPres").change(function () {
+                //console.log("Entro")
+                //$("#idAccRes").select2().select2("val", $(".select2 option:eq(1)").val());
+                if ($("#idTipoPres").val() != "") {
+                //*******************************
+                    var RolOptions = {};
+                    RolOptions.url = "/Presupuesto/buscarResponsable";
+                    RolOptions.type = "POST";
+                    RolOptions.data = JSON.stringify({ idTipPres: $("#idTipoPres").val() });
+                    RolOptions.datatype = "json";
+                    RolOptions.contentType = "application/json";
+                    RolOptions.success = function (data) {
+                        //--------------------------------------
+                        console.log("entro tipo" + data);
+                        /////////////////////////////////////////////
+                        $("#idAccRes").empty();
+                        //$("#idAccRes").select2("val", "");
+                        $("#idAccRes").append($("<option> </option>").val("").html("Seleccionar"));
+                        $.each(data, function (i, item) {
+                            console.log(item.value + "-" + item.text+ ";");
+                            $("#idAccRes").append($("<option> </option>").val(item.value).html(item.text));
+                        });
+                        /////////////////////////////////////////////
+                        //--------------------------------------
+                    };
+                    RolOptions.error = function () { alert("Error!!"); };
+                    $.ajax(RolOptions);
+                }
+                //*******************************
+            });
+            ///////////////////////////////////////////////////////
+            //Ocultar y aparecer un hidden por un tipo de presupuesto
+            $("#idTipoPres").change(function () {
+                if ($("#idTipoPres").val() != "") {
+                        //console.log("Entro options")
+                        $("#PtoCom1").removeClass("hidden");
+                        $("#PtoCom2").removeClass("hidden");
+                        var RolOptions = {};
+                        RolOptions.url = "/Presupuesto/buscarTipoPresupuesto";
+                        RolOptions.type = "POST";
+                        RolOptions.data = JSON.stringify({ idTipPres: $("#idTipoPres").val() });
+                        RolOptions.datatype = "json";
+                        RolOptions.contentType = "application/json";
+                        RolOptions.success = function (data) {
+                        //console.log(data)
+                        if (data == @ConstantesGlobales.Com_PtoGas_Tipo_Cas_02)
+                        {
+                            launchPtoVtas();
+                            //--------------------------------------
+                            $("#PtoVtas").removeClass("hidden");
+                            //--------------------------------------
+                            $("#idLin").empty();
+                            $("#idLin").select2("val", "");
+                            $("#idLin").append($("<option> </option>").val("").html("Seleccionar"));
+                            $("#idLin").select2();
+                            //--------------------------------------
+                            $("#idZon").empty();
+                            $("#idZon").select2("val", "");
+                            $("#idZon").append($("<option> </option>").val("").html("Seleccionar"));
+                            $("#idZon").select2();
+                            //--------------------------------------
+                            $("#idAccJ").empty();
+                            $("#idAccJ").select2("val", "");
+                            $("#idAccJ").append($("<option> </option>").val("").html("Seleccionar"));
+                            $("#idAccJ").select2();
+                            //--------------------------------------
+                        }
+                        else
+                        {
+                            $("#PtoVtas").addClass("hidden");
+                        }
+                        if (data == @ConstantesGlobales.Com_PtoGas_Tipo_Cas_01)
+                        {
+                            delayPtoVtas();
+                            //--------------------------------------
+                            $("#PtoMkt").removeClass("hidden");
+                        }
+                        else
+                        {
+                            $("#PtoMkt").addClass("hidden");
+                        }
+                    };
+                    RolOptions.error = function () { alert("Error!!"); };
+                    $.ajax(RolOptions);
+                }
+                else
+                {
+                    $("#PtoVtas").addClass("hidden");
+                    $("#PtoMkt").addClass("hidden");
+                    $("#PtoCom1").addClass("hidden");
+                    $("#PtoCom2").addClass("hidden");
+                }
+            });
+            ///////////////////////////////////////////////////////
+            //buscar las lineas del responsable
+            $("#idAccRes").change(function () {
+                if(PtoVtas)
+                {
+                    //-- Efecto Bloqueo --
+                    block();
+                    //-- Efecto Bloqueo --
+                    if ($("#idAccRes").val() != "") {
+                        var RolOptions = {};
+                        RolOptions.url = "/Presupuesto/buscarLinea";
+                        RolOptions.type = "POST";
+                        RolOptions.data = JSON.stringify({ idAccRes: $("#idAccRes").val() });
+                        RolOptions.datatype = "json";
+                        RolOptions.contentType = "application/json";
+                        RolOptions.success = function (data) {
+                            /////////////////////////////////////////////
+                            $("#idLin").empty();
+                            $("#idLin").select2("val", "");
+                            $("#idLin").append($("<option> </option>").val("").html("Seleccionar"));
+                            $.each(data, function (i, item) {
+                                $("#idLin").append($("<option> </option>").val(item.value).html(item.text));
+                            });
+                            //--
+                                $("#idLin").find("option:last").prop("selected", true);
+                                var resulLinea = $("#idLin option:selected").text();
+                                var valorLinea = $("#idLin option:selected").val();
+                                console.log("Entro If");
+                                console.log(resulLinea + "-" + valorLinea);
+                                $("#idLin").select2("data", { id: valorLinea, text: resulLinea });
+                            //--
+                            /////////////////////////////////////////////
+                        };
+                        RolOptions.error = function () { alert("Error !!"); };
+                        $.ajax(RolOptions);
+                    }
+                    else {
+                        $("#idLin").empty();
+                        $("#idLin").append($("<option> </option>").val("").html("Seleccionar"));
+                        $("#idLin").select2();
+                        $("#idLin").prop("disabled", true);
+                    }
+                }
+            });
+            ///////////////////////////////////////////////////////
+            //buscar las zonas del responsable
+            $("#idAccRes").change(function () {
+                if(PtoVtas)
+                {
+                    //-- Efecto Bloqueo --
+                    block();
+                    //-- Efecto Bloqueo --
+                    if ($("#idAccRes").val() != "") {
+                        var RolOptions = {};
+                        RolOptions.url = "/Presupuesto/buscarZona";
+                        RolOptions.type = "POST";
+                        RolOptions.data = JSON.stringify({ idAccRes: $("#idAccRes").val() });
+                        RolOptions.datatype = "json";
+                        RolOptions.contentType = "application/json";
+                        RolOptions.success = function (data) {
+                            /////////////////////////////////////////////
+                            $("#idZon").empty();
+                            $("#idZon").select2("val", "");
+                            $("#idZon").append($("<option> </option>").val("").html("Seleccionar"));
+                            $.each(data, function (i, item) {
+                                $("#idZon").append($("<option> </option>").val(item.value).html(item.text));
+                            });
+                            //--
+                                $("#idZon").find("option:last").prop("selected", true);
+                                var resulZona = $("#idZon option:selected").text();
+                                var valorZona = $("#idZon option:selected").val();
+                                console.log("Entro If");
+                                console.log(resulZona + "-" + valorZona);
+                                $("#idZon").select2("data", { id: valorZona, text: resulZona });
+                            //--
+                        };
+                        RolOptions.error = function () { alert("Error !!"); };
+                        $.ajax(RolOptions);
+                    }
+                    else {
+                        $("#idZon").empty();
+                        $("#idZon").append($("<option> </option>").val("").html("Seleccionar"));
+                        $("#idZon").select2();
+                        $("#idZon").prop("disabled", true);
+                    }
+                }
+            });
+            ///////////////////////////////////////////////////////
+            //buscar el jefe del Responsable
+            $("#idAccRes").change(function () {
+                if(PtoVtas)
+                {
+                    //-- Efecto Bloqueo --
+                    block();
+                    //-- Efecto Bloqueo --
+                    if ($("#idAccRes").val() != "") {
+                        var RolOptions = {};
+                        RolOptions.url = "/Presupuesto/buscarJefe";
+                        RolOptions.type = "POST";
+                        RolOptions.data = JSON.stringify({ idAccRes: $("#idAccRes").val() });
+                        RolOptions.datatype = "json";
+                        RolOptions.contentType = "application/json";
+                        RolOptions.success = function (data) {
+                            /////////////////////////////////////////////
+                            $("#idAccJ").empty();
+                            $("#idAccJ").select2("val", "");
+                            $("#idAccJ").append($("<option> </option>").val("").html("Seleccionar"));
+                            $.each(data, function (i, item) {
+                                $("#idAccJ").append($("<option> </option>").val(item.value).html(item.text));
+                            });
+                            //--
+                            $("#idAccJ").find("option:last").prop("selected", true);
+                            var resulEmp = $("#idAccJ option:selected").text();
+                            var valorEmp = $("#idAccJ option:selected").val();
+                            console.log("Entro If");
+                            console.log(resulEmp + "-" + valorEmp);
+                            $("#idAccJ").select2("data", { id: valorEmp, text: resulEmp });
+                            //-- Efecto Bloqueo --
+                            unblock();
+                            //-- Efecto Bloqueo --
+                        };
+                        RolOptions.error = function () { alert("Error !!"); };
+                        $.ajax(RolOptions);
+                    }
+                    else {
+                        $("#idAccJ").empty();
+                        $("#idAccJ").append($("<option> </option>").val("").html("Seleccionar"));
+                        $("#idAccJ").select2();
+                        $("#idAccJ").prop("disabled", true);
+                    }
+                    /////////////////////////////////////////////
+                }
+            });
+            ///////////////////////////////////////////////////////
+            //buscar la especialidad x Responsable
+            $("#idAccRes").change(function () {
+                if (!PtoVtas) {
+                    //-- Efecto Bloqueo --
+                    block();
+                    //-- Efecto Bloqueo --
+                    if ($("#idAccRes").val() != "") {
+                        var RolOptions = {};
+                        RolOptions.url = "/Presupuesto/buscarEspecilidad";
+                        RolOptions.type = "POST";
+                        RolOptions.data = JSON.stringify({ idAccRes: $("#idAccRes").val() });
+                        RolOptions.datatype = "json";
+                        RolOptions.contentType = "application/json";
+                        RolOptions.success = function (data) {
+                            /////////////////////////////////////////////
+                            $("#idEsp").empty();
+                            $("#idEsp").select2("val", "");
+                            $("#idEsp").append($("<option> </option>").val("").html("Seleccionar"));
+                            $.each(data, function (i, item) {
+                                $("#idEsp").append($("<option> </option>").val(item.value).html(item.text));
+                            });
+                            //--
+                            $("#idEsp").find("option:last").prop("selected", true);
+                            var resulEmp = $("#idEsp option:selected").text();
+                            var valorEmp = $("#idEsp option:selected").val();
+                            console.log("Entro If Esp");
+                            console.log(resulEmp + "-" + valorEmp);
+                            $("#idEsp").select2("data", { id: valorEmp, text: resulEmp });
+                            //-- Efecto Bloqueo --
+                            unblock();
+                            //-- Efecto Bloqueo --
+                        };
+                        RolOptions.error = function () { alert("Error !!"); };
+                        $.ajax(RolOptions);
+                    }
+                    else {
+                        $("#idEsp").empty();
+                        $("#idEsp").append($("<option> </option>").val("").html("Seleccionar"));
+                        $("#idEsp").select2();
+                        $("#idEsp").prop("disabled", true);
+                    }
+                    /////////////////////////////////////////////
+                }
+            });
+            ///////////////////////////////////////////////////////
+            //Evento Next Accordion
+            $("#nextButtonA").on("click", function () {
+                var req1 = "";
+                var req2 = "";
+                var req3 = "";
+                req1 = $("#fchIniVigencia").val();
+                req2 = $("#fchFinVigencia").val();
+                data = $('#idTipoPres').val();
+                console.log(req1 + req2 + req3+"entronext");
+                if (req1 != "" && req2 != "" && data != "")
+                {
+                    console.log("Entro primer condicional");
+                    if (data == @ConstantesGlobales.plan_Trab)
+                    {
+                        launchPtoVtas();
+                        //--------------------------------------
+                        $("#PtoVtas").removeClass("hidden");
+                    }
+                    else
+                    {
+                        $("#PtoVtas").addClass("hidden");
+                    }
+                    if (data == @ConstantesGlobales.plan_Mark)
+                    {
+                        delayPtoVtas();
+                        //--------------------------------------
+                        $("#PtoMkt").removeClass("hidden");
+                    }
+                    else
+                    {
+                        $("#PtoMkt").addClass("hidden");
+                    }
+                }
+                else {
+                    swal("Ingresar todos los campos");
+                    return false;
+                }
+            });
+            ///////////////////////////////////////////////////////
+            //Cambio Tipo de Gasto y Gasto
+            //llenar concepto de gasto por un tipo de gasto
+            $("#idTipGas").change(function () {
+                if ($("#idTipGas").val() != "") {
+                    $("#idConGas").prop("disabled", true);
+                    var RolOptions = {};
+                    RolOptions.url = "/SolicitudGasto/buscarConceptoTGasto";
+                    RolOptions.type = "POST";
+                    RolOptions.data = JSON.stringify({ idTipGas: $("#idTipGas").val() });
+                    RolOptions.datatype = "json";
+                    RolOptions.contentType = "application/json";
+                    RolOptions.success = function (data) {
+                        $("#idConGas").select2("val", "");
+                        $('#idConGas').empty();
+                        $("#idConGas").append($("<option> </option>").val("").html("Seleccionar"));
+                        $.each(data, function (i, item) {
+                            $("#idConGas").append($("<option> </option>").val(item.idConGas).html(item.nomConGas));
+                        });
+                        $("#idConGas").append($("<option> </option>").val("00").html("CUALQUIERA"));
+
+                    };
+                    RolOptions.error = function () { alert("Error in Getting States!!"); };
+                    $.ajax(RolOptions);
+                    $("#idConGas").prop("disabled", false);
+                }
+                else {
+                    $("#idConGas").empty();
+                    $("#idConGas").prop("disabled", true);
+                }
+            });
+
+            ///////////////////////////////////////////////////////
+
+            //Valores Fijos
+            $("#idAccRes").select2();
+            $("#idZon").select2();
+            $("#idLin").select2();
+            $("#idAccJ").select2();
+            $("#idConGas").select2();
+            $("#idEsp").select2();
+            $("#idTipGas").select2();
+
+            ///////////////////////////////////////////////////////
+            //Efecto de bloqueo en espera .....
+            function block() {
+                $("section.block1").block({
+                    message: "<h4><img src='../../Content/plugins/images/busy.gif' />...</h4>",
+                    css: {  border: "100px solid #fff" }
+                });
+            };
+
+            function unblock() {
+                $("section.block1").unblock();
+            };
+
+        });
+        //------------------------------------------------------
+        $("#neoPres").submit(function (e) {
+            //----------------------------------------
+            var data = $('#idTipoPres').val();
+            //----------------------------------------
+            var responsable = $("#idAccRes").val();
+            var aprobador = $("#idAccJ").val();
+            var zona = $("#idZon").val();
+            var linea = $("#idLin").val();
+            var congas = $("#idConGas").val();
+            var espec = $("#idEsp").val();
+            var moneda = $("#idMon").val();
+            var monto = $("#Monto").val();
+            console.log("-resp=" + responsable + "-aprob=" + aprobador );
+            //------------------------------------------
+            if (data == @ConstantesGlobales.plan_Trab)
+            {
+                if (linea == "" || zona == "" || responsable == "" || aprobador == "" || moneda == "" || monto == "")
+                {
+                    swal("Ingresar todos los campos");
+                    return false;
+                }
+            }
+            else if (data ==@ConstantesGlobales.plan_Fuera)
+            {
+                if (responsable == "" || moneda == "" || monto == "")
+                {
+                    swal("Ingresar todos los campos");
+                    return false;
+                }
+            }
+            else if(data ==@ConstantesGlobales.plan_Mark)
+            {
+                if (  responsable == "" || congas == "" || espec == "" || moneda == "" || monto == "")
+                {
+                    swal("Ingresar todos los campos");
+                    return false;
+                }
+            }
+            //-------------------------------------------
+        });
+        //------------------------------------------------------
+
+
+        //------------------------------------------------------
+    </script>
+}

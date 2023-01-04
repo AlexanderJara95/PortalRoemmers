@@ -1,0 +1,504 @@
+﻿@model IEnumerable<PortalRoemmers.Areas.Ventas.Models.SolicitudGasto.SolicitudGastoModels>
+@using PortalRoemmers.Security
+@{
+    ViewBag.Title = "Seguimiento";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section css {
+    @Styles.Render("~/Content/tablaExport_CSS")
+    @Styles.Render("~/Content/datepicker_CSS")
+}
+<!--Visualizar-->
+<div class="modal fade bs-example-modal-lg" id="visualizar">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h2>SOLICITUD DE GASTO</h2>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">C&oacutedigo</label>
+                            <input type="text" id="data_cod" class="form-control" disabled />
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">F. Evento</label>
+                            <input type="text" id="data_fec" class="form-control" disabled />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">Responsable</label>
+                            <input type="text" id="data_res" class="form-control" disabled />
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">Tipo Gasto</label>
+                            <input type="text" id="data_tga" class="form-control" disabled />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">Concepto</label>
+                            <input type="text" id="data_con" class="form-control" disabled />
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">Zona</label>
+                            <input type="text" id="data_zon" class="form-control" disabled />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">Linea</label>
+                            <input type="text" id="data_lin" class="form-control" disabled />
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">Especialidad</label>
+                            <input type="text" id="data_esp" class="form-control" disabled />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">Título</label>
+                            <input type="text" id="data_tit" class="form-control" disabled />
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">Lugar</label>
+                            <input type="text" id="data_lug" class="form-control" disabled />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">U.Creaci&oacuten</label>
+                            <input type="text" id="data-usc" class="form-control" disabled />
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label class="control-label">U. Fecha Creaci&oacuten</label>
+                            <input type="text" id="data-ucf" class="form-control" disabled />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <label class="control-label">Observaci&oacuten</label>
+                            <textarea id="data_obs" class="form-control" disabled></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <input type="text" id="data_mto" class="form-control" disabled />
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <input type="text" id="data_mon" class="form-control" disabled />
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                            <input type="text" id="data_cam" class="form-control" disabled />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h2> Familia de producto</h2>
+                        <table id="tb_familia" class="tablesaw table-bordered table-hover table" data-tablesaw-mode="swipe">
+                            <thead>
+                                <tr>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist">C&oacutedigo</th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1">Nombre</th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2">Descripci&oacuten</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h2> M&eacutedicos</h2>
+                        <table id="tb_medico" class="tablesaw table-bordered table-hover table" data-tablesaw-mode="swipe">
+                            <thead>
+                                <tr>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist">C&oacutedigo</th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1">Nombre</th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2">Descripci&oacuten</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h2> Responsable</h2>
+                        <table id="tb_responsable" class="tablesaw table-bordered table-hover table" data-tablesaw-mode="swipe">
+                            <thead>
+                                <tr>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist">C&oacutedigo</th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1">Nombre</th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2">Descripci&oacuten</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!---->
+<!--Firmas-->
+<div id="responsive-modal-Firmas" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h2 class="modal-title">Firmas de la Solicitud</h2>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="table-responsive m-t-10" style="clear: both;">
+                            <table id="tb_firma" class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">N°</th>
+                                        <th class="text-center">Firm&oacute</th>
+                                        <th class="text-center">Fecha</th>
+                                        <th class="text-center">Estado</th>
+                                        <th class="text-center">Monto</th>
+                                        <th class="text-center">Observaci&oacuten</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Firmas-->
+<div class="panel panel-default">
+    <div class="panel-heading box-title m-b-0"><h2>Seguimiento de mis aprobaciones</h2></div>
+    <div class="panel-body">
+        <section id="wrapper" class="block1">
+            <br />
+            @using (Html.BeginForm("Seguimiento", "SolicitudGasto", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista }, FormMethod.Post))
+            {
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="desMen">DESDE</label>
+                            <input class="form-control form-control-line datepicker" id="fchEveSolGasI" name="fchEveSolGasI" placeholder="dd/mm/aaaa" autocomplete="off" value="@ViewBag.primero">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="desMen">HASTA</label>
+                            <input class="form-control form-control-line datepicker" id="fchEveSolGasF" name="fchEveSolGasF" placeholder="dd/mm/aaaa" autocomplete="off" value="@ViewBag.actual">
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <span class="input-group-btn">
+                            <button class="btn waves-effect waves-light btn-info">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </span>
+                    </div>
+                    <div class="col-md-5">
+
+                    </div>
+                </div>
+            }
+            <br />
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="table-responsive">
+                        <table id="example23" class="display nowrap" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>C&oacutedigo</th>
+                                    <th>Solicitante</th>
+                                    <th>T.Gasto</th>
+                                    <th>Concepto</th>
+                                    <th>Responsable</th>
+                                    <th>F.Evento</th>
+                                    <th>Costo</th>
+                                    <th class="hidden">Presupuesto</th>
+                                    <th class="hidden">Moneda</th>
+                                    <th class="hidden">Cambio</th>
+                                    <th class="hidden">Titulo</th>
+                                    <th class="hidden">Obs</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <th>C&oacutedigo</th>
+                                    <th>Solicitante</th>
+                                    <th>T.Gasto</th>
+                                    <th>Concepto</th>
+                                    <th>Responsable</th>
+                                    <th>F.Evento</th>
+                                    <th>Costo</th>
+                                    <th class="hidden">Presupuesto</th>
+                                    <th class="hidden">Moneda</th>
+                                    <th class="hidden">Cambio</th>
+                                    <th class="hidden">Titulo</th>
+                                    <th class="hidden">Obs</th>
+                                    <th></th>
+                                </tr>
+                            </tfoot>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    var fecha=DateTime.Parse(item.dFirma.Where(y => y.idAcc == SessionPersister.UserId && y.idSolGas == item.idSolGas).Select(x => x.usufchCrea).FirstOrDefault().ToString());
+
+                                    string fch= fecha.ToString("dd/MM/yyyy");
+
+                                    <tr>
+                                        <td> @Html.DisplayFor(modelItem => item.idSolGas)</td>
+                                        @{
+                                            var nombre = item.solicitante.empleado.nom1Emp;
+                                            var apellido = item.solicitante.empleado.apePatEmp;
+                                            var solicitante = nombre.Substring(0, 1) + ". " + apellido;
+                                        }
+                                        <td> @solicitante</td>
+                                        <td> @Html.DisplayFor(modelItem => item.concepto.tipoGasto.nomTipGas)</td>
+                                        <td> @Html.DisplayFor(modelItem => item.concepto.nomConGas)</td>
+                                        <td> @Html.DisplayFor(modelItem => item.responsable.empleado.nomComEmp)</td>
+                                        <td> @Html.DisplayFor(modelItem => fch)</td>
+                                        <td> @Html.DisplayFor(modelItem => item.moneda.simbMon) @Html.DisplayFor(modelItem => item.monSolGas)</td>
+                                        <td class="hidden"> @Html.DisplayFor(modelItem => item.idPres)</td>
+                                        <td class="hidden"> @Html.DisplayFor(modelItem => item.idMon)</td>
+                                        <td class="hidden"> @Html.DisplayFor(modelItem => item.valtipCam)</td>
+                                        <td class="hidden"> @Html.DisplayFor(modelItem => item.titSolGas)</td>
+                                        <td class="hidden"> @Html.DisplayFor(modelItem => item.obsSolGas)</td>
+                                        <td class="jsgrid-align-center">
+                                            @{
+                                                //familia
+                                                var detF = item.dFam.ToList();
+                                                var dF = "";
+                                                if (detF.Count != 0)
+                                                {
+                                                    foreach (var f in detF)
+                                                    {
+                                                        dF += f.idFamRoe + ";" + f.familia.nomFamRoe + ";" + f.familia.desFamRoe + "|";
+                                                    }
+                                                    dF = dF.Remove(dF.Length - 1, 1);
+                                                }
+                                                //medico
+                                                var detM = item.dMed.ToList();
+                                                var dM = "";
+                                                if (detM.Count != 0)
+                                                {
+                                                    foreach (var f in detM)
+                                                    {
+                                                        dM += f.idCli + ";" + f.cliente.nomCli + ";" + f.cliente.nroCloUPCli + "|";
+                                                    }
+                                                    dM = dM.Remove(dM.Length - 1, 1);
+                                                }
+                                                //responsable
+                                                var detR = item.dResp.ToList();
+                                                var dR = "";
+                                                if (detR.Count != 0)
+                                                {
+                                                    foreach (var f in detR)
+                                                    {
+                                                        dR += f.idEmp + ";" + f.responsable.nomComEmp + ";" + f.responsable.nroDocEmp + "|";
+                                                    }
+                                                    dR = dR.Remove(dR.Length - 1, 1);
+                                                }
+                                                //Firmas
+                                                var detFr = item.dFirma.OrderBy(x => x.usufchCrea).ToList();
+                                                var dfr = "";
+                                                if (detFr.Count != 0)
+                                                {
+                                                    foreach (var f in detFr)
+                                                    {
+                                                        dfr += f.idSolGas + ";" + f.solicitante.username + ";" + f.usufchCrea + ";" + f.estado.nomEst + ";" + f.gasto.monSolGas + ";" + f.gasto.dFirma.Where(x => x.idAcc == f.solicitante.idAcc).Select(x => x.obsFirSol).FirstOrDefault() + "|";
+                                                    }
+                                                    dfr = dfr.Remove(dfr.Length - 1, 1);
+                                                }
+                                            }
+                                            <a href="#visualizar" data-toggle="modal" title="Visualizar" class="open-proces m-r-10"
+                                               data-res="@item.responsable.empleado.nomComEmp"
+                                               data-con="@item.concepto.nomConGas"
+                                               data-tga="@item.concepto.tipoGasto.nomTipGas"
+                                               data-zon="@item.zona.nomZon"
+                                               data-lin="@item.linea.nomLin"
+                                               data-esp="@item.especialidad.nomEsp"
+                                               data-tit="@item.titSolGas"
+                                               data-lug="@item.lugSolGas"
+                                               data-fec="@item.fchEveSolGas"
+                                               data-obs="@item.obsSolGas"
+                                               data-cod="@item.idSolGas"
+                                               data-mto="@item.monSolGas"
+                                               data-mon="@item.moneda.nomMon"
+                                               data-cam="@item.valtipCam"
+                                               data-usc="@item.usuCrea"
+                                               data-ucf="@item.usufchCrea"
+                                               data-detf="@dF"
+                                               data-detm="@dM"
+                                               data-detr="@dR"><i class="fa fa-eye"></i></a>
+                                            <a href="#responsive-modal-Firmas" data-toggle="modal" title="Firmas" class="open-firma" data-detfr="@dfr"><i class="fa fa-list-ol"></i></a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+@section scripts
+{
+    @Scripts.Render("~/Bundles/tablaExport_JS")
+    @Scripts.Render("~/Bundles/bloqueo_JS")
+    @Scripts.Render("~/Bundles/datepicker_JS")
+    <script src="~/Content/plugins/bower_components/sweetalert/sweetalert.min.js"></script>
+    <script src="~/Areas/Sistemas/Scripts/Sistemas.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            $('#example23').DataTable({
+                dom: 'Bfrtip'
+                , buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+            });
+
+
+            $('.datepicker').datepicker({
+                dateFormat: 'dd/mm/yy'
+            });
+
+        });
+        $(document).on("click", ".open-proces", function () {
+            $("#data_res").val($(this).data('res'));
+            $("#data_con").val($(this).data('con'));
+            $("#data_tga").val($(this).data('tga'));
+            $("#data_zon").val($(this).data('zon'));
+            $("#data_lin").val($(this).data('lin'));
+            $("#data_esp").val($(this).data('esp'));
+            $("#data_tit").val($(this).data('tit'));
+            $("#data_lug").val($(this).data('lug'));
+            $("#data_fec").val($(this).data('fec'));
+            $("#data_obs").val($(this).data('obs'));
+            $("#data_cod").val($(this).data('cod'));
+            $("#data_mto").val($(this).data('mto'));
+            $("#data_mon").val($(this).data('mon'));
+            $("#data_cam").val($(this).data('cam'));
+            $("#data-usc").val($(this).data('usc'));
+            $("#data-ucf").val($(this).data('ucf'));
+            //armo la tabla familia
+            var df = $(this).data('detf');
+            var filas = df.split("|");
+            var row = "";
+            $("#tb_familia > tbody:last").empty();
+            if (filas != "") {
+                $.each(filas, function (id, elem) {
+                    var col = elem.split(";");
+                    row = "<tr>";
+                    row += "<td>" + col[0] + "</td>";
+                    row += "<td>" + col[1] + "</td>";
+                    row += "<td>" + col[2] + "</td>";
+                    row += "</tr>";
+                    $("#tb_familia > tbody:last").append(row);
+                });
+            }
+            //armo la tabla medico
+            var dm = $(this).data('detm');
+            var filasM = dm.split("|");
+            var rowM = "";
+            $("#tb_medico > tbody:last").empty();
+            if (filasM != "") {
+                $.each(filasM, function (id, elem) {
+                    var col = elem.split(";");
+                    rowM = "<tr>";
+                    rowM += "<td>" + col[0] + "</td>";
+                    rowM += "<td>" + col[1] + "</td>";
+                    rowM += "<td>" + col[2] + "</td>";
+                    rowM += "</tr>";
+                    $("#tb_medico > tbody:last").append(rowM);
+                });
+            }
+
+            //armo la tabla responsable
+            var dr = $(this).data('detr');
+            var filasR = dr.split("|");
+            var rowR = "";
+            $("#tb_responsable > tbody:last").empty();
+            if (filasR != "") {
+                $.each(filasR, function (id, elem) {
+                    var col = elem.split(";");
+                    rowR = "<tr>";
+                    rowR += "<td>" + col[0] + "</td>";
+                    rowR += "<td>" + col[1] + "</td>";
+                    rowR += "<td>" + col[2] + "</td>";
+                    rowR += "</tr>";
+                    $("#tb_responsable > tbody:last").append(rowR);
+                });
+            }
+        });
+        $(document).on("click", ".open-firma", function () {
+            //armo la tabla firma
+            var df = $(this).data('detfr');
+            var filas = df.split("|");
+            var row = "";
+            $("#tb_firma > tbody:last").empty();
+            if (filas != "") {
+                $.each(filas, function (id, elem) {
+                    var col = elem.split(";");
+                    row = "<tr>";
+                    row += "<td>" + col[0] + "</td>";
+                    row += "<td>" + col[1] + "</td>";
+                    row += "<td>" + col[2] + "</td>";
+                    row += "<td>" + col[3] + "</td>";
+                    row += "<td>" + col[4] + "</td>";
+                    row += "<td>" + col[5] + "</td>";
+                    row += "</tr>";
+                    $("#tb_firma > tbody:last").append(row);
+                });
+            }
+        });
+    </script>
+}
+

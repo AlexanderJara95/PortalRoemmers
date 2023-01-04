@@ -1,0 +1,57 @@
+﻿@model PortalRoemmers.Areas.Sistemas.Models.Usuario.EmpleadoModels
+@using PortalRoemmers.Security
+
+@{
+    ViewBag.Title = "Eliminar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<div class="white-box p-l-20 p-r-20">
+    <h3 class="box-title m-b-0">Eliminar Empleado</h3>
+    <p class="text-muted m-b-30 font-13">¿Estás seguro que quieres eliminar esto?</p>
+    <div class="row">
+        <div class="col-md-12">
+            @using (Html.BeginForm("Eliminar", "Empleado", FormMethod.Post, new { @class = "form-horizontal form-material" }))
+            {
+                @Html.HiddenFor(model => model.idEmp)
+                @Html.AntiForgeryToken()
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.apePatEmp)</label>
+                    <div class="col-md-12">
+                        @Html.DisplayFor(model => model.apePatEmp, new { htmlAttributes = new { @class = "form-control form-control-line" } })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.apeMatEmp)</label>
+                    <div class="col-md-12">
+                        @Html.DisplayFor(model => model.apeMatEmp, new { htmlAttributes = new { @class = "form-control form-control-line" } })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.nom1Emp)</label>
+                    <div class="col-md-12">
+                        @Html.DisplayFor(model => model.nom1Emp, new { htmlAttributes = new { @class = "form-control form-control-line" } })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-12">@Html.LabelFor(model => model.nroDocEmp)</label>
+                    <div class="col-md-12">
+                        @Html.DisplayFor(model => model.nroDocEmp, new { htmlAttributes = new { @class = "form-control form-control-line" } })
+                    </div>
+                </div>
+
+                <button class="btn btn-info btn-rounded btn-outline waves-effect waves-light m-r-10">Guardar</button>
+                @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-default btn-rounded btn-outline waves-effect waves-light" })
+
+            }
+        </div>
+    </div>
+</div>
+
+
+

@@ -1,0 +1,27 @@
+﻿@model PortalRoemmers.Areas.Ventas.Models.SolicitudGasto.SolicitudGastoModels
+@using PortalRoemmers.Helpers
+@using PortalRoemmers.Security
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="white-box p-l-20 p-r-20">
+    <h3 class="box-title m-b-0"> Solicitud de Gasto : @Html.DisplayFor(model => model.idSolGas)</h3>
+    <p class="text-muted m-b-30 font-13"></p>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-horizontal form-material">
+                @{Html.RenderAction("VisualizarPartial", "SolicitudGasto", new { id = Model.idSolGas }); }
+                <div class="panel-group">
+                    <div class="col-md-4 tab-content">
+                        <div class="col-lg-6 col-sm-4">
+                            @Html.ActionLink("Volver", "IndexGeneral", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-block btn-outline btn-rounded btn-default" })
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,228 @@
+﻿@model  PortalRoemmers.ViewModels.IndexViewModel
+@using PortalRoemmers.Helpers
+@using PortalRoemmers.Security
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section css {
+    @Styles.Render("~/Content/tablaResponsive_CSS")
+}
+<div class="panel panel-default">
+    <div class="panel-heading box-title m-b-0"><h2>Mantenimiento de Presupuesto</h2></div>
+    <div class="panel-body">
+        <div id='danger' class='alert alert-danger hidden'></div>
+        <div class="form-group">
+            @{ string v = ""; try { v = TempData["mensaje"].ToString(); } catch { }}
+            @(new HtmlString(v))
+        </div>
+        @using (Html.BeginForm("Index", "Presupuesto", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista }, FormMethod.Post))
+        {
+    <div class="row">
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="search">NOMBRE o CÓDIGO</label>
+                <input type="text" id="search" name="search" class="form-control" placeholder="Buscar" value="@ViewBag.search">
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group">
+                <label for="search">ESTADO</label>
+                @Html.DropDownList("idEst", (SelectList)ViewBag.estado, "", htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="desMen">DESDE</label>
+                <input class="form-control form-control-line datepicker" id="fchEveSolGasI" name="fchEveSolGasI" placeholder="dd/mm/aaaa" autocomplete="off" value="@ViewBag.primero">
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="desMen">HASTA</label>
+                <input class="form-control form-control-line datepicker" id="fchEveSolGasF" name="fchEveSolGasF" placeholder="dd/mm/aaaa" autocomplete="off" value="@ViewBag.actual">
+            </div>
+        </div>
+        <div class="col-md-1">
+            <span class="input-group-btn">
+                <button class="btn waves-effect waves-light btn-info">
+                    <i class="fa fa-search"></i>
+                </button>
+            </span>
+        </div>
+    </div>
+            <!--Modificar Saldo-->
+            <div id="responsive-modal-Saldo" class="modal fade bs-example-modal-sm m-t-40" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" style="display: none;">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                            <h2 class="modal-title">Modificar Saldo</h2>
+                        </div>
+                        <div class="modal-body">
+
+                            <form>
+                                <div>
+                                    <p class="text-muted text-center">
+                                        <strong><label id="idNomPres" class="control-label"></label></strong> <br>
+                                        <label id="idNomResp" class="control-label"></label><br>
+                                        <label id="idAttr1" class="control-label"></label><br>
+                                        <label id="idAttr2" class="control-label"></label><br>
+                                        <label id="idAttr3" class="control-label"></label><br>
+                                    </p>
+                                </div>
+                                <div class="form-group">
+                                    <label for="idSald" class="control-label">Saldo:</label>
+                                    <input type="number" min="0" max="1000000000000" class="form-control" id="idSald" style="text-align:right;" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)">
+                                </div>
+                                <div class="form-group">
+                                    <label for="idNewSald" class="control-label">Nuevo Saldo:</label>
+                                    <input type="number" min="0" max="1000000000000" class="form-control" id="idNewSald" style="text-align:right;" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)">
+                                </div>
+
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-danger waves-effect waves-light" id="btn_ModSaldo">Guardar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--Modificar Saldo-->
+        }
+        <br />
+        <div class="row">
+            <div class="col-xs-6">
+                @Html.ActionLink("Crear Presupuesto", "Registrar", "Presupuesto", new { Area = "Sistemas" }, new { @Class = "btn btn-info btn-rounded" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <table class="tablesaw table-bordered table-hover table" data-tablesaw-mode="swipe">
+                    <thead>
+                        <tr>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist"></th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1">C&oacutedigo</th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2">Tipo de Pto.</th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Usuario</th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="4">Monto</th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="5">Saldo</th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="5">Atributos</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Pres)
+                        {
+                            <tr>
+                                <td class="text-nowrap">
+                                    <a href="@MyExtensions.ActionUrl("Modificar", "Presupuesto", new { Area = "Sistemas", id = item.idPres ,modulo="Index"})" data-toggle="tooltip" title="Editar"> <i class="fa fa-pencil text-inverse m-r-5"></i></a>
+                                    @{
+                                        var referencia = "";
+                                        referencia = item.idPres + "|" + item.tipospres.nomTipPres + "|" + item.responsable.empleado.nomComEmp + "|" + item.moneda.nomMon + "|" + item.Saldo + "|";
+                                        if (item.idTipoPres == ConstantesGlobales.plan_Trab)
+                                        { referencia += item.zona.nomZon + "|" + item.linea.nomLin; }
+                                        else if (item.idTipoPres == ConstantesGlobales.plan_Mark) { if (item.idTipGas != null) { if (item.idConGas == null) { referencia += item.tipogasto.nomTipGas + "|" + item.especialidad.nomEsp; } else { referencia += item.tipogasto.nomTipGas + "|" + item.concepto.nomConGas + "|" + item.especialidad.nomEsp; } } else { referencia += item.concepto.nomConGas + "|" + item.especialidad.nomEsp; } }
+                                        else if (item.idTipoPres == ConstantesGlobales.plan_Fuera) { referencia += "|NINGUNO|"; }
+                                    }
+                                    <a href="#responsive-modal-Saldo" data-toggle="modal" title="Modificar Saldo" class="open-saldo m-r-5" data-dsald="@referencia"><i class="mdi mdi-calculator"></i></a>
+                                    <a href="@MyExtensions.ActionUrl("Anular", "Presupuesto", new { Area = "Sistemas", id = item.idPres })" data-toggle="tooltip" title="Anular"> <i class="fa fa-close text-danger m-r-5"></i></a>
+                                </td>
+                                <td>@Html.DisplayFor(modelItem => item.idPres)</td>
+                                <td>@Html.DisplayFor(modelItem => item.tipospres.nomTipPres)</td>
+                                <td>@Html.DisplayFor(modelItem => item.responsable.empleado.nomComEmp)</td>
+                                <td>@Html.DisplayFor(modelItem => item.moneda.simbMon) @Html.DisplayFor(modelItem => item.Monto)</td>
+                                <td>@Html.DisplayFor(modelItem => item.moneda.simbMon) @Html.DisplayFor(modelItem => item.Saldo)</td>
+                                @{ if (item.idTipoPres == ConstantesGlobales.plan_Trab)
+                                    {
+                                        <td>@Html.DisplayFor(modelItem => item.zona.nomZon) - @Html.DisplayFor(modelItem => item.linea.nomLin)</td>}
+                                    else
+                                    {
+                                        <td>@Html.DisplayFor(modelItem => item.tipogasto.nomTipGas) -  @Html.DisplayFor(modelItem => item.concepto.nomConGas) - @Html.DisplayFor(modelItem => item.especialidad.nomEsp)</td>}
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                @{Html.RenderPartial("_paginador", Model);}
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-footer"></div>
+</div>
+@section scripts
+{
+    @Scripts.Render("~/Bundles/tablaResponsive_JS")
+    <script src="~/Areas/Sistemas/Scripts/Sistemas.js"></script>
+    <script>
+        $(document).on("click", ".open-saldo", function () {
+            //armo la tabla firma
+            var referen = $(this).data('dsald');
+            console.log(referen);
+            //--
+            var idPres = referen.split("|")[0];
+            var descrip0 = referen.split("|")[1];
+            var descrip1 = referen.split("|")[2];
+            var descrip2 = referen.split("|")[3];
+            var descrip3 = referen.split("|")[4];
+            var descrip4 = referen.split("|")[5];
+            var descrip5 = referen.split("|")[6];
+            //--
+            $("#idNomPres").text(descrip0);
+            $("#idNomResp").text(descrip1);
+            $("#idAttr1").text(descrip4);
+            $("#idAttr2").text(descrip5);
+            $("#idAttr3").text('EN ' + descrip2);
+            var Saldo = parseFloat(descrip3).toFixed(2);
+            $("#idSald").val(Saldo);
+            $("#idSald").prop("disabled", true);
+            $("#idNewSald").val(Saldo);
+            //--
+            $("#btn_ModSaldo").click(function () {
+                console.log("Entro guardar modal ...");
+                var saldoAnt = $("#idSald").val();
+                var saldoAct = $("#idNewSald").val();
+                var dif = parseFloat(saldoAct - saldoAnt).toFixed(2);
+                if ($("#idNewSald").val() != Saldo) {
+                    var RolOptions = {};
+                    RolOptions.url = "/Presupuesto/modificarSaldo";
+                    RolOptions.type = "POST";
+                    RolOptions.data = JSON.stringify({ idpres: idPres, diferencia: dif });
+                    RolOptions.datatype = "json";
+                    RolOptions.contentType = "application/json";
+                    RolOptions.success = function (data) {
+                        //if(data=)
+                        console.log('primera prueba : ' + data);
+                        if (data = 'true') {
+                            console.log('if entro : ' + data);
+                            $("#responsive-modal-Saldo").modal('hide');
+                            location.reload();
+                        }
+                        else {
+                            console.log('Else : ' + data);
+                            alert("Error en guardar modificacion de saldo!!");
+                            return false;
+                        }
+                    };
+                    RolOptions.error = function () {
+                        alert("Error en guardar modificacion de saldo!!");
+                        return false;
+                    };
+                    $.ajax(RolOptions);
+                }
+                else {
+                    $("#responsive-modal-Saldo").modal('hide');
+                    $("div #danger").removeClass('hidden');
+                    $("div #danger").text('No se modifico ningun elemento ...');
+                    setTimeout(function () { $("div #danger").fadeOut(2000).fadeIn(2000).fadeOut(1500).fadeIn(1500).fadeOut(500) }, 500);
+                    setTimeout(function () { $("div #danger").addClass('hidden'); }, 4000);
+                }
+            });
+        });
+    </script>
+}
