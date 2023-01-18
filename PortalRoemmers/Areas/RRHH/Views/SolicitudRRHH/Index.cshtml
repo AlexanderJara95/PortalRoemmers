@@ -1,0 +1,224 @@
+﻿@model  PortalRoemmers.ViewModels.IndexViewModel
+@using PortalRoemmers.Helpers
+@using PortalRoemmers.Security
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section css {
+    @Styles.Render("~/Content/tablaResponsive_CSS")
+    @Styles.Render("~/Content/sweetalert_CSS")
+    @Styles.Render("~/Content/datepicker_CSS")
+}
+
+<!--Firmas-->
+<div class="panel panel-default">
+    <div class="panel-heading box-title m-b-0"><h2>Mantenimiento de Solicitud de Gasto</h2></div>
+    <div class="panel-body">
+        <div class="form-group">
+            @{ string v = ""; try { v = TempData["mensaje"].ToString(); } catch { }}
+            @(new HtmlString(v))
+        </div>
+        @using (Html.BeginForm("Index", "SolicitudGasto", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista }, FormMethod.Post))
+        {
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="form-group">
+                        <label for="search">NOMBRE o CÓDIGO</label>
+                        <input type="text" id="search" name="search" class="form-control" placeholder="Buscar" value="@ViewBag.search">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="desMen">DESDE</label>
+                        <input class="form-control form-control-line datepicker" id="fchEveSolGasI" name="fchEveSolGasI" placeholder="dd/mm/aaaa" autocomplete="off" value="@ViewBag.primero">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="desMen">HASTA</label>
+                        <input class="form-control form-control-line datepicker" id="fchEveSolGasF" name="fchEveSolGasF" placeholder="dd/mm/aaaa" autocomplete="off" value="@ViewBag.actual">
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <span class="input-group-btn">
+                        <button class="btn waves-effect waves-light btn-info">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </span>
+                </div>
+            </div>
+        }
+        <br />
+        <div class="row">
+            <div class="col-xs-6">
+                @Html.ActionLink("Crear Solicitud", "Registrar", "SolicitudGasto", new { Area = "Ventas" }, new { @Class = "btn btn-info btn-rounded" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <table class="tablesaw table-bordered table-hover table" data-tablesaw-mode="swipe">
+                    <thead>
+                        <tr>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist"></th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1">C&oacutedigo</th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2">T&iacutetulo</th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Evento</th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="4">Estado</th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="5">T.Gasto</th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="6">Monto</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                @{Html.RenderPartial("_paginador", Model);}
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-footer"></div>
+</div>
+@section scripts
+{
+    @Scripts.Render("~/Bundles/tablaResponsive_JS")
+    @Scripts.Render("~/Bundles/sweetalert_JS")
+    @Scripts.Render("~/Bundles/datepicker_JS")
+
+    <script src="~/Areas/Ventas/Scripts/Ventas.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('table tbody tr a#sa-params').click(function () {
+                var idSolGas = $(this).parent().parents('tr').find('td').eq(1).text();
+                swal({
+                    title: "¿Estás seguro?",
+                    text: "¡No se podrá aprobar esta solicitud! \n",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Sí, anularlo!",
+                    cancelButtonText: "No, anularlo!",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                }, function (isConfirm) {
+                    if (isConfirm) {
+                        var Options = {};
+                        Options.url = "/SolicitudGasto/anularSolicitud";
+                        Options.type = "POST";
+                        Options.data = JSON.stringify({ idSolGas: idSolGas });
+                        Options.datatype = "json";
+                        Options.contentType = "application/json";
+                        Options.success = function (data) {
+
+                            if (data) {
+                                swal("Anulado!", "Tu solicitud ha sido anulada.", "success");
+                                setTimeout(function () { location.reload(); }, 2000);
+                            } else {
+                                swal("Ocurrio un problema!", "Tu solicitud no ha sido anulaa.", "error");
+                            }
+                        };
+                        Options.error = function () { alert("Error in Getting States!!"); unblock(); };
+                        $.ajax(Options);
+
+                    } else {
+                        swal("Cancelado", "Tu solicitud esta seguro.)", "error");
+                    }
+                });
+            });
+        });
+
+        $(document).on("click", ".open-proces", function () {
+            $("#data_res").val($(this).data('res'));
+            $("#data_con").val($(this).data('con'));
+            $("#data_tga").val($(this).data('tga'));
+            $("#data_zon").val($(this).data('zon'));
+            $("#data_lin").val($(this).data('lin'));
+            $("#data_esp").val($(this).data('esp'));
+            $("#data_tit").val($(this).data('tit'));
+            $("#data_lug").val($(this).data('lug'));
+            $("#data_fec").val($(this).data('fec'));
+            $("#data_obs").val($(this).data('obs'));
+            $("#data_cod").val($(this).data('cod'));
+            $("#data_mto").val($(this).data('mto'));
+            $("#data_mon").val($(this).data('mon'));
+            $("#data_cam").val($(this).data('cam'));
+            $("#data-usc").val($(this).data('usc'));
+            $("#data-ucf").val($(this).data('ucf'));
+            //armo la tabla familia
+            var df = $(this).data('detf');
+            var filas = df.split("|");
+            var row = "";
+            $("#tb_familia > tbody:last").empty();
+            if (filas != "") {
+                $.each(filas, function (id, elem) {
+                    var col = elem.split(";");
+                    row = "<tr>";
+                    row += "<td>" + col[0] + "</td>";
+                    row += "<td>" + col[1] + "</td>";
+                    row += "<td>" + col[2] + "</td>";
+                    row += "</tr>";
+                    $("#tb_familia > tbody:last").append(row);
+                });
+            }
+            //armo la tabla medico
+            var dm = $(this).data('detm');
+            var filasM = dm.split("|");
+            var rowM = "";
+            $("#tb_medico > tbody:last").empty();
+            if (filasM != "") {
+                $.each(filasM, function (id, elem) {
+                    var col = elem.split(";");
+                    rowM = "<tr>";
+                    rowM += "<td>" + col[0] + "</td>";
+                    rowM += "<td>" + col[1] + "</td>";
+                    rowM += "<td>" + col[2] + "</td>";
+                    rowM += "</tr>";
+                    $("#tb_medico > tbody:last").append(rowM);
+                });
+            }
+            //armo la tabla responsable
+            var dr = $(this).data('detr');
+            var filasR = dr.split("|");
+            var rowR = "";
+            $("#tb_responsable > tbody:last").empty();
+            if (filasR != "") {
+                $.each(filasR, function (id, elem) {
+                    var col = elem.split(";");
+                    rowR = "<tr>";
+                    rowR += "<td>" + col[0] + "</td>";
+                    rowR += "<td>" + col[1] + "</td>";
+                    rowR += "<td>" + col[2] + "</td>";
+                    rowR += "</tr>";
+                    $("#tb_responsable > tbody:last").append(rowR);
+                });
+            }
+        });
+        $(document).on("click", ".open-firma", function () {
+            //armo la tabla firma
+            var df = $(this).data('detfr');
+            var filas = df.split("|");
+            var row = "";
+            $("#tb_firma > tbody:last").empty();
+            if (filas != "") {
+                $.each(filas, function (id, elem) {
+                    var col = elem.split(";");
+                    row = "<tr>";
+                    row += "<td>" + col[0] + "</td>";
+                    row += "<td>" + col[1] + "</td>";
+                    row += "<td>" + col[2] + "</td>";
+                    row += "<td>" + col[3] + "</td>";
+                    row += "<td>" + col[4] + "</td>";
+                    row += "<td>" + col[5] + "</td>";
+                    row += "</tr>";
+                    $("#tb_firma > tbody:last").append(row);
+                });
+            }
+        });
+    </script>
+}

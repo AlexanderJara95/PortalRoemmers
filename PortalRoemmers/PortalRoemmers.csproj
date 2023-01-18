@@ -2607,6 +2607,7 @@
     <Folder Include="App_Data\" />
     <Folder Include="Areas\Contabilidad\Views\Shared\" />
     <Folder Include="Areas\RRHH\Controllers\SolicitudRRHH\" />
+    <Folder Include="Areas\RRHH\Views\SolicitudRRHH\" />
     <Folder Include="bin\es\" />
     <Folder Include="Boletas\" />
     <Folder Include="Content\Home\Enlace\0000001\" />

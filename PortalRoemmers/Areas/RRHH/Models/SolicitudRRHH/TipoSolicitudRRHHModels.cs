@@ -40,5 +40,7 @@ namespace PortalRoemmers.Areas.RRHH.Models.SolicitudRRHH
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:d}")]
         public DateTime? usufchMod { get; set; }
 
+        public List<SubtipoSolicitudRRHHModels> SubtipoSolicitudRRHH { get; set; }
+
     }
 }

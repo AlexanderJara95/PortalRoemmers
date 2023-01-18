@@ -32,7 +32,7 @@ namespace PortalRoemmers.Areas.RRHH.Models.SolicitudRRHH
         [StringLength(10)]
         public string idTipoSolicitudRrhh { get; set; }
         [ForeignKey("idTipoSolicitudRrhh")]
-        public SubtipoSolicitudRRHHModels tipoSolicitud { get; set; }
+        public TipoSolicitudRRHHModels tipoSolicitud { get; set; }
 
 
         [Display(Name = "Usuario creación")]
@@ -45,5 +45,7 @@ namespace PortalRoemmers.Areas.RRHH.Models.SolicitudRRHH
         [Display(Name = "Fecha modificación")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:d}")]
         public DateTime? usufchMod { get; set; }
+
+        public List<SolicitudRRHHModels> SolicitudRRHH { get; set;}
     }
 }
