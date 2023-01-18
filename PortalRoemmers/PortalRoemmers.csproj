@@ -235,6 +235,7 @@
     <Compile Include="Areas\RRHH\Controllers\Galeria\TipoGaleriaController.cs" />
     <Compile Include="Areas\RRHH\Controllers\Periodico\ContenidoController.cs" />
     <Compile Include="Areas\RRHH\Controllers\Periodico\PeriodicoController.cs" />
+    <Compile Include="Areas\RRHH\Controllers\SolicitudRRHH\SolicitudRRHHController.cs" />
     <Compile Include="Areas\RRHH\Models\Boleta\BoletaDetalleModels.cs" />
     <Compile Include="Areas\RRHH\Models\Boleta\BoletaPersonalModels.cs" />
     <Compile Include="Areas\RRHH\Models\Documento\DocumentoRRHHModels.cs" />
@@ -255,6 +256,7 @@
     <Compile Include="Areas\RRHH\Services\Formulario\Form_Usu_Repositorio.cs" />
     <Compile Include="Areas\RRHH\Services\Periodico\ContenidoRepositorio.cs" />
     <Compile Include="Areas\RRHH\Services\Periodico\EfectoImagenRepositorio.cs" />
+    <Compile Include="Areas\RRHH\Services\SolicitudRRHH\SolicitudRRHHRepositorio.cs" />
     <Compile Include="Areas\Sistemas\Controllers\Enlace\EnlaceController.cs" />
     <Compile Include="Areas\Sistemas\Controllers\Enlace\TipoEnlaceController.cs" />
     <Compile Include="Areas\Sistemas\Controllers\Equipo\FabricanteController.cs" />
@@ -2606,8 +2608,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\Contabilidad\Views\Shared\" />
-    <Folder Include="Areas\RRHH\Controllers\SolicitudRRHH\" />
-    <Folder Include="Areas\RRHH\Views\SolicitudRRHH\" />
     <Folder Include="bin\es\" />
     <Folder Include="Boletas\" />
     <Folder Include="Content\Home\Enlace\0000001\" />
@@ -3826,6 +3826,7 @@
     <Content Include="Areas\RRHH\Views\DocumentoRRHH\Modificar.cshtml" />
     <Content Include="Areas\RRHH\Views\DocumentoRRHH\Eliminar.cshtml" />
     <Content Include="Areas\Ventas\Views\SolicitudGasto\Deposito.cshtml" />
+    <Content Include="Areas\RRHH\Views\SolicitudRRHH\Index.cshtml" />
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <Content Include="Views\Account\Confirm.cshtml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
