@@ -2463,10 +2463,24 @@ namespace PortalRoemmers.Areas.Marketing.Controllers
                         font.Bold = true;//negrita
                         font.SetFont(FontSchemeValues.Minor, 12);//tamaño de letra
                         rst = new SLRstType();
-                        rst.AppendText("Familia de Productos", font);
+                        rst.AppendText("Zona", font);
+                        style = sl.CreateStyle();
+                        style.Alignment.Horizontal = HorizontalAlignmentValues.Center;
                         sl.SetCellValue(fil, col, rst.ToInlineString());
+                        sl.SetCellStyle(fil, col, style);
 
                         col = 5;
+                        font = new SLFont();
+                        font.Bold = true;//negrita
+                        font.SetFont(FontSchemeValues.Minor, 12);//tamaño de letra
+                        rst = new SLRstType();
+                        rst.AppendText("Familia de Productos", font);
+                        style = sl.CreateStyle();
+                        style.Alignment.Horizontal = HorizontalAlignmentValues.Center;
+                        sl.SetCellValue(fil, col, rst.ToInlineString());
+                        sl.SetCellStyle(fil, col, style);
+
+                        col = 6;
                         font = new SLFont();
                         font.Bold = true;//negrita
                         font.SetFont(FontSchemeValues.Minor, 12);//tamaño de letra
@@ -2474,7 +2488,7 @@ namespace PortalRoemmers.Areas.Marketing.Controllers
                         rst.AppendText("Fecha de Eve.", font);
                         sl.SetCellValue(fil, col, rst.ToInlineString());
 
-                        col = 6;
+                        col = 8;
                         font = new SLFont();
                         font.Bold = true;//negrita
                         font.SetFont(FontSchemeValues.Minor, 12);//tamaño de letra
@@ -2483,7 +2497,7 @@ namespace PortalRoemmers.Areas.Marketing.Controllers
                         sl.SetCellValue(fil, col, rst.ToInlineString());
                         sl.AutoFitColumn(col);
 
-                        col = 7;
+                        col = 8;
                         font = new SLFont();
                         font.Bold = true;//negrita
                         font.SetFont(FontSchemeValues.Minor, 12);//tamaño de letra
@@ -2495,7 +2509,7 @@ namespace PortalRoemmers.Areas.Marketing.Controllers
                         sl.SetCellStyle(fil, col, style);
                         sl.AutoFitColumn(col);
 
-                        col = 8;
+                        col = 9;
                         font = new SLFont();
                         font.Bold = true;//negrita
                         font.SetFont(FontSchemeValues.Minor, 12);//tamaño de letra
@@ -2504,7 +2518,7 @@ namespace PortalRoemmers.Areas.Marketing.Controllers
                         sl.SetCellValue(fil, col, rst.ToInlineString());
                         sl.AutoFitColumn(col);
 
-                        col = 9;
+                        col = 10;
                         font = new SLFont();
                         font.Bold = true;//negrita
                         font.SetFont(FontSchemeValues.Minor, 12);//tamaño de letra
@@ -2516,7 +2530,7 @@ namespace PortalRoemmers.Areas.Marketing.Controllers
                         sl.SetCellStyle(fil, col, style);
                         sl.AutoFitColumn(col);
 
-                        col = 10;
+                        col = 11;
                         font = new SLFont();
                         font.Bold = true;//negrita
                         font.SetFont(FontSchemeValues.Minor, 12);//tamaño de letra
@@ -2528,7 +2542,7 @@ namespace PortalRoemmers.Areas.Marketing.Controllers
                         sl.SetCellStyle(fil, col, style);
                         sl.AutoFitColumn(col);
 
-                        col = 11;
+                        col = 12;
                         font = new SLFont();
                         font.Bold = true;//negrita
                         font.SetFont(FontSchemeValues.Minor, 12);//tamaño de letra
@@ -2592,6 +2606,15 @@ namespace PortalRoemmers.Areas.Marketing.Controllers
 
                                 //---------------------------------------------------
                                 col = 4;
+                                //--
+                                var zona = _zon.obtenerItem(det.solGasto.idZon);
+                                sl.SetCellValue(fil, col, zona.nomZon);
+                                style = sl.CreateStyle();
+                                style.Alignment.Horizontal = HorizontalAlignmentValues.Center;
+                                sl.SetCellStyle(fil, col, style);
+
+                                //---------------------------------------------------
+                                col = 5;
                                 string famproductos= "";
                                 //var counter = 0;
                                 foreach (var pro in det.solGasto.dFam)
@@ -2609,7 +2632,7 @@ namespace PortalRoemmers.Areas.Marketing.Controllers
                                 //--
                                 //fil = fil - counter;
                                 //---------------------------------------------------
-                                col = 5;
+                                col = 6;
                                 sl.SetCellValue(fil, col, det.solGasto.fchEveSolGas.ToString("dd-MM-yyyy"));
                                 style = sl.CreateStyle();
                                 style.Alignment.Horizontal = HorizontalAlignmentValues.Center;
@@ -2652,10 +2675,10 @@ namespace PortalRoemmers.Areas.Marketing.Controllers
                                 //---------------------------------------------------
                                 //SOLES 
                                 //---------------------------------------------------
-                                col = 6;
+                                col = 7;
                                 sl.SetCellValue(fil, col, "S/.");
 
-                                col = 7;
+                                col = 8;
                                 style = sl.CreateStyle();
                                 style.FormatCode = "#,##0.00";
                                 sl.SetCellValue(fil, col, conversionS);
@@ -2664,10 +2687,10 @@ namespace PortalRoemmers.Areas.Marketing.Controllers
                                 //---------------------------------------------------
                                 //DOLARES
                                 //---------------------------------------------------
-                                col = 8;
+                                col = 9;
                                 sl.SetCellValue(fil, col, "$");
 
-                                col = 9;
+                                col = 10;
                                 style = sl.CreateStyle();
                                 style.FormatCode = "#,##0.00";
                                 sl.SetCellValue(fil, col, conversionD);
@@ -2675,7 +2698,7 @@ namespace PortalRoemmers.Areas.Marketing.Controllers
 
                                 //---------------------------------------------------
                                 //ESTADO
-                                col = 10;
+                                col = 11;
                                 sl.SetCellValue(fil, col, det.estado.nomEst);
                                 style = sl.CreateStyle();
                                 style.Alignment.Horizontal = HorizontalAlignmentValues.Center;
@@ -2684,7 +2707,7 @@ namespace PortalRoemmers.Areas.Marketing.Controllers
 
                                 //OBSERVACION
                                 //---------------------------------------------------
-                                col = 11;
+                                col = 12;
                                 sl.SetCellValue(fil, col, det.solGasto.obsSolGas);
                                 style = sl.CreateStyle();
                                 style.Alignment.Horizontal = HorizontalAlignmentValues.Left;
@@ -2761,9 +2784,9 @@ namespace PortalRoemmers.Areas.Marketing.Controllers
                 SLStyle styleF = sl.CreateStyle();
                 styleF.Fill.SetPattern(PatternValues.Solid, System.Drawing.Color.White, System.Drawing.Color.White);
                 styleF.Border.RemoveAllBorders();
-                sl.SetCellStyle(1, 1, fil, 11, styleF);
+                sl.SetCellStyle(1, 1, fil, 12, styleF);
                 sl.SetPageSettings(ps);
-                sl.AutoFitColumn(4, 11);
+                sl.AutoFitColumn(4, 12);
                 //-----------------------------------------
                 sl.SaveAs(rutaArchivoCompleta);
                 //-----------------------------------------
