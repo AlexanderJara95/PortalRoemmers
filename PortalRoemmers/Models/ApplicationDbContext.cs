@@ -29,6 +29,8 @@ using System.Data.Entity.Infrastructure.Annotations;
 using PortalRoemmers.Areas.RRHH.Models.Formulario;
 using PortalRoemmers.Areas.Marketing.Models.FarmacoVigilancia;
 using PortalRoemmers.Areas.RRHH.Models.Documento;
+using PortalRoemmers.Areas.RRHH.Models.SolicitudRRHH;
+using PortalRoemmers.Areas.RRHH.Models.SolicitudesRRHH;
 
 namespace PortalRoemmers.Models
 {
@@ -177,6 +179,12 @@ namespace PortalRoemmers.Models
         //Documento RRHH
         public DbSet<TipoDocumentoRRHHModels> tb_TipDocRRHH { get; set; }
         public DbSet<DocumentoRRHHModels> tb_DocRRHH { get; set; }
+
+        //Solicitud RRHH
+        public DbSet<SolicitudRRHHModels> tb_SolicitudRRHH { get; set; }
+        public DbSet<SubtipoSolicitudRRHHModels> tb_SubtipoSolicitudRRHH { get; set; }
+        public DbSet<TipoSolicitudRRHHModels> tb_TipoSolicitudRRHH { get; set; }
+        public DbSet<UserSolicitudRRHHModels> tb_userSolicitudRRHH { get; set; }
 
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -376,6 +384,13 @@ namespace PortalRoemmers.Models
             //Documento RRHH
             modelBuilder.Entity<TipoDocumentoRRHHModels>().ToTable("tb_TipDocRRHH");
             modelBuilder.Entity<DocumentoRRHHModels>().ToTable("tb_DocRRHH");
+
+            //SolicitudRRHH
+            modelBuilder.Entity<SolicitudRRHHModels>().ToTable("tb_SolicitudRRHH");
+            modelBuilder.Entity<SubtipoSolicitudRRHHModels>().ToTable("tb_SubtipoSolicitudRRHH");
+            modelBuilder.Entity<TipoSolicitudRRHHModels>().ToTable("tb_TipoSolicitudRRHH");
+            modelBuilder.Entity<UserSolicitudRRHHModels>().ToTable("tb_userSolicitudRRHH");
+            modelBuilder.Entity<UserSolicitudRRHHModels>().HasKey(x => new { x.idSolicitudRrhh, x.idAccRes });
 
             base.OnModelCreating(modelBuilder);
         }

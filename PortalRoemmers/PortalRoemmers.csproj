@@ -274,6 +274,10 @@
     <Compile Include="Areas\RRHH\Models\Documento\TipoDocumentoRRHHModels.cs" />
     <Compile Include="Areas\RRHH\Models\Formulario\FormularioModels.cs" />
     <Compile Include="Areas\RRHH\Models\Formulario\Form_Usu_Models.cs" />
+    <Compile Include="Areas\RRHH\Models\SolicitudesRRHH\SolicitudRRHHModels.cs" />
+    <Compile Include="Areas\RRHH\Models\SolicitudesRRHH\SubtipoSolicitudRRHHModels.cs" />
+    <Compile Include="Areas\RRHH\Models\SolicitudesRRHH\TipoSolicitudRRHHModels.cs" />
+    <Compile Include="Areas\RRHH\Models\SolicitudesRRHH\UserSolicitudRRHHModels.cs" />
     <Compile Include="Areas\RRHH\RRHHAreaRegistration.cs" />
     <Compile Include="Areas\RRHH\Services\Bienvenida\BienvenidaRepositorio.cs" />
     <Compile Include="Areas\RRHH\Services\Boleta\BoletaDetalleRepositorio.cs" />
@@ -496,6 +500,10 @@
     <Compile Include="Helpers\MyExtensions.cs" />
     <Compile Include="Helpers\Parametros.cs" />
     <Compile Include="Helpers\SelectedModels.cs" />
+    <Compile Include="Migrations\202302232302051_CreateModelSolicitudRRHH.cs" />
+    <Compile Include="Migrations\202302232302051_CreateModelSolicitudRRHH.Designer.cs">
+      <DependentUpon>202302232302051_CreateModelSolicitudRRHH.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationDbContext.cs" />
     <Compile Include="Models\BaseModelo.cs" />
@@ -2692,8 +2700,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\Contabilidad\Views\Shared\" />
-    <Folder Include="Areas\RRHH\Controllers\SolicitudRRHH\" />
-    <Folder Include="Areas\RRHH\Models\SolicitudRRHH\" />
     <Folder Include="bin\es\" />
     <Folder Include="Boletas\" />
     <Folder Include="Content\Home\Enlace\0000001\" />
@@ -3935,6 +3941,11 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202302232302051_CreateModelSolicitudRRHH.resx">
+      <DependentUpon>202302232302051_CreateModelSolicitudRRHH.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
