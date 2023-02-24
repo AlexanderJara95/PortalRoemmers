@@ -274,10 +274,10 @@
     <Compile Include="Areas\RRHH\Models\Documento\TipoDocumentoRRHHModels.cs" />
     <Compile Include="Areas\RRHH\Models\Formulario\FormularioModels.cs" />
     <Compile Include="Areas\RRHH\Models\Formulario\Form_Usu_Models.cs" />
-    <Compile Include="Areas\RRHH\Models\SolicitudesRRHH\SolicitudRRHHModels.cs" />
-    <Compile Include="Areas\RRHH\Models\SolicitudesRRHH\SubtipoSolicitudRRHHModels.cs" />
-    <Compile Include="Areas\RRHH\Models\SolicitudesRRHH\TipoSolicitudRRHHModels.cs" />
-    <Compile Include="Areas\RRHH\Models\SolicitudesRRHH\UserSolicitudRRHHModels.cs" />
+    <Compile Include="Areas\RRHH\Models\SolicitudRRHH\SolicitudRRHHModels.cs" />
+    <Compile Include="Areas\RRHH\Models\SolicitudRRHH\SubtipoSolicitudRRHHModels.cs" />
+    <Compile Include="Areas\RRHH\Models\SolicitudRRHH\TipoSolicitudRRHHModels.cs" />
+    <Compile Include="Areas\RRHH\Models\SolicitudRRHH\UserSolicitudRRHHModels.cs" />
     <Compile Include="Areas\RRHH\RRHHAreaRegistration.cs" />
     <Compile Include="Areas\RRHH\Services\Bienvenida\BienvenidaRepositorio.cs" />
     <Compile Include="Areas\RRHH\Services\Boleta\BoletaDetalleRepositorio.cs" />
@@ -2700,6 +2700,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\Contabilidad\Views\Shared\" />
+    <Folder Include="Areas\RRHH\Controllers\SolicitudesRRHH\" />
     <Folder Include="bin\es\" />
     <Folder Include="Boletas\" />
     <Folder Include="Content\Home\Enlace\0000001\" />
