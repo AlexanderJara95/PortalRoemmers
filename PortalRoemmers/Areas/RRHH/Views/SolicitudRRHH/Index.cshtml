@@ -1,0 +1,151 @@
+﻿@model  PortalRoemmers.ViewModels.IndexViewModel
+@using PortalRoemmers.Helpers
+@using PortalRoemmers.Security
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section css {
+    @Styles.Render("~/Content/tablaResponsive_CSS")
+    @Styles.Render("~/Content/Galeria_CSS")
+    @Styles.Render("~/Content/sweetalert_CSS")
+    @Styles.Render("~/Content/selectBusqueda_CSS")
+    @Styles.Render("~/Content/datepicker_CSS")
+}
+<div class="panel panel-default">
+    <div class="panel-heading box-title m-b-0"><h2>Mantenimiento de Solicitud de Vacaciones</h2></div>
+    <div class="panel-body">
+        <div class="form-group">
+            @{ string v = ""; try { v = TempData["mensaje"].ToString(); } catch { }}
+            @(new HtmlString(v))
+        </div>
+        @using (Html.BeginForm("Index", "SolicitudRRHH", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista }, FormMethod.Post))
+        {
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="form-group">
+                        <label for="search">NOMBRE o CÓDIGO</label>
+                        <input type="text" id="search" name="search" class="form-control" placeholder="Buscar" value="@ViewBag.search">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="desMen">DESDE</label>
+                        <input class="form-control form-control-line datepicker" id="fchEveSolGasI" name="fchEveSolGasI" placeholder="dd/mm/aaaa" autocomplete="off" value="@ViewBag.primero">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="desMen">HASTA</label>
+                        <input class="form-control form-control-line datepicker" id="fchEveSolGasF" name="fchEveSolGasF" placeholder="dd/mm/aaaa" autocomplete="off" value="@ViewBag.actual">
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <span class="input-group-btn">
+                        <button class="btn waves-effect waves-light btn-info">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </span>
+                </div>
+            </div>
+        }
+        <br />
+
+        @using (Html.BeginForm("Registrar", "SolicitudRRHH", new { Area = "RRHH" }, FormMethod.Get))
+        {
+            <div class="col-sm-12">
+                <div class="col-sm-2"></div>
+                <div class="col-sm-8">
+                    <div class="user-btm-box">
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <dl>
+                                    <dt>INGRESE LOS DATOS DE SUS VACACIONES</dt>
+                                    <dd>Puede crear varias solicitudes</dd>
+                                </dl>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <button type="submit" class="btn btn-info btn-rounded">Crear Solicitud</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2"></div>
+            </div>
+        }
+    <div class="row">
+        <div class="row show-grid">
+            <div class="col-lg-1 col-sm-4 col-xs-12">
+                <button id="btnExportar" type="submit" class="btn btn-block btn-outline btn-info">Exportar</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <table class="tablesaw table-bordered table-hover table" data-tablesaw-mode="swipe">
+                    <thead>
+                        <tr>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist"></th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1">C&oacutedigo</th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2">Descripción</th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Fecha de Inicio</th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Fecha de Fin</th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="4">Estado</th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="6">Solicitud</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.SoliRRHH)
+                        {
+                            <tr>
+                                <td class="text-nowrap">
+                                    @{/*
+                                        //Firmas
+                                        var detFr = item.dFirma.OrderBy(x => x.usufchCrea).ToList();
+                                        var dfr = "";
+                                        if (detFr.Count != 0)
+                                        {
+                                            foreach (var f in detFr)
+                                            {
+                                                dfr += f.idSolGas + ";" + f.solicitante.username + ";" + f.usufchCrea + ";" + f.estado.nomEst + ";" + f.gasto.monSolGas + ";" + f.gasto.dFirma.Where(x => x.idAcc == f.solicitante.idAcc).Select(x => x.obsFirSol).FirstOrDefault() + "|";
+                                            }
+                                            dfr = dfr.Remove(dfr.Length - 1, 1);
+                                        }
+                                    */}
+                                    <a href="@Url.Action("Imprimir", "SolicitudGasto", new {Area="Ventas",html = false,sol=item.idSolicitudRrhh })" data-toggle="tooltip" title="Imprimir"> <i class="fa fa-print text-inverse m-r-10"></i> </a>
+                                    <!--><a href="#responsive-modal-Firmas" data-toggle="modal" title="Firmas" class="open-firma m-r-10" data-detfr="(arroba)dfr"><i class="fa fa-list-ol"></i></a>-->
+                                    <a href="@MyExtensions.ActionUrl("Visualizar", "SolicitudGasto", new {Area="Ventas", id = item.idSolicitudRrhh})" data-toggle="tooltip" title="Visualizar"> <i class="fa fa-eye text-inverse m-r-10"></i> </a>
+                                    @{
+                                        //solo algunos lo ven
+                                        if (item.idEstado == ConstantesGlobales.estadoRegistrado || item.idEstado == ConstantesGlobales.estadoModificado)
+                                        {
+                                            <a href="@MyExtensions.ActionUrl("Modificar", "SolicitudRRHH", new {Area="RRHH", id = item.idSolicitudRrhh})" data-toggle="tooltip" title="Editar"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a>
+                                            <a data-toggle="tooltip" title="Anular" id="sa-params"> <i class="fa fa-close text-danger"></i> </a>
+                                        }
+                                    }
+
+                                </td>
+                                <td>@Html.DisplayFor(modelItem => item.idSolicitudRrhh)</td>
+                                <td>@Html.DisplayFor(modelItem => item.descSolicitud)</td>
+                                <td>@Html.DisplayFor(modelItem => item.fchIniSolicitud)</td>
+                                <td>@Html.DisplayFor(modelItem => item.fchFinSolicitud)</td>
+                                <td>@Html.DisplayFor(modelItem => item.estado.nomEst)</td>
+                                <td>@Html.DisplayFor(modelItem => item.subtipoSolicitud.nomSubtipoSolicitud)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+        <div class="row">
+            <div class="col-sm-12">
+                @{Html.RenderPartial("_paginador", Model);}
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-footer"></div>
+</div>

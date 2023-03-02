@@ -268,6 +268,7 @@
     <Compile Include="Areas\RRHH\Controllers\Galeria\TipoGaleriaController.cs" />
     <Compile Include="Areas\RRHH\Controllers\Periodico\ContenidoController.cs" />
     <Compile Include="Areas\RRHH\Controllers\Periodico\PeriodicoController.cs" />
+    <Compile Include="Areas\RRHH\Controllers\SolicitudRRHH\SolicitudRRHHController.cs" />
     <Compile Include="Areas\RRHH\Models\Boleta\BoletaDetalleModels.cs" />
     <Compile Include="Areas\RRHH\Models\Boleta\BoletaPersonalModels.cs" />
     <Compile Include="Areas\RRHH\Models\Documento\DocumentoRRHHModels.cs" />
@@ -289,6 +290,7 @@
     <Compile Include="Areas\RRHH\Services\Formulario\Form_Usu_Repositorio.cs" />
     <Compile Include="Areas\RRHH\Services\Periodico\ContenidoRepositorio.cs" />
     <Compile Include="Areas\RRHH\Services\Periodico\EfectoImagenRepositorio.cs" />
+    <Compile Include="Areas\RRHH\Services\SolicitudRRHH\SolicitudRRHHRepositorio.cs" />
     <Compile Include="Areas\Sistemas\Controllers\Enlace\EnlaceController.cs" />
     <Compile Include="Areas\Sistemas\Controllers\Enlace\TipoEnlaceController.cs" />
     <Compile Include="Areas\Sistemas\Controllers\Equipo\FabricanteController.cs" />
@@ -2613,6 +2615,7 @@
     <Content Include="Content\bootstrap-reboot.css.map" />
     <Content Include="Content\bootstrap-grid.min.css.map" />
     <Content Include="Content\bootstrap-grid.css.map" />
+    <Content Include="Areas\RRHH\Views\SolicitudRRHH\Index.cshtml" />
     <None Include="Scripts\jquery-3.0.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.0.0.js" />
     <Content Include="Scripts\jquery-3.0.0.min.js" />
@@ -2700,7 +2703,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\Contabilidad\Views\Shared\" />
-    <Folder Include="Areas\RRHH\Controllers\SolicitudesRRHH\" />
     <Folder Include="bin\es\" />
     <Folder Include="Boletas\" />
     <Folder Include="Content\Home\Enlace\0000001\" />
