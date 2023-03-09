@@ -151,6 +151,8 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
         public ActionResult Modificar(string id)
         {
             var model = _soli.obtenerItem(id);
+            ViewBag.fechaIni = model.fchIniSolicitud.ToShortDateString();
+            ViewBag.fechaFin = model.fchFinSolicitud.ToShortDateString();
             model.idSubTipoSolicitudRrhh = model.idSubTipoSolicitudRrhh;
             model.usufchMod = DateTime.Now;
             model.usuMod = SessionPersister.Username;
@@ -161,26 +163,25 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
         [SessionAuthorize]
         public ActionResult Modificar(SolicitudRRHHModels model)
         {
-            if (ModelState.IsValid)
+            var mensaje="";
+            try
             {
-                try
+                if (_soli.modificar(model))
                 {
-                    if (_soli.modificar(model))
-                    {
-                        TempData["mensaje"] = "<div id='success' class='alert alert-success'>Se modificó correctamente el registro.</div>";
-                    }
-                    else
-                    {
-                        TempData["mensaje"] = "<div id='warning' class='alert alert-warning'>" + "Error en la modificación del registro" + "</div>";
-                    }
+                    mensaje = "<div id='success' class='alert alert-success'>Se modificó correctamente el registro.</div>";
+                }
+                else
+                {
+                    TempData["mensaje"] = "<div id='warning' class='alert alert-warning'>" + "Error en la modificación del registro" + "</div>";
+                }
 
-                }
-                catch (Exception e) { 
-                    e.Message.ToString();
-                }
-                return RedirectToAction("Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search });
-            }            
-            return View(model);
+            }
+            catch (Exception e) { 
+                e.Message.ToString();
+            }
+            TempData["mensaje"] = mensaje;
+
+            return RedirectToAction("Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search });
         }
 
 

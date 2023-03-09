@@ -29,6 +29,13 @@
                                 <div class="panel-collapse collapse in" id="exampleCollapseDefaultOne" aria-labelledby="exampleHeadingDefaultOne" role="tabpanel">
                                     @Html.HiddenFor(model => model.idEstado)
                                     @Html.HiddenFor(model => model.idAccSol)
+                                    @Html.HiddenFor(model => model.idAccApro)
+                                    @Html.HiddenFor(model => model.idSolicitudRrhh)
+                                    @Html.HiddenFor(model => model.idSubTipoSolicitudRrhh)
+                                    @Html.HiddenFor(model => model.usuCrea)
+                                    @Html.HiddenFor(model => model.usufchCrea)
+                                    @Html.HiddenFor(model => model.usuMod)
+                                    @Html.HiddenFor(model => model.usufchMod)
 
                                     <div class="panel-body">
                                         <div class="row">
@@ -45,7 +52,7 @@
                                                 <div class="form-group">
                                                     <label class="col-md-12">@Html.LabelFor(model => model.fchIniSolicitud)</label>
                                                     <div class="col-md-12">
-                                                        @Html.EditorFor(model => model.fchIniSolicitud, new { htmlAttributes = new { @class = "form-control form-control-line datepicker" } })
+                                                        <input class="form-control form-control-line datepicker" id="fchIniSolicitud" name="fchIniSolicitud" placeholder="dd/mm/aaaa" autocomplete="off" value="@ViewBag.fechaIni">
                                                         @Html.ValidationMessageFor(model => model.fchIniSolicitud, "", new { @class = "text-danger" })
                                                     </div>
                                                 </div>
@@ -54,7 +61,7 @@
                                                 <div class="form-group">
                                                     <label class="col-md-12">@Html.LabelFor(model => model.fchFinSolicitud)</label>
                                                     <div class="col-md-12">
-                                                        @Html.EditorFor(model => model.fchFinSolicitud, new { htmlAttributes = new { @class = "form-control form-control-line datepicker" } })
+                                                        <input class="form-control form-control-line datepicker" id="fchFinSolicitud" name="fchFinSolicitud" placeholder="dd/mm/aaaa" autocomplete="off" value="@ViewBag.fechaFin">
                                                         @Html.ValidationMessageFor(model => model.fchFinSolicitud, "", new { @class = "text-danger" })
                                                     </div>
                                                 </div>
