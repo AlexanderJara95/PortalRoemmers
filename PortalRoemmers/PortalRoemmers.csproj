@@ -502,9 +502,9 @@
     <Compile Include="Helpers\MyExtensions.cs" />
     <Compile Include="Helpers\Parametros.cs" />
     <Compile Include="Helpers\SelectedModels.cs" />
-    <Compile Include="Migrations\202302232302051_CreateModelSolicitudRRHH.cs" />
-    <Compile Include="Migrations\202302232302051_CreateModelSolicitudRRHH.Designer.cs">
-      <DependentUpon>202302232302051_CreateModelSolicitudRRHH.cs</DependentUpon>
+    <Compile Include="Migrations\202303022124458_CreateModelSolicitudRRHH.cs" />
+    <Compile Include="Migrations\202303022124458_CreateModelSolicitudRRHH.Designer.cs">
+      <DependentUpon>202303022124458_CreateModelSolicitudRRHH.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationDbContext.cs" />
@@ -2616,6 +2616,8 @@
     <Content Include="Content\bootstrap-grid.min.css.map" />
     <Content Include="Content\bootstrap-grid.css.map" />
     <Content Include="Areas\RRHH\Views\SolicitudRRHH\Index.cshtml" />
+    <Content Include="Areas\RRHH\Views\SolicitudRRHH\Registrar.cshtml" />
+    <Content Include="Areas\RRHH\Views\SolicitudRRHH\Modificar.cshtml" />
     <None Include="Scripts\jquery-3.0.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.0.0.js" />
     <Content Include="Scripts\jquery-3.0.0.min.js" />
@@ -3946,8 +3948,8 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202302232302051_CreateModelSolicitudRRHH.resx">
-      <DependentUpon>202302232302051_CreateModelSolicitudRRHH.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202303022124458_CreateModelSolicitudRRHH.resx">
+      <DependentUpon>202303022124458_CreateModelSolicitudRRHH.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

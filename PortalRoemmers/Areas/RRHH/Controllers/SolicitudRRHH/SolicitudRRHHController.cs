@@ -2,6 +2,7 @@
 using PortalRoemmers.Areas.RRHH.Services.SolicitudRRHH;
 using PortalRoemmers.Areas.Sistemas.Models.Usuario;
 using PortalRoemmers.Areas.Sistemas.Services.Usuario;
+using PortalRoemmers.Filters;
 using PortalRoemmers.Helpers;
 using PortalRoemmers.Security;
 using System;
@@ -25,6 +26,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             _soli = new SolicitudRRHHRepositorio();
             _usu = new UsuarioRepositorio();
             p = new Parametros();
+            enu = new Ennumerador();
         }
 
         /*public ActionResult Index()
@@ -47,8 +49,11 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             {
                 DateTime date = DateTime.Now;
                 DateTime oPrimerDiaDelMes = new DateTime(date.Year, 1, 1);
+                DateTime ultimoDelanio = new DateTime(date.Year, 12, 31);
                 var primero = oPrimerDiaDelMes.ToString("dd/MM/yyyy");
-                var actual = DateTime.Today.ToString("dd/MM/yyyy");
+                var actual = ultimoDelanio.ToString("dd/MM/yyyy");
+                /*var actual = DateTime.Today.ToString("dd/MM/yyyy");*/
+
                 inicio = DateTime.Parse(primero);
                 fin = DateTime.Parse(actual);
             }
@@ -105,18 +110,28 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             string tabla = "tb_SolicitudRRHH";
             int idc = enu.buscarTabla(tabla);
             model.idSolicitudRrhh = idc.ToString("D7");
+
+            model.idEstado = ConstantesGlobales.estadoRegistrado;
             model.idAccSol = SessionPersister.UserId;
             model.usuCrea = SessionPersister.Username;
             model.usufchCrea = DateTime.Now;
 
-            if (emple.jefe.idEmpJ != null || emple.jefe.idEmpJ == ""){
-                model.idAccApro = _usu.obtenerItem(emple.jefe.idEmpJ).idAcc;
+            UserSolicitudRRHHModels userSoliRRHH = new UserSolicitudRRHHModels();
+            userSoliRRHH.idSolicitudRrhh = model.idSolicitudRrhh;
+            userSoliRRHH.idAccRes = SessionPersister.UserId;
+            userSoliRRHH.usuCrea = model.usuCrea;
+            userSoliRRHH.usufchCrea = model.usufchCrea;
+
+            if (emple.idEmpJ != ""){
+                model.idAccApro = emple.idEmpJ;
                 model.idSubTipoSolicitudRrhh = ConstantesGlobales.subTipoVacaciones;
                 try
                 {
                     if (_soli.crear(model))
                     {
+                        enu.actualizarTabla(tabla, idc);
                         TempData["mensaje"] = "<div id='success' class='alert alert-success'>Se creó un nuevo registro.</div>";
+                        _soli.crearUserSolRrhh(userSoliRRHH);
                     }
                     else
                     {
@@ -130,6 +145,47 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             return RedirectToAction("Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search });
 
         }
+        [HttpGet]
+        [EncryptedActionParameter]
+        [CustomAuthorize(Roles = "000003,000240")]
+        public ActionResult Modificar(string id)
+        {
+            var model = _soli.obtenerItem(id);
+            model.idSubTipoSolicitudRrhh = model.idSubTipoSolicitudRrhh;
+            model.usufchMod = DateTime.Now;
+            model.usuMod = SessionPersister.Username;
+            return View(model);
+        }
+
+        [HttpPost]
+        [SessionAuthorize]
+        public ActionResult Modificar(SolicitudRRHHModels model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    if (_soli.modificar(model))
+                    {
+                        TempData["mensaje"] = "<div id='success' class='alert alert-success'>Se modificó correctamente el registro.</div>";
+                    }
+                    else
+                    {
+                        TempData["mensaje"] = "<div id='warning' class='alert alert-warning'>" + "Error en la modificación del registro" + "</div>";
+                    }
+
+                }
+                catch (Exception e) { 
+                    e.Message.ToString();
+                }
+                return RedirectToAction("Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search });
+            }            
+            return View(model);
+        }
+
+
+
+
     }
 
 }

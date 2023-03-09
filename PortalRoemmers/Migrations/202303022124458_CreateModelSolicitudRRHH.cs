@@ -67,7 +67,7 @@ namespace PortalRoemmers.Migrations
                 .PrimaryKey(t => t.idTipoSolicitudRrhh);
             
             CreateTable(
-                "dbo.tb_userSolicitudRRHH",
+                "dbo.tb_UserSolicitudRRHH",
                 c => new
                     {
                         idSolicitudRrhh = c.String(nullable: false, maxLength: 7),
@@ -85,19 +85,19 @@ namespace PortalRoemmers.Migrations
         
         public override void Down()
         {
-            DropForeignKey("dbo.tb_userSolicitudRRHH", "idAccRes", "dbo.tb_Usuario");
+            DropForeignKey("dbo.tb_UserSolicitudRRHH", "idAccRes", "dbo.tb_Usuario");
             DropForeignKey("dbo.tb_SubtipoSolicitudRRHH", "idTipoSolicitudRrhh", "dbo.tb_TipoSolicitudRRHH");
             DropForeignKey("dbo.tb_SolicitudRRHH", "idSubTipoSolicitudRrhh", "dbo.tb_SubtipoSolicitudRRHH");
             DropForeignKey("dbo.tb_SolicitudRRHH", "idAccSol", "dbo.tb_Usuario");
             DropForeignKey("dbo.tb_SolicitudRRHH", "idEstado", "dbo.tb_Estado");
             DropForeignKey("dbo.tb_SolicitudRRHH", "idAccApro", "dbo.tb_Usuario");
-            DropIndex("dbo.tb_userSolicitudRRHH", new[] { "idAccRes" });
+            DropIndex("dbo.tb_UserSolicitudRRHH", new[] { "idAccRes" });
             DropIndex("dbo.tb_SubtipoSolicitudRRHH", new[] { "idTipoSolicitudRrhh" });
             DropIndex("dbo.tb_SolicitudRRHH", new[] { "idSubTipoSolicitudRrhh" });
             DropIndex("dbo.tb_SolicitudRRHH", new[] { "idEstado" });
             DropIndex("dbo.tb_SolicitudRRHH", new[] { "idAccApro" });
             DropIndex("dbo.tb_SolicitudRRHH", new[] { "idAccSol" });
-            DropTable("dbo.tb_userSolicitudRRHH");
+            DropTable("dbo.tb_UserSolicitudRRHH");
             DropTable("dbo.tb_TipoSolicitudRRHH");
             DropTable("dbo.tb_SubtipoSolicitudRRHH");
             DropTable("dbo.tb_SolicitudRRHH");

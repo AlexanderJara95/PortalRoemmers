@@ -1,5 +1,4 @@
-﻿using PortalRoemmers.Areas.RRHH.Models.SolicitudRRHH;
-using PortalRoemmers.Areas.Sistemas.Models.Usuario;
+﻿using PortalRoemmers.Areas.Sistemas.Models.Usuario;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -7,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 
-namespace PortalRoemmers.Areas.RRHH.Models.SolicitudesRRHH
+namespace PortalRoemmers.Areas.RRHH.Models.SolicitudRRHH
 {
     public class UserSolicitudRRHHModels
     {

@@ -39,13 +39,11 @@ namespace PortalRoemmers.Areas.RRHH.Models.SolicitudRRHH
         //fecha Inicio 6
         [Display(Name = "Fecha Inicio")]
         [Required(ErrorMessage = "El campo {0} es obligatorio")]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:d}")]
         public DateTime fchIniSolicitud { get; set; }
 
         //fecha Fin 7
         [Display(Name = "Fecha Final")]
         [Required(ErrorMessage = "El campo {0} es obligatorio")]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:d}")]
         public DateTime fchFinSolicitud { get; set; }
 
         //Ruta Adjunto 8

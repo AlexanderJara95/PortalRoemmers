@@ -28,7 +28,6 @@ using PortalRoemmers.Areas.RRHH.Models.Formulario;
 using PortalRoemmers.Areas.Marketing.Models.FarmacoVigilancia;
 using PortalRoemmers.Areas.RRHH.Models.Documento;
 using PortalRoemmers.Areas.RRHH.Models.SolicitudRRHH;
-using PortalRoemmers.Areas.RRHH.Models.SolicitudesRRHH;
 
 namespace PortalRoemmers.ViewModels
 {

@@ -7,7 +7,7 @@ namespace PortalRoemmers.Migrations
     {
         public Configuration()
         {
-            AutomaticMigrationsEnabled = false;
+            AutomaticMigrationsEnabled = true;
         }
 
         protected override void Seed(PortalRoemmers.Models.ApplicationDbContext context)

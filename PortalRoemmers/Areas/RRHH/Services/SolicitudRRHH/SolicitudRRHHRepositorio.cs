@@ -9,7 +9,6 @@ using System.Data.Entity; //permite usar landa
 using System.Data.SqlClient;
 using PortalRoemmers.Security;
 using PortalRoemmers.Areas.RRHH.Models.SolicitudRRHH;
-using PortalRoemmers.Areas.RRHH.Models.SolicitudesRRHH;
 
 namespace PortalRoemmers.Areas.RRHH.Services.SolicitudRRHH
 {
@@ -52,18 +51,45 @@ namespace PortalRoemmers.Areas.RRHH.Services.SolicitudRRHH
                 return modelo;
             }
         }
-        public Boolean crear(SolicitudRRHHModels model)
+        public SolicitudRRHHModels obtenerItem(string id)
         {
+            using (var db = new ApplicationDbContext())
+            {
+                SolicitudRRHHModels model = db.tb_SolicitudRRHH
+                    .Include(x => x.solicitante.empleado)
+                    .Include(x => x.aprobador.empleado)
+                    .Include(x => x.estado)
+                    .Include(x => x.subtipoSolicitud)
+                    .Where(x => x.idSolicitudRrhh == id).FirstOrDefault();
+                return model;
+            }
+
+        }
+        public Boolean modificar(SolicitudRRHHModels model)
+        {
+            Boolean ok = false;
+            using (var db = new ApplicationDbContext())
+            {
+                db.Entry(model).State = EntityState.Modified;
+                try
+                {
+                    db.SaveChanges();
+                    ok = true;
+                }
+                catch (Exception e)
+                {
+                    e.Message.ToString();
+                }
+            }
+            return ok;
+        }
+
+        public Boolean crear(SolicitudRRHHModels model)
+        {   
             Boolean exec = true;
             using (var db = new ApplicationDbContext())
             {
-                UserSolicitudRRHHModels userSoliRRHH = new UserSolicitudRRHHModels();
-                userSoliRRHH.idSolicitudRrhh = model.idSolicitudRrhh;
-                userSoliRRHH.idAccRes = SessionPersister.UserId;
-                userSoliRRHH.usuCrea = model.usuCrea;
-                userSoliRRHH.usufchCrea = model.usufchCrea;
                 db.tb_SolicitudRRHH.Add(model);
-                db.tb_userSolicitudRRHH.Add(userSoliRRHH);
                 try
                 {
                     db.SaveChanges();
@@ -75,6 +101,29 @@ namespace PortalRoemmers.Areas.RRHH.Services.SolicitudRRHH
             }
             return exec;
         }
+
+        public Boolean crearUserSolRrhh (UserSolicitudRRHHModels model)
+        {
+            Boolean exec = true;
+            using (var db = new ApplicationDbContext())
+            {
+                db.tb_UserSolicitudRRHH.Add(model);
+                try
+                {
+                    db.SaveChanges();
+                }
+                catch (Exception e)
+                {
+                    exec = false;
+                }
+            }
+            return exec;
+        }
+
+            
+                
+
+
 
     }
 }
