@@ -17,7 +17,7 @@ namespace PortalRoemmers.Areas.RRHH.Services.SolicitudRRHH
         Ennumerador enu = new Ennumerador();
         UsuarioRepositorio _usu = new UsuarioRepositorio();
 
-        public ViewModels.IndexViewModel obtenerTodos(int pagina, string search, string modulo, string primero, string actual)
+        public ViewModels.IndexViewModel obtenerTodos(int pagina, string search, string tipo, string primero, string actual)
         {
             //------------------------------------------------------------------------
             DateTime p = DateTime.Parse(primero); //desde
@@ -38,10 +38,10 @@ namespace PortalRoemmers.Areas.RRHH.Services.SolicitudRRHH
                     .Include(x => x.aprobador.empleado)
                     .Include(x => x.estado)
                     .Include(x => x.subtipoSolicitud)
-                    .OrderByDescending(x => x.idSolicitudRrhh).Where(x => ((x.idAccSol == SessionPersister.UserId) && x.idEstado != ConstantesGlobales.estadoAnulado) && ((x.usufchCrea >= p) && (x.usufchCrea <= a)) && (x.descSolicitud.Contains(search) || (x.subtipoSolicitud.descSubtipoSolicitud.Contains(search)) || x.estado.nomEst.Contains(search)))
+                    .OrderByDescending(x => x.idSolicitudRrhh).Where(x => (x.idAccSol == SessionPersister.UserId && x.idEstado != ConstantesGlobales.estadoAnulado && x.subtipoSolicitud.idTipoSolicitudRrhh == tipo) && ((x.fchIniSolicitud >= p) && (x.fchIniSolicitud <= a) && (x.fchFinSolicitud >= p) && (x.fchFinSolicitud <= a)) && (x.descSolicitud.Contains(search) || (x.subtipoSolicitud.descSubtipoSolicitud.Contains(search)) || x.estado.nomEst.Contains(search)))
                     .Skip((pagina - 1) * cantidadRegistrosPorPagina)
                     .Take(cantidadRegistrosPorPagina).ToList();
-                var totalDeRegistros = db.tb_SolGastos.Where(x => ((x.idAccRes == SessionPersister.UserId || x.idAccSol == SessionPersister.UserId) && x.idEst != ConstantesGlobales.estadoAnulado && x.modSolGas == modulo) && ((x.usufchCrea >= p) && (x.usufchCrea <= a)) && (x.titSolGas.Contains(search) || (x.obsSolGas.Contains(search)) || x.idSolGas.Contains(search) || x.estado.nomEst.Contains(search))).Count();
+                var totalDeRegistros = db.tb_SolicitudRRHH.Where(x => (x.idAccSol == SessionPersister.UserId && x.idEstado != ConstantesGlobales.estadoAnulado && x.subtipoSolicitud.idTipoSolicitudRrhh == tipo) && ((x.fchIniSolicitud >= p) && (x.fchIniSolicitud <= a) && (x.fchFinSolicitud >= p) && (x.fchFinSolicitud <= a)) && (x.descSolicitud.Contains(search) || (x.subtipoSolicitud.descSubtipoSolicitud.Contains(search)) || x.estado.nomEst.Contains(search))).Count();
                 var modelo = new ViewModels.IndexViewModel();
                 modelo.SoliRRHH = model;
                 modelo.PaginaActual = pagina;
@@ -119,9 +119,36 @@ namespace PortalRoemmers.Areas.RRHH.Services.SolicitudRRHH
             }
             return exec;
         }
+        public Boolean updateEstadoSoliRRHH(string sol)
+        {
+            string commandText = "UPDATE tb_SolicitudRRHH SET idEstado = @idEstado, usuMod=@usuMod , usufchMod=@usufchMod  WHERE idSolicitudRrhh = @idSolicitudRrhh ;";
 
-            
-                
+            using (SqlConnection connection = new SqlConnection(Conexion.connetionString))
+            {
+                SqlCommand command = new SqlCommand(commandText, connection);
+
+                command.Parameters.Add("@idSolicitudRrhh", SqlDbType.VarChar);
+                command.Parameters["@idSolicitudRrhh"].Value = sol;
+                command.Parameters.AddWithValue("@idEstado", ConstantesGlobales.estadoAnulado);
+                command.Parameters.AddWithValue("@usuMod", SessionPersister.Username);
+                command.Parameters.AddWithValue("@usufchMod", DateTime.Now);
+
+                try
+                {
+                    connection.Open();
+                    Int32 rowsAffected = command.ExecuteNonQuery();
+                    connection.Close();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    return false;
+                }
+            }
+        }
+
+
 
 
 

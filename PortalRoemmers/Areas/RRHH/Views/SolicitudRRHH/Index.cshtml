@@ -69,56 +69,56 @@
                 <div class="col-sm-2"></div>
             </div>
         }
-    <div class="row">
-        <div class="row show-grid">
-            <div class="col-lg-1 col-sm-4 col-xs-12">
-                <button id="btnExportar" type="submit" class="btn btn-block btn-outline btn-info">Exportar</button>
-            </div>
-        </div>
         <div class="row">
-            <div class="col-sm-12">
-                <table class="table-bordered table-hover table" data-tablesaw-mode="swipe">
-                    <thead>
-                        <tr>
-                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist"></th>
-                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1">C&oacutedigo</th>
-                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2">Descripción</th>
-                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Fecha de Inicio</th>
-                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Fecha de Fin</th>
-                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="4">Estado</th>
-                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="6">Solicitud</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.SoliRRHH)
-                        {
-                            <tr>
-                                <td class="text-nowrap" align="center">
-                                   <a href="@MyExtensions.ActionUrl("Visualizar", "SolicitudGasto", new {Area="Ventas", id = item.idSolicitudRrhh})" data-toggle="tooltip" title="Visualizar"> <i class="fa fa-eye text-inverse m-r-10"></i> </a>
-                                    @{
-                                        //solo algunos lo ven
-                                        if (item.idEstado == ConstantesGlobales.estadoRegistrado || item.idEstado == ConstantesGlobales.estadoModificado)
-                                        {
-                                            <a href="@MyExtensions.ActionUrl("Modificar", "SolicitudRRHH", new {Area="RRHH", id = item.idSolicitudRrhh})" data-toggle="tooltip" title="Editar"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a>
-                                            <a data-toggle="tooltip" title="Anular" id="sa-params"> <i class="fa fa-close text-danger"></i> </a>
-                                        }
-                                    }
-
-                                </td>
-                                <td>@Html.DisplayFor(modelItem => item.idSolicitudRrhh)</td>
-                                <td>@Html.DisplayFor(modelItem => item.descSolicitud)</td>
-                                <td>@Html.DisplayFor(modelItem => item.fchIniSolicitud)</td>
-                                <td>@Html.DisplayFor(modelItem => item.fchFinSolicitud)</td>
-                                <td>@Html.DisplayFor(modelItem => item.estado.nomEst)</td>
-                                <td>@Html.DisplayFor(modelItem => item.subtipoSolicitud.nomSubtipoSolicitud)</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+            <div class="row show-grid">
+                <div class="col-lg-1 col-sm-4 col-xs-12">
+                    <button id="btnExportar" type="submit" class="btn btn-block btn-outline btn-info">Exportar</button>
+                </div>
             </div>
-        </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <table class="table-bordered table-hover table" data-tablesaw-mode="swipe">
+                        <thead>
+                            <tr>
+                                <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist"></th>
+                                <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1">C&oacutedigo</th>
+                                <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2">Descripción</th>
+                                <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Fecha de Inicio</th>
+                                <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Fecha de Fin</th>
+                                <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="4">Estado</th>
+                                <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="6">Solicitud</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.SoliRRHH)
+                            {
+                                <tr>
+                                    <td class="text-nowrap" align="center">
+                                        <a href="@MyExtensions.ActionUrl("Visualizar", "SolicitudGasto", new {Area="Ventas", id = item.idSolicitudRrhh})" data-toggle="tooltip" title="Visualizar"> <i class="fa fa-eye text-inverse m-r-10"></i> </a>
+                                        @{
+                                            //solo algunos lo ven
+                                            if (item.idEstado == ConstantesGlobales.estadoRegistrado || item.idEstado == ConstantesGlobales.estadoModificado)
+                                            {
+                                                <a href="@MyExtensions.ActionUrl("Modificar", "SolicitudRRHH", new {Area="RRHH", id = item.idSolicitudRrhh})" data-toggle="tooltip" title="Editar"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a>
+                                                <a data-toggle="tooltip" title="Anular" id="sa-params"> <i class="fa fa-close text-danger"></i> </a>
+                                            }
+                                        }
 
-    </div>
+                                    </td>
+                                    <td>@Html.DisplayFor(modelItem => item.idSolicitudRrhh)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.descSolicitud)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.fchIniSolicitud)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.fchFinSolicitud)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.estado.nomEst)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.subtipoSolicitud.nomSubtipoSolicitud)</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
         <div class="row">
             <div class="col-sm-12">
                 @{Html.RenderPartial("_paginador", Model);}
@@ -128,10 +128,63 @@
 
     <div class="panel-footer"></div>
 </div>
-<script>
-    $(document).ready(function () {
-        $('.datepicker').datepicker({
-            dateFormat: 'dd/mm/yy'
+
+
+
+
+@section scripts
+{
+    <script src="~/Areas/RRHH/Scripts/RRHH.js"></script>
+    @Scripts.Render("~/Bundles/autocompletado_JS")
+    @Scripts.Render("~/Bundles/selectBusqueda_JS")
+    @Scripts.Render("~/Bundles/datepicker_JS")
+    @Scripts.Render("~/Bundles/bloqueo_JS")
+
+    <script>
+        $(document).ready(function () {
+            $('.datepicker').datepicker({
+                dateFormat: 'dd/mm/yy'
+            });
+            $('table tbody tr a#sa-params').click(function () {
+                var idSolicitudRrhh = $(this).parent().parents('tr').find('td').eq(1).text();
+
+                swal({
+                    title: "¿Estás seguro?",
+                    text: "¡No se podrá aprobar esta solicitud! \n",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Sí, anularlo!",
+                    cancelButtonText: "No, no anularlo!",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                }, function (isConfirm) {
+                    if (isConfirm) {
+                        var Options = {};
+                        Options.url = "/SolicitudRRHH/anularSolicitud";
+                        Options.type = "POST";
+                        Options.data = JSON.stringify({ idSolicitudRrhh: idSolicitudRrhh });
+                        Options.datatype = "json";
+                        Options.contentType = "application/json";
+                        Options.success = function (data) {
+
+                            if (data) {
+                                swal("Anulado!", "Tu solicitud ha sido anulada.", "success");
+                                setTimeout(function () {
+                                    location.reload();
+                                }, 2000);
+                            } else {
+                                swal("Ocurrio un problema!", "Tu solicitud no ha sido anulada.", "error");
+                            }
+                        };
+                        Options.error = function () { alert("Error in Getting States!!"); unblock(); };
+                        $.ajax(Options);
+
+                    } else {
+                        swal("Cancelado", "Tu solicitud esta seguro.)", "error");
+                    }
+                });
+            });
         });
-    });    
-</script>
+    </script>
+}

@@ -70,14 +70,15 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             ViewBag.primero = inicio.ToString("dd/MM/yyyy");
             ViewBag.actual = fin.ToString("dd/MM/yyyy");
             //-----------------------------
-            var parametro = p.selectResultado(ConstantesGlobales.Com_Usu_Pre_Cas_03).ToList();
-            var usuario = _usu.obtenerUsuarios().ToList();
-            var result = parametro.Join(usuario, e => e.value, d => d.idAcc, (e, d) => new { e.value, d.empleado.nomComEmp });
+            //var parametro = p.selectResultado(ConstantesGlobales.Com_Usu_Pre_Cas_03).ToList();
+            //var usuario = _usu.obtenerUsuarios().ToList();
+            //var result = parametro.Join(usuario, e => e.value, d => d.idAcc, (e, d) => new { e.value, d.empleado.nomComEmp });
             //-----------------------------
             //ViewBag.gerentesProd = new SelectList(result.Select(x => new { idAccResGP = x.value, nombre = x.nomComEmp }), "idAccResGP", "nombre");
             //ViewBag.actividades = new SelectList(_act.obtenerActividades().Where(x => x.idAccRes == idAcc && x.estimacion != null && ((DateTime.Today >= x.fchIniVig) && (DateTime.Today <= x.fchFinVig))).Select(x => new { idActividades = x.idActiv, nomActiv = x.nomActiv }), "idActividades", "nomActiv");
             //-----------------------------
-            var model = _soli.obtenerTodos(pagina, search, ConstantesGlobales.mod_marketing, inicio.ToString(), fin.ToString());
+
+            var model = _soli.obtenerTodos(pagina, search, ConstantesGlobales.tipoVacaciones, inicio.ToString(), fin.ToString());
             //-----------------------------
             return View(model);
         }
@@ -182,6 +183,12 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             TempData["mensaje"] = mensaje;
 
             return RedirectToAction("Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search });
+        }
+
+        public JsonResult anularSolicitud(string idSolicitudRRHH)
+        {
+            var variable = _soli.updateEstadoSoliRRHH(idSolicitudRRHH);
+            return Json(variable, JsonRequestBehavior.AllowGet);
         }
 
 
