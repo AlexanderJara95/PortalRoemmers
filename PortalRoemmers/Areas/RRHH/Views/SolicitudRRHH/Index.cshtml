@@ -69,61 +69,170 @@
                 <div class="col-sm-2"></div>
             </div>
         }
-        <div class="row">
-            <div class="row show-grid">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item active">
+                <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Mis Solicitudes</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Admin Solicitudes</a>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                <div class="">
+                    <!--<div class="row show-grid">
                 <div class="col-lg-1 col-sm-4 col-xs-12">
                     <button id="btnExportar" type="submit" class="btn btn-block btn-outline btn-info">Exportar</button>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    <table class="table-bordered table-hover table" data-tablesaw-mode="swipe">
-                        <thead>
-                            <tr>
-                                <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist"></th>
-                                <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1">C&oacutedigo</th>
-                                <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2">Descripción</th>
-                                <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Fecha de Inicio</th>
-                                <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Fecha de Fin</th>
-                                <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="4">Estado</th>
-                                <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="6">Solicitud</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model.SoliRRHH)
-                            {
-                                <tr>
-                                    <td class="text-nowrap" align="center">
-                                        <a href="@MyExtensions.ActionUrl("Visualizar", "SolicitudGasto", new {Area="Ventas", id = item.idSolicitudRrhh})" data-toggle="tooltip" title="Visualizar"> <i class="fa fa-eye text-inverse m-r-10"></i> </a>
-                                        @{
-                                            //solo algunos lo ven
-                                            if (item.idEstado == ConstantesGlobales.estadoRegistrado || item.idEstado == ConstantesGlobales.estadoModificado)
+        </div>-->
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <dl>
+                                <dt>MIS SOLICITUDES</dt>
+                            </dl>
+                        </div>
+                        <div class="col-sm-12">
+                            <table class="table-bordered table-hover table" data-tablesaw-mode="swipe">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist"></th>
+                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1">C&oacutedigo</th>
+                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2">Descripción</th>
+                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Fecha de Inicio</th>
+                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Fecha de Fin</th>
+                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="4">Estado</th>
+                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="6">Solicitud</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.SoliRRHH)
+                                    {
+                                        if (item.idAccApro != ViewBag.userId)
                                             {
-                                                <a href="@MyExtensions.ActionUrl("Modificar", "SolicitudRRHH", new {Area="RRHH", id = item.idSolicitudRrhh})" data-toggle="tooltip" title="Editar"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a>
-                                                <a data-toggle="tooltip" title="Anular" id="sa-params"> <i class="fa fa-close text-danger"></i> </a>
+                                    <tr>
+                                        <td class="text-nowrap" align="center">
+                                            @{
+                                                //solo algunos lo ven
+                                                if (item.idEstado == ConstantesGlobales.estadoRegistrado || item.idEstado == ConstantesGlobales.estadoModificado || item.idEstado == ConstantesGlobales.estadoRechazado)
+                                                {
+                                                    <a href="@MyExtensions.ActionUrl("Visualizar", "SolicitudGasto", new { Area = "Ventas", id = item.idSolicitudRrhh })" data-toggle="tooltip" title="Visualizar"> <i class="fa fa-eye text-inverse m-r-10"></i> </a>
+                                                    <a href="@MyExtensions.ActionUrl("Modificar", "SolicitudRRHH", new { Area = "RRHH", id = item.idSolicitudRrhh })" data-toggle="tooltip" title="Editar"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a>
+                                                    <a data-toggle="tooltip" title="Anular" id="sa-params"> <i class="fa fa-close text-danger"></i> </a>
+                                                }
+                                                else
+                                                {
+                                                    if (item.estado.nomEst == "APROBADO")
+                                                    {
+                                                        <strong style="color: #2cabe3">LISTO</strong>
+                                                    }
+                                                }
                                             }
-                                        }
 
-                                    </td>
-                                    <td>@Html.DisplayFor(modelItem => item.idSolicitudRrhh)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.descSolicitud)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.fchIniSolicitud)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.fchFinSolicitud)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.estado.nomEst)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.subtipoSolicitud.nomSubtipoSolicitud)</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
+                                        </td>
+                                            <td>@Html.DisplayFor(modelItem => item.idSolicitudRrhh)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.descSolicitud)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.fchIniSolicitud)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.fchFinSolicitud)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.estado.nomEst)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.subtipoSolicitud.nomSubtipoSolicitud)</td>
+                                        </tr>
+                                            }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        @{Html.RenderPartial("_paginador", Model);}
+                    </div>
                 </div>
             </div>
+            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                <div class="">
+                    <!--<div class="row show-grid">
+                            <div class="col-lg-1 col-sm-4 col-xs-12">
+                                <button id="btnExportar" type="submit" class="btn btn-block btn-outline btn-info">Exportar</button>
+                            </div>
+                    </div>-->
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <dl>
+                                <dt>ADMIN SOLICITUDES</dt>
+                            </dl>
+                        </div>
+                        <div class="col-sm-12">
+                            <table class="table-bordered table-hover table" data-tablesaw-mode="swipe">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist"></th>
+                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1">C&oacutedigo</th>
+                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2">Descripción</th>
+                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Fecha de Inicio</th>
+                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Fecha de Fin</th>
+                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="4">Estado</th>
+                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="6">Usuario</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.SoliRRHH)
+                                    {
+                                        if (item.idAccApro == ViewBag.userId)
+                                            {
+                                    <tr>
+                                        <td class="text-nowrap" align="center">
+                                            <!--<a href="MyExtensions.ActionUrl("Visualizar", "SolicitudGasto", new { Area = "Ventas", id = item.idSolicitudRrhh })" data-toggle="tooltip" title="Visualizar"> <i class="fa fa-eye text-inverse m-r-10"></i> </a>-->
+                                            @{
+                                                //solo algunos lo ven
+                                                if (item.idEstado == ConstantesGlobales.estadoRegistrado || item.idEstado == ConstantesGlobales.estadoModificado)
+                                                {
+                                                    <!--<a href="MyExtensions.ActionUrl("Modificar", "SolicitudRRHH", new { Area = "RRHH", id = item.idSolicitudRrhh })" data-toggle="tooltip" title="Editar"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a>-->
+                                                    <!--<a data-toggle="tooltip" title="Anular" id="sa-params"> <i class="fa fa-close text-danger"></i> </a>-->
+                                                    <select data-toggle="tooltip" title="Cambiar Estado" id="sa-params" class="form-select">
+                                                        <option selected>Cambiar estado</option>
+                                                        <option value="9">Aprobar</option>
+                                                        <option value="12">Rechazar</option>
+                                                    </select>
+                                                }
+                                                else
+                                                {
+                                                    if (item.estado.nomEst == "APROBADO")
+                                                    {
+                                                        <strong style="color: #2cabe3">LISTO</strong>
+                                                    }
+                                                    if (item.estado.nomEst == "RECHAZADO")
+                                                    {
+                                                        <strong style="color: #dd6b55">LISTO</strong>
+                                                    }
+                                                }
+                                            }
 
-        </div>
-        <div class="row">
-            <div class="col-sm-12">
-                @{Html.RenderPartial("_paginador", Model);}
+                                        </td>
+                                        <td>@Html.DisplayFor(modelItem => item.idSolicitudRrhh)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.descSolicitud)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.fchIniSolicitud)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.fchFinSolicitud)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.estado.nomEst)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.solicitante.username)</td>
+                                    </tr>
+                                            }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        @{Html.RenderPartial("_paginador", Model);}
+                    </div>
+                </div>
+
             </div>
         </div>
+
+
     </div>
 
     <div class="panel-footer"></div>
@@ -142,48 +251,99 @@
 
     <script>
         $(document).ready(function () {
+            $("table tbody tr").each(function () {
+                var estado = $(this).parent().parents('tr').find('td').eq(5).val();
+                console.log(estado);
+            });
             $('.datepicker').datepicker({
                 dateFormat: 'dd/mm/yy'
             });
-            $('table tbody tr a#sa-params').click(function () {
+            $('table tbody tr select#sa-params').click(function () {
                 var idSolicitudRrhh = $(this).parent().parents('tr').find('td').eq(1).text();
+                var slc = $(this).parent().parents('tr').find('select').val();
+                var rpta = true;
+                if (slc == '9') {                    
+                    swal({
+                        title: "¿Estás seguro?",
+                        text: "¡Va a aprobar esta solicitud! \n",
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#55c7dd",
+                        confirmButtonText: "Sí, Aprobar!",
+                        cancelButtonText: "No, no aprobarlo aún",
+                        closeOnConfirm: false,
+                        closeOnCancel: false
+                    }, function (isConfirm) {
+                        if (isConfirm) {
+                            var Options = {};
+                            Options.url = "/SolicitudRRHH/aprobarSolicitud";
+                            Options.type = "POST";
+                            Options.data = JSON.stringify({ idSolicitudRrhh: idSolicitudRrhh });
+                            Options.datatype = "json";
+                            Options.contentType = "application/json";
+                            Options.success = function (data) {
 
-                swal({
-                    title: "¿Estás seguro?",
-                    text: "¡No se podrá aprobar esta solicitud! \n",
-                    type: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#DD6B55",
-                    confirmButtonText: "Sí, anularlo!",
-                    cancelButtonText: "No, no anularlo!",
-                    closeOnConfirm: false,
-                    closeOnCancel: false
-                }, function (isConfirm) {
-                    if (isConfirm) {
-                        var Options = {};
-                        Options.url = "/SolicitudRRHH/anularSolicitud";
-                        Options.type = "POST";
-                        Options.data = JSON.stringify({ idSolicitudRrhh: idSolicitudRrhh });
-                        Options.datatype = "json";
-                        Options.contentType = "application/json";
-                        Options.success = function (data) {
+                                if (data) {
+                                    swal("Aprobado!", "La solicitud ha sido aprobada.", "success");
+                                    setTimeout(function () {
+                                        location.reload();
+                                    }, 2000);
+                                } else {
+                                    swal("Ocurrio un problema!", "La solicitud no ha sido aprobada.", "error");
+                                }
+                            };
+                            Options.error = function () { alert("Error in Getting States!!"); unblock(); };
+                            $.ajax(Options);
 
-                            if (data) {
-                                swal("Anulado!", "Tu solicitud ha sido anulada.", "success");
-                                setTimeout(function () {
-                                    location.reload();
-                                }, 2000);
-                            } else {
-                                swal("Ocurrio un problema!", "Tu solicitud no ha sido anulada.", "error");
-                            }
-                        };
-                        Options.error = function () { alert("Error in Getting States!!"); unblock(); };
-                        $.ajax(Options);
+                        } else {
+                            swal("Cancelado", "La solicitud no ha sido aprobada.", "error");
+                            rpta = false;
+                            console.log("9", rpta);
+                        }
+                    });
+                }
 
-                    } else {
-                        swal("Cancelado", "Tu solicitud esta seguro.)", "error");
-                    }
-                });
+                if (slc == '12') {
+                    swal({
+                        title: "¿Estás seguro?",
+                        text: "¡Va a desaprobar esta solicitud! \n",
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#DD6B55",
+                        confirmButtonText: "Sí, desaprobarlo!",
+                        cancelButtonText: "No, no desaprobarlo!",
+                        closeOnConfirm: false,
+                        closeOnCancel: false
+                    }, function (isConfirm) {
+                        if (isConfirm) {
+                            var Options = {};
+                            Options.url = "/SolicitudRRHH/rechazarSolicitud";
+                            Options.type = "POST";
+                            Options.data = JSON.stringify({ idSolicitudRrhh: idSolicitudRrhh });
+                            Options.datatype = "json";
+                            Options.contentType = "application/json";
+                            Options.success = function (data) {
+
+                                if (data) {
+                                    swal("Anulado!", "La solicitud ha sido desaprobada.", "success");
+                                    setTimeout(function () {
+                                        location.reload();
+                                    }, 2000);
+                                } else {
+                                    swal("Ocurrio un problema!", "La solicitud no ha sido desaprobada.", "error");
+                                }
+                            };
+                            Options.error = function () { alert("Error in Getting States!!"); unblock(); };
+                            $.ajax(Options);
+
+                        } else {
+                            swal("Cancelado", "Tu solicitud esta segura.", "error");
+                            rpta = false;
+                            console.log("12", rpta);
+                            $(this).parent().parents('tr').find('select option:first').prop('selected', true);
+                        }
+                    });
+                }
             });
         });
     </script>

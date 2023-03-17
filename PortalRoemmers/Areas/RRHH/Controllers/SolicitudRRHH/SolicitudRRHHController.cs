@@ -69,6 +69,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             ViewBag.search = search;
             ViewBag.primero = inicio.ToString("dd/MM/yyyy");
             ViewBag.actual = fin.ToString("dd/MM/yyyy");
+            ViewBag.userId = SessionPersister.UserId;
             //-----------------------------
             //var parametro = p.selectResultado(ConstantesGlobales.Com_Usu_Pre_Cas_03).ToList();
             //var usuario = _usu.obtenerUsuarios().ToList();
@@ -79,6 +80,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             //-----------------------------
 
             var model = _soli.obtenerTodos(pagina, search, ConstantesGlobales.tipoVacaciones, inicio.ToString(), fin.ToString());
+
             //-----------------------------
             return View(model);
         }
@@ -124,7 +126,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             userSoliRRHH.usufchCrea = model.usufchCrea;
 
             if (emple.idEmpJ != ""){
-                model.idAccApro = emple.idEmpJ;
+                model.idAccApro = _usu.obtenerItemXEmpleado(emple.idEmpJ).idAcc;
                 model.idSubTipoSolicitudRrhh = ConstantesGlobales.subTipoVacaciones;
                 try
                 {
@@ -165,6 +167,10 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
         public ActionResult Modificar(SolicitudRRHHModels model)
         {
             var mensaje="";
+            if(model.idEstado == ConstantesGlobales.estadoRechazado)
+            {
+                model.idEstado = ConstantesGlobales.estadoModificado;
+            }
             try
             {
                 if (_soli.modificar(model))
@@ -187,7 +193,19 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
 
         public JsonResult anularSolicitud(string idSolicitudRRHH)
         {
-            var variable = _soli.updateEstadoSoliRRHH(idSolicitudRRHH);
+            var variable = _soli.updateEstadoSoliRRHH(idSolicitudRRHH, ConstantesGlobales.estadoAnulado);
+            return Json(variable, JsonRequestBehavior.AllowGet);
+        }
+        //9
+        public JsonResult aprobarSolicitud(string idSolicitudRRHH)
+        {
+            var variable = _soli.updateEstadoSoliRRHH(idSolicitudRRHH, ConstantesGlobales.estadoAprobado);
+            return Json(variable, JsonRequestBehavior.AllowGet);
+        }
+        //12
+        public JsonResult rechazarSolicitud(string idSolicitudRRHH)
+        {
+            var variable = _soli.updateEstadoSoliRRHH(idSolicitudRRHH, ConstantesGlobales.estadoRechazado);
             return Json(variable, JsonRequestBehavior.AllowGet);
         }
 

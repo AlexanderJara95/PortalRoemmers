@@ -32,16 +32,15 @@ namespace PortalRoemmers.Areas.RRHH.Services.SolicitudRRHH
 
             using (var db = new ApplicationDbContext())
             {
-
                 var model = db.tb_SolicitudRRHH
                     .Include(x => x.solicitante.empleado)
                     .Include(x => x.aprobador.empleado)
                     .Include(x => x.estado)
                     .Include(x => x.subtipoSolicitud)
-                    .OrderByDescending(x => x.idSolicitudRrhh).Where(x => (x.idAccSol == SessionPersister.UserId && x.idEstado != ConstantesGlobales.estadoAnulado && x.subtipoSolicitud.idTipoSolicitudRrhh == tipo) && ((x.fchIniSolicitud >= p) && (x.fchIniSolicitud <= a) && (x.fchFinSolicitud >= p) && (x.fchFinSolicitud <= a)) && (x.descSolicitud.Contains(search) || (x.subtipoSolicitud.descSubtipoSolicitud.Contains(search)) || x.estado.nomEst.Contains(search)))
+                    .OrderByDescending(x => x.idSolicitudRrhh).Where(x => ((x.idAccSol == SessionPersister.UserId || x.idAccApro == SessionPersister.UserId) && x.idEstado != ConstantesGlobales.estadoAnulado && x.subtipoSolicitud.idTipoSolicitudRrhh == tipo) && ((x.fchIniSolicitud >= p) && (x.fchIniSolicitud <= a) && (x.fchFinSolicitud >= p) && (x.fchFinSolicitud <= a)) && (x.descSolicitud.Contains(search) || (x.subtipoSolicitud.descSubtipoSolicitud.Contains(search)) || x.estado.nomEst.Contains(search)))
                     .Skip((pagina - 1) * cantidadRegistrosPorPagina)
                     .Take(cantidadRegistrosPorPagina).ToList();
-                var totalDeRegistros = db.tb_SolicitudRRHH.Where(x => (x.idAccSol == SessionPersister.UserId && x.idEstado != ConstantesGlobales.estadoAnulado && x.subtipoSolicitud.idTipoSolicitudRrhh == tipo) && ((x.fchIniSolicitud >= p) && (x.fchIniSolicitud <= a) && (x.fchFinSolicitud >= p) && (x.fchFinSolicitud <= a)) && (x.descSolicitud.Contains(search) || (x.subtipoSolicitud.descSubtipoSolicitud.Contains(search)) || x.estado.nomEst.Contains(search))).Count();
+                var totalDeRegistros = db.tb_SolicitudRRHH.Where(x => ((x.idAccSol == SessionPersister.UserId || x.idAccApro == SessionPersister.UserId) && x.idEstado != ConstantesGlobales.estadoAnulado && x.subtipoSolicitud.idTipoSolicitudRrhh == tipo) && ((x.fchIniSolicitud >= p) && (x.fchIniSolicitud <= a) && (x.fchFinSolicitud >= p) && (x.fchFinSolicitud <= a)) && (x.descSolicitud.Contains(search) || (x.subtipoSolicitud.descSubtipoSolicitud.Contains(search)) || x.estado.nomEst.Contains(search))).Count();
                 var modelo = new ViewModels.IndexViewModel();
                 modelo.SoliRRHH = model;
                 modelo.PaginaActual = pagina;
@@ -119,7 +118,7 @@ namespace PortalRoemmers.Areas.RRHH.Services.SolicitudRRHH
             }
             return exec;
         }
-        public Boolean updateEstadoSoliRRHH(string sol)
+        public Boolean updateEstadoSoliRRHH(string sol, string estado)
         {
             string commandText = "UPDATE tb_SolicitudRRHH SET idEstado = @idEstado, usuMod=@usuMod , usufchMod=@usufchMod  WHERE idSolicitudRrhh = @idSolicitudRrhh ;";
 
@@ -129,7 +128,7 @@ namespace PortalRoemmers.Areas.RRHH.Services.SolicitudRRHH
 
                 command.Parameters.Add("@idSolicitudRrhh", SqlDbType.VarChar);
                 command.Parameters["@idSolicitudRrhh"].Value = sol;
-                command.Parameters.AddWithValue("@idEstado", ConstantesGlobales.estadoAnulado);
+                command.Parameters.AddWithValue("@idEstado", estado);
                 command.Parameters.AddWithValue("@usuMod", SessionPersister.Username);
                 command.Parameters.AddWithValue("@usufchMod", DateTime.Now);
 
@@ -147,10 +146,5 @@ namespace PortalRoemmers.Areas.RRHH.Services.SolicitudRRHH
                 }
             }
         }
-
-
-
-
-
     }
 }
