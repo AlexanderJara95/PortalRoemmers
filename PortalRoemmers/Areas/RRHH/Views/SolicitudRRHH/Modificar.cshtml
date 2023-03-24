@@ -2,7 +2,7 @@
 @using PortalRoemmers.Security
 @model PortalRoemmers.Areas.RRHH.Models.SolicitudRRHH.SolicitudRRHHModels
 @{
-    ViewBag.Title = "Registrar Marketing";
+    ViewBag.Title = "Modificar Solicitud RRHH";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 @section css {
@@ -18,13 +18,21 @@
     @(new HtmlString(msg))
     <div class="row">
         <div class="col-md-12">
-            @using (Html.BeginForm("Modificar", "SolicitudRRHH", FormMethod.Post, new { id = "newSol", enctype = "multipart/form-data", @class = "form-horizontal form-material" }))
+            @using (Html.BeginForm("Modificar", "SolicitudRRHH", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal form-material" }))
             {
                 @Html.AntiForgeryToken()
                 <div class="col-md-12">
                     <section id="wrapper" class="block1">
                         <div class="panel-group" id="exampleAccordionDefault" aria-multiselectable="true" role="tablist">
                             <div class="panel">
+                                <div class="row">
+                                    <div class="col-md-12 text-center">
+                                        <dl>
+                                            <dt>VACACIONES DISPONIBLES</dt>
+                                            <dd style="color: #2cabe3">@ViewBag.diasRestantes DIAS</dd>
+                                        </dl>
+                                    </div>
+                                </div>
                                 <div class="panel-heading" id="exampleHeadingDefaultOne" role="tab"> <a class="panel-title" data-toggle="collapse" href="#exampleCollapseDefaultOne" data-parent="#exampleAccordionDefault" aria-expanded="true" aria-controls="exampleCollapseDefaultOne"> Datos de la Solicitud </a> </div>
                                 <div class="panel-collapse collapse in" id="exampleCollapseDefaultOne" aria-labelledby="exampleHeadingDefaultOne" role="tabpanel">
                                     @Html.HiddenFor(model => model.idEstado)
@@ -36,6 +44,7 @@
                                     @Html.HiddenFor(model => model.usufchCrea)
                                     @Html.HiddenFor(model => model.usuMod)
                                     @Html.HiddenFor(model => model.usufchMod)
+                                    @Html.Hidden("diasRestantes",(int)ViewBag.diasRestantes)
 
                                     <div class="panel-body">
                                         <div class="row">
