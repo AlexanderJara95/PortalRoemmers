@@ -134,7 +134,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             userSoliRRHH.usufchCrea = model.usufchCrea;
             if (validarLimiteVacaciones(model.fchIniSolicitud,model.fchFinSolicitud, diasRestantes))
             {
-                if (emple.idEmpJ != "")
+                if (emple.idEmpJ != "" || emple.idEmpJ != null)
                 {
                     model.idAccApro = _usu.obtenerItemXEmpleado(emple.idEmpJ).idAcc;
                     model.idSubTipoSolicitudRrhh = ConstantesGlobales.subTipoVacaciones;
@@ -150,12 +150,14 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
                         {
                             TempData["mensaje"] = "<div id='warning' class='alert alert-warning'>" + "Error en guardar el registro" + "</div>";
                         }
-
                     }
                     catch (Exception e)
                     {
                         e.Message.ToString();
                     }
+                }
+                else{
+                    TempData["mensaje"] = "<div id='warning' class='alert alert-warning'>" + "Se necesita asignar Jefe" + "</div>";
                 }
             }
             else
@@ -166,6 +168,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             return RedirectToAction("Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search });
 
         }
+
         [HttpGet]
         [EncryptedActionParameter]
         [CustomAuthorize(Roles = "000003,000407")]
@@ -308,8 +311,6 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             var variable = _soli.updateEstadoSoliRRHH(idSolicitudRRHH, ConstantesGlobales.estadoRechazado);
             return Json(variable, JsonRequestBehavior.AllowGet);
         }
-
-
 
 
     }
