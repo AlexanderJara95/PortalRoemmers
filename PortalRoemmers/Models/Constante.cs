@@ -156,6 +156,13 @@ public static class ConstantesGlobales
     public static string tipDocReglamento = "0000002";
     public static string tipDocSeguridad = "0000003";
     public static string tipDocCovid = "0000004";
+
+    //tabla tb_subtipoRRHH
+    public static string subTipoVacaciones = "1"; //vacaciones
+    public static string tipoVacaciones = "1";//tipo vacaciones
+    public static string tipoDescansos = "2";//tipo descansos médicos
+    public static string tipoLicencias = "3";//tipo licencias
+
 }
 
 public class Sessiones

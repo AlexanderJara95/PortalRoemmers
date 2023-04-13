@@ -57,6 +57,21 @@ namespace PortalRoemmers.Areas.Sistemas.Services.Usuario
             }
             return cuenta;
         }
+        public UsuarioModels obtenerItemXEmpleado(string id)
+        {
+            UsuarioModels cuenta = new UsuarioModels();
+
+            if (id != null)
+            {
+                using (var db = new ApplicationDbContext())
+                {
+                    cuenta = db.tb_Usuario.Include(x => x.empleado).Include(x => x.empleado.cargo).Include(x => x.empleado.area).Include(x => x.empleado.afp).Include(x => x.aprobacion).Where(y => y.idEmp == id).First();
+                    return cuenta;
+                }
+
+            }
+            return cuenta;
+        }
         public Boolean crear(UsuarioModels model)
         {
             Usu_RolModels ur = new Usu_RolModels();
