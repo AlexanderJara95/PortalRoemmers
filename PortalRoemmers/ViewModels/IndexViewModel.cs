@@ -27,6 +27,7 @@ using PortalRoemmers.Areas.Contabilidad.Models.Letra;
 using PortalRoemmers.Areas.RRHH.Models.Formulario;
 using PortalRoemmers.Areas.Marketing.Models.FarmacoVigilancia;
 using PortalRoemmers.Areas.RRHH.Models.Documento;
+using PortalRoemmers.Areas.RRHH.Models.SolicitudRRHH;
 
 namespace PortalRoemmers.ViewModels
 {
@@ -134,6 +135,12 @@ namespace PortalRoemmers.ViewModels
         //Documento RRHH
         public List<TipoDocumentoRRHHModels> TipDocRRHH { get; set; }
         public List<DocumentoRRHHModels> DocRRHH { get; set; }
+
+        //Solicitud RRHH
+        public List<SolicitudRRHHModels> SoliRRHH { get; set; }
+        public List<SubtipoSolicitudRRHHModels> SubTipoSoliRRHH { get; set; }
+        public List<TipoSolicitudRRHHModels> TipoSoliRRHH { get; set; }
+        public List<UserSolicitudRRHHModels> userSoliRRHH { get; set; }
 
 
         //Almacen****************************************************

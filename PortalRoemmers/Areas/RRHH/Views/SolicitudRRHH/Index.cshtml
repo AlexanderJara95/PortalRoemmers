@@ -1,0 +1,406 @@
+﻿@model  PortalRoemmers.ViewModels.IndexViewModel
+@using PortalRoemmers.Helpers
+@using PortalRoemmers.Security
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section css {
+    @Styles.Render("~/Content/tablaResponsive_CSS")
+    @Styles.Render("~/Content/Galeria_CSS")
+    @Styles.Render("~/Content/sweetalert_CSS")
+    @Styles.Render("~/Content/selectBusqueda_CSS")
+    @Styles.Render("~/Content/datepicker_CSS")
+}
+<div class="panel panel-default">
+    <div class="panel-heading box-title m-b-0"><h2>Mantenimiento de Solicitud de Vacaciones</h2></div>
+    <div class="panel-body">
+        <div class="form-group">
+            @{ string v = ""; try { v = TempData["mensaje"].ToString(); } catch { }}
+            @(new HtmlString(v))
+        </div>
+        @using (Html.BeginForm("Index", "SolicitudRRHH", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista }, FormMethod.Post))
+        {
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="form-group">
+                        <label for="desMen">DESDE</label>
+                        <input class="form-control form-control-line datepicker" id="fchEveSolGasI" name="fchEveSolGasI" placeholder="dd/mm/aaaa" autocomplete="off" value="@ViewBag.primero">
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="form-group">
+                        <label for="desMen">HASTA</label>
+                        <input class="form-control form-control-line datepicker" id="fchEveSolGasF" name="fchEveSolGasF" placeholder="dd/mm/aaaa" autocomplete="off" value="@ViewBag.actual">
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <span class="input-group-btn">
+                        <button class="btn waves-effect waves-light btn-info">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </span>
+                </div>
+            </div>
+        }
+        <br />
+
+        @using (Html.BeginForm("Registrar", "SolicitudRRHH", new { Area = "RRHH" }, FormMethod.Get))
+        {
+            @Html.Hidden("diasRestantes", (int)ViewBag.diasRestantes)
+            <div class="col-sm-12">
+                <div class="col-sm-2"></div>
+                <div class="col-sm-8">
+                    <div class="user-btm-box">
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <dl>
+                                    <dt>INGRESE LOS DATOS DE SUS VACACIONES</dt>
+                                    <dd>Puede crear varias solicitudes</dd>
+                                </dl>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 text-center">
+                                <dl>
+                                    <dt>VACACIONES DISPONIBLES</dt>
+                                    <dd style="color:#2cabe3">@ViewBag.diasRestantes DIAS</dd>
+                                </dl>
+                            </div>
+                            <div class="col-md-6 text-center">
+                                <dl>
+                                    <dt>VACACIONES UTILIZADAS</dt>
+                                    <dd style="">@ViewBag.diasUtilizados DIAS</dd>
+                                </dl>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <button type="submit" class="btn btn-info btn-rounded">Crear Solicitud</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2"></div>
+            </div>
+        }
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item active">
+                <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Mis Solicitudes</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Admin Solicitudes</a>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                <div class="">
+                    <!--<div class="row show-grid">
+                        <div class="col-lg-1 col-sm-4 col-xs-12">
+                            <button id="btnExportar" type="submit" class="btn btn-block btn-outline btn-info">Exportar</button>
+                        </div>
+                </div>-->
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <dl>
+                                <dt>MIS SOLICITUDES</dt>
+                            </dl>
+                        </div>
+                        <div class="col-sm-12">
+                            <table class="table-bordered table-hover table" data-tablesaw-mode="swipe">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist"></th>
+                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1">C&oacutedigo</th>
+                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2">Descripción</th>
+                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Fecha de Inicio</th>
+                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Fecha de Fin</th>
+                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="4">Estado</th>
+                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="6">Solicitud</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.SoliRRHH)
+                                    {
+                                        if (item.idAccApro != ViewBag.userId)
+                                        {
+                                            <tr>
+                                                <td class="text-nowrap" align="center">
+                                                    @{
+                                                        //solo algunos lo ven
+                                                        if (item.idEstado == ConstantesGlobales.estadoRegistrado || item.idEstado == ConstantesGlobales.estadoModificado || item.idEstado == ConstantesGlobales.estadoRechazado)
+                                                        {
+                                                            <a href="@MyExtensions.ActionUrl("Visualizar", "SolicitudRRHH", new { Area = "RRHH", id = item.idSolicitudRrhh })" data-toggle="tooltip" title="Visualizar"> <i class="fa fa-eye text-inverse m-r-10"></i> </a>
+                                                            <a href="@MyExtensions.ActionUrl("Modificar", "SolicitudRRHH", new { Area = "RRHH", id = item.idSolicitudRrhh, diasRestantes = ViewBag.diasRestantes })" data-toggle="tooltip" title="Editar"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a>
+                                                            <a data-toggle="tooltip" title="Anular" id="sa-params-anul"> <i class="fa fa-close text-danger"></i> </a>
+                                                        }
+                                                        else
+                                                        {
+                                                            if (item.estado.nomEst == "APROBADO")
+                                                            {
+                                                                <strong style="color: #2cabe3">LISTO</strong>
+                                                            }
+                                                        }
+                                                    }
+
+                                                </td>
+                                                <td>@Html.DisplayFor(modelItem => item.idSolicitudRrhh)</td>
+                                                <td>@Html.DisplayFor(modelItem => item.descSolicitud)</td>
+                                                <td>@Html.DisplayFor(modelItem => item.fchIniSolicitud)</td>
+                                                <td>@Html.DisplayFor(modelItem => item.fchFinSolicitud)</td>
+                                                <td>@Html.DisplayFor(modelItem => item.estado.nomEst)</td>
+                                                <td>@Html.DisplayFor(modelItem => item.subtipoSolicitud.nomSubtipoSolicitud)</td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        @{Html.RenderPartial("_paginador", Model);}
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                <div class="">
+                    <!--<div class="row show-grid">
+                        <div class="col-lg-1 col-sm-4 col-xs-12">
+                            <button id="btnExportar" type="submit" class="btn btn-block btn-outline btn-info">Exportar</button>
+                        </div>
+                </div>-->
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <dl>
+                                <dt>ADMIN SOLICITUDES</dt>
+                            </dl>
+                        </div>
+                        <div class="col-sm-12">
+                            <table class="table-bordered table-hover table" data-tablesaw-mode="swipe">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist"></th>
+                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1">C&oacutedigo</th>
+                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2">Descripción</th>
+                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Fecha de Inicio</th>
+                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Fecha de Fin</th>
+                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="4">Estado</th>
+                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="6">Usuario</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.SoliRRHH)
+                                    {
+                                        if (item.idAccApro == ViewBag.userId)
+                                        {
+
+                                            <tr>
+                                                <td class="text-nowrap" align="center">
+                                                    <!--<a href="MyExtensions.ActionUrl("Visualizar", "SolicitudGasto", new { Area = "Ventas", id = item.idSolicitudRrhh })" data-toggle="tooltip" title="Visualizar"> <i class="fa fa-eye text-inverse m-r-10"></i> </a>-->
+                                                    @{
+                                                        //solo algunos lo ven
+                                                        if (item.idEstado == ConstantesGlobales.estadoRegistrado || item.idEstado == ConstantesGlobales.estadoModificado)
+                                                        {
+                                                            <!--<a href="MyExtensions.ActionUrl("Modificar", "SolicitudRRHH", new { Area = "RRHH", id = item.idSolicitudRrhh })" data-toggle="tooltip" title="Editar"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a>-->
+                                                            <!--<a data-toggle="tooltip" title="Anular" id="sa-params"> <i class="fa fa-close text-danger"></i> </a>-->
+                                                            <select data-toggle="tooltip" title="Cambiar Estado" id="sa-params" class="form-select">
+                                                                <option selected>Cambiar estado</option>
+                                                                <option value="9">Aprobar</option>
+                                                                <option value="12">Desaprobar</option>
+                                                            </select>
+                                                        }
+                                                        else
+                                                        {
+                                                            if (item.estado.nomEst == "APROBADO")
+                                                            {
+                                                                <strong style="color: #2cabe3">LISTO</strong>
+                                                            }
+                                                            if (item.estado.nomEst == "RECHAZADO")
+                                                            {
+                                                                <strong style="color: #dd6b55">LISTO</strong>
+                                                            }
+                                                        }
+                                                    }
+
+                                                </td>
+                                                <td>@Html.DisplayFor(modelItem => item.idSolicitudRrhh)</td>
+                                                <td>@Html.DisplayFor(modelItem => item.descSolicitud)</td>
+                                                <td>@Html.DisplayFor(modelItem => item.fchIniSolicitud)</td>
+                                                <td>@Html.DisplayFor(modelItem => item.fchFinSolicitud)</td>
+                                                <td>@Html.DisplayFor(modelItem => item.estado.nomEst)</td>
+                                                <td>@Html.DisplayFor(modelItem => item.solicitante.username)</td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        @{Html.RenderPartial("_paginador", Model);}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+
+    <div class="panel-footer"></div>
+</div>
+
+
+
+
+@section scripts
+{
+    <script src="~/Areas/RRHH/Scripts/RRHH.js"></script>
+    @Scripts.Render("~/Bundles/autocompletado_JS")
+    @Scripts.Render("~/Bundles/selectBusqueda_JS")
+    @Scripts.Render("~/Bundles/datepicker_JS")
+    @Scripts.Render("~/Bundles/bloqueo_JS")
+
+    <script>
+        $(document).ready(function () {
+            $("table tbody tr").each(function () {
+                var estado = $(this).parent().parents('tr').find('td').eq(5).val();
+                console.log(estado);
+            });
+            $('.datepicker').datepicker({
+                dateFormat: 'dd/mm/yy'
+            });
+
+            $('table tbody tr a#sa-params-anul').click(function () {
+                var idSolicitudRrhh = $(this).parent().parents('tr').find('td').eq(1).text();
+                swal({
+                    title: "¿Estás seguro?",
+                    text: "¡No se podrá aprobar esta solicitud! \n",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Sí, anularlo!",
+                    cancelButtonText: "No, no anularlo!",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                }, function (isConfirm) {
+                    if (isConfirm) {
+                        var Options = {};
+                        Options.url = "/SolicitudRRHH/anularSolicitud";
+                        Options.type = "POST";
+                        Options.data = JSON.stringify({ idSolicitudRrhh: idSolicitudRrhh });
+                        Options.datatype = "json";
+                        Options.contentType = "application/json";
+                        Options.success = function (data) {
+                            if (data) {
+                                swal("Anulado!", "Tu solicitud ha sido anulada.", "success");
+                                setTimeout(function () {
+                                    location.reload();
+                                }, 2000);
+                            } else {
+                                swal("Ocurrio un problema!", "Tu solicitud no ha sido anulada.", "error");
+                            }
+                        };
+                        Options.error = function () { alert("Error in Getting States!!"); unblock(); };
+                        $.ajax(Options);
+                    } else {
+                        swal("Cancelado", "Tu solicitud esta seguro.)", "error");
+                    }
+                });
+            });
+
+
+            $('table tbody tr select#sa-params').click(function () {
+                var idSolicitudRrhh = $(this).parent().parents('tr').find('td').eq(1).text();
+                var slc = $(this).parent().parents('tr').find('select').val();
+                var rpta = true;
+                if (slc == '9') {                    
+                    swal({
+                        title: "¿Estás seguro?",
+                        text: "¡Va a aprobar esta solicitud! \n",
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#55c7dd",
+                        confirmButtonText: "Sí, Aprobar!",
+                        cancelButtonText: "No, no aprobarlo aún",
+                        closeOnConfirm: false,
+                        closeOnCancel: false
+                    }, function (isConfirm) {
+                        if (isConfirm) {
+                            var Options = {};
+                            Options.url = "/SolicitudRRHH/aprobarSolicitud";
+                            Options.type = "POST";
+                            Options.data = JSON.stringify({ idSolicitudRrhh: idSolicitudRrhh });
+                            Options.datatype = "json";
+                            Options.contentType = "application/json";
+                            Options.success = function (data) {
+
+                                if (data) {
+                                    swal("Aprobado!", "La solicitud ha sido aprobada.", "success");
+                                    setTimeout(function () {
+                                        location.reload();
+                                    }, 2000);
+                                } else {
+                                    swal("Ocurrio un problema!", "La solicitud no ha sido aprobada.", "error");
+                                }
+                            };
+                            Options.error = function () { alert("Error in Getting States!!"); unblock(); };
+                            $.ajax(Options);
+
+                        } else {
+                            swal("Cancelado", "La solicitud no ha sido aprobada.", "error");
+                            rpta = false;
+                            console.log("9", rpta);
+                        }
+                    });
+                }
+
+                if (slc == '12') {
+                    swal({
+                        title: "¿Estás seguro?",
+                        text: "¡Va a desaprobar esta solicitud! \n",
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#DD6B55",
+                        confirmButtonText: "Sí, desaprobarlo!",
+                        cancelButtonText: "No, no desaprobarlo!",
+                        closeOnConfirm: false,
+                        closeOnCancel: false
+                    }, function (isConfirm) {
+                        if (isConfirm) {
+                            var Options = {};
+                            Options.url = "/SolicitudRRHH/rechazarSolicitud";
+                            Options.type = "POST";
+                            Options.data = JSON.stringify({ idSolicitudRrhh: idSolicitudRrhh });
+                            Options.datatype = "json";
+                            Options.contentType = "application/json";
+                            Options.success = function (data) {
+
+                                if (data) {
+                                    swal("Anulado!", "La solicitud ha sido desaprobada.", "success");
+                                    setTimeout(function () {
+                                        location.reload();
+                                    }, 2000);
+                                } else {
+                                    swal("Ocurrio un problema!", "La solicitud no ha sido desaprobada.", "error");
+                                }
+                            };
+                            Options.error = function () { alert("Error in Getting States!!"); unblock(); };
+                            $.ajax(Options);
+
+                        } else {
+                            swal("Cancelado", "Tu solicitud esta segura.", "error");
+                            rpta = false;
+                            console.log("12", rpta);
+                            $(this).parent().parents('tr').find('select option:first').prop('selected', true);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}
