@@ -28,6 +28,7 @@ using PortalRoemmers.Areas.RRHH.Models.Formulario;
 using PortalRoemmers.Areas.Marketing.Models.FarmacoVigilancia;
 using PortalRoemmers.Areas.RRHH.Models.Documento;
 using PortalRoemmers.Areas.RRHH.Models.SolicitudRRHH;
+using PortalRoemmers.Areas.RRHH.Models.Grupo;
 
 namespace PortalRoemmers.ViewModels
 {
@@ -141,6 +142,13 @@ namespace PortalRoemmers.ViewModels
         public List<SubtipoSolicitudRRHHModels> SubTipoSoliRRHH { get; set; }
         public List<TipoSolicitudRRHHModels> TipoSoliRRHH { get; set; }
         public List<UserSolicitudRRHHModels> userSoliRRHH { get; set; }
+
+        //Grupo RRHH
+        public List<AreaGrupoRRHHModels> AreaGrupoRRHH { get; set; }
+        public List<ExcluGrupoRRHHModels> ExcluGrupoRRHH { get; set; }
+        public List<GrupoRRHHModels> GrupoRRHH { get; set; }
+        public List<GrupoSolicitudRRHHModels> GrupoSoliRRHH { get; set; }
+
 
 
         //Almacen****************************************************
