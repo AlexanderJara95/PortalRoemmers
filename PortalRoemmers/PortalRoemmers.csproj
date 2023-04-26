@@ -266,6 +266,7 @@
     <Compile Include="Areas\RRHH\Controllers\Formulario\ForUsuController.cs" />
     <Compile Include="Areas\RRHH\Controllers\Galeria\GaleriaController.cs" />
     <Compile Include="Areas\RRHH\Controllers\Galeria\TipoGaleriaController.cs" />
+    <Compile Include="Areas\RRHH\Controllers\Grupo\GrupoRRHHController.cs" />
     <Compile Include="Areas\RRHH\Controllers\Periodico\ContenidoController.cs" />
     <Compile Include="Areas\RRHH\Controllers\Periodico\PeriodicoController.cs" />
     <Compile Include="Areas\RRHH\Controllers\SolicitudRRHH\SolicitudRRHHController.cs" />
@@ -292,6 +293,7 @@
     <Compile Include="Areas\RRHH\Services\Formulario\AtributoHtmlRepositorio.cs" />
     <Compile Include="Areas\RRHH\Services\Formulario\FormularioRepositorio.cs" />
     <Compile Include="Areas\RRHH\Services\Formulario\Form_Usu_Repositorio.cs" />
+    <Compile Include="Areas\RRHH\Services\Grupo\GrupoRRHHRepositorio.cs" />
     <Compile Include="Areas\RRHH\Services\Periodico\ContenidoRepositorio.cs" />
     <Compile Include="Areas\RRHH\Services\Periodico\EfectoImagenRepositorio.cs" />
     <Compile Include="Areas\RRHH\Services\SolicitudRRHH\SolicitudRRHHRepositorio.cs" />
