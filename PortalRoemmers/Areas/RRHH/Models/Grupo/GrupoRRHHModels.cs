@@ -17,7 +17,7 @@ namespace PortalRoemmers.Areas.RRHH.Models.Grupo
         [Display(Name = "Descripción Grupo")]
         public string descGrupo { get; set; }
 
-        //Auditóría 3
+        //Auditoría 3
         [Display(Name = "Usuario creación")]
         public string usuCrea { get; set; }
         [Display(Name = "Fecha creación")]

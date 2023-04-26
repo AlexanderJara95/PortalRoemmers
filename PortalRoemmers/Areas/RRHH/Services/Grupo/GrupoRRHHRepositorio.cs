@@ -95,6 +95,41 @@ namespace PortalRoemmers.Areas.RRHH.Services.Grupo
             }
             return exec;
         }
+        public Boolean crearAreaGrupoRrhh(AreaGrupoRRHHModels model)
+        {
+            Boolean exec = true;
+            using (var db = new ApplicationDbContext())
+            {
+                db.tb_AreaGrupoRRHH.Add(model);
+                try
+                {
+                    db.SaveChanges();
+                }
+                catch (Exception e)
+                {
+                    exec = false;
+                }
+            }
+            return exec;
+        }
+
+        public Boolean crearExcluGrupoRrhh(ExcluGrupoRRHHModels model)
+        {
+            Boolean exec = true;
+            using (var db = new ApplicationDbContext())
+            {
+                db.tb_ExcluGrupoRRHH.Add(model);
+                try
+                {
+                    db.SaveChanges();
+                }
+                catch (Exception e)
+                {
+                    exec = false;
+                }
+            }
+            return exec;
+        }
 
         public Boolean crearGrupoSolRrhh(GrupoSolicitudRRHHModels model)
         {
@@ -113,17 +148,17 @@ namespace PortalRoemmers.Areas.RRHH.Services.Grupo
             }
             return exec;
         }
-        public Boolean updateEstadoSoliRRHH(string sol, string estado)
+        public Boolean updateGrupo(string idGrupoRrhh, string descGrupo)
         {
-            string commandText = "UPDATE tb_SolicitudRRHH SET idEstado = @idEstado, usuMod=@usuMod , usufchMod=@usufchMod  WHERE idSolicitudRrhh = @idSolicitudRrhh ;";
+            string commandText = "UPDATE tb_GrupoRRHH SET descGrupo = @descGrupo, usuMod=@usuMod , usufchMod=@usufchMod  WHERE idGrupoRrhh = @idGrupoRrhh;";
 
             using (SqlConnection connection = new SqlConnection(Conexion.connetionString))
             {
                 SqlCommand command = new SqlCommand(commandText, connection);
 
-                command.Parameters.Add("@idSolicitudRrhh", SqlDbType.VarChar);
-                command.Parameters["@idSolicitudRrhh"].Value = sol;
-                command.Parameters.AddWithValue("@idEstado", estado);
+                command.Parameters.Add("@idGrupoRrhh", SqlDbType.VarChar);
+                command.Parameters["@idGrupoRrhh"].Value = idGrupoRrhh;
+                command.Parameters.AddWithValue("@descGrupo", descGrupo);
                 command.Parameters.AddWithValue("@usuMod", SessionPersister.Username);
                 command.Parameters.AddWithValue("@usufchMod", DateTime.Now);
 
