@@ -275,6 +275,10 @@
     <Compile Include="Areas\RRHH\Models\Documento\TipoDocumentoRRHHModels.cs" />
     <Compile Include="Areas\RRHH\Models\Formulario\FormularioModels.cs" />
     <Compile Include="Areas\RRHH\Models\Formulario\Form_Usu_Models.cs" />
+    <Compile Include="Areas\RRHH\Models\Grupo\ExcluGrupoRRHHModels.cs" />
+    <Compile Include="Areas\RRHH\Models\Grupo\GrupoRRHHModels.cs" />
+    <Compile Include="Areas\RRHH\Models\Grupo\GrupoSolicitudRRHHModels.cs" />
+    <Compile Include="Areas\RRHH\Models\Grupo\AreaGrupoRRHHModels.cs" />
     <Compile Include="Areas\RRHH\Models\SolicitudRRHH\SolicitudRRHHModels.cs" />
     <Compile Include="Areas\RRHH\Models\SolicitudRRHH\SubtipoSolicitudRRHHModels.cs" />
     <Compile Include="Areas\RRHH\Models\SolicitudRRHH\TipoSolicitudRRHHModels.cs" />
@@ -505,6 +509,10 @@
     <Compile Include="Migrations\202303022124458_CreateModelSolicitudRRHH.cs" />
     <Compile Include="Migrations\202303022124458_CreateModelSolicitudRRHH.Designer.cs">
       <DependentUpon>202303022124458_CreateModelSolicitudRRHH.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202304261342417_CreateModelGrupo.cs" />
+    <Compile Include="Migrations\202304261342417_CreateModelGrupo.Designer.cs">
+      <DependentUpon>202304261342417_CreateModelGrupo.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationDbContext.cs" />
@@ -3950,6 +3958,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202303022124458_CreateModelSolicitudRRHH.resx">
       <DependentUpon>202303022124458_CreateModelSolicitudRRHH.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202304261342417_CreateModelGrupo.resx">
+      <DependentUpon>202304261342417_CreateModelGrupo.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

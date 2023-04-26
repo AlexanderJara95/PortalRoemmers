@@ -30,6 +30,7 @@ using PortalRoemmers.Areas.RRHH.Models.Formulario;
 using PortalRoemmers.Areas.Marketing.Models.FarmacoVigilancia;
 using PortalRoemmers.Areas.RRHH.Models.Documento;
 using PortalRoemmers.Areas.RRHH.Models.SolicitudRRHH;
+using PortalRoemmers.Areas.RRHH.Models.Grupo;
 
 namespace PortalRoemmers.Models
 {
@@ -184,6 +185,12 @@ namespace PortalRoemmers.Models
         public DbSet<SubtipoSolicitudRRHHModels> tb_SubtipoSolicitudRRHH { get; set; }
         public DbSet<TipoSolicitudRRHHModels> tb_TipoSolicitudRRHH { get; set; }
         public DbSet<UserSolicitudRRHHModels> tb_UserSolicitudRRHH { get; set; }
+
+        //Solicitud RRHH
+        public DbSet<AreaGrupoRRHHModels> tb_AreaGrupoRRHH { get; set; }
+        public DbSet<ExcluGrupoRRHHModels> tb_ExcluGrupoRRHH { get; set; }
+        public DbSet<GrupoRRHHModels> tb_grupoRRHH { get; set; }
+        public DbSet<GrupoSolicitudRRHHModels> tb_GrupoSolicitudRRHH { get; set; }
 
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -390,6 +397,15 @@ namespace PortalRoemmers.Models
             modelBuilder.Entity<TipoSolicitudRRHHModels>().ToTable("tb_TipoSolicitudRRHH");
             modelBuilder.Entity<UserSolicitudRRHHModels>().ToTable("tb_UserSolicitudRRHH");
             modelBuilder.Entity<UserSolicitudRRHHModels>().HasKey(x => new { x.idSolicitudRrhh, x.idAccRes });
+
+            //GrupoRRHH
+            modelBuilder.Entity<AreaGrupoRRHHModels>().ToTable("tb_AreaGrupoRRHH");
+            modelBuilder.Entity<AreaGrupoRRHHModels>().HasKey(x => new { x.idAreRoe, x.idGrupoRrhh});
+            modelBuilder.Entity<ExcluGrupoRRHHModels>().ToTable("tb_ExcluGrupoRRHH");
+            modelBuilder.Entity<ExcluGrupoRRHHModels>().HasKey(x => new { x.idAcc, x.idGrupoRrhh });
+            modelBuilder.Entity<GrupoRRHHModels>().ToTable("tb_GrupoRRHH");
+            modelBuilder.Entity<GrupoSolicitudRRHHModels>().ToTable("tb_GrupoSolicitudRRHH");
+            modelBuilder.Entity<GrupoSolicitudRRHHModels>().HasKey(x => new { x.idGrupoRrhh, x.idSolicitudRrhh });
 
             base.OnModelCreating(modelBuilder);
         }
