@@ -1,4 +1,5 @@
-﻿using PortalRoemmers.Areas.RRHH.Models.Grupo;
+﻿using Newtonsoft.Json;
+using PortalRoemmers.Areas.RRHH.Models.Grupo;
 using PortalRoemmers.Areas.RRHH.Services.Grupo;
 using PortalRoemmers.Areas.Sistemas.Models.Usuario;
 using PortalRoemmers.Areas.Sistemas.Services.Usuario;
@@ -7,6 +8,7 @@ using PortalRoemmers.Helpers;
 using PortalRoemmers.Security;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -17,6 +19,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.Grupo
     {
         // GET: RRHH/SolicitudRRHH
         private GrupoRRHHRepositorio _gru;
+        private AreaRoeRepositorio _are;
         private UsuarioRepositorio _usu;
         private EmpleadoRepositorio _emp;
         private Ennumerador enu;
@@ -25,6 +28,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.Grupo
         public GrupoRRHHController()
         {
             _gru = new GrupoRRHHRepositorio();
+            _are = new AreaRoeRepositorio();
             _usu = new UsuarioRepositorio();
             p = new Parametros();
             enu = new Ennumerador();
@@ -89,11 +93,17 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.Grupo
 
         [CustomAuthorize(Roles = "000003,000406")]
         [HttpGet]
-        public ActionResult Registrar(int diasRestantes)
+        public ActionResult Registrar()
         {
-            ViewBag.procedeA = true;
-            //dias restantes sin el inicio y final actual
-            ViewBag.diasRestantes = diasRestantes;
+            ViewBag.Areas = new SelectList(_are.obtenerArea(), "idAreRoe", "nomAreRoe");
+
+            var opcionesAutocompletar = new List<string>();
+            foreach (var area in ViewBag.Areas)
+            {
+                opcionesAutocompletar.Add(area.Text);
+            }
+
+            ViewBag.OpcionesAutocompletar = JsonConvert.SerializeObject(opcionesAutocompletar);
 
             GrupoRRHHModels model = new GrupoRRHHModels();
             model.usuCrea = SessionPersister.UserId;
@@ -107,65 +117,83 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.Grupo
             return View();
         }
 
-        /*
+        public JsonResult ObtenerTodasLasAreas(string term)
+        {
+            var areas = _are.obtenerArea()
+                .Where(a => a.nomAreRoe.ToLower().Contains(term.ToLower()))
+                .Select(a => new { id = a.idAreRoe, text = a.nomAreRoe })
+                .ToList();
+            return Json(areas, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult ObtenerTodosLosUsuarios(string term, List<string> list)
+        {
+
+            var filtroUsuarios = _usu.obtenerUsuarios()
+                .Where(a => list.Contains(a.empleado.idAreRoe)).ToList();
+            
+            var usuarios = filtroUsuarios
+                .Where(a => a.username.ToLower().Contains(term.ToLower()) || a.empleado.nomComEmp.ToLower().Contains(term.ToLower()))
+                .Select(a => new { id = a.idAcc, text = (a.empleado.nomComEmp + " (" + a.username + ")") })
+                .ToList();
+
+            return Json(usuarios, JsonRequestBehavior.AllowGet);
+        }
+
+        
         [HttpPost]
         [SessionAuthorize]
-        public ActionResult Registrar(GrupoRRHHModels model, int diasRestantes)
+        public ActionResult Registrar(List<string> areas, List<string> usuarios, string descripcion)
         {
             EmpleadoModels emple = (EmpleadoModels)System.Web.HttpContext.Current.Session[Sessiones.empleado];
-            //string responsableD = emple.idEmp + ";" + emple.apePatEmp + " " + emple.apeMatEmp + " " + emple.nom1Emp + " " + emple.nom2Emp + ";" + "";
-            string tabla = "tb_SolicitudRRHH";
+            string tabla = "tb_GrupoRRHH";
+            GrupoRRHHModels model = new GrupoRRHHModels();
             int idc = enu.buscarTabla(tabla);
-            model.idSolicitudRrhh = idc.ToString("D7");
-
-            model.idEstado = ConstantesGlobales.estadoRegistrado;
-            model.idAccSol = SessionPersister.UserId;
+            model.idGrupoRrhh = idc.ToString("D7");
+            model.descGrupo = descripcion;
             model.usuCrea = SessionPersister.Username;
             model.usufchCrea = DateTime.Now;
 
-            UserSolicitudRRHHModels userSoliRRHH = new UserSolicitudRRHHModels();
-            userSoliRRHH.idSolicitudRrhh = model.idSolicitudRrhh;
-            userSoliRRHH.idAccRes = SessionPersister.UserId;
-            userSoliRRHH.usuCrea = model.usuCrea;
-            userSoliRRHH.usufchCrea = model.usufchCrea;
-            if (validarLimiteVacaciones(model.fchIniSolicitud, model.fchFinSolicitud, diasRestantes))
+            try
             {
-                if (emple.idEmpJ != "" || emple.idEmpJ != null)
+                if (_gru.crear(model))
                 {
-                    model.idAccApro = _usu.obtenerItemXEmpleado(emple.idEmpJ).idAcc;
-                    model.idSubTipoSolicitudRrhh = ConstantesGlobales.subTipoVacaciones;
-                    try
+                    enu.actualizarTabla(tabla, idc);
+                    foreach (var area in areas)
                     {
-                        if (_soli.crear(model))
-                        {
-                            enu.actualizarTabla(tabla, idc);
-                            TempData["mensaje"] = "<div id='success' class='alert alert-success'>Se creó un nuevo registro.</div>";
-                            _soli.crearUserSolRrhh(userSoliRRHH);
-                        }
-                        else
-                        {
-                            TempData["mensaje"] = "<div id='warning' class='alert alert-warning'>" + "Error en guardar el registro" + "</div>";
-                        }
+                        AreaGrupoRRHHModels areaGrupoRRHH = new AreaGrupoRRHHModels();
+                        areaGrupoRRHH.idGrupoRrhh = model.idGrupoRrhh;
+                        areaGrupoRRHH.idAreRoe = area;
+                        areaGrupoRRHH.usuCrea = model.usuCrea;
+                        areaGrupoRRHH.usufchCrea = model.usufchCrea;
+                        _gru.crearAreaGrupoRrhh(areaGrupoRRHH);
                     }
-                    catch (Exception e)
+                    foreach (var usuario in usuarios)
                     {
-                        e.Message.ToString();
+                        ExcluGrupoRRHHModels excluGrupoRRHH = new ExcluGrupoRRHHModels();
+                        excluGrupoRRHH.idGrupoRrhh = model.idGrupoRrhh;
+                        excluGrupoRRHH.idAcc = usuario;
+                        excluGrupoRRHH.usuCrea = model.usuCrea;
+                        excluGrupoRRHH.usufchCrea = model.usufchCrea;
+                        _gru.crearExcluGrupoRrhh(excluGrupoRRHH);
                     }
+                    TempData["mensaje"] = "<div id='success' class='alert alert-success'>Se creó un nuevo registro.</div>";
+
                 }
                 else
                 {
-                    TempData["mensaje"] = "<div id='warning' class='alert alert-warning'>" + "Se necesita asignar Jefe" + "</div>";
+                    TempData["mensaje"] = "<div id='warning' class='alert alert-warning'>" + "Error en guardar el registro" + "</div>";
                 }
             }
-            else
+            catch (Exception e)
             {
-                TempData["mensaje"] = "<div id='warning' class='alert alert-warning'>" + "Has superado la cantidad de días disponibles" + "</div>";
+                e.Message.ToString();
             }
 
             return RedirectToAction("Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search });
 
         }
-        */
+        
 
 
 
