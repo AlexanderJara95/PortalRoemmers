@@ -33,7 +33,6 @@ namespace PortalRoemmers.Areas.RRHH.Services.Grupo
             using (var db = new ApplicationDbContext())
             {
                 var model = db.tb_grupoRRHH
-                    .Include(x => x.descGrupo)
                     .OrderByDescending(x => x.idGrupoRrhh)
                     //.Where(x => (x.idEstado != ConstantesGlobales.estadoAnulado && x.subtipoSolicitud.idTipoSolicitudRrhh == tipo) && ((x.fchIniSolicitud >= p) && (x.fchIniSolicitud <= a) && (x.fchFinSolicitud >= p) && (x.fchFinSolicitud <= a)) && (x.descSolicitud.Contains(search) || (x.subtipoSolicitud.descSubtipoSolicitud.Contains(search)) || x.estado.nomEst.Contains(search)))
                     .Skip((pagina - 1) * cantidadRegistrosPorPagina)

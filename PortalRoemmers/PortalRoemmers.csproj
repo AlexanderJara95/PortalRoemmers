@@ -266,7 +266,7 @@
     <Compile Include="Areas\RRHH\Controllers\Formulario\ForUsuController.cs" />
     <Compile Include="Areas\RRHH\Controllers\Galeria\GaleriaController.cs" />
     <Compile Include="Areas\RRHH\Controllers\Galeria\TipoGaleriaController.cs" />
-    <Compile Include="Areas\RRHH\Controllers\Grupo\GrupoRRHHController.cs" />
+    <Compile Include="Areas\RRHH\Controllers\GrupoRRHH\GrupoRRHHController.cs" />
     <Compile Include="Areas\RRHH\Controllers\Periodico\ContenidoController.cs" />
     <Compile Include="Areas\RRHH\Controllers\Periodico\PeriodicoController.cs" />
     <Compile Include="Areas\RRHH\Controllers\SolicitudRRHH\SolicitudRRHHController.cs" />
@@ -276,10 +276,10 @@
     <Compile Include="Areas\RRHH\Models\Documento\TipoDocumentoRRHHModels.cs" />
     <Compile Include="Areas\RRHH\Models\Formulario\FormularioModels.cs" />
     <Compile Include="Areas\RRHH\Models\Formulario\Form_Usu_Models.cs" />
-    <Compile Include="Areas\RRHH\Models\Grupo\ExcluGrupoRRHHModels.cs" />
-    <Compile Include="Areas\RRHH\Models\Grupo\GrupoRRHHModels.cs" />
-    <Compile Include="Areas\RRHH\Models\Grupo\GrupoSolicitudRRHHModels.cs" />
-    <Compile Include="Areas\RRHH\Models\Grupo\AreaGrupoRRHHModels.cs" />
+    <Compile Include="Areas\RRHH\Models\GrupoRRHH\ExcluGrupoRRHHModels.cs" />
+    <Compile Include="Areas\RRHH\Models\GrupoRRHH\GrupoRRHHModels.cs" />
+    <Compile Include="Areas\RRHH\Models\GrupoRRHH\GrupoSolicitudRRHHModels.cs" />
+    <Compile Include="Areas\RRHH\Models\GrupoRRHH\AreaGrupoRRHHModels.cs" />
     <Compile Include="Areas\RRHH\Models\SolicitudRRHH\SolicitudRRHHModels.cs" />
     <Compile Include="Areas\RRHH\Models\SolicitudRRHH\SubtipoSolicitudRRHHModels.cs" />
     <Compile Include="Areas\RRHH\Models\SolicitudRRHH\TipoSolicitudRRHHModels.cs" />
@@ -2628,6 +2628,8 @@
     <Content Include="Areas\RRHH\Views\SolicitudRRHH\Index.cshtml" />
     <Content Include="Areas\RRHH\Views\SolicitudRRHH\Registrar.cshtml" />
     <Content Include="Areas\RRHH\Views\SolicitudRRHH\Modificar.cshtml" />
+    <Content Include="Areas\RRHH\Views\GrupoRRHH\Index.cshtml" />
+    <Content Include="Areas\RRHH\Views\GrupoRRHH\Registrar.cshtml" />
     <None Include="Scripts\jquery-3.0.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.0.0.js" />
     <Content Include="Scripts\jquery-3.0.0.min.js" />

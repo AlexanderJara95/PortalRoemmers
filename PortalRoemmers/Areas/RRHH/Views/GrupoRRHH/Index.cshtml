@@ -1,0 +1,258 @@
+﻿@model  PortalRoemmers.ViewModels.IndexViewModel
+@using PortalRoemmers.Helpers
+@using PortalRoemmers.Security
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section css {
+    @Styles.Render("~/Content/tablaResponsive_CSS")
+    @Styles.Render("~/Content/Galeria_CSS")
+    @Styles.Render("~/Content/sweetalert_CSS")
+    @Styles.Render("~/Content/selectBusqueda_CSS")
+    @Styles.Render("~/Content/datepicker_CSS")
+}
+<div class="panel panel-default">
+    <div class="panel-heading box-title m-b-0"><h2>Mantenimiento de Grupos de Usuarios</h2></div>
+    <div class="panel-body">
+        <div class="form-group">
+            @{ string v = ""; try { v = TempData["mensaje"].ToString(); } catch { }}
+            @(new HtmlString(v))
+        </div>
+        @using (Html.BeginForm("Index", "Grupo", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista }, FormMethod.Post))
+        {
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="form-group">
+                        <label for="desMen">DESDE</label>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="form-group">
+                        <label for="desMen">HASTA</label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <span class="input-group-btn">
+                        <button class="btn waves-effect waves-light btn-info">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </span>
+                </div>
+            </div>
+        }
+        <br />
+        @using (Html.BeginForm("Registrar", "GrupoRRHH", new { Area = "RRHH" }, FormMethod.Get))
+        {
+            <div class="col-sm-12">
+                <div class="col-sm-2"></div>
+                <div class="col-sm-8">
+                    <div class="user-btm-box">
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <dl>
+                                    <dt>INGRESE LOS DATOS DE GRUPOS</dt>
+                                    <dd>Puede crear varios Grupos</dd>
+                                </dl>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <button type="submit" class="btn btn-info btn-rounded">Crear Grupo</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2"></div>
+            </div>
+        }
+
+        <div class="row">
+            <div class="col-sm-12">
+                <dl>
+                    <dt>MIS SOLICITUDES</dt>
+                </dl>
+            </div>
+            <div class="col-sm-12">
+                <table class="table-bordered table-hover table" data-tablesaw-mode="swipe">
+                    <thead>
+                        <tr>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist"></th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1">C&oacutedigo</th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2">Descripción</th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Fecha de Creación</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.GrupoRRHH)
+                        {                          
+                        <tr>
+                            <td class="text-nowrap" align="center">
+                                <a href="@MyExtensions.ActionUrl("Visualizar", "GrupoRRHH", new { Area = "RRHH", id = item.idGrupoRrhh })" data-toggle="tooltip" title="Visualizar"> <i class="fa fa-eye text-inverse m-r-10"></i> </a>
+                                <a href="@MyExtensions.ActionUrl("Modificar", "GrupoRRHH", new { Area = "RRHH", id = item.idGrupoRrhh})" data-toggle="tooltip" title="Editar"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a>
+                                <a data-toggle="tooltip" title="Anular" id="sa-params-anul"> <i class="fa fa-close text-danger"></i> </a>
+                            </td>
+                            <td>@Html.DisplayFor(modelItem => item.idGrupoRrhh)</td>
+                            <td>@Html.DisplayFor(modelItem => item.descGrupo)</td>
+                            <td>@Html.DisplayFor(modelItem => item.usufchCrea)</td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-footer"></div>
+</div>
+
+
+
+
+@section scripts
+{
+    <script src="~/Areas/RRHH/Scripts/RRHH.js"></script>
+    @Scripts.Render("~/Bundles/autocompletado_JS")
+    @Scripts.Render("~/Bundles/selectBusqueda_JS")
+    @Scripts.Render("~/Bundles/datepicker_JS")
+    @Scripts.Render("~/Bundles/bloqueo_JS")
+
+    <script>
+        $(document).ready(function () {
+            $("table tbody tr").each(function () {
+                var estado = $(this).parent().parents('tr').find('td').eq(5).val();
+                console.log(estado);
+            });
+            $('.datepicker').datepicker({
+                dateFormat: 'dd/mm/yy'
+            });
+
+            $('table tbody tr a#sa-params-anul').click(function () {
+                var idSolicitudRrhh = $(this).parent().parents('tr').find('td').eq(1).text();
+                swal({
+                    title: "¿Estás seguro?",
+                    text: "¡No se podrá aprobar esta solicitud! \n",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Sí, anularlo!",
+                    cancelButtonText: "No, no anularlo!",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                }, function (isConfirm) {
+                    if (isConfirm) {
+                        var Options = {};
+                        Options.url = "/SolicitudRRHH/anularSolicitud";
+                        Options.type = "POST";
+                        Options.data = JSON.stringify({ idSolicitudRrhh: idSolicitudRrhh });
+                        Options.datatype = "json";
+                        Options.contentType = "application/json";
+                        Options.success = function (data) {
+                            if (data) {
+                                swal("Anulado!", "Tu solicitud ha sido anulada.", "success");
+                                setTimeout(function () {
+                                    location.reload();
+                                }, 2000);
+                            } else {
+                                swal("Ocurrio un problema!", "Tu solicitud no ha sido anulada.", "error");
+                            }
+                        };
+                        Options.error = function () { alert("Error in Getting States!!"); unblock(); };
+                        $.ajax(Options);
+                    } else {
+                        swal("Cancelado", "Tu solicitud esta seguro.)", "error");
+                    }
+                });
+            });
+
+
+            $('table tbody tr select#sa-params').click(function () {
+                var idSolicitudRrhh = $(this).parent().parents('tr').find('td').eq(1).text();
+                var slc = $(this).parent().parents('tr').find('select').val();
+                var rpta = true;
+                if (slc == '9') {                    
+                    swal({
+                        title: "¿Estás seguro?",
+                        text: "¡Va a aprobar esta solicitud! \n",
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#55c7dd",
+                        confirmButtonText: "Sí, Aprobar!",
+                        cancelButtonText: "No, no aprobarlo aún",
+                        closeOnConfirm: false,
+                        closeOnCancel: false
+                    }, function (isConfirm) {
+                        if (isConfirm) {
+                            var Options = {};
+                            Options.url = "/SolicitudRRHH/aprobarSolicitud";
+                            Options.type = "POST";
+                            Options.data = JSON.stringify({ idSolicitudRrhh: idSolicitudRrhh });
+                            Options.datatype = "json";
+                            Options.contentType = "application/json";
+                            Options.success = function (data) {
+
+                                if (data) {
+                                    swal("Aprobado!", "La solicitud ha sido aprobada.", "success");
+                                    setTimeout(function () {
+                                        location.reload();
+                                    }, 2000);
+                                } else {
+                                    swal("Ocurrio un problema!", "La solicitud no ha sido aprobada.", "error");
+                                }
+                            };
+                            Options.error = function () { alert("Error in Getting States!!"); unblock(); };
+                            $.ajax(Options);
+
+                        } else {
+                            swal("Cancelado", "La solicitud no ha sido aprobada.", "error");
+                            rpta = false;
+                            console.log("9", rpta);
+                        }
+                    });
+                }
+
+                if (slc == '12') {
+                    swal({
+                        title: "¿Estás seguro?",
+                        text: "¡Va a desaprobar esta solicitud! \n",
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#DD6B55",
+                        confirmButtonText: "Sí, desaprobarlo!",
+                        cancelButtonText: "No, no desaprobarlo!",
+                        closeOnConfirm: false,
+                        closeOnCancel: false
+                    }, function (isConfirm) {
+                        if (isConfirm) {
+                            var Options = {};
+                            Options.url = "/SolicitudRRHH/rechazarSolicitud";
+                            Options.type = "POST";
+                            Options.data = JSON.stringify({ idSolicitudRrhh: idSolicitudRrhh });
+                            Options.datatype = "json";
+                            Options.contentType = "application/json";
+                            Options.success = function (data) {
+
+                                if (data) {
+                                    swal("Anulado!", "La solicitud ha sido desaprobada.", "success");
+                                    setTimeout(function () {
+                                        location.reload();
+                                    }, 2000);
+                                } else {
+                                    swal("Ocurrio un problema!", "La solicitud no ha sido desaprobada.", "error");
+                                }
+                            };
+                            Options.error = function () { alert("Error in Getting States!!"); unblock(); };
+                            $.ajax(Options);
+
+                        } else {
+                            swal("Cancelado", "Tu solicitud esta segura.", "error");
+                            rpta = false;
+                            console.log("12", rpta);
+                            $(this).parent().parents('tr').find('select option:first').prop('selected', true);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}

@@ -1,0 +1,201 @@
+﻿@using PortalRoemmers.Security
+@model PortalRoemmers.Areas.RRHH.Models.Grupo.GrupoRRHHModels
+@using Newtonsoft.Json
+@{
+    ViewBag.Title = "Registrar Solicitud RRHH";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section css {
+    @Styles.Render("~/Content/autocompletado_CSS")
+    @Styles.Render("~/Content/selectBusqueda_CSS")
+    @Styles.Render("~/Content/datepicker_CSS")
+}
+<div class="white-box p-l-20 p-r-20">
+    <h3 class="box-title m-b-0"> NuevO Grupo de Usuarios</h3>
+    <p class="text-muted m-b-30 font-13">Completar todos los campos necesarios.</p>
+    <div id='danger' class='alert alert-danger hidden'></div>
+    @{string msg = ""; try { msg = TempData["mensaje"].ToString(); } catch { }}
+    @(new HtmlString(msg))
+    <div class="row">
+        <div class="col-md-12">            
+            @Html.AntiForgeryToken()
+            <div class="col-md-12">
+                <section id="wrapper" class="block1">
+                    <div class="panel-group" id="exampleAccordionDefault" aria-multiselectable="true" role="tablist">
+                        <div class="panel">
+                            <div class="row">
+                                <div class="col-md-12 text-center">
+                                    <dl>
+                                        <dt>GRUPO ESPECÍFICO</dt>
+                                    </dl>
+                                </div>
+                            </div>
+                            <div class="panel-heading" id="exampleHeadingDefaultOne" role="tab"> <a class="panel-title" data-toggle="collapse" href="#exampleCollapseDefaultOne" data-parent="#exampleAccordionDefault" aria-expanded="true" aria-controls="exampleCollapseDefaultOne"> Datos de la Solicitud </a> </div>
+                            <div class="panel-collapse collapse in" id="exampleCollapseDefaultOne" aria-labelledby="exampleHeadingDefaultOne" role="tabpanel">
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label class="col-md-12">@Html.LabelFor(model => model.descGrupo)</label>
+                                                <div class="col-md-12">
+                                                    @Html.EditorFor(model => model.descGrupo, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Descripción" } })
+                                                    @Html.ValidationMessageFor(model => model.descGrupo, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 ">
+                                            <div class="form-group">
+                                                <label class="col-md-12">Áeas Incluidas</label>
+                                                <div class="col-md-12">
+                                                    <input type="text" id="txtArea" class="form-control" />
+                                                    <div class="pt-3">
+                                                        <ul id="selectedAreas" style="padding:1em;margin:1em;background-color:azure;"></ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 ">
+                                            <div class="form-group">
+                                                <label class="col-md-12">Usuarios Excluídos</label>
+                                                <div class="col-md-12">
+                                                    <input type="text" id="txtUsuario" class="form-control" />
+                                                    <div class="pt-3">
+                                                        <ul id="selectedUsuarios" style="padding:1em;margin:1em;background-color:azure;"></ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <div id='danger' class='alert alert-danger hidden'></div>
+                <div class="panel-group">
+                    <div class="col-md-4 tab-content">
+                        <div class="col-lg-6 col-sm-4 panel-group">
+                            <button id="btnGuardar" class="btn btn-block btn-outline btn-rounded btn-info">Guardar</button>
+                        </div>
+                        <div class="col-lg-6 col-sm-4">
+                            @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-block btn-outline btn-rounded btn-default" })
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script src="~/Areas/RRHH/Scripts/RRHH.js"></script>
+    @Scripts.Render("~/Bundles/autocompletado_JS")
+    @Scripts.Render("~/Bundles/selectBusqueda_JS")
+    @Scripts.Render("~/Bundles/datepicker_JS")
+    @Scripts.Render("~/Bundles/bloqueo_JS")
+
+<script>
+        $(document).ready(function () {
+            /*$(".datepicker").datepicker({
+                format: "dd-M-yyyy",
+                todayHighlight: true,
+                autoclose: true,
+                clearBtn: true
+            });*/
+
+            $('.datepicker').datepicker({
+                dateFormat: 'dd/mm/yy'
+            });
+
+            $("#txtArea").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: "@Url.Action("ObtenerTodasLasAreas", "GrupoRRHH")",
+                        data: { term: request.term },
+                        type: "POST",
+                        dataType: "json",
+                        success: function (data) {
+                            response($.map(data, function (item) {
+                                return { label: item.text, value: item.id };
+                            }));
+                        }
+                    });
+                },
+                minLength: 2,
+                select: function (event, ui) {
+                    var selectedArea = ui.item.value;
+                    var selectedAreaText = ui.item.label;
+                    var $selectedAreas = $("#selectedAreas");
+                    var $selectedUsuarios = $("#selectedUsuarios");
+
+                    if ($selectedUsuarios.find("li").length == 0 && !$selectedAreas.find("li[data-value='" + selectedArea + "']").length) {
+                        var $newItem = $("<li class='selected-item' style='display:flow-root;padding:1em;' data-value='" + selectedArea + "'><span class='item-text'>" + selectedAreaText + "</span> <button class='btn btn-sm btn-danger btn-remove' style='float:right;'>x</button></li>");
+                        $selectedAreas.append($newItem);
+
+                        $newItem.find(".btn-remove").on("click", function () {
+                            $(this).parent().remove();
+                        });
+                    }
+                    $(this).val('');
+                    return false;
+                }
+            });
+
+            $("#txtUsuario").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: "@Url.Action("ObtenerTodosLosUsuarios", "GrupoRRHH")",
+                        data: { term: request.term, list: $("#selectedAreas li").map(function () { return $(this).attr("data-value"); }).get()  },
+                        type: "POST",
+                        dataType: "json",
+                        success: function (data) {
+                            response($.map(data, function (item) {
+                                return { label: item.text, value: item.id };
+                            }));
+                        }
+                    });
+                },
+                minLength: 3,
+                select: function (event, ui) {
+                    var selectedUsuario = ui.item.value;
+                    var selectedUsuarioText = ui.item.label;
+                    var $selectedUsuarios = $("#selectedUsuarios");
+                    if (!$selectedUsuarios.find("li[data-value='" + selectedUsuario + "']").length) {
+                        //$selectedUsuarios.append("<li data-value='" + selectedUsuario + "'>" + selectedUsuarioText + "</li>");
+                        // Agregar el elemento seleccionado a la lista de elementos seleccionados
+                        var $newItem = $("<li class='selected-item' style='display:flow-root;padding:1em;' data-value='" + selectedUsuario + "'><span class='item-text'>" + selectedUsuarioText + "</span> <button class='btn btn-sm btn-danger btn-remove' style='float:right;'>x</button></li>");
+                        $selectedUsuarios.append($newItem);
+
+                        // Agregar el controlador de eventos para el botón "x"
+                        $newItem.find(".btn-remove").on("click", function () {
+                            $(this).parent().remove();
+                        });
+                    }
+                    $(this).val('');
+                    return false;
+                }
+            });
+            $("#btnGuardar").on("click", function () {
+                var selectedAreas = $("#selectedAreas li").map(function () { return $(this).attr("data-value"); }).get();
+                var selectedUsuarios = $("#selectedUsuarios li").map(function () { return $(this).attr("data-value"); }).get();
+                var descGrupo = $("#descGrupo").val();
+                $.ajax({
+                    url: "@Url.Action("Registrar", "GrupoRRHH")",
+                    type: "POST",
+                    data: { areas: selectedAreas, usuarios: selectedUsuarios, descripcion: descGrupo },
+                    success: function (data) {
+                        // hacer algo con la respuesta del controlador
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        // manejar el error de la solicitud AJAX
+                    }
+                });
+            });
+
+
+        });
+
+</script>
+}
