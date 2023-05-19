@@ -153,6 +153,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.Grupo
             model.descGrupo = descripcion;
             model.usuCrea = SessionPersister.Username;
             model.usufchCrea = DateTime.Now;
+            model.idEstado = ConstantesGlobales.estadoActivo;
 
             try
             {
@@ -193,30 +194,31 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.Grupo
             return RedirectToAction("Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search });
 
         }
-        
-
-
-
-        /*
+                        
         [HttpGet]
         [EncryptedActionParameter]
         [CustomAuthorize(Roles = "000003,000407")]
-        public ActionResult Modificar(string id, string diasRestantes)
+        public ActionResult Visualizar(string id)
         {
-            var model = _soli.obtenerItem(id);
-            ViewBag.fechaIni = model.fchIniSolicitud.ToShortDateString();
-            ViewBag.fechaFin = model.fchFinSolicitud.ToShortDateString();
-            int diasHabiles = calcularDiasHabiles(model.fchIniSolicitud, model.fchFinSolicitud);
-            //dias restantes sin el inicio y final actual
-            ViewBag.diasRestantes = Convert.ToInt32(diasRestantes) + diasHabiles;
-            model.idSubTipoSolicitudRrhh = model.idSubTipoSolicitudRrhh;
-            model.usufchMod = DateTime.Now;
-            model.usuMod = SessionPersister.Username;
+            var model = _gru.obtenerItem(id);
+            model.areas = _gru.obtenerAreaGrupoRrhh(id);
+            model.excluidos = _gru.obtenerExcluGrupoRrhh(id);
             return View(model);
-        }*/
+        }
+
+        public JsonResult anularGrupo(string idGrupoRRHH)
+        {
+            var variable = _gru.updateEstadoGrupo(idGrupoRRHH, ConstantesGlobales.estadoAnulado);
+            return Json(variable, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult activarGrupo(string idGrupoRRHH)
+        {
+            var variable = _gru.updateEstadoGrupo(idGrupoRRHH, ConstantesGlobales.estadoActivo);
+            return Json(variable, JsonRequestBehavior.AllowGet);
+        }
 
 
-        /*
         [HttpPost]
         [SessionAuthorize]
         public ActionResult Modificar(GrupoRRHHModels model, int diasRestantes)
@@ -228,7 +230,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.Grupo
                 model.idEstado = ConstantesGlobales.estadoModificado;
             }
 
-            if (validarLimiteVacaciones(model.fchIniSolicitud, model.fchFinSolicitud, diasRestantes))
+            /*if (validarLimiteVacaciones(model.fchIniSolicitud, model.fchFinSolicitud, diasRestantes))
             {
                 try
                 {
@@ -250,12 +252,12 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.Grupo
             else
             {
                 mensaje = "<div id='warning' class='alert alert-warning'>" + "Has superado la cantidad de días disponibles" + "</div>";
-            }
+            }*/
 
             TempData["mensaje"] = mensaje;
 
             return RedirectToAction("Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search });
-        }*/
+        }
 
 
     }

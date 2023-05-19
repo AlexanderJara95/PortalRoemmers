@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-
+using System.ComponentModel.DataAnnotations.Schema;
+using PortalRoemmers.Areas.Sistemas.Models.Global;
+using PortalRoemmers.Areas.Sistemas.Models.Usuario;
 namespace PortalRoemmers.Areas.RRHH.Models.Grupo
 {
     public class GrupoRRHHModels
@@ -16,6 +19,17 @@ namespace PortalRoemmers.Areas.RRHH.Models.Grupo
         [StringLength(200, ErrorMessage = "El campo {0} no puede exceder {1}  characters.")]
         [Display(Name = "Descripción Grupo")]
         public string descGrupo { get; set; }
+
+        ///estado 3
+        [Display(Name = "Estado")]
+        [Required(ErrorMessage = "El campo {0} es obligatorio")]
+        [StringLength(10)]
+        public string idEstado { get; set; }
+        [ForeignKey("idEstado")]
+        public EstadoModels estado { get; set; }
+
+        public List<AreaRoeModels> areas { get; set; }
+        public List<UsuarioModels> excluidos { get; set; }
 
         //Auditoría 3
         [Display(Name = "Usuario creación")]

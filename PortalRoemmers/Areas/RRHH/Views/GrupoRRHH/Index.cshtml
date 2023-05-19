@@ -70,7 +70,7 @@
         <div class="row">
             <div class="col-sm-12">
                 <dl>
-                    <dt>MIS SOLICITUDES</dt>
+                    <dt>GRUPOS DE USUARIOS</dt>
                 </dl>
             </div>
             <div class="col-sm-12">
@@ -81,20 +81,38 @@
                             <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1">C&oacutedigo</th>
                             <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2">Descripción</th>
                             <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Fecha de Creación</th>
+                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Estado</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var item in Model.GrupoRRHH)
-                        {                          
+                        {
                         <tr>
                             <td class="text-nowrap" align="center">
                                 <a href="@MyExtensions.ActionUrl("Visualizar", "GrupoRRHH", new { Area = "RRHH", id = item.idGrupoRrhh })" data-toggle="tooltip" title="Visualizar"> <i class="fa fa-eye text-inverse m-r-10"></i> </a>
-                                <a href="@MyExtensions.ActionUrl("Modificar", "GrupoRRHH", new { Area = "RRHH", id = item.idGrupoRrhh})" data-toggle="tooltip" title="Editar"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a>
-                                <a data-toggle="tooltip" title="Anular" id="sa-params-anul"> <i class="fa fa-close text-danger"></i> </a>
+                                <!--<a href="@MyExtensions.ActionUrl("Modificar", "GrupoRRHH", new { Area = "RRHH", id = item.idGrupoRrhh })" data-toggle="tooltip" title="Editar"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a>-->
+                                @if (item.idEstado == ConstantesGlobales.estadoActivo)
+                                {
+                                    <a data-toggle="tooltip" title="Anular" id="sa-params-anul"> <i class="fa fa-close text-danger"></i> </a>
+                                }
+                                else
+                                {
+                                    <a data-toggle="tooltip" title="Activar" id="sa-params-activ"> <i class="fa fa-check" style="color:#2cabe3;"></i> </a>
+                                }                                
                             </td>
                             <td>@Html.DisplayFor(modelItem => item.idGrupoRrhh)</td>
                             <td>@Html.DisplayFor(modelItem => item.descGrupo)</td>
                             <td>@Html.DisplayFor(modelItem => item.usufchCrea)</td>
+                            <td>@{ 
+                                    if (item.idEstado == ConstantesGlobales.estadoActivo)
+                                    {
+                                        <strong style="color: #2cabe3">@Html.DisplayFor(modelItem => item.estado.nomEst)</strong>
+                                    }
+                                    else { 
+                                        <strong style="color: #dd6b55">@Html.DisplayFor(modelItem => item.estado.nomEst)</strong>
+                                    }
+                                }
+                            </td>
                         </tr>
                         }
                     </tbody>
@@ -128,10 +146,11 @@
             });
 
             $('table tbody tr a#sa-params-anul').click(function () {
-                var idSolicitudRrhh = $(this).parent().parents('tr').find('td').eq(1).text();
+                var idGrupoRrhh = $(this).parent().parents('tr').find('td').eq(1).text();
+                console.log("num", idGrupoRrhh);
                 swal({
                     title: "¿Estás seguro?",
-                    text: "¡No se podrá aprobar esta solicitud! \n",
+                    text: "¡Va a anular el grupo! \n",
                     type: "warning",
                     showCancelButton: true,
                     confirmButtonColor: "#DD6B55",
@@ -142,117 +161,68 @@
                 }, function (isConfirm) {
                     if (isConfirm) {
                         var Options = {};
-                        Options.url = "/SolicitudRRHH/anularSolicitud";
+                        Options.url = "/GrupoRRHH/anularGrupo";
                         Options.type = "POST";
-                        Options.data = JSON.stringify({ idSolicitudRrhh: idSolicitudRrhh });
+                        Options.data = JSON.stringify({ idGrupoRrhh: idGrupoRrhh });
                         Options.datatype = "json";
                         Options.contentType = "application/json";
                         Options.success = function (data) {
                             if (data) {
-                                swal("Anulado!", "Tu solicitud ha sido anulada.", "success");
+                                swal("Anulado!", "El grupo ha sido anulado.", "success");
                                 setTimeout(function () {
                                     location.reload();
                                 }, 2000);
                             } else {
-                                swal("Ocurrio un problema!", "Tu solicitud no ha sido anulada.", "error");
+                                swal("Ocurrio un problema!", "El grupo no ha sido anulado.", "error");
                             }
                         };
                         Options.error = function () { alert("Error in Getting States!!"); unblock(); };
                         $.ajax(Options);
                     } else {
-                        swal("Cancelado", "Tu solicitud esta seguro.)", "error");
+                        swal("Cancelado", "El grupo está seguro.)", "error");
                     }
                 });
             });
 
-
-            $('table tbody tr select#sa-params').click(function () {
-                var idSolicitudRrhh = $(this).parent().parents('tr').find('td').eq(1).text();
-                var slc = $(this).parent().parents('tr').find('select').val();
-                var rpta = true;
-                if (slc == '9') {                    
-                    swal({
-                        title: "¿Estás seguro?",
-                        text: "¡Va a aprobar esta solicitud! \n",
-                        type: "warning",
-                        showCancelButton: true,
-                        confirmButtonColor: "#55c7dd",
-                        confirmButtonText: "Sí, Aprobar!",
-                        cancelButtonText: "No, no aprobarlo aún",
-                        closeOnConfirm: false,
-                        closeOnCancel: false
-                    }, function (isConfirm) {
-                        if (isConfirm) {
-                            var Options = {};
-                            Options.url = "/SolicitudRRHH/aprobarSolicitud";
-                            Options.type = "POST";
-                            Options.data = JSON.stringify({ idSolicitudRrhh: idSolicitudRrhh });
-                            Options.datatype = "json";
-                            Options.contentType = "application/json";
-                            Options.success = function (data) {
-
-                                if (data) {
-                                    swal("Aprobado!", "La solicitud ha sido aprobada.", "success");
-                                    setTimeout(function () {
-                                        location.reload();
-                                    }, 2000);
-                                } else {
-                                    swal("Ocurrio un problema!", "La solicitud no ha sido aprobada.", "error");
-                                }
-                            };
-                            Options.error = function () { alert("Error in Getting States!!"); unblock(); };
-                            $.ajax(Options);
-
-                        } else {
-                            swal("Cancelado", "La solicitud no ha sido aprobada.", "error");
-                            rpta = false;
-                            console.log("9", rpta);
-                        }
-                    });
-                }
-
-                if (slc == '12') {
-                    swal({
-                        title: "¿Estás seguro?",
-                        text: "¡Va a desaprobar esta solicitud! \n",
-                        type: "warning",
-                        showCancelButton: true,
-                        confirmButtonColor: "#DD6B55",
-                        confirmButtonText: "Sí, desaprobarlo!",
-                        cancelButtonText: "No, no desaprobarlo!",
-                        closeOnConfirm: false,
-                        closeOnCancel: false
-                    }, function (isConfirm) {
-                        if (isConfirm) {
-                            var Options = {};
-                            Options.url = "/SolicitudRRHH/rechazarSolicitud";
-                            Options.type = "POST";
-                            Options.data = JSON.stringify({ idSolicitudRrhh: idSolicitudRrhh });
-                            Options.datatype = "json";
-                            Options.contentType = "application/json";
-                            Options.success = function (data) {
-
-                                if (data) {
-                                    swal("Anulado!", "La solicitud ha sido desaprobada.", "success");
-                                    setTimeout(function () {
-                                        location.reload();
-                                    }, 2000);
-                                } else {
-                                    swal("Ocurrio un problema!", "La solicitud no ha sido desaprobada.", "error");
-                                }
-                            };
-                            Options.error = function () { alert("Error in Getting States!!"); unblock(); };
-                            $.ajax(Options);
-
-                        } else {
-                            swal("Cancelado", "Tu solicitud esta segura.", "error");
-                            rpta = false;
-                            console.log("12", rpta);
-                            $(this).parent().parents('tr').find('select option:first').prop('selected', true);
-                        }
-                    });
-                }
+            $('table tbody tr a#sa-params-activ').click(function () {
+                var idGrupoRrhh = $(this).parent().parents('tr').find('td').eq(1).text();
+                console.log("num", idGrupoRrhh);
+                swal({
+                    title: "¿Estás seguro?",
+                    text: "¡Va a activar el grupo! \n",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#2cabe3",
+                    confirmButtonText: "Sí, activarlo!",
+                    cancelButtonText: "No, no activarlo!",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                }, function (isConfirm) {
+                    if (isConfirm) {
+                        var Options = {};
+                        Options.url = "/GrupoRRHH/activarGrupo";
+                        Options.type = "POST";
+                        Options.data = JSON.stringify({ idGrupoRrhh: idGrupoRrhh });
+                        Options.datatype = "json";
+                        Options.contentType = "application/json";
+                        Options.success = function (data) {
+                            if (data) {
+                                swal("Activado!", "El grupo ha sido activado.", "success");
+                                setTimeout(function () {
+                                    location.reload();
+                                }, 2000);
+                            } else {
+                                swal("Ocurrio un problema!", "El grupo no ha sido activado.", "error");
+                            }
+                        };
+                        Options.error = function () { alert("Error in Getting States!!"); unblock(); };
+                        $.ajax(Options);
+                    } else {
+                        swal("Cancelado", "El grupo sigue anulado.)", "error");
+                    }
+                });
             });
+
         });
     </script>
 }

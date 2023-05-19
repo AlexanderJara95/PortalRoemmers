@@ -1,0 +1,127 @@
+﻿@using PortalRoemmers.Security
+@model PortalRoemmers.Areas.RRHH.Models.Grupo.GrupoRRHHModels
+@using Newtonsoft.Json
+@{
+    ViewBag.Title = "Registrar Solicitud RRHH";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+@section css {
+    @Styles.Render("~/Content/autocompletado_CSS")
+    @Styles.Render("~/Content/selectBusqueda_CSS")
+    @Styles.Render("~/Content/datepicker_CSS")
+}
+<div class="white-box p-l-20 p-r-20">
+    <h3 class="box-title m-b-0"> Mantenimiento del Grupo de Usuarios</h3>
+    <p class="text-muted m-b-30 font-13">Completar todos los campos necesarios.</p>
+    <div id='danger' class='alert alert-danger hidden'></div>
+    @{string msg = ""; try { msg = TempData["mensaje"].ToString(); } catch { }}
+    @(new HtmlString(msg))
+    <div class="row">
+        <div class="col-md-12">
+            @Html.AntiForgeryToken()
+            <div class="col-md-12">
+                <section id="wrapper" class="block1">
+                    <div class="panel-group" id="exampleAccordionDefault" aria-multiselectable="true" role="tablist">
+                        <div class="panel">
+                            <div class="row">
+                                <div class="col-md-12 text-center">
+                                    <dl>
+                                        <dt>@Model.descGrupo</dt>
+                                    </dl>
+                                </div>
+                            </div>
+                            <div class="panel-heading" id="exampleHeadingDefaultOne" role="tab"> <a class="panel-title" data-toggle="collapse" href="#exampleCollapseDefaultOne" data-parent="#exampleAccordionDefault" aria-expanded="true" aria-controls="exampleCollapseDefaultOne"> Datos del grupo</a> </div>
+                            <div class="panel-collapse collapse in" id="exampleCollapseDefaultOne" aria-labelledby="exampleHeadingDefaultOne" role="tabpanel">
+                                @Html.HiddenFor(model => model.idGrupoRrhh)
+                                @Html.HiddenFor(model => model.descGrupo)
+                                @Html.HiddenFor(model => model.usuCrea)
+                                @Html.HiddenFor(model => model.usufchCrea)
+                                @Html.HiddenFor(model => model.usuMod)
+                                @Html.HiddenFor(model => model.usufchMod)
+                                @Html.HiddenFor(model => model.areas)
+                                @Html.HiddenFor(model => model.excluidos)
+
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-md-6 pt-3">
+                                            <div class="form-group">
+                                                <label class="col-md-12">Áeas Incluidas</label>
+                                                <div class="col-md-12">
+                                                    <div class="pt-3">
+                                                        <ul id="selectedAreas" style="padding:1em;margin:1em;background-color:azure;">
+                                                            @foreach (var area in Model.areas)
+                                                            {
+                                                                <li class='selected-item' style='display:flow-root;padding:1em;' data-value='@area.idAreRoe'>
+                                                                    <span class='item-text'>@area.nomAreRoe</span>
+                                                                </li>
+                                                            }
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 ">
+                                            <div class="form-group">
+                                                <label class="col-md-12">Usuarios Excluídos</label>
+                                                <div class="col-md-12">
+                                                    <div class="pt-3">
+                                                        <ul id="selectedUsuarios" style="padding:1em;margin:1em;background-color:azure;">
+                                                            @foreach (var excluido in Model.excluidos)
+                                                            {
+                                                                <li class='selected-item' style='display:flow-root;padding:1em;' data-value='@excluido.idAcc'>
+                                                                    <span class='item-text'>@excluido.empleado.nomComEmp (&nbsp;@excluido.username)</span>
+                                                                </li>
+                                                            }
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <div id='danger' class='alert alert-danger hidden'></div>
+                <div class="panel-group">
+                    <div class="col-md-4 tab-content">
+                        <div class="col-lg-6 col-sm-4 panel-group">
+                        </div>
+                        <div class="col-lg-6 col-sm-4">
+                            @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-block btn-outline btn-rounded btn-default" })
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script src="~/Areas/RRHH/Scripts/RRHH.js"></script>
+    @Scripts.Render("~/Bundles/autocompletado_JS")
+    @Scripts.Render("~/Bundles/selectBusqueda_JS")
+    @Scripts.Render("~/Bundles/datepicker_JS")
+    @Scripts.Render("~/Bundles/bloqueo_JS")
+
+    <script>
+        $(document).ready(function () {
+            /*$(".datepicker").datepicker({
+                format: "dd-M-yyyy",
+                todayHighlight: true,
+                autoclose: true,
+                clearBtn: true
+            });*/
+
+            $('.datepicker').datepicker({
+                dateFormat: 'dd/mm/yy'
+            });
+
+        });
+
+    </script>
+}

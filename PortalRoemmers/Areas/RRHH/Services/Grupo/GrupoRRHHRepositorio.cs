@@ -9,6 +9,7 @@ using System.Data.Entity; //permite usar landa
 using System.Data.SqlClient;
 using PortalRoemmers.Security;
 using PortalRoemmers.Areas.RRHH.Models.Grupo;
+using PortalRoemmers.Areas.Sistemas.Models.Usuario;
 
 namespace PortalRoemmers.Areas.RRHH.Services.Grupo
 {
@@ -36,7 +37,10 @@ namespace PortalRoemmers.Areas.RRHH.Services.Grupo
                     .OrderByDescending(x => x.idGrupoRrhh)
                     //.Where(x => (x.idEstado != ConstantesGlobales.estadoAnulado && x.subtipoSolicitud.idTipoSolicitudRrhh == tipo) && ((x.fchIniSolicitud >= p) && (x.fchIniSolicitud <= a) && (x.fchFinSolicitud >= p) && (x.fchFinSolicitud <= a)) && (x.descSolicitud.Contains(search) || (x.subtipoSolicitud.descSubtipoSolicitud.Contains(search)) || x.estado.nomEst.Contains(search)))
                     .Skip((pagina - 1) * cantidadRegistrosPorPagina)
-                    .Take(cantidadRegistrosPorPagina).ToList();
+                    .Take(cantidadRegistrosPorPagina)
+                    .Include(x => x.estado) // Carga el estado relacionado
+                    .ToList();
+                
                 var totalDeRegistros = db.tb_SolicitudRRHH.Where(x => ((x.idAccSol == SessionPersister.UserId || x.idAccApro == SessionPersister.UserId) && x.idEstado != ConstantesGlobales.estadoAnulado && x.subtipoSolicitud.idTipoSolicitudRrhh == tipo) && ((x.fchIniSolicitud >= p) && (x.fchIniSolicitud <= a) && (x.fchFinSolicitud >= p) && (x.fchFinSolicitud <= a)) && (x.descSolicitud.Contains(search) || (x.subtipoSolicitud.descSubtipoSolicitud.Contains(search)) || x.estado.nomEst.Contains(search))).Count();
                 var modelo = new ViewModels.IndexViewModel();
                 modelo.GrupoRRHH = model;
@@ -52,7 +56,6 @@ namespace PortalRoemmers.Areas.RRHH.Services.Grupo
             using (var db = new ApplicationDbContext())
             {
                 GrupoRRHHModels model = db.tb_grupoRRHH
-                    .Include(x => x.descGrupo)
                     .Where(x => x.idGrupoRrhh == id).FirstOrDefault();
                 return model;
             }
@@ -111,6 +114,16 @@ namespace PortalRoemmers.Areas.RRHH.Services.Grupo
             }
             return exec;
         }
+        public List<AreaRoeModels> obtenerAreaGrupoRrhh(string id)
+        {
+            using (var db = new ApplicationDbContext())
+            {
+                //var modelAreaGrupoRRHH = db.tb_AreaGrupoRRHH.Where(x => x.idGrupoRrhh == id).Select(x => x.idAreRoe).ToList();
+                //var modelArea = db.tb_Area.Where(x => modelAreaGrupoRRHH.Contains(x.idAreRoe)).ToList();
+                var model = db.tb_Area.Where(x => db.tb_AreaGrupoRRHH.Any(y => y.idGrupoRrhh == id && y.idAreRoe == x.idAreRoe)).ToList();
+                return model;
+            }
+        }
 
         public Boolean crearExcluGrupoRrhh(ExcluGrupoRRHHModels model)
         {
@@ -128,6 +141,31 @@ namespace PortalRoemmers.Areas.RRHH.Services.Grupo
                 }
             }
             return exec;
+        }
+
+        /*public ExcluGrupoRRHHModels obtenerExcluGrupoRrhh(string id)
+        {
+            using (var db = new ApplicationDbContext())
+            {
+                ExcluGrupoRRHHModels model = db.tb_ExcluGrupoRRHH
+                    .Include(x => x.idGrupoRrhh && x.)
+                    .Where(x => x.idGrupoRrhh == id).FirstOrDefault();
+                return model;
+            }
+
+        }*/
+        public List<UsuarioModels> obtenerExcluGrupoRrhh(string id)
+        {
+            using (var db = new ApplicationDbContext())
+            {
+                var model = db.tb_Usuario
+                    .Include(x => x.empleado)
+                    .Where(x => db.tb_ExcluGrupoRRHH.Any(y => y.idGrupoRrhh == id && y.idAcc == x.idAcc))
+                    .Where(x => x.idEst != ConstantesGlobales.estadoCesado)
+                    .OrderBy(x => x.idAcc).ToList();
+
+                return model;
+            }
         }
 
         public Boolean crearGrupoSolRrhh(GrupoSolicitudRRHHModels model)
@@ -174,6 +212,36 @@ namespace PortalRoemmers.Areas.RRHH.Services.Grupo
                     return false;
                 }
             }
+        }
+        
+        public Boolean updateEstadoGrupo(string id, string estado)
+        {
+            string commandText = "UPDATE tb_GrupoRRHH SET idEstado = @idEstado, usuMod=@usuMod , usufchMod=@usufchMod  WHERE idGrupoRrhh = @idGrupoRrhh ;";
+
+            using (SqlConnection connection = new SqlConnection(Conexion.connetionString))
+            {
+                SqlCommand command = new SqlCommand(commandText, connection);
+
+                command.Parameters.Add("@idGrupoRrhh", SqlDbType.VarChar);
+                command.Parameters["@idGrupoRrhh"].Value = id;
+                command.Parameters.AddWithValue("@idEstado", estado);
+                command.Parameters.AddWithValue("@usuMod", SessionPersister.Username);
+                command.Parameters.AddWithValue("@usufchMod", DateTime.Now);
+
+                try
+                {
+                    connection.Open();
+                    Int32 rowsAffected = command.ExecuteNonQuery();
+                    connection.Close();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    return false;
+                }
+            }
+            
         }
     }
 }

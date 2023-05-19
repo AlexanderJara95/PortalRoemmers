@@ -186,7 +186,7 @@ namespace PortalRoemmers.Models
         public DbSet<TipoSolicitudRRHHModels> tb_TipoSolicitudRRHH { get; set; }
         public DbSet<UserSolicitudRRHHModels> tb_UserSolicitudRRHH { get; set; }
 
-        //Solicitud RRHH
+        //Grupo RRHH
         public DbSet<AreaGrupoRRHHModels> tb_AreaGrupoRRHH { get; set; }
         public DbSet<ExcluGrupoRRHHModels> tb_ExcluGrupoRRHH { get; set; }
         public DbSet<GrupoRRHHModels> tb_grupoRRHH { get; set; }
