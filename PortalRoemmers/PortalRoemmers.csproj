@@ -516,6 +516,10 @@
     <Compile Include="Migrations\202304261342417_CreateModelGrupo.Designer.cs">
       <DependentUpon>202304261342417_CreateModelGrupo.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202305111445299_UpdateModelGrupoRRHH.cs" />
+    <Compile Include="Migrations\202305111445299_UpdateModelGrupoRRHH.Designer.cs">
+      <DependentUpon>202305111445299_UpdateModelGrupoRRHH.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationDbContext.cs" />
     <Compile Include="Models\BaseModelo.cs" />
@@ -2630,6 +2634,8 @@
     <Content Include="Areas\RRHH\Views\SolicitudRRHH\Modificar.cshtml" />
     <Content Include="Areas\RRHH\Views\GrupoRRHH\Index.cshtml" />
     <Content Include="Areas\RRHH\Views\GrupoRRHH\Registrar.cshtml" />
+    <Content Include="Areas\RRHH\Views\GrupoRRHH\Modificar.cshtml" />
+    <Content Include="Areas\RRHH\Views\GrupoRRHH\Visualizar.cshtml" />
     <None Include="Scripts\jquery-3.0.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.0.0.js" />
     <Content Include="Scripts\jquery-3.0.0.min.js" />
@@ -3965,6 +3971,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202304261342417_CreateModelGrupo.resx">
       <DependentUpon>202304261342417_CreateModelGrupo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202305111445299_UpdateModelGrupoRRHH.resx">
+      <DependentUpon>202305111445299_UpdateModelGrupoRRHH.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
