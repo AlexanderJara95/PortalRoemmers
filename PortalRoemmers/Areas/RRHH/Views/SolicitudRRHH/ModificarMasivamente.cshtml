@@ -1,7 +1,7 @@
 ﻿@using PortalRoemmers.Security
 @model PortalRoemmers.Areas.RRHH.Models.SolicitudRRHH.SolicitudRRHHModels
 @{
-    ViewBag.Title = "Registrar Solicitud RRHH";
+    ViewBag.Title = "Registrar Solicitud RRHH Masiva";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 @section css {
@@ -10,38 +10,49 @@
     @Styles.Render("~/Content/datepicker_CSS")
 }
 <div class="white-box p-l-20 p-r-20">
-    <h3 class="box-title m-b-0"> Nueva Solicitud de Vacaciones</h3>
-    <p class="text-muted m-b-30 font-13">
-        Para realizar una solicitud, es necesario emitirlo
-        como mínimo con 15 días de anticipación
-    </p>
+    <h3 class="box-title m-b-0"> Nueva Solicitud Masiva de Vacaciones</h3>
+    <p class="text-muted m-b-30 font-13">Completar todos los campos necesarios.</p>
     <div id='danger' class='alert alert-danger hidden'></div>
     @{string msg = ""; try { msg = TempData["mensaje"].ToString(); } catch { }}
     @(new HtmlString(msg))
     <div class="row">
         <div class="col-md-12">
-            @using (Html.BeginForm("Registrar", "SolicitudRRHH", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal form-material" }))
+            @using (Html.BeginForm("ModificarMasivamente", "SolicitudRRHH", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal form-material" }))
             {
                 @Html.AntiForgeryToken()
                 <div class="col-md-12">
                     <section id="wrapper" class="block1">
                         <div class="panel-group" id="exampleAccordionDefault" aria-multiselectable="true" role="tablist">
                             <div class="panel">
-                                <div class="row">
+                                <!--<div class="row">
                                     <div class="col-md-12 text-center">
                                         <dl>
                                             <dt>VACACIONES DISPONIBLES</dt>
-                                            <dd style="color: #2cabe3">@ViewBag.diasRestantes DIAS</dd>
+                                            <dd style="color: #2cabe3"> DIAS</dd>
                                         </dl>
                                     </div>
-                                </div>
+                                </div>-->
                                 <div class="panel-heading" id="exampleHeadingDefaultOne" role="tab"> <a class="panel-title" data-toggle="collapse" href="#exampleCollapseDefaultOne" data-parent="#exampleAccordionDefault" aria-expanded="true" aria-controls="exampleCollapseDefaultOne"> Datos de la Solicitud </a> </div>
                                 <div class="panel-collapse collapse in" id="exampleCollapseDefaultOne" aria-labelledby="exampleHeadingDefaultOne" role="tabpanel">
                                     @Html.HiddenFor(model => model.idEstado)
-                                    @Html.HiddenFor(model => model.idAccSol)
-                                    @Html.Hidden("diasRestantes", (int)ViewBag.diasRestantes)
+                                    @Html.HiddenFor(model => model.idAccApro)
+                                    @Html.HiddenFor(model => model.idSolicitudRrhh)
+                                    @Html.HiddenFor(model => model.idSubTipoSolicitudRrhh)
+                                    @Html.HiddenFor(model => model.usuCrea)
+                                    @Html.HiddenFor(model => model.usufchCrea)
+                                    @Html.HiddenFor(model => model.usuMod)
+                                    @Html.HiddenFor(model => model.usufchMod)
                                     <div class="panel-body">
                                         <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label class="col-md-12">Grupo de Usuarios<span class="text-danger">*</span></label>
+                                                    <div class="col-md-12">
+                                                        @Html.DropDownListFor(model => model.idAccSol, (SelectList)ViewBag.GrupoRrhh, "Seleccionar....", new { @class = "form-control form-control-line" })
+                                                        @Html.ValidationMessageFor(model => model.idAccSol, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label class="col-md-12">@Html.LabelFor(model => model.descSolicitud)</label>
@@ -55,7 +66,7 @@
                                                 <div class="form-group">
                                                     <label class="col-md-12">@Html.LabelFor(model => model.fchIniSolicitud)</label>
                                                     <div class="col-md-12">
-                                                        <input class="form-control form-control-line datepicker" id="fchIniSolicitud" name="fchIniSolicitud" placeholder="dd/mm/aaaa" autocomplete="off">
+                                                        <input class="form-control form-control-line datepicker" id="fchIniSolicitud" name="fchIniSolicitud" placeholder="dd/mm/aaaa" autocomplete="off" value="@ViewBag.fechaIni">
                                                         @Html.ValidationMessageFor(model => model.fchIniSolicitud, "", new { @class = "text-danger" })
                                                     </div>
                                                 </div>
@@ -64,7 +75,7 @@
                                                 <div class="form-group">
                                                     <label class="col-md-12">@Html.LabelFor(model => model.fchFinSolicitud)</label>
                                                     <div class="col-md-12">
-                                                        <input class="form-control form-control-line datepicker" id="fchFinSolicitud" name="fchFinSolicitud" placeholder="dd/mm/aaaa" autocomplete="off">
+                                                        <input class="form-control form-control-line datepicker" id="fchFinSolicitud" name="fchFinSolicitud" placeholder="dd/mm/aaaa" autocomplete="off" value="@ViewBag.fechaFin">
                                                         @Html.ValidationMessageFor(model => model.fchFinSolicitud, "", new { @class = "text-danger" })
                                                     </div>
                                                 </div>
@@ -102,45 +113,24 @@
     @Scripts.Render("~/Bundles/datepicker_JS")
     @Scripts.Render("~/Bundles/bloqueo_JS")
 
-    <script>
+<script>
         $(document).ready(function () {
-            var minDate = getDatesFromNow(15).toLocaleDateString('es-ES');
+            /*$(".datepicker").datepicker({
+                format: "dd-M-yyyy",
+                todayHighlight: true,
+                autoclose: true,
+                clearBtn: true
+            });*/
 
             $('.datepicker').datepicker({
-                format: 'dd/mm/yyyy',
-                startDate: minDate,
-                autoclose: true
+                dateFormat: 'dd/mm/yy',
             });
 
-            $('.datepicker').datepicker('setDate', minDate);
-
-            $('#fchIniSolicitud').on('changeDate', function (selected) {
-                var startDate = new Date(selected.date.valueOf());
-                $('#fchFinSolicitud').datepicker('setStartDate', startDate);
-                validateDates();
+            $(document).ready(function() {
+                var selectedGrupoRrhh = '@ViewBag.SelectedGrupoRrhh';
+                $("#idAccSol").val(selectedGrupoRrhh);
             });
-
-            $('#fchFinSolicitud').on('changeDate', function (selected) {
-                var endDate = new Date(selected.date.valueOf());
-                $('#fchIniSolicitud').datepicker('setEndDate', endDate);
-                validateDates();
-            });
-
-            function getDatesFromNow(days) {
-                var date = new Date();
-                date.setDate(date.getDate() + days);
-                return date;
-            }
-
-            function validateDates() {
-                var startDate = $('#fchIniSolicitud').datepicker('getDate');
-                var endDate = $('#fchFinSolicitud').datepicker('getDate');
-
-                if (startDate && endDate && startDate > endDate) {
-                    $('#fchFinSolicitud').datepicker('update', startDate);
-                }
-            }
         });
 
-    </script>
+</script>
 }

@@ -12,7 +12,7 @@
 }
 <div class="white-box p-l-20 p-r-20">
     <h3 class="box-title m-b-0"> Nueva Solicitud de Vacaciones</h3>
-    <p class="text-muted m-b-30 font-13">Completar todos los campos necesarios.</p>
+    <p class="text-muted m-b-30 font-13">Para modificar una solicitud, es necesario realizarlo como mínimo con 15 días de anticipación.</p>
     <div id='danger' class='alert alert-danger hidden'></div>
     @{string msg = ""; try { msg = TempData["mensaje"].ToString(); } catch { }}
     @(new HtmlString(msg))
@@ -110,16 +110,42 @@
 
     <script>
         $(document).ready(function () {
-            /*$(".datepicker").datepicker({
-                format: "dd-M-yyyy",
-                todayHighlight: true,
-                autoclose: true,
-                clearBtn: true
-            });*/
+            var minDate = getDatesFromNow(15).toLocaleDateString('es-ES');
 
             $('.datepicker').datepicker({
-                dateFormat: 'dd/mm/yy'
+                format: 'dd/mm/yyyy',
+                startDate: minDate,
+                autoclose: true
             });
+
+            //$('.datepicker').datepicker('setDate', minDate);
+
+            $('#fchIniSolicitud').on('changeDate', function (selected) {
+                var startDate = new Date(selected.date.valueOf());
+                $('#fchFinSolicitud').datepicker('setStartDate', startDate);
+                validateDates();
+            });
+
+            $('#fchFinSolicitud').on('changeDate', function (selected) {
+                var endDate = new Date(selected.date.valueOf());
+                $('#fchIniSolicitud').datepicker('setEndDate', endDate);
+                validateDates();
+            });
+
+            function getDatesFromNow(days) {
+                var date = new Date();
+                date.setDate(date.getDate() + days);
+                return date;
+            }
+
+            function validateDates() {
+                var startDate = $('#fchIniSolicitud').datepicker('getDate');
+                var endDate = $('#fchFinSolicitud').datepicker('getDate');
+
+                if (startDate && endDate && startDate > endDate) {
+                    $('#fchFinSolicitud').datepicker('update', startDate);
+                }
+            }
         });
 
     </script>

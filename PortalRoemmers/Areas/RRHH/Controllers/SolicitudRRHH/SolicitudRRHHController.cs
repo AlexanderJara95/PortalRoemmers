@@ -1,5 +1,7 @@
 ﻿using PortalRoemmers.Areas.RRHH.Models.SolicitudRRHH;
 using PortalRoemmers.Areas.RRHH.Services.SolicitudRRHH;
+using PortalRoemmers.Areas.RRHH.Models.Grupo;
+using PortalRoemmers.Areas.RRHH.Services.Grupo;
 using PortalRoemmers.Areas.Sistemas.Models.Usuario;
 using PortalRoemmers.Areas.Sistemas.Services.Usuario;
 using PortalRoemmers.Filters;
@@ -19,6 +21,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
         private SolicitudRRHHRepositorio _soli;
         private UsuarioRepositorio _usu;
         private EmpleadoRepositorio _emp;
+        private GrupoRRHHRepositorio _gru;
         private Ennumerador enu;
         private Parametros p;
 
@@ -26,6 +29,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
         {
             _soli = new SolicitudRRHHRepositorio();
             _usu = new UsuarioRepositorio();
+            _gru = new GrupoRRHHRepositorio();
             p = new Parametros();
             enu = new Ennumerador();
         }
@@ -36,7 +40,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
         }*/
         [CustomAuthorize(Roles = "000003,000405")]
         public ActionResult Index(string menuArea, string menuVista, int pagina = 1, string search = "", string idAcc = "", string fchEveSolGasI = "", string fchEveSolGasF = "")
-        {
+       {
             EmpleadoModels emple = (EmpleadoModels)System.Web.HttpContext.Current.Session[Sessiones.empleado];
             //-----------------------------
             DateTime inicio = new DateTime();
@@ -81,10 +85,11 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             //ViewBag.gerentesProd = new SelectList(result.Select(x => new { idAccResGP = x.value, nombre = x.nomComEmp }), "idAccResGP", "nombre");
             //ViewBag.actividades = new SelectList(_act.obtenerActividades().Where(x => x.idAccRes == idAcc && x.estimacion != null && ((DateTime.Today >= x.fchIniVig) && (DateTime.Today <= x.fchFinVig))).Select(x => new { idActividades = x.idActiv, nomActiv = x.nomActiv }), "idActividades", "nomActiv");
             //-----------------------------
-
-            var model = _soli.obtenerTodos(pagina, search, ConstantesGlobales.tipoVacaciones, inicio.ToString(), fin.ToString());
+            var model = _soli.obtenerTodos(pagina, search, ConstantesGlobales.subTipoVacaciones, inicio.ToString(), fin.ToString());
             int total = diasTotalesVacaciones(emple.ingfchEmp.Value);
             int rest = diasRestantes(model.SoliRRHH, total);
+            ViewBag.SolicitudMasiva = validarSolicitudMasivaAdmin(model.SoliRRHH);
+            ViewBag.SolicitudAdmin = validarSolicitudAdmin(model.SoliRRHH);
             ViewBag.diasRestantes =  rest;
             ViewBag.diasUtilizados = total - rest;
             //-----------------------------
@@ -95,7 +100,6 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
         [HttpGet]
         public ActionResult Registrar(int diasRestantes)
         {
-
             ViewBag.procedeA = true;
             //dias restantes sin el inicio y final actual
             ViewBag.diasRestantes = diasRestantes;
@@ -110,6 +114,82 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             ViewBag.fecha = actual;
 
             return View();
+        }
+
+        [CustomAuthorize(Roles = "000003,000406")]
+        [HttpGet]
+        public ActionResult RegistrarMasivamente()
+        {
+            ViewBag.procedeA = true;
+            SolicitudRRHHModels model = new SolicitudRRHHModels();
+            model.idAccSol = SessionPersister.UserId;
+            ViewBag.GrupoRrhh = new SelectList(_gru.obtenerGruposRrhh(), "idGrupoRrhh", "descGrupo");
+            var actual = DateTime.Today.ToString("dd/MM/yyyy");
+
+            ViewBag.fecha = actual;
+
+            return View();
+        }
+
+        [HttpPost]
+        [SessionAuthorize]
+        public ActionResult RegistrarMasivamente(SolicitudRRHHModels model)
+        {
+            EmpleadoModels emple = (EmpleadoModels)System.Web.HttpContext.Current.Session[Sessiones.empleado];
+            //string responsableD = emple.idEmp + ";" + emple.apePatEmp + " " + emple.apeMatEmp + " " + emple.nom1Emp + " " + emple.nom2Emp + ";" + "";
+            string idGrupoRrhh = model.idAccSol;
+            string tabla = "tb_SolicitudRRHH";
+            int idc = enu.buscarTabla(tabla);
+            model.idSolicitudRrhh = idc.ToString("D7");
+            model.idEstado = ConstantesGlobales.estadoRegistrado;
+            model.idAccSol = SessionPersister.UserId;
+            model.usuCrea = SessionPersister.Username;
+            model.usufchCrea = DateTime.Now;
+
+            UserSolicitudRRHHModels userSoliRRHH = new UserSolicitudRRHHModels();
+            userSoliRRHH.idSolicitudRrhh = model.idSolicitudRrhh;
+            userSoliRRHH.idAccRes = SessionPersister.UserId;
+            userSoliRRHH.usuCrea = model.usuCrea;
+            userSoliRRHH.usufchCrea = model.usufchCrea;
+
+            GrupoSolicitudRRHHModels grupoSoliRRHH = new GrupoSolicitudRRHHModels();
+            grupoSoliRRHH.idSolicitudRrhh = model.idSolicitudRrhh;
+            grupoSoliRRHH.idGrupoRrhh = idGrupoRrhh;
+            grupoSoliRRHH.descGrupo = model.descSolicitud;
+            grupoSoliRRHH.usuCrea = model.usuCrea;
+            grupoSoliRRHH.usufchCrea = model.usufchCrea;
+
+
+            if (emple.idEmpJ != "" || emple.idEmpJ != null)
+            {
+                model.idAccApro = _usu.obtenerItemXEmpleado(emple.idEmpJ).idAcc;
+                model.idSubTipoSolicitudRrhh = ConstantesGlobales.subTipoVacaciones;
+                try
+                {
+                    if (_soli.crear(model))
+                    {
+                        enu.actualizarTabla(tabla, idc);
+                        TempData["mensaje"] = "<div id='success' class='alert alert-success'>Se creó un nuevo registro.</div>";
+                        _soli.crearUserSoliRrhh(userSoliRRHH);
+                        _soli.crearGrupoSoliRrhh(grupoSoliRRHH);
+                    }
+                    else
+                    {
+                        TempData["mensaje"] = "<div id='warning' class='alert alert-warning'>" + "Error en guardar el registro" + "</div>";
+                    }
+                }
+                catch (Exception e)
+                {
+                    e.Message.ToString();
+                }
+            }
+            else
+            {
+                TempData["mensaje"] = "<div id='warning' class='alert alert-warning'>" + "Se necesita asignar Jefe" + "</div>";
+            }
+
+            return RedirectToAction("Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search });
+
         }
 
         [HttpPost]
@@ -144,7 +224,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
                         {
                             enu.actualizarTabla(tabla, idc);
                             TempData["mensaje"] = "<div id='success' class='alert alert-success'>Se creó un nuevo registro.</div>";
-                            _soli.crearUserSolRrhh(userSoliRRHH);
+                            _soli.crearUserSoliRrhh(userSoliRRHH);
                         }
                         else
                         {
@@ -180,16 +260,17 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             int diasHabiles = calcularDiasHabiles(model.fchIniSolicitud,model.fchFinSolicitud);
             //dias restantes sin el inicio y final actual
             ViewBag.diasRestantes = Convert.ToInt32(diasRestantes) + diasHabiles;
-            model.idSubTipoSolicitudRrhh = model.idSubTipoSolicitudRrhh;
-            model.usufchMod = DateTime.Now;
-            model.usuMod = SessionPersister.Username;
+            //model.idSubTipoSolicitudRrhh = model.idSubTipoSolicitudRrhh;            
             return View(model);
         }
 
+        
         [HttpPost]
         [SessionAuthorize]
         public ActionResult Modificar(SolicitudRRHHModels model,int diasRestantes)
         {
+            model.usufchMod = DateTime.Now;
+            model.usuMod = SessionPersister.Username;
             EmpleadoModels emple = (EmpleadoModels)System.Web.HttpContext.Current.Session[Sessiones.empleado];
             var mensaje = "";
             if (model.idEstado == ConstantesGlobales.estadoRechazado)
@@ -225,6 +306,81 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             return RedirectToAction("Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search });
         }
 
+        [HttpGet]
+        [EncryptedActionParameter]
+        public ActionResult ModificarMasivamente(string id)
+        {
+            var model = _soli.obtenerItem(id);
+            var modelGrupo = _soli.obtenerGrupoSoliRrhh(id);
+            ViewBag.fechaIni = model.fchIniSolicitud.ToShortDateString();
+            ViewBag.fechaFin = model.fchFinSolicitud.ToShortDateString();
+            //dias restantes sin el inicio y final actual
+            //model.idSubTipoSolicitudRrhh = model.idSubTipoSolicitudRrhh;
+            ViewBag.GrupoRrhh = new SelectList(_gru.obtenerGruposRrhh(), "idGrupoRrhh", "descGrupo");
+            ViewBag.SelectedGrupoRrhh = modelGrupo.idGrupoRrhh; // Valor del elemento a seleccionar
+            return View(model);
+        }
+
+        [HttpPost]
+        [SessionAuthorize]
+        public ActionResult ModificarMasivamente(SolicitudRRHHModels model)
+        {
+            string idGrupoRrhh = model.idAccSol;
+            model.usufchMod = DateTime.Now;
+            model.usuMod = SessionPersister.Username;
+            model.idAccSol = SessionPersister.UserId;
+
+            EmpleadoModels emple = (EmpleadoModels)System.Web.HttpContext.Current.Session[Sessiones.empleado];
+            var mensaje = "";
+            if (model.idEstado == ConstantesGlobales.estadoRechazado)
+            {
+                model.idEstado = ConstantesGlobales.estadoModificado;
+            }                     
+
+            GrupoSolicitudRRHHModels grupoSoliRRHH = new GrupoSolicitudRRHHModels();
+            grupoSoliRRHH.idSolicitudRrhh = model.idSolicitudRrhh;
+            grupoSoliRRHH.idGrupoRrhh = idGrupoRrhh;
+            grupoSoliRRHH.descGrupo = model.descSolicitud;
+            grupoSoliRRHH.usuMod = model.usuCrea;
+            grupoSoliRRHH.usufchMod = model.usufchCrea;
+
+            try
+            {
+                if (_soli.modificar(model) && _soli.modificarGrupoSoliRrhh(grupoSoliRRHH))
+                {
+                    mensaje = "<div id='success' class='alert alert-success'>Se modificó correctamente el registro.</div>";
+                }
+                else
+                {
+                    mensaje = "<div id='warning' class='alert alert-warning'>" + "Error en la modificación del registro" + "</div>";
+                }
+
+            }
+            catch (Exception e)
+            {
+                e.Message.ToString();
+            }
+
+            TempData["mensaje"] = mensaje;
+
+            return RedirectToAction("Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search });
+        }
+
+        [HttpGet]
+        [EncryptedActionParameter]
+        [CustomAuthorize(Roles = "000003,000407")]
+        public ActionResult Visualizar(string id)
+        {
+            var model = _soli.obtenerItem(id);
+            ViewBag.fechaIni = model.fchIniSolicitud.ToShortDateString();
+            ViewBag.fechaFin = model.fchFinSolicitud.ToShortDateString();
+            int dias = calcularDiasHabiles(model.fchIniSolicitud, model.fchFinSolicitud);
+            //dias restantes sin el inicio y final actual
+            ViewBag.dias = dias;
+            //model.idSubTipoSolicitudRrhh = model.idSubTipoSolicitudRrhh;            
+            return View(model);
+        }
+
         public int diasTotalesVacaciones(DateTime fchIngreso)
         {
             int anioActual = DateTime.Now.Year;
@@ -251,12 +407,37 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
                     return 0;
                 }
             }
-        }    
+        }
+
+        public bool validarSolicitudAdmin(List<SolicitudRRHHModels> soli)
+        {
+            foreach (var item in soli)
+            {
+                if (item.idAccApro == ViewBag.userId)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public bool validarSolicitudMasivaAdmin(List<SolicitudRRHHModels> soli)
+        {
+            foreach (var item in soli)
+            {
+                if (item.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM && item.idAccSol == SessionPersister.UserId)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public int diasRestantes(List<SolicitudRRHHModels> soli , int cantTotalDisponible)
         {
             foreach (var item in soli)
             {
-                if (item.idAccApro != SessionPersister.UserId)
+                if ((item.idAccSol == SessionPersister.UserId && item.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacaciones) ||
+                    (item.idAccSol != SessionPersister.UserId && item.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM))
                 {
                     cantTotalDisponible -= calcularDiasHabiles(item.fchIniSolicitud, item.fchFinSolicitud);
                 }
@@ -290,7 +471,6 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
                     diasHabiles++;
                 }
             }
-
             return diasHabiles;
         }
 

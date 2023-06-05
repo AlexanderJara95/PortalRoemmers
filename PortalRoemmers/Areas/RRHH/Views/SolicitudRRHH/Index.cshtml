@@ -79,178 +79,299 @@
                                 <button type="submit" class="btn btn-info btn-rounded">Crear Solicitud</button>
                             </div>
                         </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <a href="@Url.Action("RegistrarMasivamente", "SolicitudRRHH", new { Area = "RRHH" })" class="btn btn-success btn-rounded">Crear Solicitud Masiva</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="col-sm-2"></div>
             </div>
         }
-        <ul class="nav nav-tabs" id="myTab" role="tablist">
-            <li class="nav-item active">
-                <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Mis Solicitudes</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Admin Solicitudes</a>
-            </li>
-        </ul>
-        <div class="tab-content" id="myTabContent">
-            <div class="tab-pane fade active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                <div class="">
-                    <!--<div class="row show-grid">
-                        <div class="col-lg-1 col-sm-4 col-xs-12">
-                            <button id="btnExportar" type="submit" class="btn btn-block btn-outline btn-info">Exportar</button>
-                        </div>
-                </div>-->
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <dl>
-                                <dt>MIS SOLICITUDES</dt>
-                            </dl>
-                        </div>
-                        <div class="col-sm-12">
-                            <table class="table-bordered table-hover table" data-tablesaw-mode="swipe">
-                                <thead>
-                                    <tr>
-                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist"></th>
-                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1">C&oacutedigo</th>
-                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2">Descripción</th>
-                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Fecha de Inicio</th>
-                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Fecha de Fin</th>
-                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="4">Estado</th>
-                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="6">Solicitud</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var item in Model.SoliRRHH)
+
+
+
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item active">
+            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Mis Solicitudes</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="admin-tab" data-toggle="tab" href="#admin" role="tab" aria-controls="admin" aria-selected="false">Admin Solicitudes</a>
+        </li>
+        @{
+            if (ViewBag.SolicitudMasiva)
+            {
+                <li class="nav-item">
+                    <a class="nav-link" id="masiva-tab" data-toggle="tab" href="#masiva" role="tab" aria-controls="masiva" aria-selected="false">Solicitudes Masivas</a>
+                </li>
+            }
+        }
+    </ul>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade active" id="home" role="tabpanel" aria-labelledby="home-tab">
+            <div class="">
+                <!--<div class="row show-grid">
+                    <div class="col-lg-1 col-sm-4 col-xs-12">
+                        <button id="btnExportar" type="submit" class="btn btn-block btn-outline btn-info">Exportar</button>
+                    </div>
+            </div>-->
+                <div class="row">
+                    <div class="col-sm-12">
+                        <dl>
+                            <dt>MIS SOLICITUDES</dt>
+                        </dl>
+                    </div>
+                    <div class="col-sm-12">
+                        <table class="table-bordered table-hover table" data-tablesaw-mode="swipe">
+                            <thead>
+                                <tr>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist"></th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1">C&oacutedigo</th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2">Descripción</th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Fecha de Inicio</th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Fecha de Fin</th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="4">Estado</th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="6">Solicitud</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.SoliRRHH)
+                                {
+                                    if ((item.idAccSol == ViewBag.userId && item.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacaciones) ||
+                                        (item.idAccSol != ViewBag.userId && item.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM))
                                     {
-                                        if (item.idAccApro != ViewBag.userId)
-                                        {
-                                            <tr>
-                                                <td class="text-nowrap" align="center">
-                                                    @{
-                                                        //solo algunos lo ven
-                                                        if (item.idEstado == ConstantesGlobales.estadoRegistrado || item.idEstado == ConstantesGlobales.estadoModificado || item.idEstado == ConstantesGlobales.estadoRechazado)
+                                        <tr>
+                                            <td class="text-nowrap" align="center">
+                                                @{
+                                                    //solo algunos lo ven
+                                                    if (item.idEstado == ConstantesGlobales.estadoRegistrado || item.idEstado == ConstantesGlobales.estadoModificado || item.idEstado == ConstantesGlobales.estadoRechazado)
+                                                    {
+                                                        if (item.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacaciones)
                                                         {
                                                             <a href="@MyExtensions.ActionUrl("Visualizar", "SolicitudRRHH", new { Area = "RRHH", id = item.idSolicitudRrhh })" data-toggle="tooltip" title="Visualizar"> <i class="fa fa-eye text-inverse m-r-10"></i> </a>
                                                             <a href="@MyExtensions.ActionUrl("Modificar", "SolicitudRRHH", new { Area = "RRHH", id = item.idSolicitudRrhh, diasRestantes = ViewBag.diasRestantes })" data-toggle="tooltip" title="Editar"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a>
                                                             <a data-toggle="tooltip" title="Anular" id="sa-params-anul"> <i class="fa fa-close text-danger"></i> </a>
                                                         }
-                                                        else
+                                                        if (item.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM)
                                                         {
-                                                            if (item.estado.nomEst == "APROBADO")
-                                                            {
-                                                                <strong style="color: #2cabe3">LISTO</strong>
-                                                            }
+                                                            <a href="@MyExtensions.ActionUrl("VisualizarMasiva", "SolicitudRRHH", new { Area = "RRHH", id = item.idSolicitudRrhh })" data-toggle="tooltip" title="Visualizar">
+                                                                <strong style="color: #2cabe3">OBLIGATORIO</strong>
+                                                            </a>
                                                         }
                                                     }
+                                                    else
+                                                    {
+                                                        if (item.estado.nomEst == "APROBADO")
+                                                        {
+                                                            <a href="@MyExtensions.ActionUrl("Visualizar", "SolicitudRRHH", new { Area = "RRHH", id = item.idSolicitudRrhh })" data-toggle="tooltip" title="Visualizar">
+                                                                <strong style="color: #2cabe3">LISTO</strong>
+                                                            </a>
+                                                        }
 
-                                                </td>
-                                                <td>@Html.DisplayFor(modelItem => item.idSolicitudRrhh)</td>
-                                                <td>@Html.DisplayFor(modelItem => item.descSolicitud)</td>
-                                                <td>@Html.DisplayFor(modelItem => item.fchIniSolicitud)</td>
-                                                <td>@Html.DisplayFor(modelItem => item.fchFinSolicitud)</td>
-                                                <td>@Html.DisplayFor(modelItem => item.estado.nomEst)</td>
-                                                <td>@Html.DisplayFor(modelItem => item.subtipoSolicitud.nomSubtipoSolicitud)</td>
-                                            </tr>
-                                        }
+                                                        if (item.estado.nomEst == "RECHAZADO")
+                                                        {
+                                                            <a href="@MyExtensions.ActionUrl("Visualizar", "SolicitudRRHH", new { Area = "RRHH", id = item.idSolicitudRrhh })" data-toggle="tooltip" title="Visualizar">
+                                                                <strong style="color: #dd6b55">LISTO</strong>
+                                                            </a>
+                                                        }
+                                                    }
+                                                }
+
+                                            </td>
+                                            <td>@Html.DisplayFor(modelItem => item.idSolicitudRrhh)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.descSolicitud)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.fchIniSolicitud)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.fchFinSolicitud)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.estado.nomEst)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.subtipoSolicitud.nomSubtipoSolicitud)</td>
+                                        </tr>
                                     }
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-12">
-                        @{Html.RenderPartial("_paginador", Model);}
+                                }
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
-            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                <div class="">
-                    <!--<div class="row show-grid">
-                        <div class="col-lg-1 col-sm-4 col-xs-12">
-                            <button id="btnExportar" type="submit" class="btn btn-block btn-outline btn-info">Exportar</button>
-                        </div>
-                </div>-->
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <dl>
-                                <dt>ADMIN SOLICITUDES</dt>
-                            </dl>
-                        </div>
-                        <div class="col-sm-12">
-                            <table class="table-bordered table-hover table" data-tablesaw-mode="swipe">
-                                <thead>
-                                    <tr>
-                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist"></th>
-                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1">C&oacutedigo</th>
-                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2">Descripción</th>
-                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Fecha de Inicio</th>
-                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Fecha de Fin</th>
-                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="4">Estado</th>
-                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="6">Usuario</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var item in Model.SoliRRHH)
-                                    {
-                                        if (item.idAccApro == ViewBag.userId)
-                                        {
-
-                                            <tr>
-                                                <td class="text-nowrap" align="center">
-                                                    <!--<a href="MyExtensions.ActionUrl("Visualizar", "SolicitudGasto", new { Area = "Ventas", id = item.idSolicitudRrhh })" data-toggle="tooltip" title="Visualizar"> <i class="fa fa-eye text-inverse m-r-10"></i> </a>-->
-                                                    @{
-                                                        //solo algunos lo ven
-                                                        if (item.idEstado == ConstantesGlobales.estadoRegistrado || item.idEstado == ConstantesGlobales.estadoModificado)
-                                                        {
-                                                            <!--<a href="MyExtensions.ActionUrl("Modificar", "SolicitudRRHH", new { Area = "RRHH", id = item.idSolicitudRrhh })" data-toggle="tooltip" title="Editar"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a>-->
-                                                            <!--<a data-toggle="tooltip" title="Anular" id="sa-params"> <i class="fa fa-close text-danger"></i> </a>-->
-                                                            <select data-toggle="tooltip" title="Cambiar Estado" id="sa-params" class="form-select">
-                                                                <option selected>Cambiar estado</option>
-                                                                <option value="9">Aprobar</option>
-                                                                <option value="12">Desaprobar</option>
-                                                            </select>
-                                                        }
-                                                        else
-                                                        {
-                                                            if (item.estado.nomEst == "APROBADO")
-                                                            {
-                                                                <strong style="color: #2cabe3">LISTO</strong>
-                                                            }
-                                                            if (item.estado.nomEst == "RECHAZADO")
-                                                            {
-                                                                <strong style="color: #dd6b55">LISTO</strong>
-                                                            }
-                                                        }
-                                                    }
-
-                                                </td>
-                                                <td>@Html.DisplayFor(modelItem => item.idSolicitudRrhh)</td>
-                                                <td>@Html.DisplayFor(modelItem => item.descSolicitud)</td>
-                                                <td>@Html.DisplayFor(modelItem => item.fchIniSolicitud)</td>
-                                                <td>@Html.DisplayFor(modelItem => item.fchFinSolicitud)</td>
-                                                <td>@Html.DisplayFor(modelItem => item.estado.nomEst)</td>
-                                                <td>@Html.DisplayFor(modelItem => item.solicitante.username)</td>
-                                            </tr>
-                                        }
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    @{Html.RenderPartial("_paginador", Model);}
                 </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="admin" role="tabpanel" aria-labelledby="admin-tab">
+            <div class="">
+                <!--<div class="row show-grid">
+                    <div class="col-lg-1 col-sm-4 col-xs-12">
+                        <button id="btnExportar" type="submit" class="btn btn-block btn-outline btn-info">Exportar</button>
+                    </div>
+            </div>-->
                 <div class="row">
                     <div class="col-sm-12">
-                        @{Html.RenderPartial("_paginador", Model);}
+                        <dl>
+                            <dt>ADMIN SOLICITUDES</dt>
+                        </dl>
+                    </div>
+                    <div class="col-sm-12">
+                        <table class="table-bordered table-hover table" data-tablesaw-mode="swipe">
+                            <thead>
+                                <tr>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist"></th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1">C&oacutedigo</th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2">Descripción</th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Fecha de Inicio</th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Fecha de Fin</th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="4">Estado</th>
+                                    <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="6">Usuario</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.SoliRRHH)
+                                {
+                                    if (item.idAccApro == ViewBag.userId)
+                                    {
+
+                                        <tr>
+                                            <td class="text-nowrap" align="center">
+                                                <!--<a href="MyExtensions.ActionUrl("Visualizar", "SolicitudGasto", new { Area = "Ventas", id = item.idSolicitudRrhh })" data-toggle="tooltip" title="Visualizar"> <i class="fa fa-eye text-inverse m-r-10"></i> </a>-->
+                                                @{
+                                                    //solo algunos lo ven
+                                                    if (item.idEstado == ConstantesGlobales.estadoRegistrado || item.idEstado == ConstantesGlobales.estadoModificado)
+                                                    {
+                                                        <!--<a href="MyExtensions.ActionUrl("Modificar", "SolicitudRRHH", new { Area = "RRHH", id = item.idSolicitudRrhh })" data-toggle="tooltip" title="Editar"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a>-->
+                                                        <!--<a data-toggle="tooltip" title="Anular" id="sa-params"> <i class="fa fa-close text-danger"></i> </a>-->
+                                                        <select data-toggle="tooltip" title="Cambiar Estado" id="sa-params" class="form-select">
+                                                            <option selected>Cambiar estado</option>
+                                                            <option value="9">Aprobar</option>
+                                                            <option value="12">Desaprobar</option>
+                                                        </select>
+                                                    }
+                                                    else
+                                                    {
+                                                        if (item.estado.nomEst == "APROBADO")
+                                                        {
+                                                            <strong style="color: #2cabe3">LISTO</strong>
+                                                        }
+                                                        if (item.estado.nomEst == "RECHAZADO")
+                                                        {
+                                                            <strong style="color: #dd6b55">LISTO</strong>
+                                                        }
+                                                    }
+                                                }
+                                            </td>
+                                            <td>@Html.DisplayFor(modelItem => item.idSolicitudRrhh)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.descSolicitud)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.fchIniSolicitud)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.fchFinSolicitud)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.estado.nomEst)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.solicitante.username)</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    @{Html.RenderPartial("_paginador", Model);}
+                </div>
             </div>
         </div>
 
+        @{
+            if (ViewBag.SolicitudMasiva)
+            {
+                <div class="tab-pane fade" id="masiva" role="tabpanel" aria-labelledby="masiva-tab">
+                    <div class="">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <dl>
+                                    <dt>SOLICITUDES MASIVAS</dt>
+                                </dl>
+                            </div>
+                            <div class="col-sm-12">
+                                <table class="table-bordered table-hover table" data-tablesaw-mode="swipe">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist"></th>
+                                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1">C&oacutedigo</th>
+                                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2">Descripción</th>
+                                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Fecha de Inicio</th>
+                                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Fecha de Fin</th>
+                                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="4">Estado</th>
+                                            <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="6">Usuario</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.SoliRRHH)
+                                        {
+                                            if (item.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM)
+                                            {
 
+                                                <tr>
+                                                    <td class="text-nowrap" align="center">
+                                                        <!--<a href="MyExtensions.ActionUrl("Visualizar", "SolicitudGasto", new { Area = "Ventas", id = item.idSolicitudRrhh })" data-toggle="tooltip" title="Visualizar"> <i class="fa fa-eye text-inverse m-r-10"></i> </a>-->
+                                                        @{
+                                                            //solo algunos lo ven
+                                                            if (item.idEstado == ConstantesGlobales.estadoRegistrado || item.idEstado == ConstantesGlobales.estadoModificado)
+                                                            {
+                                                                if (item.idAccApro == ViewBag.userId)
+                                                                {
+                                                                    <select data-toggle="tooltip" title="Cambiar Estado" id="sa-params" class="form-select">
+                                                                        <option selected>Cambiar estado</option>
+                                                                        <option value="9">Aprobar</option>
+                                                                        <option value="12">Desaprobar</option>
+                                                                    </select>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <a href="@MyExtensions.ActionUrl("Visualizar", "SolicitudRRHH", new { Area = "RRHH", id = item.idSolicitudRrhh })" data-toggle="tooltip" title="Visualizar"> <i class="fa fa-eye text-inverse m-r-10"></i> </a>
+                                                                    <a href="@MyExtensions.ActionUrl("ModificarMasivamente", "SolicitudRRHH", new { Area = "RRHH", id = item.idSolicitudRrhh})" data-toggle="tooltip" title="Editar"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a>
+                                                                    <a data-toggle="tooltip" title="Anular" id="sa-params-anul"> <i class="fa fa-close text-danger"></i> </a>
+                                                                }
+
+                                                            }
+                                                            else
+                                                            {
+                                                                if (item.estado.nomEst == "APROBADO")
+                                                                {
+                                                                    <strong style="color: #2cabe3">LISTO</strong>
+                                                                }
+                                                                if (item.estado.nomEst == "RECHAZADO")
+                                                                {
+                                                                    <strong style="color: #dd6b55">LISTO</strong>
+                                                                }
+                                                            }
+                                                        }
+
+                                                    </td>
+                                                    <td>@Html.DisplayFor(modelItem => item.idSolicitudRrhh)</td>
+                                                    <td>@Html.DisplayFor(modelItem => item.descSolicitud)</td>
+                                                    <td>@Html.DisplayFor(modelItem => item.fchIniSolicitud)</td>
+                                                    <td>@Html.DisplayFor(modelItem => item.fchFinSolicitud)</td>
+                                                    <td>@Html.DisplayFor(modelItem => item.estado.nomEst)</td>
+                                                    <td>@Html.DisplayFor(modelItem => item.solicitante.username)</td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            @{Html.RenderPartial("_paginador", Model);}
+                        </div>
+                    </div>
+                </div>
+            }
+        }
     </div>
-
+    </div>
     <div class="panel-footer"></div>
 </div>
 
