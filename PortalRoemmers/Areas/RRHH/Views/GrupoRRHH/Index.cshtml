@@ -90,7 +90,7 @@
                         <tr>
                             <td class="text-nowrap" align="center">
                                 <a href="@MyExtensions.ActionUrl("Visualizar", "GrupoRRHH", new { Area = "RRHH", id = item.idGrupoRrhh })" data-toggle="tooltip" title="Visualizar"> <i class="fa fa-eye text-inverse m-r-10"></i> </a>
-                                <!--<a href="@MyExtensions.ActionUrl("Modificar", "GrupoRRHH", new { Area = "RRHH", id = item.idGrupoRrhh })" data-toggle="tooltip" title="Editar"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a>-->
+                                <a href="@MyExtensions.ActionUrl("Modificar", "GrupoRRHH", new { Area = "RRHH", id = item.idGrupoRrhh })" data-toggle="tooltip" title="Editar"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a>
                                 @if (item.idEstado == ConstantesGlobales.estadoActivo)
                                 {
                                     <a data-toggle="tooltip" title="Anular" id="sa-params-anul"> <i class="fa fa-close text-danger"></i> </a>

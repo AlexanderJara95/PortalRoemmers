@@ -15,8 +15,14 @@
     <h3 class="box-title m-b-0"> Mantenimiento del Grupo de Usuarios</h3>
     <p class="text-muted m-b-30 font-13">Completar todos los campos necesarios.</p>
     <div id='danger' class='alert alert-danger hidden'></div>
-    @{string msg = ""; try { msg = TempData["mensaje"].ToString(); } catch { }}
-    @(new HtmlString(msg))
+    @{
+        string mensaje = ViewBag.Mensaje;
+    }
+
+    @if (!string.IsNullOrEmpty(mensaje))
+    {
+        @Html.Raw(mensaje)
+    }
     <div class="row">
         <div class="col-md-12">
             @Html.AntiForgeryToken()
@@ -33,20 +39,13 @@
                             </div>
                             <div class="panel-heading" id="exampleHeadingDefaultOne" role="tab"> <a class="panel-title" data-toggle="collapse" href="#exampleCollapseDefaultOne" data-parent="#exampleAccordionDefault" aria-expanded="true" aria-controls="exampleCollapseDefaultOne"> Datos de la Solicitud </a> </div>
                             <div class="panel-collapse collapse in" id="exampleCollapseDefaultOne" aria-labelledby="exampleHeadingDefaultOne" role="tabpanel">
-                                @Html.HiddenFor(model => model.idGrupoRrhh)
-                                @Html.HiddenFor(model => model.descGrupo)
-                                @Html.HiddenFor(model => model.usuCrea)
-                                @Html.HiddenFor(model => model.usufchCrea)
-                                @Html.HiddenFor(model => model.usuMod)
-                                @Html.HiddenFor(model => model.usufchMod)
-                                @Html.HiddenFor(model => model.areas)
-                                @Html.HiddenFor(model => model.excluidos)
 
                                 <div class="panel-body">
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="form-group">
                                                 <label class="col-md-12">@Html.LabelFor(model => model.descGrupo)</label>
+                                                <input type="hidden" id="modelId" value="@Model.idGrupoRrhh" />
                                                 <div class="col-md-12">
                                                     @Html.EditorFor(model => model.descGrupo, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Descripción" } })
                                                     @Html.ValidationMessageFor(model => model.descGrupo, "", new { @class = "text-danger" })
@@ -62,7 +61,6 @@
                                                         <ul id="selectedAreas" style="padding:1em;margin:1em;background-color:azure;">
                                                             @foreach (var area in Model.areas)
                                                             {
-                                                                
                                                                 <li class='selected-item' style='display:flow-root;padding:1em;' data-value='@area.idAreRoe'>
                                                                     <span class='item-text'>@area.nomAreRoe</span>
                                                                     <button class='btn btn-sm btn-danger btn-remove' style='float:right;'>x</button>
@@ -123,18 +121,8 @@
     @Scripts.Render("~/Bundles/datepicker_JS")
     @Scripts.Render("~/Bundles/bloqueo_JS")
 
-    <script>
+<script>
         $(document).ready(function () {
-            /*$(".datepicker").datepicker({
-                format: "dd-M-yyyy",
-                todayHighlight: true,
-                autoclose: true,
-                clearBtn: true
-            });*/
-
-            $('.datepicker').datepicker({
-                dateFormat: 'dd/mm/yy'
-            });
 
             $("#txtArea").autocomplete({
                 source: function (request, response) {
@@ -157,24 +145,29 @@
                     var $selectedAreas = $("#selectedAreas");
                     var $selectedUsuarios = $("#selectedUsuarios");
 
-                    if ($selectedUsuarios.find("li").length == 0 && !$selectedAreas.find("li[data-value='" + selectedArea + "']").length) {
-                        var $newItem = $("<li class='selected-item' style='display:flow-root;padding:1em;' data-value='" + selectedArea + "'><span class='item-text'>" + selectedAreaText + "</span> <button class='btn btn-sm btn-danger btn-remove' style='float:right;'>x</button></li>");
-                        $selectedAreas.append($newItem);
-
-                        $newItem.find(".btn-remove").on("click", function () {
-                            $(this).parent().remove();
-                        });
+                    if ($(this).attr("id") === "txtArea") {
+                        if (!$selectedAreas.find("li[data-value='" + selectedArea + "']").length) {
+                            var $newItem = $("<li class='selected-item' style='display:flow-root;padding:1em;' data-value='" + selectedArea + "'><span class='item-text'>" + selectedAreaText + "</span> <button class='btn btn-sm btn-danger btn-remove' style='float:right;'>x</button></li>");
+                            $selectedAreas.append($newItem);
+                        }
+                    } else if ($(this).attr("id") === "txtUsuario") {
+                        if (!$selectedUsuarios.find("li[data-value='" + selectedArea + "']").length) {
+                            var $newItem = $("<li class='selected-item' style='display:flow-root;padding:1em;' data-value='" + selectedArea + "'><span class='item-text'>" + selectedAreaText + "</span> <button class='btn btn-sm btn-danger btn-remove' style='float:right;'>x</button></li>");
+                            $selectedUsuarios.append($newItem);
+                        }
                     }
-                    $(this).val('');
+
+                    $(this).val(''); // Limpiar el campo de entrada después de seleccionar un elemento
                     return false;
                 }
             });
 
             $("#txtUsuario").autocomplete({
                 source: function (request, response) {
+                    console.log($("#selectedAreas li").map(function () { return $(this).attr("data-value"); }).get());
                     $.ajax({
                         url: "@Url.Action("ObtenerTodosLosUsuarios", "GrupoRRHH")",
-                        data: { term: request.term, list: $("#selectedAreas li").map(function () { return $(this).attr("data-value"); }).get()  },
+                        data: { term: request.term, list: $("#selectedAreas li").map(function () { return $(this).attr("data-value"); }).get() },
                         type: "POST",
                         dataType: "json",
                         success: function (data) {
@@ -190,39 +183,47 @@
                     var selectedUsuarioText = ui.item.label;
                     var $selectedUsuarios = $("#selectedUsuarios");
                     if (!$selectedUsuarios.find("li[data-value='" + selectedUsuario + "']").length) {
-                        //$selectedUsuarios.append("<li data-value='" + selectedUsuario + "'>" + selectedUsuarioText + "</li>");
-                        // Agregar el elemento seleccionado a la lista de elementos seleccionados
                         var $newItem = $("<li class='selected-item' style='display:flow-root;padding:1em;' data-value='" + selectedUsuario + "'><span class='item-text'>" + selectedUsuarioText + "</span> <button class='btn btn-sm btn-danger btn-remove' style='float:right;'>x</button></li>");
                         $selectedUsuarios.append($newItem);
-
-                        // Agregar el controlador de eventos para el botón "x"
-                        $newItem.find(".btn-remove").on("click", function () {
-                            $(this).parent().remove();
-                        });
                     }
                     $(this).val('');
                     return false;
                 }
             });
+
+            // Agregar el controlador de eventos para el botón "x" en selectedAreas
+            $("#selectedAreas").on("click", ".btn-remove", function () {
+                $(this).closest("li").remove();
+            });
+
+            // Agregar el controlador de eventos para el botón "x" en selectedUsuarios
+            $("#selectedUsuarios").on("click", ".btn-remove", function () {
+                $(this).closest("li").remove();
+            });
+
             $("#btnGuardar").on("click", function () {
                 var selectedAreas = $("#selectedAreas li").map(function () { return $(this).attr("data-value"); }).get();
                 var selectedUsuarios = $("#selectedUsuarios li").map(function () { return $(this).attr("data-value"); }).get();
                 var descGrupo = $("#descGrupo").val();
+                var idGrupoRrhh = $("#modelId").val();
                 $.ajax({
-                    url: "@Url.Action("Registrar", "GrupoRRHH")",
+                    url: "@Url.Action("Modificar", "GrupoRRHH")",
                     type: "POST",
-                    data: { areas: selectedAreas, usuarios: selectedUsuarios, descripcion: descGrupo },
+                    data: { areas: selectedAreas, usuarios: selectedUsuarios, descripcion: descGrupo, idGrupoRrhh: idGrupoRrhh },
                     success: function (data) {
                         // hacer algo con la respuesta del controlador
+                        $("#success").text("Se creó un nuevo registro.").show();
+                        window.location.href = "@Url.Action("Index", "GrupoRRHH")";
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
                         // manejar el error de la solicitud AJAX
+                        $("#warning").text("Error en guardar el registro.").show();
+                        window.location.href = "@Url.Action("Index", "GrupoRRHH")";
                     }
                 });
             });
 
-
         });
 
-    </script>
+</script>
 }

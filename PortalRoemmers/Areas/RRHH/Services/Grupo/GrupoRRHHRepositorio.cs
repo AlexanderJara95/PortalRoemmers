@@ -33,7 +33,7 @@ namespace PortalRoemmers.Areas.RRHH.Services.Grupo
 
             using (var db = new ApplicationDbContext())
             {
-                var model = db.tb_grupoRRHH
+                var model = db.tb_GrupoRRHH
                     .OrderByDescending(x => x.idGrupoRrhh)
                     //.Where(x => (x.idEstado != ConstantesGlobales.estadoAnulado && x.subtipoSolicitud.idTipoSolicitudRrhh == tipo) && ((x.fchIniSolicitud >= p) && (x.fchIniSolicitud <= a) && (x.fchFinSolicitud >= p) && (x.fchFinSolicitud <= a)) && (x.descSolicitud.Contains(search) || (x.subtipoSolicitud.descSubtipoSolicitud.Contains(search)) || x.estado.nomEst.Contains(search)))
                     .Skip((pagina - 1) * cantidadRegistrosPorPagina)
@@ -55,37 +55,86 @@ namespace PortalRoemmers.Areas.RRHH.Services.Grupo
         {
             using (var db = new ApplicationDbContext())
             {
-                GrupoRRHHModels model = db.tb_grupoRRHH
+                GrupoRRHHModels model = db.tb_GrupoRRHH
                     .Where(x => x.idGrupoRrhh == id).FirstOrDefault();
                 return model;
             }
 
         }
-        public Boolean modificar(GrupoRRHHModels model)
+
+        public List<GrupoRRHHModels> obtenerGruposRrhh()
         {
-            Boolean ok = false;
+            var db = new ApplicationDbContext();
+            var emp = db.tb_GrupoRRHH
+                .Include(x => x.estado)
+                .Where(x => x.idEstado == ConstantesGlobales.estadoActivo).ToList();
+            return emp;
+        }
+
+        public bool modificar(GrupoRRHHModels model, List<string> areas, List<string> usuarios)
+        {
+            bool ok = false;
+
             using (var db = new ApplicationDbContext())
             {
-                db.Entry(model).State = EntityState.Modified;
                 try
                 {
+                    var idGrupoArea = db.tb_AreaGrupoRRHH.Where(a => a.idGrupoRrhh == model.idGrupoRrhh).ToList();
+                    db.tb_AreaGrupoRRHH.RemoveRange(idGrupoArea);
+
+                    var idGrupoExclu = db.tb_ExcluGrupoRRHH.Where(a => a.idGrupoRrhh == model.idGrupoRrhh).ToList();
+                    db.tb_ExcluGrupoRRHH.RemoveRange(idGrupoExclu);
+
+                    db.Entry(model).State = EntityState.Modified;
+
+                    List<AreaGrupoRRHHModels> nuevasAreas = new List<AreaGrupoRRHHModels>();
+                    List<ExcluGrupoRRHHModels> nuevosUsuarios = new List<ExcluGrupoRRHHModels>();
+
+                    foreach (var area in areas)
+                    {
+                        AreaGrupoRRHHModels areaGrupoRRHH = new AreaGrupoRRHHModels();
+                        areaGrupoRRHH.idGrupoRrhh = model.idGrupoRrhh;
+                        areaGrupoRRHH.idAreRoe = area;
+                        areaGrupoRRHH.usuCrea = model.usuCrea;
+                        areaGrupoRRHH.usufchCrea = model.usufchCrea;
+
+                        nuevasAreas.Add(areaGrupoRRHH);
+                    }
+
+                    foreach (var usuario in usuarios)
+                    {
+                        ExcluGrupoRRHHModels excluGrupoRRHH = new ExcluGrupoRRHHModels();
+                        excluGrupoRRHH.idGrupoRrhh = model.idGrupoRrhh;
+                        excluGrupoRRHH.idAcc = usuario;
+                        excluGrupoRRHH.usuCrea = model.usuCrea;
+                        excluGrupoRRHH.usufchCrea = model.usufchCrea;
+
+                        nuevosUsuarios.Add(excluGrupoRRHH);
+                    }
+
+                    db.tb_AreaGrupoRRHH.AddRange(nuevasAreas);
+                    db.tb_ExcluGrupoRRHH.AddRange(nuevosUsuarios);
+
                     db.SaveChanges();
                     ok = true;
                 }
                 catch (Exception e)
                 {
-                    e.Message.ToString();
+                    // Manejar el error de guardado de manera adecuada, como registrar o notificar el error
+                    Console.WriteLine("Error al modificar el modelo: " + e.Message);
                 }
             }
+
             return ok;
         }
+
 
         public Boolean crear(GrupoRRHHModels model)
         {
             Boolean exec = true;
             using (var db = new ApplicationDbContext())
             {
-                db.tb_grupoRRHH.Add(model);
+                db.tb_GrupoRRHH.Add(model);
                 try
                 {
                     db.SaveChanges();
@@ -243,5 +292,6 @@ namespace PortalRoemmers.Areas.RRHH.Services.Grupo
             }
             
         }
+
     }
 }

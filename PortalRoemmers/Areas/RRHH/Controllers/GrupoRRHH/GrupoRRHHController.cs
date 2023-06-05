@@ -131,7 +131,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.Grupo
 
             var filtroUsuarios = _usu.obtenerUsuarios()
                 .Where(a => list.Contains(a.empleado.idAreRoe)).ToList();
-            
+
             var usuarios = filtroUsuarios
                 .Where(a => a.username.ToLower().Contains(term.ToLower()) || a.empleado.nomComEmp.ToLower().Contains(term.ToLower()))
                 .Select(a => new { id = a.idAcc, text = (a.empleado.nomComEmp + " (" + a.username + ")") })
@@ -140,7 +140,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.Grupo
             return Json(usuarios, JsonRequestBehavior.AllowGet);
         }
 
-        
+
         [HttpPost]
         [SessionAuthorize]
         public ActionResult Registrar(List<string> areas, List<string> usuarios, string descripcion)
@@ -194,7 +194,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.Grupo
             return RedirectToAction("Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search });
 
         }
-                        
+
         [HttpGet]
         [EncryptedActionParameter]
         [CustomAuthorize(Roles = "000003,000407")]
@@ -219,45 +219,46 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.Grupo
         }
 
 
+        [HttpGet]
+        [EncryptedActionParameter]
+        [CustomAuthorize(Roles = "000003,000407")]
+        public ActionResult Modificar(string id)
+        {
+            var model = _gru.obtenerItem(id);
+            model.areas = _gru.obtenerAreaGrupoRrhh(id);
+            model.excluidos = _gru.obtenerExcluGrupoRrhh(id);
+            return View(model);
+        }
+
         [HttpPost]
         [SessionAuthorize]
-        public ActionResult Modificar(GrupoRRHHModels model, int diasRestantes)
+        public ActionResult Modificar(List<string> areas, List<string> usuarios, string descripcion, string idGrupoRrhh)
         {
-            EmpleadoModels emple = (EmpleadoModels)System.Web.HttpContext.Current.Session[Sessiones.empleado];
-            var mensaje = "";
-            if (model.idEstado == ConstantesGlobales.estadoRechazado)
+            GrupoRRHHModels model = new GrupoRRHHModels();
+            model = _gru.obtenerItem(idGrupoRrhh);
+            model.descGrupo = descripcion;
+            model.usuMod = SessionPersister.Username;
+            model.usufchMod = DateTime.Now;
+            try
             {
-                model.idEstado = ConstantesGlobales.estadoModificado;
-            }
-
-            /*if (validarLimiteVacaciones(model.fchIniSolicitud, model.fchFinSolicitud, diasRestantes))
-            {
-                try
+                if (_gru.modificar(model, areas, usuarios))
                 {
-                    if (_soli.modificar(model))
-                    {
-                        mensaje = "<div id='success' class='alert alert-success'>Se modificó correctamente el registro.</div>";
-                    }
-                    else
-                    {
-                        mensaje = "<div id='warning' class='alert alert-warning'>" + "Error en la modificación del registro" + "</div>";
-                    }
-
+                    ViewBag.Mensaje = "<div id='success' class='alert alert-success'>Se creó un nuevo registro.</div>";
                 }
-                catch (Exception e)
+                else
                 {
-                    e.Message.ToString();
+                    ViewBag.Mensaje = "<div id='warning' class='alert alert-warning'>Error en guardar el registro.</div>";
                 }
             }
-            else
+            catch (Exception e)
             {
-                mensaje = "<div id='warning' class='alert alert-warning'>" + "Has superado la cantidad de días disponibles" + "</div>";
-            }*/
-
-            TempData["mensaje"] = mensaje;
+                e.Message.ToString();
+            }
 
             return RedirectToAction("Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search });
+
         }
+
 
 
     }

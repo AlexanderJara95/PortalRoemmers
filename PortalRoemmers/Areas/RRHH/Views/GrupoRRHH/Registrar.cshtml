@@ -18,52 +18,49 @@
     @(new HtmlString(msg))
     <div class="row">
         <div class="col-md-12">
-            @using (Html.BeginForm("Registrar", "SolicitudRRHH", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal form-material" }))
-            {
-                @Html.AntiForgeryToken()
-                <div class="col-md-12">
-                    <section id="wrapper" class="block1">
-                        <div class="panel-group" id="exampleAccordionDefault" aria-multiselectable="true" role="tablist">
-                            <div class="panel">
-                                <div class="row">
-                                    <div class="col-md-12 text-center">
-                                        <dl>
-                                            <dt>GRUPO ESPECÍFICO</dt>
-                                        </dl>
-                                    </div>
+            @Html.AntiForgeryToken()
+            <div class="col-md-12">
+                <section id="wrapper" class="block1">
+                    <div class="panel-group" id="exampleAccordionDefault" aria-multiselectable="true" role="tablist">
+                        <div class="panel">
+                            <div class="row">
+                                <div class="col-md-12 text-center">
+                                    <dl>
+                                        <dt>GRUPO ESPECÍFICO</dt>
+                                    </dl>
                                 </div>
-                                <div class="panel-heading" id="exampleHeadingDefaultOne" role="tab"> <a class="panel-title" data-toggle="collapse" href="#exampleCollapseDefaultOne" data-parent="#exampleAccordionDefault" aria-expanded="true" aria-controls="exampleCollapseDefaultOne"> Datos de la Solicitud </a> </div>
-                                <div class="panel-collapse collapse in" id="exampleCollapseDefaultOne" aria-labelledby="exampleHeadingDefaultOne" role="tabpanel">
-                                    <div class="panel-body">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div class="form-group">
-                                                    <label class="col-md-12">@Html.LabelFor(model => model.descGrupo)</label>
-                                                    <div class="col-md-12">
-                                                        @Html.EditorFor(model => model.descGrupo, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Descripción" } })
-                                                        @Html.ValidationMessageFor(model => model.descGrupo, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="panel-heading" id="exampleHeadingDefaultOne" role="tab"> <a class="panel-title" data-toggle="collapse" href="#exampleCollapseDefaultOne" data-parent="#exampleAccordionDefault" aria-expanded="true" aria-controls="exampleCollapseDefaultOne"> Datos de la Solicitud </a> </div>
+                            <div class="panel-collapse collapse in" id="exampleCollapseDefaultOne" aria-labelledby="exampleHeadingDefaultOne" role="tabpanel">
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label class="col-md-12">@Html.LabelFor(model => model.descGrupo)</label>
+                                                <div class="col-md-12">
+                                                    @Html.EditorFor(model => model.descGrupo, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Descripción" } })
+                                                    @Html.ValidationMessageFor(model => model.descGrupo, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 ">
+                                            <div class="form-group">
+                                                <label class="col-md-12">Áeas Incluidas</label>
+                                                <div class="col-md-12">
+                                                    <input type="text" id="txtArea" class="form-control col-md-12" />
+                                                    <div class="pt-3">
+                                                        <ul id="selectedAreas" style="padding:1em;margin:1em;background-color:azure;"></ul>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-6 ">
-                                                <div class="form-group">
-                                                    <label class="col-md-12">Áeas Incluidas</label>
-                                                    <div class="col-md-12">
-                                                        <input type="text" id="txtArea" class="form-control col-md-12" />
-                                                        <div class="pt-3">
-                                                            <ul id="selectedAreas" style="padding:1em;margin:1em;background-color:azure;"></ul>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 ">
-                                                <div class="form-group">
-                                                    <label class="col-md-12">Usuarios Excluídos</label>
-                                                    <div class="col-md-12">
-                                                        <input type="text" id="txtUsuario" class="form-control col-md-12" />
-                                                        <div class="pt-3">
-                                                            <ul id="selectedUsuarios" style="padding:1em;margin:1em;background-color:azure;"></ul>
-                                                        </div>
+                                        </div>
+                                        <div class="col-md-6 ">
+                                            <div class="form-group">
+                                                <label class="col-md-12">Usuarios Excluídos</label>
+                                                <div class="col-md-12">
+                                                    <input type="text" id="txtUsuario" class="form-control col-md-12" />
+                                                    <div class="pt-3">
+                                                        <ul id="selectedUsuarios" style="padding:1em;margin:1em;background-color:azure;"></ul>
                                                     </div>
                                                 </div>
                                             </div>
@@ -72,20 +69,20 @@
                                 </div>
                             </div>
                         </div>
-                    </section>
-                    <div id='danger' class='alert alert-danger hidden'></div>
-                    <div class="panel-group">
-                        <div class="col-md-4 tab-content">
-                            <div class="col-lg-6 col-sm-4 panel-group">
-                                <button id="btnGuardar" class="btn btn-block btn-outline btn-rounded btn-info">Guardar</button>
-                            </div>
-                            <div class="col-lg-6 col-sm-4">
-                                @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-block btn-outline btn-rounded btn-default" })
-                            </div>
+                    </div>
+                </section>
+                <div id='danger' class='alert alert-danger hidden'></div>
+                <div class="panel-group">
+                    <div class="col-md-4 tab-content">
+                        <div class="col-lg-6 col-sm-4 panel-group">
+                            <button id="btnGuardar" class="btn btn-block btn-outline btn-rounded btn-info">Guardar</button>
+                        </div>
+                        <div class="col-lg-6 col-sm-4">
+                            @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-block btn-outline btn-rounded btn-default" })
                         </div>
                     </div>
                 </div>
-            }
+            </div>            
         </div>
     </div>
 </div>
@@ -189,6 +186,7 @@
                     data: { areas: selectedAreas, usuarios: selectedUsuarios, descripcion: descGrupo },
                     success: function (data) {
                         // hacer algo con la respuesta del controlador
+                        window.location.href = "@Url.Action("Index", "GrupoRRHH")";
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
                         // manejar el error de la solicitud AJAX
