@@ -2636,6 +2636,9 @@
     <Content Include="Areas\RRHH\Views\GrupoRRHH\Registrar.cshtml" />
     <Content Include="Areas\RRHH\Views\GrupoRRHH\Modificar.cshtml" />
     <Content Include="Areas\RRHH\Views\GrupoRRHH\Visualizar.cshtml" />
+    <Content Include="Areas\RRHH\Views\SolicitudRRHH\RegistrarMasivamente.cshtml" />
+    <Content Include="Areas\RRHH\Views\SolicitudRRHH\ModificarMasivamente.cshtml" />
+    <Content Include="Areas\RRHH\Views\SolicitudRRHH\Visualizar.cshtml" />
     <None Include="Scripts\jquery-3.0.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.0.0.js" />
     <Content Include="Scripts\jquery-3.0.0.min.js" />
