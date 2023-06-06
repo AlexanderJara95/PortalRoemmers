@@ -69,6 +69,9 @@ public static class ConstantesGlobales
     public static string rolBienvenida = "000006";
     public static string rolTodos = "ALL";
 
+    //tabla tb_Area
+    public static string areaVentas = "9";
+
     //tabla tb_TipRol
     public static string tipRol_Ninguno = "00";
     public static string tipRol_Total = "01";

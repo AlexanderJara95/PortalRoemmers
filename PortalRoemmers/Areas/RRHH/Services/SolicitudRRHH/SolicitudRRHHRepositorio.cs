@@ -41,7 +41,7 @@ namespace PortalRoemmers.Areas.RRHH.Services.SolicitudRRHH
                     .Include(x => x.estado)
                     .Include(x => x.subtipoSolicitud)
                     .OrderByDescending(x => x.idSolicitudRrhh)
-                    .Where(x => ((x.idAccSol == SessionPersister.UserId || x.idAccApro == SessionPersister.UserId) && x.idEstado != ConstantesGlobales.estadoAnulado && (x.idSubTipoSolicitudRrhh == subtipo || (x.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM && x.idAccSol == SessionPersister.UserId))) && ((x.fchIniSolicitud >= p) && (x.fchIniSolicitud <= a) && (x.fchFinSolicitud >= p) && (x.fchFinSolicitud <= a)) && (x.descSolicitud.Contains(search) || (x.subtipoSolicitud.descSubtipoSolicitud.Contains(search)) || x.estado.nomEst.Contains(search)))
+                    .Where(x => ((x.idAccSol == SessionPersister.UserId || x.idAccApro == SessionPersister.UserId) && x.idEstado != ConstantesGlobales.estadoAnulado && (x.idSubTipoSolicitudRrhh == subtipo || (x.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM && (x.idAccSol == SessionPersister.UserId || x.idAccApro == SessionPersister.UserId)))) && ((x.fchIniSolicitud >= p) && (x.fchIniSolicitud <= a) && (x.fchFinSolicitud >= p) && (x.fchFinSolicitud <= a)) && (x.descSolicitud.Contains(search) || (x.subtipoSolicitud.descSubtipoSolicitud.Contains(search)) || x.estado.nomEst.Contains(search)))
                     .Skip((pagina - 1) * cantidadRegistrosPorPagina)
                     .Take(cantidadRegistrosPorPagina).ToList();
 
@@ -73,9 +73,9 @@ namespace PortalRoemmers.Areas.RRHH.Services.SolicitudRRHH
                             db.tb_AreaGrupoRRHH.Any(areaGrupo =>
                                 areaGrupo.idGrupoRrhh == grupo.idGrupoRrhh &&
                                 areaGrupo.idAreRoe == idAreaUser) &&
-                            db.tb_ExcluGrupoRRHH.Any(exclude =>
+                            !db.tb_ExcluGrupoRRHH.Any(exclude =>
                                 exclude.idGrupoRrhh == grupo.idGrupoRrhh &&
-                                exclude.idAcc != SessionPersister.UserId))))
+                                exclude.idAcc == SessionPersister.UserId))))
                     .ToList();
 
                 var modelFinal = model.Concat(modelMasiva).ToList();

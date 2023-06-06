@@ -45,6 +45,17 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             //-----------------------------
             DateTime inicio = new DateTime();
             DateTime fin = new DateTime();
+
+            DateTime primero = new DateTime();
+            DateTime actual = new DateTime();
+
+            DateTime date = DateTime.Now;
+            DateTime oPrimerDiaDelMes = new DateTime(date.Year, 1, 1);
+            DateTime ultimoDelanio = new DateTime(date.Year, 12, 31);
+            primero = DateTime.Parse(oPrimerDiaDelMes.ToString("dd/MM/yyyy"));
+            actual = DateTime.Parse(ultimoDelanio.ToString("dd/MM/yyyy"));
+            /*var actual = DateTime.Today.ToString("dd/MM/yyyy");*/
+
             //-----------------------------
             try
             {
@@ -53,23 +64,14 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             }
             catch (Exception e)
             {
-                DateTime date = DateTime.Now;
-                DateTime oPrimerDiaDelMes = new DateTime(date.Year, 1, 1);
-                DateTime ultimoDelanio = new DateTime(date.Year, 12, 31);
-                var primero = oPrimerDiaDelMes.ToString("dd/MM/yyyy");
-                var actual = ultimoDelanio.ToString("dd/MM/yyyy");
-                /*var actual = DateTime.Today.ToString("dd/MM/yyyy");*/
-
-                inicio = DateTime.Parse(primero);
-                fin = DateTime.Parse(actual);
+                inicio = primero;
+                fin = actual;
             }
             //-----------------------------
             SessionPersister.ActiveVista = menuVista;
             SessionPersister.ActiveMenu = menuArea;
             SessionPersister.Search = search;
             SessionPersister.Pagina = pagina.ToString();
-            SessionPersister.FchEveSolGasI = fchEveSolGasI;
-            SessionPersister.FchEveSolGasF = fchEveSolGasF;
 
             //-----------------------------
             ViewBag.search = search;
@@ -85,9 +87,12 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             //ViewBag.gerentesProd = new SelectList(result.Select(x => new { idAccResGP = x.value, nombre = x.nomComEmp }), "idAccResGP", "nombre");
             //ViewBag.actividades = new SelectList(_act.obtenerActividades().Where(x => x.idAccRes == idAcc && x.estimacion != null && ((DateTime.Today >= x.fchIniVig) && (DateTime.Today <= x.fchFinVig))).Select(x => new { idActividades = x.idActiv, nomActiv = x.nomActiv }), "idActividades", "nomActiv");
             //-----------------------------
+            // validación de rango de fechas del año actual
+            var modelCant = _soli.obtenerTodos(pagina, search, ConstantesGlobales.subTipoVacaciones, primero.ToString(), actual.ToString());
+            int total = diasTotalesVacaciones(emple.ingfchEmp.Value,emple.idAreRoe);
+            int rest = diasRestantes(modelCant.SoliRRHH, total);
+            // filtrado general
             var model = _soli.obtenerTodos(pagina, search, ConstantesGlobales.subTipoVacaciones, inicio.ToString(), fin.ToString());
-            int total = diasTotalesVacaciones(emple.ingfchEmp.Value);
-            int rest = diasRestantes(model.SoliRRHH, total);
             ViewBag.SolicitudMasiva = validarSolicitudMasivaAdmin(model.SoliRRHH);
             ViewBag.SolicitudAdmin = validarSolicitudAdmin(model.SoliRRHH);
             ViewBag.diasRestantes =  rest;
@@ -381,30 +386,50 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             return View(model);
         }
 
-        public int diasTotalesVacaciones(DateTime fchIngreso)
+        public int diasTotalesVacaciones(DateTime fchIngreso, string idAreRoe)
         {
             int anioActual = DateTime.Now.Year;
 
             //Si el trabajador ingresó el año anterior
-            if (anioActual - fchIngreso.Year == 1)
+            if ((anioActual - fchIngreso.Year == 1) )
             {
-                DateTime ultimodia = new DateTime(DateTime.Now.Year - 1, 12, 31); //ultimo dia del año anterior
-                TimeSpan diferencia = ultimodia.Subtract(fchIngreso); //diferencia entre días
-                int diaAnio = DateTime.IsLeapYear(DateTime.Now.Year) ? 366 : 365; //dias del año
-                double cantidadDias = Math.Round((30 * diferencia.Days) / (diaAnio) * 1.0); //diás de vacaciones
-                cantidadDias = (cantidadDias % 7) == 6 ? cantidadDias - (((Math.Floor(cantidadDias / 7)) * 2) + 1) : cantidadDias - ((Math.Floor(cantidadDias / 7)) * 2);
-                return Convert.ToInt32(cantidadDias);
-            }
-            else
-            {
-                if (anioActual - fchIngreso.Year > 1)
+                //si no es ventas
+                if (idAreRoe != ConstantesGlobales.areaVentas)
                 {
-                    return 22;
-                    
+                    DateTime ultimodia = new DateTime(DateTime.Now.Year - 1, 12, 31); //ultimo dia del año anterior
+                    TimeSpan diferencia = ultimodia.Subtract(fchIngreso); //diferencia entre días
+                    int diaAnio = DateTime.IsLeapYear(DateTime.Now.Year) ? 366 : 365; //dias del año
+                    double cantidadDias = Math.Round((30 * diferencia.Days) / (diaAnio) * 1.0); //diás de vacaciones
+                    cantidadDias = (cantidadDias % 7) == 6 ? cantidadDias - (((Math.Floor(cantidadDias / 7)) * 2) + 1) : cantidadDias - ((Math.Floor(cantidadDias / 7)) * 2);
+                    return Convert.ToInt32(cantidadDias);
                 }
                 else
                 {
-                    return 0;
+                    return 22;
+                }
+                
+            }
+            else
+            {                
+                if ((anioActual - fchIngreso.Year > 1))
+                {
+                    return 22;                    
+                }
+                else
+                {
+                    if (idAreRoe == ConstantesGlobales.areaVentas)
+                    {
+                        DateTime ultimodia = new DateTime(DateTime.Now.Year, 12, 31); //ultimo dia del año actual
+                        TimeSpan diferencia = ultimodia.Subtract(fchIngreso); //diferencia entre días
+                        int diaAnio = DateTime.IsLeapYear(DateTime.Now.Year) ? 366 : 365; //dias del año
+                        double cantidadDias = Math.Round((30 * diferencia.Days) / (diaAnio) * 1.0); //diás de vacaciones
+                        cantidadDias = (cantidadDias % 7) == 6 ? cantidadDias - (((Math.Floor(cantidadDias / 7)) * 2) + 1) : cantidadDias - ((Math.Floor(cantidadDias / 7)) * 2);
+                        return Convert.ToInt32(cantidadDias);
+                    }
+                    else
+                    {
+                        return 0;
+                    }                    
                 }
             }
         }
@@ -424,7 +449,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
         {
             foreach (var item in soli)
             {
-                if (item.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM && item.idAccSol == SessionPersister.UserId)
+                if (item.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM && (item.idAccSol == SessionPersister.UserId || item.idAccApro == SessionPersister.UserId))
                 {
                     return true;
                 }

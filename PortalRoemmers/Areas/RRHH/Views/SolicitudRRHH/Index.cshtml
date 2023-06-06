@@ -80,11 +80,15 @@
                             </div>
                         </div>
                         <br />
-                        <div class="row">
-                            <div class="col-md-12 text-center">
-                                <a href="@Url.Action("RegistrarMasivamente", "SolicitudRRHH", new { Area = "RRHH" })" class="btn btn-success btn-rounded">Crear Solicitud Masiva</a>
-                            </div>
-                        </div>
+                        @{
+                            if(ViewBag.userId=="61") {
+                                <div class="row">
+                                    <div class="col-md-12 text-center">
+                                        <a href="@Url.Action("RegistrarMasivamente", "SolicitudRRHH", new { Area = "RRHH" })" class="btn btn-success btn-rounded">Crear Solicitud Masiva</a>
+                                    </div>
+                                </div>
+                            }
+                         }
                     </div>
                 </div>
                 <div class="col-sm-2"></div>
@@ -101,7 +105,7 @@
             <a class="nav-link" id="admin-tab" data-toggle="tab" href="#admin" role="tab" aria-controls="admin" aria-selected="false">Admin Solicitudes</a>
         </li>
         @{
-            if (ViewBag.SolicitudMasiva)
+            if(ViewBag.SolicitudMasiva)
             {
                 <li class="nav-item">
                     <a class="nav-link" id="masiva-tab" data-toggle="tab" href="#masiva" role="tab" aria-controls="masiva" aria-selected="false">Solicitudes Masivas</a>
@@ -229,7 +233,7 @@
                             <tbody>
                                 @foreach (var item in Model.SoliRRHH)
                                 {
-                                    if (item.idAccApro == ViewBag.userId)
+                                    if (item.idAccApro == ViewBag.userId && item.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacaciones)
                                     {
 
                                         <tr>
@@ -393,7 +397,8 @@
                 console.log(estado);
             });
             $('.datepicker').datepicker({
-                dateFormat: 'dd/mm/yy'
+                dateFormat: 'dd/mm/yy',
+                position: "bottom"
             });
 
             $('table tbody tr a#sa-params-anul').click(function () {
