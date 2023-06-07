@@ -47,9 +47,8 @@ namespace PortalRoemmers.Areas.RRHH.Models.SolicitudRRHH
         public DateTime fchFinSolicitud { get; set; }
 
         //Ruta Adjunto 8
-        [StringLength(500, ErrorMessage = "El campo {0} no puede exceder {1}  characters.")]
-        [Display(Name = "Ruta Adjunto")]
-        public string rutaArchivoAdjunto { get; set; }
+        [Display(Name = "Documento Adjunto")]
+        public byte[] documentoAdjunto { get; set; }
 
         //estado 9
         [Display(Name = "Estado")]

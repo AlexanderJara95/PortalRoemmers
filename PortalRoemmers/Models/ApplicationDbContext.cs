@@ -31,6 +31,7 @@ using PortalRoemmers.Areas.Marketing.Models.FarmacoVigilancia;
 using PortalRoemmers.Areas.RRHH.Models.Documento;
 using PortalRoemmers.Areas.RRHH.Models.SolicitudRRHH;
 using PortalRoemmers.Areas.RRHH.Models.Grupo;
+using PortalRoemmers.Areas.RRHH.Models.DocSustentoRRHH;
 
 namespace PortalRoemmers.Models
 {
@@ -185,6 +186,11 @@ namespace PortalRoemmers.Models
         public DbSet<SubtipoSolicitudRRHHModels> tb_SubtipoSolicitudRRHH { get; set; }
         public DbSet<TipoSolicitudRRHHModels> tb_TipoSolicitudRRHH { get; set; }
         public DbSet<UserSolicitudRRHHModels> tb_UserSolicitudRRHH { get; set; }
+        public DbSet<DocSustentoSolicitudRRHHModel> tb_DocSustentoSolicitudRRHH { get;set; }
+
+        //Documento Solicitud RRHH
+        public DbSet<DocSustentoRRHHModels> tb_DocSustentoRRHH { get; set; }
+        public DbSet<TipoDocSustentoRRHHModels> tb_TipoDocSustentoRRHH { get; set; }
 
         //Grupo RRHH
         public DbSet<AreaGrupoRRHHModels> tb_AreaGrupoRRHH { get; set; }
@@ -397,6 +403,12 @@ namespace PortalRoemmers.Models
             modelBuilder.Entity<TipoSolicitudRRHHModels>().ToTable("tb_TipoSolicitudRRHH");
             modelBuilder.Entity<UserSolicitudRRHHModels>().ToTable("tb_UserSolicitudRRHH");
             modelBuilder.Entity<UserSolicitudRRHHModels>().HasKey(x => new { x.idSolicitudRrhh, x.idAccRes });
+            modelBuilder.Entity<DocSustentoSolicitudRRHHModel>().ToTable("tb_DocSustentoSolicitudRRHH");
+            modelBuilder.Entity<DocSustentoSolicitudRRHHModel>().HasKey(x => new { x.idSolicitudRrhh, x.idDocSustento });
+
+            //DocSustentoRRHH
+            modelBuilder.Entity<DocSustentoRRHHModels>().ToTable("tb_DocSustentoRRHH");
+            modelBuilder.Entity<TipoDocSustentoRRHHModels>().ToTable("tb_TipoDocSustentoRRHH");
 
             //GrupoRRHH
             modelBuilder.Entity<AreaGrupoRRHHModels>().ToTable("tb_AreaGrupoRRHH");
