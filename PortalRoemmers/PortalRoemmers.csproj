@@ -260,6 +260,7 @@
     <Compile Include="Areas\RRHH\Controllers\Bienvenida\BienvenidaController.cs" />
     <Compile Include="Areas\RRHH\Controllers\Boleta\BoletaDetalleController.cs" />
     <Compile Include="Areas\RRHH\Controllers\Boleta\BoletaPersonalController.cs" />
+    <Compile Include="Areas\RRHH\Controllers\DescansoMedRRHH\DescansoMedRRHHController.cs" />
     <Compile Include="Areas\RRHH\Controllers\DocumentoRRHH\DocumentoRRHHController.cs" />
     <Compile Include="Areas\RRHH\Controllers\DocumentoRRHH\TipoDocumentoRRHHController.cs" />
     <Compile Include="Areas\RRHH\Controllers\Formulario\FormularioController.cs" />
@@ -272,6 +273,8 @@
     <Compile Include="Areas\RRHH\Controllers\SolicitudRRHH\SolicitudRRHHController.cs" />
     <Compile Include="Areas\RRHH\Models\Boleta\BoletaDetalleModels.cs" />
     <Compile Include="Areas\RRHH\Models\Boleta\BoletaPersonalModels.cs" />
+    <Compile Include="Areas\RRHH\Models\DocSustentoRRHH\DocSustentoRRHHModels.cs" />
+    <Compile Include="Areas\RRHH\Models\DocSustentoRRHH\TipoDocSustentoRRHHModels.cs" />
     <Compile Include="Areas\RRHH\Models\Documento\DocumentoRRHHModels.cs" />
     <Compile Include="Areas\RRHH\Models\Documento\TipoDocumentoRRHHModels.cs" />
     <Compile Include="Areas\RRHH\Models\Formulario\FormularioModels.cs" />
@@ -283,11 +286,13 @@
     <Compile Include="Areas\RRHH\Models\SolicitudRRHH\SolicitudRRHHModels.cs" />
     <Compile Include="Areas\RRHH\Models\SolicitudRRHH\SubtipoSolicitudRRHHModels.cs" />
     <Compile Include="Areas\RRHH\Models\SolicitudRRHH\TipoSolicitudRRHHModels.cs" />
+    <Compile Include="Areas\RRHH\Models\SolicitudRRHH\DocSustentoSolicitudRRHHModel.cs" />
     <Compile Include="Areas\RRHH\Models\SolicitudRRHH\UserSolicitudRRHHModels.cs" />
     <Compile Include="Areas\RRHH\RRHHAreaRegistration.cs" />
     <Compile Include="Areas\RRHH\Services\Bienvenida\BienvenidaRepositorio.cs" />
     <Compile Include="Areas\RRHH\Services\Boleta\BoletaDetalleRepositorio.cs" />
     <Compile Include="Areas\RRHH\Services\Boleta\BoletaPersonalRepositorio.cs" />
+    <Compile Include="Areas\RRHH\Services\DescansoMedRRHH\DescansoMedRRHHRepositorio.cs" />
     <Compile Include="Areas\RRHH\Services\DocumentoRRHH\DocumentoRRHHRepositorio.cs" />
     <Compile Include="Areas\RRHH\Services\DocumentoRRHH\TipoDocumentoRRHHRepositorio.cs" />
     <Compile Include="Areas\RRHH\Services\Formulario\AtributoHtmlRepositorio.cs" />
@@ -519,6 +524,14 @@
     <Compile Include="Migrations\202305111445299_UpdateModelGrupoRRHH.cs" />
     <Compile Include="Migrations\202305111445299_UpdateModelGrupoRRHH.Designer.cs">
       <DependentUpon>202305111445299_UpdateModelGrupoRRHH.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202306071448376_Cambiando_tipo_string_a_byte_ModelSolicitudRRHH.cs" />
+    <Compile Include="Migrations\202306071448376_Cambiando_tipo_string_a_byte_ModelSolicitudRRHH.Designer.cs">
+      <DependentUpon>202306071448376_Cambiando_tipo_string_a_byte_ModelSolicitudRRHH.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202306071755037_Agregando_Model_Doc_Sustento.cs" />
+    <Compile Include="Migrations\202306071755037_Agregando_Model_Doc_Sustento.Designer.cs">
+      <DependentUpon>202306071755037_Agregando_Model_Doc_Sustento.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationDbContext.cs" />
@@ -2639,6 +2652,9 @@
     <Content Include="Areas\RRHH\Views\SolicitudRRHH\RegistrarMasivamente.cshtml" />
     <Content Include="Areas\RRHH\Views\SolicitudRRHH\ModificarMasivamente.cshtml" />
     <Content Include="Areas\RRHH\Views\SolicitudRRHH\Visualizar.cshtml" />
+    <Content Include="Areas\RRHH\Views\DescansoMedRRHH\Index.cshtml" />
+    <Content Include="Areas\RRHH\Views\DescansoMedRRHH\Modificar.cshtml" />
+    <Content Include="Areas\RRHH\Views\DescansoMedRRHH\Registrar.cshtml" />
     <None Include="Scripts\jquery-3.0.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.0.0.js" />
     <Content Include="Scripts\jquery-3.0.0.min.js" />
@@ -3977,6 +3993,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202305111445299_UpdateModelGrupoRRHH.resx">
       <DependentUpon>202305111445299_UpdateModelGrupoRRHH.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202306071448376_Cambiando_tipo_string_a_byte_ModelSolicitudRRHH.resx">
+      <DependentUpon>202306071448376_Cambiando_tipo_string_a_byte_ModelSolicitudRRHH.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202306071755037_Agregando_Model_Doc_Sustento.resx">
+      <DependentUpon>202306071755037_Agregando_Model_Doc_Sustento.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
