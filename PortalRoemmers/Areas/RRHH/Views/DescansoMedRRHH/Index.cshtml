@@ -55,7 +55,7 @@
                             <div class="col-md-12 text-center">
                                 <dl>
                                     <dt>INGRESE LOS DESCANSOS MÉDICOS</dt>
-                                    <dd style="color:#2cabe3">@ViewBag.diasUtilizados DIAS ACUMULADOS DURANTE EL AÑO</dd>
+                                    <dd style="color:#2cabe3">@ViewBag.diasUtilizados SOLICITUDES</dd>
                                 </dl>
                             </div>
                         </div>
@@ -103,51 +103,46 @@
                                 </thead>
                                 <tbody>
                                     @foreach (var item in Model.SoliRRHH)
-                                    {                                        
-                                        <tr>
-                                            <td class="text-nowrap" align="center">
-                                                @{
-                                                    //solo algunos lo ven
-                                                    if (item.idEstado == ConstantesGlobales.estadoRegistrado || item.idEstado == ConstantesGlobales.estadoModificado || item.idEstado == ConstantesGlobales.estadoRechazado)
-                                                    {
-                                                        if (item.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacaciones)
+                                    {
+                                        if (item.idAccSol == ViewBag.userId)
+                                        {
+                                            <tr>
+                                                <td class="text-nowrap" align="center">
+                                                    @{
+                                                        //solo algunos lo ven
+                                                        if (item.idEstado == ConstantesGlobales.estadoRegistrado || item.idEstado == ConstantesGlobales.estadoModificado || item.idEstado == ConstantesGlobales.estadoRechazado)
                                                         {
+
                                                             <a href="@MyExtensions.ActionUrl("Visualizar", "DescansoMedRRHH", new { Area = "RRHH", id = item.idSolicitudRrhh })" data-toggle="tooltip" title="Visualizar"> <i class="fa fa-eye text-inverse m-r-10"></i> </a>
                                                             <a href="@MyExtensions.ActionUrl("Modificar", "DescansoMedRRHH", new { Area = "RRHH", id = item.idSolicitudRrhh, diasRestantes = ViewBag.diasRestantes })" data-toggle="tooltip" title="Editar"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a>
-                                                            <a data-toggle="tooltip" title="Anular" id="sa-params-anul"> <i class="fa fa-close text-danger"></i> </a>
+                                                            <a data-toggle="tooltip" title="Anular" id="sa-params-anul"> <i class="fa fa-close text-danger"></i> </a>                                                        
                                                         }
-                                                        if (item.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM)
+                                                        else
                                                         {
-                                                            <a href="@MyExtensions.ActionUrl("VisualizarMasiva", "DescansoMedRRHH", new { Area = "RRHH", id = item.idSolicitudRrhh })" data-toggle="tooltip" title="Visualizar">
-                                                                <strong style="color: #2cabe3">OBLIGATORIO</strong>
-                                                            </a>
-                                                        }
-                                                    }
-                                                    else
-                                                    {
-                                                        if (item.estado.nomEst == "APROBADO")
-                                                        {
-                                                            <a href="@MyExtensions.ActionUrl("Visualizar", "DescansoMedRRHH", new { Area = "RRHH", id = item.idSolicitudRrhh })" data-toggle="tooltip" title="Visualizar">
-                                                                <strong style="color: #2cabe3">LISTO</strong>
-                                                            </a>
-                                                        }
+                                                            if (item.estado.nomEst == "APROBADO")
+                                                            {
+                                                                <a href="@MyExtensions.ActionUrl("Visualizar", "DescansoMedRRHH", new { Area = "RRHH", id = item.idSolicitudRrhh })" data-toggle="tooltip" title="Visualizar">
+                                                                    <strong style="color: #2cabe3">LISTO</strong>
+                                                                </a>
+                                                            }
 
-                                                        if (item.estado.nomEst == "RECHAZADO")
-                                                        {
-                                                            <a href="@MyExtensions.ActionUrl("Visualizar", "DescansoMedRRHH", new { Area = "RRHH", id = item.idSolicitudRrhh })" data-toggle="tooltip" title="Visualizar">
-                                                                <strong style="color: #dd6b55">LISTO</strong>
-                                                            </a>
+                                                            if (item.estado.nomEst == "RECHAZADO")
+                                                            {
+                                                                <a href="@MyExtensions.ActionUrl("Visualizar", "DescansoMedRRHH", new { Area = "RRHH", id = item.idSolicitudRrhh })" data-toggle="tooltip" title="Visualizar">
+                                                                    <strong style="color: #dd6b55">LISTO</strong>
+                                                                </a>
+                                                            }
                                                         }
                                                     }
-                                                }
-                                            </td>
-                                            <td>@Html.DisplayFor(modelItem => item.idSolicitudRrhh)</td>
-                                            <td>@Html.DisplayFor(modelItem => item.descSolicitud)</td>
-                                            <td>@Html.DisplayFor(modelItem => item.fchIniSolicitud)</td>
-                                            <td>@Html.DisplayFor(modelItem => item.fchFinSolicitud)</td>
-                                            <td>@Html.DisplayFor(modelItem => item.estado.nomEst)</td>
-                                            <td>@Html.DisplayFor(modelItem => item.subtipoSolicitud.nomSubtipoSolicitud)</td>
-                                        </tr>
+                                                </td>
+                                                <td>@Html.DisplayFor(modelItem => item.idSolicitudRrhh)</td>
+                                                <td>@Html.DisplayFor(modelItem => item.descSolicitud)</td>
+                                                <td>@Html.DisplayFor(modelItem => item.fchIniSolicitud)</td>
+                                                <td>@Html.DisplayFor(modelItem => item.fchFinSolicitud)</td>
+                                                <td>@Html.DisplayFor(modelItem => item.estado.nomEst)</td>
+                                                <td>@Html.DisplayFor(modelItem => item.subtipoSolicitud.nomSubtipoSolicitud)</td>
+                                            </tr>
+                                        }
                                     }
                                 </tbody>
                             </table>
