@@ -268,6 +268,7 @@
     <Compile Include="Areas\RRHH\Controllers\Galeria\GaleriaController.cs" />
     <Compile Include="Areas\RRHH\Controllers\Galeria\TipoGaleriaController.cs" />
     <Compile Include="Areas\RRHH\Controllers\GrupoRRHH\GrupoRRHHController.cs" />
+    <Compile Include="Areas\RRHH\Controllers\LicenciaRRHH\LicenciaRRHHController.cs" />
     <Compile Include="Areas\RRHH\Controllers\Periodico\ContenidoController.cs" />
     <Compile Include="Areas\RRHH\Controllers\Periodico\PeriodicoController.cs" />
     <Compile Include="Areas\RRHH\Controllers\SolicitudRRHH\SolicitudRRHHController.cs" />
@@ -299,8 +300,10 @@
     <Compile Include="Areas\RRHH\Services\Formulario\FormularioRepositorio.cs" />
     <Compile Include="Areas\RRHH\Services\Formulario\Form_Usu_Repositorio.cs" />
     <Compile Include="Areas\RRHH\Services\Grupo\GrupoRRHHRepositorio.cs" />
+    <Compile Include="Areas\RRHH\Services\LicenciaRRHH\LicenciaRRHHRepositorio.cs" />
     <Compile Include="Areas\RRHH\Services\Periodico\ContenidoRepositorio.cs" />
     <Compile Include="Areas\RRHH\Services\Periodico\EfectoImagenRepositorio.cs" />
+    <Compile Include="Areas\RRHH\Services\SolicitudRRHH\SubtipoSolicitudRRHHRepositorio.cs" />
     <Compile Include="Areas\RRHH\Services\SolicitudRRHH\SolicitudRRHHRepositorio.cs" />
     <Compile Include="Areas\Sistemas\Controllers\Enlace\EnlaceController.cs" />
     <Compile Include="Areas\Sistemas\Controllers\Enlace\TipoEnlaceController.cs" />
@@ -2655,6 +2658,11 @@
     <Content Include="Areas\RRHH\Views\DescansoMedRRHH\Index.cshtml" />
     <Content Include="Areas\RRHH\Views\DescansoMedRRHH\Modificar.cshtml" />
     <Content Include="Areas\RRHH\Views\DescansoMedRRHH\Registrar.cshtml" />
+    <Content Include="Areas\RRHH\Views\DescansoMedRRHH\Visualizar.cshtml" />
+    <Content Include="Areas\RRHH\Views\LicenciaRRHH\Index.cshtml" />
+    <Content Include="Areas\RRHH\Views\LicenciaRRHH\Modificar.cshtml" />
+    <Content Include="Areas\RRHH\Views\LicenciaRRHH\Registrar.cshtml" />
+    <Content Include="Areas\RRHH\Views\LicenciaRRHH\Visualizar.cshtml" />
     <None Include="Scripts\jquery-3.0.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.0.0.js" />
     <Content Include="Scripts\jquery-3.0.0.min.js" />

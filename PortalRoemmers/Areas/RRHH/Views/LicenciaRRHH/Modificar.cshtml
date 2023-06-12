@@ -1,0 +1,169 @@
+﻿@using PortalRoemmers.Security
+@model PortalRoemmers.Areas.RRHH.Models.SolicitudRRHH.SolicitudRRHHModels
+@{
+    ViewBag.Title = "Modificar Solicitud RRHH";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section css {
+    @Styles.Render("~/Content/autocompletado_CSS")
+    @Styles.Render("~/Content/selectBusqueda_CSS")
+    @Styles.Render("~/Content/datepicker_CSS")
+}
+<div class="white-box p-l-20 p-r-20">
+    <h3 class="box-title m-b-0"> Nueva Solicitud de Vacaciones</h3>
+    <p class="text-muted m-b-30 font-13">Para modificar una solicitud, es necesario realizarlo como mínimo con 15 días de anticipación.</p>
+    <div id='danger' class='alert alert-danger hidden'></div>
+    @{string msg = ""; try { msg = TempData["mensaje"].ToString(); } catch { }}
+    @(new HtmlString(msg))
+    <div class="row">
+        <div class="col-md-12">
+            @using (Html.BeginForm("Modificar", "LicenciaRRHH", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal form-material" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="col-md-12">
+                    <section id="wrapper" class="block1">
+                        <div class="panel-group" id="exampleAccordionDefault" aria-multiselectable="true" role="tablist">
+                            <div class="panel">
+                                <div class="row">
+                                    <div class="col-md-12 text-center">
+                                        <dl>
+                                            <dt>LICENCIA Y/O PERMISO DE</dt>
+                                            <dd style="color: #2cabe3"><span id="diasTotal"></span> DIAS</dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                                <div class="panel-heading" id="exampleHeadingDefaultOne" role="tab"> <a class="panel-title" data-toggle="collapse" href="#exampleCollapseDefaultOne" data-parent="#exampleAccordionDefault" aria-expanded="true" aria-controls="exampleCollapseDefaultOne"> Datos de la Solicitud </a> </div>
+                                <div class="panel-collapse collapse in" id="exampleCollapseDefaultOne" aria-labelledby="exampleHeadingDefaultOne" role="tabpanel">
+                                    @Html.HiddenFor(model => model.idEstado)
+                                    @Html.HiddenFor(model => model.idAccSol)
+                                    @Html.HiddenFor(model => model.idAccApro)
+                                    @Html.HiddenFor(model => model.idSolicitudRrhh)
+                                    @Html.HiddenFor(model => model.usuCrea)
+                                    @Html.HiddenFor(model => model.usufchCrea)
+                                    @Html.HiddenFor(model => model.usuMod)
+                                    @Html.HiddenFor(model => model.usufchMod)
+
+                                    <div class="panel-body">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label class="col-md-12">Tipo de Licencia y/o Permiso<span class="text-danger">*</span></label>
+                                                    <div class="col-md-12">
+                                                        @Html.DropDownListFor(model => model.idSubTipoSolicitudRrhh, (SelectList)ViewBag.SubtipoSoliRrhh, "Seleccionar....", htmlAttributes: new { @class = "form-control form-control-line" })
+                                                        @Html.ValidationMessageFor(model => model.idSubTipoSolicitudRrhh, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label class="col-md-12">@Html.LabelFor(model => model.descSolicitud)</label>
+                                                    <div class="col-md-12">
+                                                        @Html.EditorFor(model => model.descSolicitud, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Descripción" } })
+                                                        @Html.ValidationMessageFor(model => model.descSolicitud, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 ">
+                                                <div class="form-group">
+                                                    <label class="col-md-12">@Html.LabelFor(model => model.fchIniSolicitud)</label>
+                                                    <div class="col-md-12">
+                                                        <input class="form-control form-control-line datepicker" id="fchIniSolicitud" name="fchIniSolicitud" placeholder="dd/mm/aaaa" autocomplete="off" value="@ViewBag.fechaIni">
+                                                        @Html.ValidationMessageFor(model => model.fchIniSolicitud, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 ">
+                                                <div class="form-group">
+                                                    <label class="col-md-12">@Html.LabelFor(model => model.fchFinSolicitud)</label>
+                                                    <div class="col-md-12">
+                                                        <input class="form-control form-control-line datepicker" id="fchFinSolicitud" name="fchFinSolicitud" placeholder="dd/mm/aaaa" autocomplete="off" value="@ViewBag.fechaFin">
+                                                        @Html.ValidationMessageFor(model => model.fchFinSolicitud, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </section>
+                    <div id='danger' class='alert alert-danger hidden'></div>
+                    <div class="panel-group">
+                        <div class="col-md-4 tab-content">
+                            <div class="col-lg-6 col-sm-4 panel-group">
+                                <button class="btn btn-block btn-outline btn-rounded btn-info">Guardar</button>
+                            </div>
+                            <div class="col-lg-6 col-sm-4">
+                                @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-block btn-outline btn-rounded btn-default" })
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script src="~/Areas/RRHH/Scripts/RRHH.js"></script>
+    @Scripts.Render("~/Bundles/autocompletado_JS")
+    @Scripts.Render("~/Bundles/selectBusqueda_JS")
+    @Scripts.Render("~/Bundles/datepicker_JS")
+    @Scripts.Render("~/Bundles/bloqueo_JS")
+
+<script>
+        $(document).ready(function () {
+            var minDate = getDatesFromNow(-1).toLocaleDateString('es-ES');
+            var hoy = getDatesFromNow(0).toLocaleDateString('es-ES');
+
+            $('.datepicker').datepicker({
+                format: 'dd/mm/yyyy',
+                startDate: minDate,
+                autoclose: true
+            });
+
+            var SelectedSubtipoSoliRrhh = '@ViewBag.SelectedSubtipoSoliRrhh';
+            $("#idSubTipoSolicitudRrhh").val(SelectedSubtipoSoliRrhh);
+
+            $('.datepicker').datepicker('setDate', hoy);
+
+            $('#fchIniSolicitud').on('changeDate', function (selected) {
+                var startDate = new Date(selected.date.valueOf());
+                $('#fchFinSolicitud').datepicker('setStartDate', startDate);
+                validateDates();
+            });
+
+            $('#fchFinSolicitud').on('changeDate', function (selected) {
+                var endDate = new Date(selected.date.valueOf());
+                $('#fchIniSolicitud').datepicker('setEndDate', endDate);
+                validateDates();
+            });
+
+            function getDatesFromNow(days) {
+                var date = new Date();
+                date.setDate(date.getDate() + days);
+                return date;
+            }
+
+            function validateDates() {
+                var startDate = $('#fchIniSolicitud').datepicker('getDate');
+                var endDate = $('#fchFinSolicitud').datepicker('getDate');
+
+                if (startDate && endDate && startDate > endDate) {
+                    $('#fchFinSolicitud').datepicker('update', startDate);
+                }
+                // Calcular la diferencia de días
+                var diffTime = endDate.getTime() - startDate.getTime();
+                var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                // Mostrar la diferencia de días en el elemento HTML
+                $('#diasTotal').text(diffDays + 1);
+
+            }
+        });
+
+</script>
+}
