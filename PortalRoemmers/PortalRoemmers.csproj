@@ -2663,6 +2663,7 @@
     <Content Include="Areas\RRHH\Views\LicenciaRRHH\Modificar.cshtml" />
     <Content Include="Areas\RRHH\Views\LicenciaRRHH\Registrar.cshtml" />
     <Content Include="Areas\RRHH\Views\LicenciaRRHH\Visualizar.cshtml" />
+    <Content Include="Areas\RRHH\Views\SolicitudRRHH\VisualizarMasivamente.cshtml" />
     <None Include="Scripts\jquery-3.0.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.0.0.js" />
     <Content Include="Scripts\jquery-3.0.0.min.js" />

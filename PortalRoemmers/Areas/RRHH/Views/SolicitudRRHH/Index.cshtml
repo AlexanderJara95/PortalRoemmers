@@ -81,7 +81,7 @@
                         </div>
                         <br />
                         @{
-                            if(ViewBag.userId=="61") {
+                            if(ViewBag.userId=="61" || ViewBag.userId=="1049") {
                                 <div class="row">
                                     <div class="col-md-12 text-center">
                                         <a href="@Url.Action("RegistrarMasivamente", "SolicitudRRHH", new { Area = "RRHH" })" class="btn btn-success btn-rounded">Crear Solicitud Masiva</a>
@@ -160,7 +160,7 @@
                                                         }
                                                         if (item.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM)
                                                         {
-                                                            <a href="@MyExtensions.ActionUrl("VisualizarMasiva", "SolicitudRRHH", new { Area = "RRHH", id = item.idSolicitudRrhh })" data-toggle="tooltip" title="Visualizar">
+                                                            <a href="@MyExtensions.ActionUrl("VisualizarMasivamente", "SolicitudRRHH", new { Area = "RRHH", id = item.idSolicitudRrhh })" data-toggle="tooltip" title="Visualizar">
                                                                 <strong style="color: #2cabe3">OBLIGATORIO</strong>
                                                             </a>
                                                         }
@@ -332,7 +332,7 @@
                                                                 }
                                                                 else
                                                                 {
-                                                                    <a href="@MyExtensions.ActionUrl("Visualizar", "SolicitudRRHH", new { Area = "RRHH", id = item.idSolicitudRrhh })" data-toggle="tooltip" title="Visualizar"> <i class="fa fa-eye text-inverse m-r-10"></i> </a>
+                                                                    <a href="@MyExtensions.ActionUrl("VisualizarMasivamente", "SolicitudRRHH", new { Area = "RRHH", id = item.idSolicitudRrhh })" data-toggle="tooltip" title="Visualizar"> <i class="fa fa-eye text-inverse m-r-10"></i> </a>
                                                                     <a href="@MyExtensions.ActionUrl("ModificarMasivamente", "SolicitudRRHH", new { Area = "RRHH", id = item.idSolicitudRrhh})" data-toggle="tooltip" title="Editar"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a>
                                                                     <a data-toggle="tooltip" title="Anular" id="sa-params-anul"> <i class="fa fa-close text-danger"></i> </a>
                                                                 }

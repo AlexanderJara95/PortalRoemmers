@@ -386,6 +386,21 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             return View(model);
         }
 
+        [HttpGet]
+        [EncryptedActionParameter]
+        [CustomAuthorize(Roles = "000003,000407")]
+        public ActionResult VisualizarMasivamente(string id)
+        {
+            var model = _soli.obtenerItem(id);
+            ViewBag.fechaIni = model.fchIniSolicitud.ToShortDateString();
+            ViewBag.fechaFin = model.fchFinSolicitud.ToShortDateString();
+            int dias = calcularDiasHabiles(model.fchIniSolicitud, model.fchFinSolicitud);
+            //dias restantes sin el inicio y final actual
+            ViewBag.dias = dias;
+            //model.idSubTipoSolicitudRrhh = model.idSubTipoSolicitudRrhh;            
+            return View(model);
+        }
+
         public int diasTotalesVacaciones(DateTime fchIngreso, string idAreRoe)
         {
             int anioActual = DateTime.Now.Year;

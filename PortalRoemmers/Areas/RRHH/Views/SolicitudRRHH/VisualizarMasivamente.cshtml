@@ -1,0 +1,90 @@
+﻿@using PortalRoemmers.Security
+@model PortalRoemmers.Areas.RRHH.Models.SolicitudRRHH.SolicitudRRHHModels
+@{
+    ViewBag.Title = "Modificar Solicitud RRHH";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section css {
+    @Styles.Render("~/Content/autocompletado_CSS")
+    @Styles.Render("~/Content/selectBusqueda_CSS")
+    @Styles.Render("~/Content/datepicker_CSS")
+}
+<div class="white-box p-l-20 p-r-20">
+    <h3 class="box-title m-b-0"> Visualización de Vacaciónes Masivas</h3>
+    <p class="text-muted m-b-30 font-13">Estas vacaciones tienen fechas fijas</p>
+    <div id='danger' class='alert alert-danger hidden'></div>
+    @{string msg = ""; try { msg = TempData["mensaje"].ToString(); } catch { }}
+    @(new HtmlString(msg))
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-12">
+                <section id="wrapper" class="block1">
+                    <div class="panel-group" id="exampleAccordionDefault" aria-multiselectable="true" role="tablist">
+                        <div class="panel">
+                            <div class="row">
+                                <div class="col-md-12 text-center">
+                                    <dl>
+                                        <dt>DURACIÓN</dt>
+                                        <dd style="color: #2cabe3">@ViewBag.dias DIAS</dd>
+                                    </dl>
+                                </div>
+                            </div>
+                            <div class="panel-heading" id="exampleHeadingDefaultOne" role="tab"> <a class="panel-title" data-toggle="collapse" href="#exampleCollapseDefaultOne" data-parent="#exampleAccordionDefault" aria-expanded="true" aria-controls="exampleCollapseDefaultOne"> Datos de la Solicitud </a> </div>
+                            <div class="panel-collapse collapse in" id="exampleCollapseDefaultOne" aria-labelledby="exampleHeadingDefaultOne" role="tabpanel">
+                                @Html.Hidden("diasRestantes", (int)ViewBag.dias)
+
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label class="col-md-12">@Html.LabelFor(model => model.descSolicitud)</label>
+                                                <div class="col-md-12">
+                                                    <span class='item-text'> @Html.DisplayFor(model => model.descSolicitud)</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 ">
+                                            <div class="form-group">
+                                                <label class="col-md-12">@Html.LabelFor(model => model.fchIniSolicitud)</label>
+                                                <div class="col-md-12">
+                                                    <span class='item-text'> @Html.DisplayFor(model => model.fchIniSolicitud)</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 ">
+                                            <div class="form-group">
+                                                <label class="col-md-12">@Html.LabelFor(model => model.fchFinSolicitud)</label>
+                                                <div class="col-md-12">
+                                                    <span class='item-text'> @Html.DisplayFor(model => model.fchFinSolicitud)</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+                <div id='danger' class='alert alert-danger hidden'></div>
+                <div class="panel-group">
+                    <div class="col-md-4 tab-content">
+                        <div class="col-lg-6 col-sm-4">
+                            @Html.ActionLink("Volver", "Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search }, new { @Class = "btn btn-block btn-outline btn-rounded btn-default" })
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script src="~/Areas/RRHH/Scripts/RRHH.js"></script>
+    @Scripts.Render("~/Bundles/autocompletado_JS")
+    @Scripts.Render("~/Bundles/selectBusqueda_JS")
+    @Scripts.Render("~/Bundles/datepicker_JS")
+    @Scripts.Render("~/Bundles/bloqueo_JS")
+}
