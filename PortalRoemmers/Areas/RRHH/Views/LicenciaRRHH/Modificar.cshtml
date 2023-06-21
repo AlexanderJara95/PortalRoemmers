@@ -116,12 +116,11 @@
 
 <script>
         $(document).ready(function () {
-            var minDate = getDatesFromNow(-1).toLocaleDateString('es-ES');
             var hoy = getDatesFromNow(0).toLocaleDateString('es-ES');
 
             $('.datepicker').datepicker({
                 format: 'dd/mm/yyyy',
-                startDate: minDate,
+                startDate: hoy,
                 autoclose: true
             });
 
