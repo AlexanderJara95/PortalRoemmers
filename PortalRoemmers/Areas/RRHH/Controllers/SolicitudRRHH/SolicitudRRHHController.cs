@@ -477,7 +477,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             foreach (var item in soli)
             {
                 if ((item.idAccSol == SessionPersister.UserId && item.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacaciones) ||
-                    (item.idAccSol != SessionPersister.UserId && item.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM))
+                    (item.idAccSol != SessionPersister.UserId && item.idAccApro != SessionPersister.UserId && item.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM))
                 {
                     cantTotalDisponible -= calcularDiasHabiles(item.fchIniSolicitud, item.fchFinSolicitud);
                 }
