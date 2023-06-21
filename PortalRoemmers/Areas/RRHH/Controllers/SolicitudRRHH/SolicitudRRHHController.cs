@@ -168,7 +168,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             if (emple.idEmpJ != "" || emple.idEmpJ != null)
             {
                 model.idAccApro = _usu.obtenerItemXEmpleado(emple.idEmpJ).idAcc;
-                model.idSubTipoSolicitudRrhh = ConstantesGlobales.subTipoVacaciones;
+                model.idSubTipoSolicitudRrhh = ConstantesGlobales.subTipoVacacionesM;
                 try
                 {
                     if (_soli.crear(model))

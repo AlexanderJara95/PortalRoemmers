@@ -89,27 +89,32 @@ namespace PortalRoemmers.Areas.RRHH.Services.Grupo
 
                     List<AreaGrupoRRHHModels> nuevasAreas = new List<AreaGrupoRRHHModels>();
                     List<ExcluGrupoRRHHModels> nuevosUsuarios = new List<ExcluGrupoRRHHModels>();
-
-                    foreach (var area in areas)
+                    if (areas != null && areas.Any())
                     {
-                        AreaGrupoRRHHModels areaGrupoRRHH = new AreaGrupoRRHHModels();
-                        areaGrupoRRHH.idGrupoRrhh = model.idGrupoRrhh;
-                        areaGrupoRRHH.idAreRoe = area;
-                        areaGrupoRRHH.usuCrea = model.usuCrea;
-                        areaGrupoRRHH.usufchCrea = model.usufchCrea;
+                        foreach (var area in areas)
+                        {
+                            AreaGrupoRRHHModels areaGrupoRRHH = new AreaGrupoRRHHModels();
+                            areaGrupoRRHH.idGrupoRrhh = model.idGrupoRrhh;
+                            areaGrupoRRHH.idAreRoe = area;
+                            areaGrupoRRHH.usuCrea = model.usuCrea;
+                            areaGrupoRRHH.usufchCrea = model.usufchCrea;
 
-                        nuevasAreas.Add(areaGrupoRRHH);
+                            nuevasAreas.Add(areaGrupoRRHH);
+                        }
                     }
 
-                    foreach (var usuario in usuarios)
+                    if (usuarios != null && usuarios.Any())
                     {
-                        ExcluGrupoRRHHModels excluGrupoRRHH = new ExcluGrupoRRHHModels();
-                        excluGrupoRRHH.idGrupoRrhh = model.idGrupoRrhh;
-                        excluGrupoRRHH.idAcc = usuario;
-                        excluGrupoRRHH.usuCrea = model.usuCrea;
-                        excluGrupoRRHH.usufchCrea = model.usufchCrea;
+                        foreach (var usuario in usuarios)
+                        {
+                            ExcluGrupoRRHHModels excluGrupoRRHH = new ExcluGrupoRRHHModels();
+                            excluGrupoRRHH.idGrupoRrhh = model.idGrupoRrhh;
+                            excluGrupoRRHH.idAcc = usuario;
+                            excluGrupoRRHH.usuCrea = model.usuCrea;
+                            excluGrupoRRHH.usufchCrea = model.usufchCrea;
 
-                        nuevosUsuarios.Add(excluGrupoRRHH);
+                            nuevosUsuarios.Add(excluGrupoRRHH);
+                        }
                     }
 
                     db.tb_AreaGrupoRRHH.AddRange(nuevasAreas);
