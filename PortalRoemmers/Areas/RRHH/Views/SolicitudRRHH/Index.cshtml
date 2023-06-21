@@ -13,7 +13,7 @@
     @Styles.Render("~/Content/datepicker_CSS")
 }
 <div class="panel panel-default">
-    <div class="panel-heading box-title m-b-0"><h2>Mantenimiento de Solicitud de Vacaciones</h2></div>
+    <div class="panel-heading box-title m-b-0"><h2>Solicitud de Vacaciones</h2></div>
     <div class="panel-body">
         <div class="form-group">
             @{ string v = ""; try { v = TempData["mensaje"].ToString(); } catch { }}
@@ -144,7 +144,7 @@
                                 @foreach (var item in Model.SoliRRHH)
                                 {
                                     if ((item.idAccSol == ViewBag.userId && item.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacaciones) ||
-                                        (item.idAccSol != ViewBag.userId && item.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM))
+                                        (item.idAccSol != ViewBag.userId && item.idAccApro != ViewBag.userId && item.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM))
                                     {
                                         <tr>
                                             <td class="text-nowrap" align="center">
