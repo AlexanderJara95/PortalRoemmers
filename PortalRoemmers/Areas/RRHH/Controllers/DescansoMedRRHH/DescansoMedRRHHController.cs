@@ -108,7 +108,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.DescansoMedRRHH
             var actual = DateTime.Today.ToString("dd/MM/yyyy");
             ViewBag.fecha = actual;
 
-            return View();
+            return View(model);
         }
 
         [HttpPost]
@@ -132,7 +132,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.DescansoMedRRHH
             userSoliRRHH.usuCrea = model.usuCrea;
             userSoliRRHH.usufchCrea = model.usufchCrea;
 
-            /*//imagen
+            //imagen
             if (file != null && file.ContentLength > 0)//Seleccione una imagen
             {
                 byte[] imageData = null;
@@ -146,7 +146,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.DescansoMedRRHH
             else
             {
                 model.documentoAdjunto = Encoding.Default.GetBytes(SessionPersister.UserIma);
-            }*/
+            }
 
             if (emple.idEmpJ != "" || emple.idEmpJ != null)
             {
@@ -194,7 +194,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.DescansoMedRRHH
 
         [HttpPost]
         [SessionAuthorize]
-        public ActionResult Modificar(SolicitudRRHHModels model)
+        public ActionResult Modificar(SolicitudRRHHModels model, HttpPostedFileBase file)
         {
             model.usufchMod = DateTime.Now;
             model.usuMod = SessionPersister.Username;
@@ -204,8 +204,22 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.DescansoMedRRHH
             {
                 model.idEstado = ConstantesGlobales.estadoModificado;
             }
+            //imagen
+            if (file != null && file.ContentLength > 0)//Seleccione una imagen
+            {
+                byte[] imageData = null;
+                using (var binaryReader = new BinaryReader(file.InputStream))
+                {
+                    imageData = binaryReader.ReadBytes(file.ContentLength);
+                }
+                //setear la imagen a la entidad que se creara
+                model.documentoAdjunto = imageData;
+            }
+            else
+            {
+                model.documentoAdjunto = Encoding.Default.GetBytes(SessionPersister.UserIma);
+            }
 
-            
             try
             {
                 if (_des.modificar(model))
@@ -244,6 +258,24 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.DescansoMedRRHH
             return View(model);
         }
 
+        [SessionAuthorize]
+        public ActionResult convertirImagen(string idSolicitudRrhh)
+        {
+            var imagen =  _des.obtenerItem(idSolicitudRrhh);
+
+            if (imagen.documentoAdjunto == null)
+            {
+                string locacion = Server.MapPath("~/Areas/Sistemas/FotoPerfil/default.png");
+                FileStream foto = new FileStream(locacion, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+                Byte[] arreglo = new Byte[foto.Length];
+                BinaryReader reader = new BinaryReader(foto);
+                arreglo = reader.ReadBytes(Convert.ToInt32(foto.Length));
+                imagen.documentoAdjunto = arreglo;
+                reader.Close();
+            }
+            return File(imagen.documentoAdjunto, "image/jpeg");
+        }
+
         public bool validarSolicitudAdmin(List<SolicitudRRHHModels> soli)
         {
             foreach (var item in soli)
@@ -265,24 +297,6 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.DescansoMedRRHH
             return diferenciaDias;
         }
         
-        [SessionAuthorize]
-        public ActionResult convertirImagen(string idAcc)
-        {
-            var imagen = _usu.obtenerItem(idAcc);
-
-            if (imagen.rutaImgPer == null)
-            {
-                string locacion = Server.MapPath("~/Areas/Sistemas/FotoPerfil/default.png");
-                FileStream foto = new FileStream(locacion, FileMode.OpenOrCreate, FileAccess.ReadWrite);
-                Byte[] arreglo = new Byte[foto.Length];
-                BinaryReader reader = new BinaryReader(foto);
-                arreglo = reader.ReadBytes(Convert.ToInt32(foto.Length));
-                imagen.rutaImgPer = arreglo;
-                reader.Close();
-            }
-            return File(imagen.rutaImgPer, "image/jpeg");
-        }
-
         public JsonResult anularSolicitud(string idSolicitudRRHH)
         {
             var variable = _des.updateEstadoSoliRRHH(idSolicitudRRHH, ConstantesGlobales.estadoAnulado);

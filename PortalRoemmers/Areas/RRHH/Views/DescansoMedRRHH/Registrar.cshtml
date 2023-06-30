@@ -38,7 +38,7 @@
                                 <div class="panel-heading" id="exampleHeadingDefaultOne" role="tab"> <a class="panel-title" data-toggle="collapse" href="#exampleCollapseDefaultOne" data-parent="#exampleAccordionDefault" aria-expanded="true" aria-controls="exampleCollapseDefaultOne"> Datos de la Solicitud </a> </div>
                                 <div class="panel-collapse collapse in" id="exampleCollapseDefaultOne" aria-labelledby="exampleHeadingDefaultOne" role="tabpanel">
                                     @Html.HiddenFor(model => model.idEstado)
-                                    <div class="panel-body">                                        
+                                    <div class="panel-body">
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <div class="form-group">
@@ -74,6 +74,23 @@
                                                         <input class="form-control form-control-line datepicker" id="fchFinSolicitud" name="fchFinSolicitud" placeholder="dd/mm/aaaa" autocomplete="off">
                                                         @Html.ValidationMessageFor(model => model.fchFinSolicitud, "", new { @class = "text-danger" })
                                                     </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="el-card-item">
+                                            <div class="el-card-avatar el-overlay-1">
+                                                <img id="output" class="img-responsive" src="@Url.Action("convertirImagen", "DescansoMedRRHH", new {idSolicitudRrhh =Model.idSolicitudRrhh})" />
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <label class="col-sm-12">@Html.LabelFor(model => model.documentoAdjunto)</label>
+                                            <div class="col-sm-12">
+                                                <div class="fileinput input-group fileinput-new" data-provides="fileinput">
+                                                    <div class="form-control" data-trigger="fileinput"> <i class="glyphicon glyphicon-file fileinput-exists"></i> <span class="fileinput-filename">Foto.jpeg</span></div>
+                                                    <span class="input-group-addon btn btn-default btn-file">
+                                                        <span class="fileinput-new">Foto</span> <span class="fileinput-exists">Cambiar</span>
+                                                        <input type="hidden" value="" name="..."><input type="file" name="file" onchange="loadFile(event)">
+                                                    </span> <a href="#" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">Remover</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -156,6 +173,10 @@
 
             }
         });
+        var loadFile = function (event) {
+            var output = document.getElementById('output');
+            output.src = URL.createObjectURL(event.target.files[0]);
+        };
 
     </script>
 }
