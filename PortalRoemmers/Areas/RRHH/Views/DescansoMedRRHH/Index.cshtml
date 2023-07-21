@@ -95,10 +95,12 @@
                                         <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist"></th>
                                         <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1">C&oacutedigo</th>
                                         <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2">Descripción</th>
-                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Fecha de Inicio</th>
-                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Fecha de Fin</th>
-                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="4">Estado</th>
-                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="6">Solicitud</th>
+                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Desde</th>
+                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="4">Hasta</th>
+                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="5">Duración</th>
+                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="6">Estado</th>
+                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="7">Fecha</th>
+                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="8">Solicitud</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -106,6 +108,12 @@
                                     {
                                         if (item.idAccSol == ViewBag.userId)
                                         {
+                                            DateTime fechaInicio = item.fchIniSolicitud;
+                                            DateTime fechaFin = item.fchFinSolicitud;
+
+                                            // Calcular la diferencia en días
+                                            TimeSpan diferencia = fechaFin - fechaInicio;
+                                            int diferenciaEnDias = diferencia.Days + 1;
                                             <tr>
                                                 <td class="text-nowrap" align="center">
                                                     @{
@@ -115,7 +123,7 @@
 
                                                             <a href="@MyExtensions.ActionUrl("Visualizar", "DescansoMedRRHH", new { Area = "RRHH", id = item.idSolicitudRrhh })" data-toggle="tooltip" title="Visualizar"> <i class="fa fa-eye text-inverse m-r-10"></i> </a>
                                                             <a href="@MyExtensions.ActionUrl("Modificar", "DescansoMedRRHH", new { Area = "RRHH", id = item.idSolicitudRrhh, diasRestantes = ViewBag.diasRestantes })" data-toggle="tooltip" title="Editar"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a>
-                                                            <a data-toggle="tooltip" title="Anular" id="sa-params-anul"> <i class="fa fa-close text-danger"></i> </a>                                                        
+                                                            <a data-toggle="tooltip" title="Anular" id="sa-params-anul"> <i class="fa fa-close text-danger"></i> </a>
                                                         }
                                                         else
                                                         {
@@ -139,7 +147,33 @@
                                                 <td>@Html.DisplayFor(modelItem => item.descSolicitud)</td>
                                                 <td>@Html.DisplayFor(modelItem => item.fchIniSolicitud)</td>
                                                 <td>@Html.DisplayFor(modelItem => item.fchFinSolicitud)</td>
+                                                <td>
+                                                    @{
+                                                        //solo algunos lo ven
+                                                        if (diferenciaEnDias == 1)
+                                                        {
+                                                            <span>@diferenciaEnDias día</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span>@diferenciaEnDias días</span>
+                                                        }
+                                                    }
+                                                </td>
                                                 <td>@Html.DisplayFor(modelItem => item.estado.nomEst)</td>
+                                                <td>
+                                                    @{
+                                                        //solo algunos lo ven
+                                                        if (item.idEstado == ConstantesGlobales.estadoRegistrado)
+                                                        {
+                                                            @Html.DisplayFor(modelItem => item.usufchCrea)
+                                                        }
+                                                        else
+                                                        {
+                                                            @Html.DisplayFor(modelItem => item.usufchMod)
+                                                        }
+                                                    }
+                                                </td>
                                                 <td>@Html.DisplayFor(modelItem => item.subtipoSolicitud.nomSubtipoSolicitud)</td>
                                             </tr>
                                         }
@@ -175,10 +209,12 @@
                                         <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist"></th>
                                         <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="1">C&oacutedigo</th>
                                         <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="2">Descripción</th>
-                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Fecha de Inicio</th>
-                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Fecha de Fin</th>
-                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="4">Estado</th>
-                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="6">Usuario</th>
+                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="3">Desde</th>
+                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="4">Hasta</th>
+                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="5">Duración</th>
+                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="6">Estado</th>
+                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="7">Fecha</th>
+                                        <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="8">Usuario</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -186,7 +222,12 @@
                                     {
                                         if (item.idAccApro == ViewBag.userId)
                                         {
+                                            DateTime fechaInicio = item.fchIniSolicitud;
+                                            DateTime fechaFin = item.fchFinSolicitud;
 
+                                            // Calcular la diferencia en días
+                                            TimeSpan diferencia = fechaFin - fechaInicio;
+                                            int diferenciaEnDias = diferencia.Days + 1;
                                             <tr>
                                                 <td class="text-nowrap" align="center">
                                                     <!--<a href="MyExtensions.ActionUrl("Visualizar", "SolicitudGasto", new { Area = "Ventas", id = item.idSolicitudRrhh })" data-toggle="tooltip" title="Visualizar"> <i class="fa fa-eye text-inverse m-r-10"></i> </a>-->
@@ -219,7 +260,33 @@
                                                 <td>@Html.DisplayFor(modelItem => item.descSolicitud)</td>
                                                 <td>@Html.DisplayFor(modelItem => item.fchIniSolicitud)</td>
                                                 <td>@Html.DisplayFor(modelItem => item.fchFinSolicitud)</td>
+                                                <td>
+                                                    @{
+                                                        //solo algunos lo ven
+                                                        if (diferenciaEnDias == 1)
+                                                        {
+                                                            <span>@diferenciaEnDias día</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span>@diferenciaEnDias días</span>
+                                                        }
+                                                    }
+                                                </td>
                                                 <td>@Html.DisplayFor(modelItem => item.estado.nomEst)</td>
+                                                <td>
+                                                    @{
+                                                        //solo algunos lo ven
+                                                        if (item.idEstado == ConstantesGlobales.estadoRegistrado)
+                                                        {
+                                                            @Html.DisplayFor(modelItem => item.usufchCrea)
+                                                        }
+                                                        else
+                                                        {
+                                                            @Html.DisplayFor(modelItem => item.usufchMod)
+                                                        }
+                                                    }
+                                                </td>
                                                 <td>@Html.DisplayFor(modelItem => item.solicitante.username)</td>
                                             </tr>
                                         }
