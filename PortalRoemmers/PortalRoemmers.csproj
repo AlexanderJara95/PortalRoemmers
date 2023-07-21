@@ -566,6 +566,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\Marketing\Scripts\Marketing.js" />
+    <Content Include="Areas\RRHH\FotoDescanso\desc-medico.jpg" />
     <Content Include="Areas\RRHH\Scripts\RRHH.js" />
     <Content Include="Areas\Sistemas\FotoPerfil\default.png" />
     <Content Include="Areas\Sistemas\Content\Sistemas.css" />

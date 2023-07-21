@@ -265,7 +265,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.DescansoMedRRHH
 
             if (imagen.documentoAdjunto == null)
             {
-                string locacion = Server.MapPath("~/Areas/Sistemas/FotoPerfil/default.png");
+                string locacion = Server.MapPath("~/Areas/RRHH/FotoDescanso/desc-medico.jpg");
                 FileStream foto = new FileStream(locacion, FileMode.OpenOrCreate, FileAccess.ReadWrite);
                 Byte[] arreglo = new Byte[foto.Length];
                 BinaryReader reader = new BinaryReader(foto);
