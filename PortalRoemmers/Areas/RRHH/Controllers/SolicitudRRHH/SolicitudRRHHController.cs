@@ -27,6 +27,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
 
         public SolicitudRRHHController()
         {
+            _emp = new EmpleadoRepositorio();
             _soli = new SolicitudRRHHRepositorio();
             _usu = new UsuarioRepositorio();
             _gru = new GrupoRRHHRepositorio();
@@ -117,8 +118,8 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             var actual = DateTime.Today.ToString("dd/MM/yyyy");
 
             ViewBag.fecha = actual;
-
             return View();
+
         }
 
         [CustomAuthorize(Roles = "000003,000406")]
@@ -202,6 +203,10 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
         public ActionResult Registrar(SolicitudRRHHModels model, int diasRestantes)
         {
             EmpleadoModels emple = (EmpleadoModels)System.Web.HttpContext.Current.Session[Sessiones.empleado];
+            //EmpleadoModels jef = new EmpleadoModels();
+            var empJefe =_emp.obtenerItem(emple.idEmpJ);
+            var usuJefe = _usu.obtenerItemXEmpleado(emple.idEmpJ);
+            var usuPrinc = _usu.obtenerItemXEmpleado(emple.idEmp);
             //string responsableD = emple.idEmp + ";" + emple.apePatEmp + " " + emple.apeMatEmp + " " + emple.nom1Emp + " " + emple.nom2Emp + ";" + "";
             string tabla = "tb_SolicitudRRHH";
             int idc = enu.buscarTabla(tabla);
@@ -230,6 +235,18 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
                             enu.actualizarTabla(tabla, idc);
                             TempData["mensaje"] = "<div id='success' class='alert alert-success'>Se creó un nuevo registro.</div>";
                             _soli.crearUserSoliRrhh(userSoliRRHH);
+
+                            //envio mensaje al usuario emisor
+                            EmailHelper m = new EmailHelper();
+                            string mensaje = string.Format("<section> Estimado (a) {0}<BR/> <p>Se registró una solicitud de vacaciones</p></section>", emple.nomComEmp);
+                            string titulo = "Solicitud de Vacaciones";
+                            m.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensaje, titulo, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+
+                            //envio mensaje al usuario receptor
+                            EmailHelper m1 = new EmailHelper();
+                            string mensaje1 = string.Format("<section> Estimado (a) {0}<BR/> <p>Nuevo registro de vacaciones de {1}</p></section>", empJefe.nomComEmp, emple.nomComEmp);
+                            string titulo1 = "Solicitud de Vacaciones";
+                            m.SendEmail(/*model.solicitante.email*/usuJefe.email, mensaje1, titulo1, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
                         }
                         else
                         {
