@@ -137,6 +137,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             return View();
         }
 
+
         [HttpPost]
         [SessionAuthorize]
         public ActionResult RegistrarMasivamente(SolicitudRRHHModels model)
@@ -146,6 +147,10 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             string idGrupoRrhh = model.idAccSol;
             string tabla = "tb_SolicitudRRHH";
             int idc = enu.buscarTabla(tabla);
+            var empJefe = _emp.obtenerItem(emple.idEmpJ);
+            var usuJefe = _usu.obtenerItemXEmpleado(emple.idEmpJ);
+            var usuPrinc = _usu.obtenerItemXEmpleado(emple.idEmp);
+
             model.idSolicitudRrhh = idc.ToString("D7");
             model.idEstado = ConstantesGlobales.estadoRegistrado;
             model.idAccSol = SessionPersister.UserId;
@@ -178,6 +183,19 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
                         TempData["mensaje"] = "<div id='success' class='alert alert-success'>Se creó un nuevo registro.</div>";
                         _soli.crearUserSoliRrhh(userSoliRRHH);
                         _soli.crearGrupoSoliRrhh(grupoSoliRRHH);
+
+                        //envio mensaje al usuario emisor
+                        EmailHelper m = new EmailHelper();
+                        string mensaje = string.Format("<section> Estimado (a) {0}<BR/> <p>Se registró una solicitud de vacaciones</p></section>", emple.nomComEmp);
+                        string titulo = "Solicitud de Vacaciones";
+                        m.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensaje, titulo, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+
+                        //envio mensaje al usuario receptor
+                        EmailHelper m1 = new EmailHelper();
+                        string mensaje1 = string.Format("<section> Estimado (a) {0}<BR/> <p>Nuevo registro de vacaciones de {1}</p></section>", empJefe.nomComEmp, emple.nomComEmp);
+                        string titulo1 = "Solicitud de Vacaciones";
+                        m.SendEmail(/*model.solicitante.email*/usuJefe.email, mensaje1, titulo1, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+
                     }
                     else
                     {
@@ -197,6 +215,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             return RedirectToAction("Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search });
 
         }
+
 
         [HttpPost]
         [SessionAuthorize]
@@ -244,7 +263,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
 
                             //envio mensaje al usuario receptor
                             EmailHelper m1 = new EmailHelper();
-                            string mensaje1 = string.Format("<section> Estimado (a) {0}<BR/> <p>Nuevo registro de vacaciones de {1}</p></section>", empJefe.nomComEmp, emple.nomComEmp);
+                            string mensaje1 = string.Format("<section> Estimado (a) {0}<BR/> <p>Nueva solicitud de vacaciones de {1}</p></section>", empJefe.nomComEmp, emple.nomComEmp);
                             string titulo1 = "Solicitud de Vacaciones";
                             m.SendEmail(/*model.solicitante.email*/usuJefe.email, mensaje1, titulo1, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
                         }
@@ -294,10 +313,13 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             model.usufchMod = DateTime.Now;
             model.usuMod = SessionPersister.Username;
             EmpleadoModels emple = (EmpleadoModels)System.Web.HttpContext.Current.Session[Sessiones.empleado];
+            var empJefe = _emp.obtenerItem(emple.idEmpJ);
+            var usuJefe = _usu.obtenerItemXEmpleado(emple.idEmpJ);
+            var usuPrinc = _usu.obtenerItemXEmpleado(emple.idEmp);
             var mensaje = "";
             if (model.idEstado == ConstantesGlobales.estadoRechazado)
             {
-                model.idEstado = ConstantesGlobales.estadoModificado;
+                model.idEstado = ConstantesGlobales.estadoModificado;               
             }
 
             if (validarLimiteVacaciones(model.fchIniSolicitud, model.fchFinSolicitud, diasRestantes))
@@ -306,6 +328,17 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
                 {
                     if (_soli.modificar(model))
                     {
+                        //envio mensaje al usuario emisor
+                        EmailHelper mE = new EmailHelper();
+                        string mensajeE = string.Format("<section> Estimado (a) {0}<BR/> <p>Se modificó una solicitud de vacaciones</p></section>", emple.nomComEmp);
+                        string tituloE = "Solicitud de Vacaciones";
+                        mE.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensajeE, tituloE, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+
+                        //envio mensaje al usuario receptor
+                        EmailHelper mR = new EmailHelper();
+                        string mensajeR = string.Format("<section> Estimado (a) {0}<BR/> <p>Se modificó una solicitud de vacaciones de {1}</p></section>", empJefe.nomComEmp, emple.nomComEmp);
+                        string tituloR = "Solicitud de Vacaciones";
+                        mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
                         mensaje = "<div id='success' class='alert alert-success'>Se modificó correctamente el registro.</div>";
                     }
                     else
@@ -327,6 +360,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
 
             return RedirectToAction("Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search });
         }
+
 
         [HttpGet]
         [EncryptedActionParameter]
@@ -493,8 +527,9 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
         {
             foreach (var item in soli)
             {
-                if ((item.idAccSol == SessionPersister.UserId && item.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacaciones) ||
+                if (((item.idAccSol == SessionPersister.UserId && item.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacaciones) ||
                     (item.idAccSol != SessionPersister.UserId && item.idAccApro != SessionPersister.UserId && item.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM))
+                    && (item.idEstado == ConstantesGlobales.estadoAprobado))
                 {
                     cantTotalDisponible -= calcularDiasHabiles(item.fchIniSolicitud, item.fchFinSolicitud);
                 }
@@ -534,18 +569,72 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
         public JsonResult anularSolicitud(string idSolicitudRRHH)
         {
             var variable = _soli.updateEstadoSoliRRHH(idSolicitudRRHH, ConstantesGlobales.estadoAnulado);
+
+            var usuPrinc = _usu.obtenerItem(SessionPersister.UserId);
+            var empPrinc = _emp.obtenerItem(usuPrinc.idEmp);
+            var usuJefe = _usu.obtenerItemXEmpleado(empPrinc.idEmpJ);
+            var empJefe = _usu.obtenerItemXEmpleado(empPrinc.idEmpJ);
+
+            //envio mensaje al usuario emisor
+            EmailHelper mE = new EmailHelper();
+            string mensajeE = string.Format("<section> Estimado (a) {0}<BR/> <p>Se anuló la solicitud de vacaciones</p></section>", empPrinc.nomComEmp);
+            string tituloE = "Anulación de solicitud de Vacaciones";
+            mE.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensajeE, tituloE, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+
+            //envio mensaje al usuario receptor
+            EmailHelper mR = new EmailHelper();
+            string mensajeR = string.Format("<section> Estimado (a) {0}<BR/> <p>Se anuló la solicitud de vacaciones a {1}</p></section>", empJefe.nomComEmp, empPrinc.nomComEmp);
+            string tituloR = "Anulación de solicitud de Vacaciones";
+            mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+
             return Json(variable, JsonRequestBehavior.AllowGet);
         }
         //9
         public JsonResult aprobarSolicitud(string idSolicitudRRHH)
         {
             var variable = _soli.updateEstadoSoliRRHH(idSolicitudRRHH, ConstantesGlobales.estadoAprobado);
+
+            var usuPrinc = _usu.obtenerItem(SessionPersister.UserId);
+            var empPrinc = _emp.obtenerItem(usuPrinc.idEmp);
+            var usuJefe = _usu.obtenerItemXEmpleado(empPrinc.idEmpJ);
+            var empJefe = _usu.obtenerItemXEmpleado(empPrinc.idEmpJ);
+
+            //envio mensaje al usuario emisor
+            EmailHelper mE = new EmailHelper();
+            string mensajeE = string.Format("<section> Estimado (a) {0}<BR/> <p>Se aprobó una solicitud de vacaciones</p></section>", empPrinc.nomComEmp);
+            string tituloE = "Aprobación de solicitud de Vacaciones";
+            mE.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensajeE, tituloE, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+
+            //envio mensaje al usuario receptor
+            EmailHelper mR = new EmailHelper();
+            string mensajeR = string.Format("<section> Estimado (a) {0}<BR/> <p>Se aprobó una solicitud de vacaciones a {1}</p></section>", empJefe.nomComEmp, empPrinc.nomComEmp);
+            string tituloR = "Aprobación de solicitud de Vacaciones";
+            mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+
             return Json(variable, JsonRequestBehavior.AllowGet);
         }
         //12
         public JsonResult rechazarSolicitud(string idSolicitudRRHH)
         {
             var variable = _soli.updateEstadoSoliRRHH(idSolicitudRRHH, ConstantesGlobales.estadoRechazado);
+
+            var usuPrinc = _usu.obtenerItem(SessionPersister.UserId);
+            var empPrinc = _emp.obtenerItem(usuPrinc.idEmp);
+            var usuJefe = _usu.obtenerItemXEmpleado(empPrinc.idEmpJ);
+            var empJefe = _usu.obtenerItemXEmpleado(empPrinc.idEmpJ);
+
+            //envio mensaje al usuario emisor
+            EmailHelper mE = new EmailHelper();
+            string mensajeE = string.Format("<section> Estimado (a) {0}<BR/> <p>Se denegó una solicitud de vacaciones</p></section>", empPrinc.nomComEmp);
+            string tituloE = "Denegación de solicitud de Vacaciones";
+            mE.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensajeE, tituloE, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+
+            //envio mensaje al usuario receptor
+            EmailHelper mR = new EmailHelper();
+            string mensajeR = string.Format("<section> Estimado (a) {0}<BR/> <p>Se denegó una solicitud de vacaciones a {1}</p></section>", empJefe.nomComEmp, empPrinc.nomComEmp);
+            string tituloR = "Denegación de solicitud de Vacaciones";
+            mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+
             return Json(variable, JsonRequestBehavior.AllowGet);
         }
 

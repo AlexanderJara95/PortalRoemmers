@@ -133,6 +133,10 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.LicenciaRRHH
             model.usuCrea = SessionPersister.Username;
             model.usufchCrea = DateTime.Now;
 
+            var empJefe = _emp.obtenerItem(emple.idEmpJ);
+            var usuJefe = _usu.obtenerItemXEmpleado(emple.idEmpJ);
+            var usuPrinc = _usu.obtenerItemXEmpleado(emple.idEmp);
+
             UserSolicitudRRHHModels userSoliRRHH = new UserSolicitudRRHHModels();
             userSoliRRHH.idSolicitudRrhh = model.idSolicitudRrhh;
             userSoliRRHH.idAccRes = SessionPersister.UserId;
@@ -165,6 +169,18 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.LicenciaRRHH
                         enu.actualizarTabla(tabla, idc);
                         TempData["mensaje"] = "<div id='success' class='alert alert-success'>Se creó un nuevo registro.</div>";
                         _lic.crearUserSoliRrhh(userSoliRRHH);
+
+                        //envio mensaje al usuario emisor
+                        EmailHelper m = new EmailHelper();
+                        string mensaje = string.Format("<section> Estimado (a) {0}<BR/> <p>Se registró una solicitud de licencia</p></section>", emple.nomComEmp);
+                        string titulo = "Solicitud de Licencia";
+                        m.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensaje, titulo, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+
+                        //envio mensaje al usuario receptor
+                        EmailHelper m1 = new EmailHelper();
+                        string mensaje1 = string.Format("<section> Estimado (a) {0}<BR/> <p>Nueva solicitud de licencia de {1}</p></section>", empJefe.nomComEmp, emple.nomComEmp);
+                        string titulo1 = "Solicitud de Licencia";
+                        m.SendEmail(/*model.solicitante.email*/usuJefe.email, mensaje1, titulo1, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
                     }
                     else
                     {
@@ -206,6 +222,11 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.LicenciaRRHH
             model.usufchMod = DateTime.Now;
             model.usuMod = SessionPersister.Username;
             EmpleadoModels emple = (EmpleadoModels)System.Web.HttpContext.Current.Session[Sessiones.empleado];
+
+            var empJefe = _emp.obtenerItem(emple.idEmpJ);
+            var usuJefe = _usu.obtenerItemXEmpleado(emple.idEmpJ);
+            var usuPrinc = _usu.obtenerItemXEmpleado(emple.idEmp);
+
             var mensaje = "";
             if (model.idEstado == ConstantesGlobales.estadoRechazado)
             {
@@ -217,6 +238,18 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.LicenciaRRHH
             {
                 if (_lic.modificar(model))
                 {
+                    //envio mensaje al usuario emisor
+                    EmailHelper mE = new EmailHelper();
+                    string mensajeE = string.Format("<section> Estimado (a) {0}<BR/> <p>Se modificó una solicitud de licencia</p></section>", emple.nomComEmp);
+                    string tituloE = "Solicitud de Licencia";
+                    mE.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensajeE, tituloE, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+
+                    //envio mensaje al usuario receptor
+                    EmailHelper mR = new EmailHelper();
+                    string mensajeR = string.Format("<section> Estimado (a) {0}<BR/> <p>Se modificó una solicitud de licencia de {1}</p></section>", empJefe.nomComEmp, emple.nomComEmp);
+                    string tituloR = "Solicitud de Licencia";
+                    mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+
                     mensaje = "<div id='success' class='alert alert-success'>Se modificó correctamente el registro.</div>";
                 }
                 else
@@ -293,18 +326,72 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.LicenciaRRHH
         public JsonResult anularSolicitud(string idSolicitudRRHH)
         {
             var variable = _lic.updateEstadoSoliRRHH(idSolicitudRRHH, ConstantesGlobales.estadoAnulado);
+
+            var usuPrinc = _usu.obtenerItem(SessionPersister.UserId);
+            var empPrinc = _emp.obtenerItem(usuPrinc.idEmp);
+            var usuJefe = _usu.obtenerItemXEmpleado(empPrinc.idEmpJ);
+            var empJefe = _usu.obtenerItemXEmpleado(empPrinc.idEmpJ);
+
+            //envio mensaje al usuario emisor
+            EmailHelper mE = new EmailHelper();
+            string mensajeE = string.Format("<section> Estimado (a) {0}<BR/> <p>Se anuló la solicitud de licencia</p></section>", empPrinc.nomComEmp);
+            string tituloE = "Anulación de solicitud de Licencia";
+            mE.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensajeE, tituloE, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+
+            //envio mensaje al usuario receptor
+            EmailHelper mR = new EmailHelper();
+            string mensajeR = string.Format("<section> Estimado (a) {0}<BR/> <p>Se anuló la solicitud de licencia a {1}</p></section>", empJefe.nomComEmp, empPrinc.nomComEmp);
+            string tituloR = "Anulación de solicitud de Licencia";
+            mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+
             return Json(variable, JsonRequestBehavior.AllowGet);
         }
         //9
         public JsonResult aprobarSolicitud(string idSolicitudRRHH)
         {
             var variable = _lic.updateEstadoSoliRRHH(idSolicitudRRHH, ConstantesGlobales.estadoAprobado);
+
+            var usuPrinc = _usu.obtenerItem(SessionPersister.UserId);
+            var empPrinc = _emp.obtenerItem(usuPrinc.idEmp);
+            var usuJefe = _usu.obtenerItemXEmpleado(empPrinc.idEmpJ);
+            var empJefe = _usu.obtenerItemXEmpleado(empPrinc.idEmpJ);
+
+            //envio mensaje al usuario emisor
+            EmailHelper mE = new EmailHelper();
+            string mensajeE = string.Format("<section> Estimado (a) {0}<BR/> <p>Se aprobó una solicitud de licencia</p></section>", empPrinc.nomComEmp);
+            string tituloE = "Aprobación de solicitud de Licencia";
+            mE.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensajeE, tituloE, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+
+            //envio mensaje al usuario receptor
+            EmailHelper mR = new EmailHelper();
+            string mensajeR = string.Format("<section> Estimado (a) {0}<BR/> <p>Se aprobó una solicitud de licencia a {1}</p></section>", empJefe.nomComEmp, empPrinc.nomComEmp);
+            string tituloR = "Aprobación de solicitud de Licencia";
+            mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+
             return Json(variable, JsonRequestBehavior.AllowGet);
         }
         //12
         public JsonResult rechazarSolicitud(string idSolicitudRRHH)
         {
             var variable = _lic.updateEstadoSoliRRHH(idSolicitudRRHH, ConstantesGlobales.estadoRechazado);
+
+            var usuPrinc = _usu.obtenerItem(SessionPersister.UserId);
+            var empPrinc = _emp.obtenerItem(usuPrinc.idEmp);
+            var usuJefe = _usu.obtenerItemXEmpleado(empPrinc.idEmpJ);
+            var empJefe = _usu.obtenerItemXEmpleado(empPrinc.idEmpJ);
+
+            //envio mensaje al usuario emisor
+            EmailHelper mE = new EmailHelper();
+            string mensajeE = string.Format("<section> Estimado (a) {0}<BR/> <p>Se denegó una solicitud de licencia</p></section>", empPrinc.nomComEmp);
+            string tituloE = "Denegación de solicitud de Licencia";
+            mE.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensajeE, tituloE, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+
+            //envio mensaje al usuario receptor
+            EmailHelper mR = new EmailHelper();
+            string mensajeR = string.Format("<section> Estimado (a) {0}<BR/> <p>Se denegó una solicitud de descanso licencia a {1}</p></section>", empJefe.nomComEmp, empPrinc.nomComEmp);
+            string tituloR = "Denegación de solicitud de Licencia";
+            mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+
             return Json(variable, JsonRequestBehavior.AllowGet);
         }
 
