@@ -241,6 +241,14 @@ namespace PortalRoemmers.Areas.Sistemas.Services.Usuario
                 return emp;
             }
         }
+        public EmpleadoModels obtenerXnomCompEmp(string nomComp)
+        {
+            using (var db = new ApplicationDbContext())
+            {
+                var emp = db.tb_Empleado.Include(x => x.usuarios).Where(x => x.nomComEmp == nomComp).FirstOrDefault();
+                return emp;
+            }
+        }
 
-     }
+    }
 }
