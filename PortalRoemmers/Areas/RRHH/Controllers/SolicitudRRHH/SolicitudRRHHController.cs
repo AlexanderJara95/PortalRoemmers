@@ -12,6 +12,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.IO;
+using SpreadsheetLight;
 
 namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
 {
@@ -499,7 +501,17 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
                 }
             }
         }
-
+        public bool validarExisteSolicitudXdata(List<SolicitudRRHHModels> soli)
+        {
+            foreach (var item in soli)
+            {
+                if (item.idAccApro == ViewBag.userId)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
         public bool validarSolicitudAdmin(List<SolicitudRRHHModels> soli)
         {
             foreach (var item in soli)
@@ -636,6 +648,236 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
 
             return Json(variable, JsonRequestBehavior.AllowGet);
+        }
+
+
+        [CustomAuthorizeJson(Roles = "000003,000347")]
+        public JsonResult importData()
+        {
+            FileStream fs = new FileStream(Server.MapPath("~/Import/SolicitudRRHH/VacacionesPortal2023.xlsx"), FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            SLDocument sl = new SLDocument(fs, "PERIODO 2023");
+            int rowIndexVal = 2;
+            int rowIndex = 2;
+
+            string numDocum = "";
+            string numDocumJ = "";
+            string totalDias = "";
+            string mensajeAlerta = "";
+            DateTime desde = new DateTime();
+            DateTime hasta = new DateTime();
+            EmpleadoModels usuItem = new EmpleadoModels();
+            SolicitudRRHHModels modelSoli = new SolicitudRRHHModels();
+            bool todasLasFilasValidas = true;
+
+            string mensaje = "|";
+            int c = 0;
+            if (sl.SelectWorksheet("PERIODO 2022"))
+            { //valido que tenga la pestaña
+                //_inv = new InventarioAxService();
+                //_inv.eliminarRegistros();
+                while (!string.IsNullOrEmpty(sl.GetCellValueAsString(rowIndex, 1)))
+                {
+                    //tomamos los valores de las celdas y lo pasamos a las respectivas columnas
+                    numDocum = sl.GetCellValueAsString(rowIndex, 1).Trim();
+                    numDocumJ = sl.GetCellValueAsString(rowIndex, 4).Trim();
+                    desde = sl.GetCellValueAsDateTime(rowIndex, 5);
+                    hasta = sl.GetCellValueAsDateTime(rowIndex, 6);
+                    usuItem = _emp.obtenerxDniEmpleado(numDocum);
+
+                    if (!string.IsNullOrEmpty(numDocum)
+                        && usuItem != null
+                        && !string.IsNullOrEmpty(usuItem.idEmpJ))
+                    {//siempre y cuando se diferente a vacio o nulo
+                        if (_soli.validarExisteEnRegistro(_usu.obtenerItemXEmpleado(usuItem.idEmp).idAcc, desde, hasta)) mensaje += "El registro ya existe|";
+                    }
+                    else
+                    {
+                        todasLasFilasValidas = false;
+                        if (string.IsNullOrEmpty(numDocum)) mensaje += "No hay información de usuario|";
+                        if (usuItem == null)
+                        {
+                            mensaje += "No se encuentra al usuario|";
+                        }
+                        else
+                        {
+                            if (usuItem != null && string.IsNullOrEmpty(usuItem.idEmpJ)) {
+                                usuItem.idEmpJ = 
+                                mensaje += "No tiene Jefe Seleccionado|"; 
+                            }
+                        }
+                    }
+                    totalDias = calcularDiasHabiles(desde, hasta).ToString();
+                    sl.SetCellValue(rowIndex, 7, totalDias);
+                    sl.SetCellValue(rowIndex, 8, mensaje);
+                    mensaje = "|";
+                    //incrementeamos una unidad al indice de la fila para continuar con el recorrido
+                    rowIndex += 1;
+                }
+
+                rowIndex = 2;
+
+
+                if (todasLasFilasValidas)
+                {
+                    string tabla = "tb_SolicitudRRHH";
+                    int idc = enu.buscarTabla(tabla) - 1;
+                    while (!string.IsNullOrEmpty(sl.GetCellValueAsString(rowIndex, 1)))
+                    {
+                        //tomamos los valores de las celdas y lo pasamos a las respectivas columnas
+                        numDocum = sl.GetCellValueAsString(rowIndex, 1).Trim();
+                        numDocumJ = sl.GetCellValueAsString(rowIndex, 4).Trim();
+                        desde = sl.GetCellValueAsDateTime(rowIndex, 5);
+                        hasta = sl.GetCellValueAsDateTime(rowIndex, 6);
+                        totalDias = calcularDiasHabiles(desde, hasta).ToString();
+                        usuItem = _emp.obtenerxDniEmpleado(numDocum);
+                        idc++;
+
+                        modelSoli.idSolicitudRrhh = idc.ToString("D7");
+                        modelSoli.descSolicitud = "Vacaciones de " + totalDias + " días";
+                        modelSoli.idEstado = ConstantesGlobales.estadoAprobado;
+                        modelSoli.idAccSol = _usu.obtenerItemXEmpleado(usuItem.idEmp).idAcc;
+                        modelSoli.usuCrea = _usu.obtenerItemXEmpleado(usuItem.idEmp).username;
+                        modelSoli.usufchCrea = DateTime.Now;
+                        modelSoli.idAccApro = _usu.obtenerItemXEmpleado(usuItem.idEmpJ).idAcc;
+                        modelSoli.idSubTipoSolicitudRrhh = ConstantesGlobales.subTipoVacaciones;
+                        modelSoli.fchIniSolicitud = desde;
+                        modelSoli.fchFinSolicitud = hasta;
+
+                        if (!_soli.validarExisteEnRegistro(_usu.obtenerItemXEmpleado(usuItem.idEmp).idAcc, desde, hasta))
+                        {
+                            if (_soli.crear(modelSoli))
+                            {
+                                mensaje += "Se creo el registro|";
+                            }
+                            else
+                            {
+                                idc--;
+                                mensaje += "No se creo el registro|";
+                            }
+                        }
+                            
+                        mensaje = "|";
+                        modelSoli = new SolicitudRRHHModels();
+                        rowIndex += 1;
+                    }
+                }
+
+                sl.SaveAs(Server.MapPath("~/Import/SolicitudRRHH/VacacionesPortal2023.xlsx"));
+                fs.Close();
+            }
+            /*if (sl.SelectWorksheet("PERIODO 2023"))
+            { //valido que tenga la pestaña
+                //_inv = new InventarioAxService();
+                //_inv.eliminarRegistros();
+                while (!string.IsNullOrEmpty(sl.GetCellValueAsString(rowIndex, 1)))
+                {
+                    //tomamos los valores de las celdas y lo pasamos a las respectivas columnas
+                    numDocum = sl.GetCellValueAsString(rowIndex, 1).Trim();
+                    numDocumJ = sl.GetCellValueAsString(rowIndex, 4).Trim();                    
+                    desde = sl.GetCellValueAsDateTime(rowIndex, 5);
+                    hasta = sl.GetCellValueAsDateTime(rowIndex, 6);
+                    usuItem = _emp.obtenerxDniEmpleado(numDocum);
+
+                    if (!string.IsNullOrEmpty(numDocum)
+                        && usuItem != null
+                        && !string.IsNullOrEmpty(usuItem.idEmpJ)
+                        && !_soli.validarExisteEnRegistro(usuItem.idEmp, desde,hasta))
+                    {//siempre y cuando se diferente a vacio o nulo
+
+                    }
+                    else
+                    {
+                        todasLasFilasValidas = false;
+                        if (string.IsNullOrEmpty(numDocum)) mensaje += "No hay información de usuario|";
+                        if (usuItem == null) {
+                            mensaje += "No se encuentra al usuario|";
+                        }
+                        else
+                        {
+                            if (_soli.validarExisteEnRegistro(usuItem.idEmp, desde, hasta)) mensaje += "El registro ya existe|";
+                            if (usuItem != null && string.IsNullOrEmpty(usuItem.idEmpJ)) mensaje += "No tiene Jefe Seleccionado|";
+                        }               
+                    }
+                    
+                    sl.SetCellValue(rowIndex, 7, totalDias);
+                    sl.SetCellValue(rowIndex, 8, mensaje);
+                    mensaje = "|";
+                    //incrementeamos una unidad al indice de la fila para continuar con el recorrido
+                    rowIndex += 1;                    
+                }
+                
+                if (todasLasFilasValidas)
+                {
+                    string tabla = "tb_SolicitudRRHH";
+                    int idc = enu.buscarTabla(tabla) - 1;
+                    while (!string.IsNullOrEmpty(sl.GetCellValueAsString(rowIndex, 1)))
+                    {
+                        //tomamos los valores de las celdas y lo pasamos a las respectivas columnas
+                        numDocum = sl.GetCellValueAsString(rowIndex, 1).Trim();
+                        numDocumJ = sl.GetCellValueAsString(rowIndex, 4).Trim();
+                        desde = sl.GetCellValueAsDateTime(rowIndex, 5);
+                        hasta = sl.GetCellValueAsDateTime(rowIndex, 6);
+                        totalDias = calcularDiasHabiles(desde, hasta).ToString();
+                        usuItem = _emp.obtenerxDniEmpleado(numDocum);
+                        idc++;
+
+                        modelSoli.idSolicitudRrhh = idc.ToString("D7");
+                        modelSoli.descSolicitud = "Vacaciones de " + totalDias + " días";
+                        modelSoli.idEstado = ConstantesGlobales.estadoAprobado;
+                        modelSoli.idAccSol = _usu.obtenerItemXEmpleado(usuItem.idEmp).idAcc;
+                        modelSoli.usuCrea = _usu.obtenerItemXEmpleado(usuItem.idEmp).username;
+                        modelSoli.usufchCrea = DateTime.Now;
+                        modelSoli.idAccApro = _usu.obtenerItemXEmpleado(usuItem.idEmpJ).idAcc;
+                        modelSoli.idSubTipoSolicitudRrhh = ConstantesGlobales.subTipoVacaciones;
+                        modelSoli.fchIniSolicitud = desde;
+                        modelSoli.fchFinSolicitud = hasta;
+
+                        if (_soli.crear(modelSoli))
+                        {
+                            mensaje += "Se creo el registro|";
+                        }
+                        else
+                        {
+                            idc--;
+                            mensaje += "No se creo el registro|";
+                        }
+
+                        modelSoli = new SolicitudRRHHModels();
+                    }
+                }
+
+                sl.SaveAs(Server.MapPath("~/Import/SolicitudRRHH/VacacionesPortal2023.xlsx"));
+                fs.Close();
+            }*/
+            return Json(Server.MapPath("~/Import/SolicitudRRHH/VacacionesPortal2023.xlsx"), JsonRequestBehavior.AllowGet);
+
+        }        
+
+        [HttpPost]
+        public JsonResult saveFile(HttpPostedFileBase file)
+        {
+            Boolean ok = false;
+            if (file != null && file.ContentLength > 0)
+            {//cargo el archivo al servidor
+                //crear carpeta
+                string path = "~/Import";
+                bool exists = Directory.Exists(Server.MapPath(path));
+                if (!exists) Directory.CreateDirectory(Server.MapPath(path));
+
+                string subpath = path + "/" + "SolicitudRRHH" + "/";
+                bool existssub = Directory.Exists(Server.MapPath(subpath));
+                if (!existssub) Directory.CreateDirectory(Server.MapPath(subpath));
+
+                string absolutePath = subpath + "VacacionesPortal2023.xlsx";
+                file.SaveAs(Server.MapPath(absolutePath));
+                ok = true;
+            }
+            return Json(ok, JsonRequestBehavior.AllowGet);
+        }
+
+        public FileResult Resultado(string ruta)
+        {
+            return File(ruta, "application/vnd.ms-excel");
         }
 
 

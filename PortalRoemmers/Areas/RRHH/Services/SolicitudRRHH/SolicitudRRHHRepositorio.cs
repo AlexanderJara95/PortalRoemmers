@@ -10,6 +10,7 @@ using System.Data.Entity; //permite usar landa
 using System.Data.SqlClient;
 using PortalRoemmers.Security;
 using PortalRoemmers.Areas.RRHH.Models.SolicitudRRHH;
+using System.Collections.Generic;
 
 namespace PortalRoemmers.Areas.RRHH.Services.SolicitudRRHH
 {
@@ -226,6 +227,17 @@ namespace PortalRoemmers.Areas.RRHH.Services.SolicitudRRHH
                 }
             }
             return exec;
+        }
+
+        public bool validarExisteEnRegistro(string id, DateTime desde, DateTime hasta)
+        {
+            using (var db = new ApplicationDbContext())
+            {
+                bool existeRegistro = db.tb_SolicitudRRHH
+                    .Any(x => x.idAccSol == id && x.fchIniSolicitud == desde && x.fchFinSolicitud == hasta);
+
+                return existeRegistro;
+            }
         }
 
         public Boolean updateEstadoSoliRRHH(string sol, string estado)

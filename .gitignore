@@ -259,3 +259,5 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+/PortalRoemmers/Import/SolicitudRRHH/VaacionesPortal2023.xlsx
+/PortalRoemmers/Import/SolicitudRRHH/VacacionesPortal2023.xlsx
