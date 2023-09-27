@@ -91,6 +91,63 @@ namespace PortalRoemmers.Areas.RRHH.Services.SolicitudRRHH
                 return modelo;
             }
         }
+
+        public List<SolicitudRRHHModels> obtenerSolicitudesUsuario(string primero, string actual, string idAccSol)
+        {
+            // ------------------------------------------------------------------------
+            DateTime p = DateTime.Parse(primero); //desde
+            DateTime a = DateTime.Parse(actual).AddHours(23).AddMinutes(59);//hasta
+            //------------------------------------------------------------------------
+
+            using (var db = new ApplicationDbContext())
+            {
+                //SOLICITUDES PROPIAS
+                var model = db.tb_SolicitudRRHH
+                    .Include(x => x.solicitante.empleado)
+                    .Include(x => x.aprobador.empleado)
+                    .Include(x => x.estado)
+                    .Include(x => x.subtipoSolicitud)
+                    .OrderByDescending(x => x.idSolicitudRrhh)
+                    .Where(x => ((x.idAccSol == idAccSol) && x.idEstado != ConstantesGlobales.estadoAnulado && (x.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacaciones || (x.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM && x.idAccSol == idAccSol))) && ((x.fchIniSolicitud >= p) && (x.fchIniSolicitud <= a) && (x.fchFinSolicitud >= p) && (x.fchFinSolicitud <= a)))
+                    .ToList();
+
+                //AREA DEL USUARIO
+                string idAreaUser = db.tb_Usuario
+                    .Where(usu => usu.idAcc == SessionPersister.UserId)
+                    .Join(db.tb_Empleado,
+                        usu => usu.idEmp,
+                        emp => emp.idEmp,
+                        (usu, emp) => emp.idAreRoe)
+                    .Join(db.tb_Area,
+                        idAreRoe => idAreRoe,
+                        area => area.idAreRoe,
+                        (idAreRoe, area) => area.idAreRoe)
+                    .FirstOrDefault();
+
+                //SOLICITUDES MASIVAS
+                var modelMasiva = db.tb_SolicitudRRHH
+                    .Include(x => x.solicitante.empleado)
+                    .Include(x => x.aprobador.empleado)
+                    .Include(x => x.estado)
+                    .Include(x => x.subtipoSolicitud)
+                    .OrderByDescending(x => x.idSolicitudRrhh)
+                    .Where(solicitud =>
+                    db.tb_GrupoSolicitudRRHH.Any(grupoSol =>
+                        grupoSol.idSolicitudRrhh == solicitud.idSolicitudRrhh &&
+                        db.tb_GrupoRRHH.Any(grupo =>
+                            grupo.idGrupoRrhh == grupoSol.idGrupoRrhh &&
+                            db.tb_AreaGrupoRRHH.Any(areaGrupo =>
+                                areaGrupo.idGrupoRrhh == grupo.idGrupoRrhh &&
+                                areaGrupo.idAreRoe == idAreaUser) &&
+                            !db.tb_ExcluGrupoRRHH.Any(exclude =>
+                                exclude.idGrupoRrhh == grupo.idGrupoRrhh &&
+                                exclude.idAcc == SessionPersister.UserId))))
+                    .ToList();
+                var modelFinal = model.Concat(modelMasiva).ToList();
+                return modelFinal;
+            }
+        }
+
         public SolicitudRRHHModels obtenerItem(string id)
         {
             using (var db = new ApplicationDbContext())

@@ -549,6 +549,20 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             return cantTotalDisponible;
         }
 
+        public int diasRestantesAdmin(List<SolicitudRRHHModels> soli, string idAccP, int cantTotalDisponible)
+        {
+            foreach (var item in soli)
+            {
+                if (((item.idAccSol == idAccP && item.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacaciones) ||
+                    (item.idAccSol != idAccP && item.idAccApro != idAccP && item.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM))
+                    && (item.idEstado == ConstantesGlobales.estadoAprobado))
+                {
+                    cantTotalDisponible -= calcularDiasHabiles(item.fchIniSolicitud, item.fchFinSolicitud);
+                }
+            }
+            return cantTotalDisponible;
+        }
+
         public bool validarLimiteVacaciones(DateTime fechaInicio, DateTime fechaFin, int diasRestantes)
         {
             int diasHabiles=calcularDiasHabiles(fechaInicio, fechaFin);
@@ -600,6 +614,43 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
 
             return Json(variable, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult verEstadoVacaciones(string idSolicitudRRHH)
+        {
+            EmpleadoModels emple = _emp.obtenerItem(_usu.obtenerItem(_soli.obtenerItem(idSolicitudRRHH).idAccSol).idEmp);
+            //-----------------------------
+            DateTime primero = new DateTime();
+            DateTime actual = new DateTime();
+
+            DateTime date = DateTime.Now;
+            DateTime oPrimerDiaDelMes = new DateTime(date.Year, 1, 1);
+            DateTime ultimoDelanio = new DateTime(date.Year, 12, 31);
+            primero = DateTime.Parse(oPrimerDiaDelMes.ToString("dd/MM/yyyy"));
+            actual = DateTime.Parse(ultimoDelanio.ToString("dd/MM/yyyy"));
+                        
+            /*var actual = DateTime.Today.ToString("dd/MM/yyyy");*/
+            //-----------------------------
+            //var parametro = p.selectResultado(ConstantesGlobales.Com_Usu_Pre_Cas_03).ToList();
+            //var usuario = _usu.obtenerUsuarios().ToList();
+            //var result = parametro.Join(usuario, e => e.value, d => d.idAcc, (e, d) => new { e.value, d.empleado.nomComEmp });
+            //-----------------------------
+            //ViewBag.gerentesProd = new SelectList(result.Select(x => new { idAccResGP = x.value, nombre = x.nomComEmp }), "idAccResGP", "nombre");
+            //ViewBag.actividades = new SelectList(_act.obtenerActividades().Where(x => x.idAccRes == idAcc && x.estimacion != null && ((DateTime.Today >= x.fchIniVig) && (DateTime.Today <= x.fchFinVig))).Select(x => new { idActividades = x.idActiv, nomActiv = x.nomActiv }), "idActividades", "nomActiv");
+            //-----------------------------
+            // validación de rango de fechas del año actual
+            var modelCant = _soli.obtenerSolicitudesUsuario(primero.ToString(), actual.ToString(),_soli.obtenerItem(idSolicitudRRHH).idAccSol);
+            int total = diasTotalesVacaciones(emple.ingfchEmp.Value, emple.idAreRoe);
+            int rest = diasRestantesAdmin(modelCant, _soli.obtenerItem(idSolicitudRRHH).idAccSol, total);
+            // filtrado general
+
+            var result = new
+            {
+                diasTotales = total,
+                diasDisponibles = rest
+            };
+
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
         //9
         public JsonResult aprobarSolicitud(string idSolicitudRRHH)

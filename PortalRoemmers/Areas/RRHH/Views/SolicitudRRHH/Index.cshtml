@@ -118,10 +118,10 @@
             <div class="tab-pane fade active" id="home" role="tabpanel" aria-labelledby="home-tab">
                 <div class="">
                     <!--<div class="row show-grid">
-                            <div class="col-lg-1 col-sm-4 col-xs-12">
-                                <button id="btnExportar" type="submit" class="btn btn-block btn-outline btn-info">Exportar</button>
-                            </div>
-                    </div>-->
+                    <div class="col-lg-1 col-sm-4 col-xs-12">
+                        <button id="btnExportar" type="submit" class="btn btn-block btn-outline btn-info">Exportar</button>
+                    </div>
+            </div>-->
                     <div class="row">
                         <div class="col-sm-12">
                             <dl>
@@ -254,10 +254,10 @@
             <div class="tab-pane fade" id="admin" role="tabpanel" aria-labelledby="admin-tab">
                 <div class="">
                     <!--<div class="row show-grid">
-                            <div class="col-lg-1 col-sm-4 col-xs-12">
-                                <button id="btnExportar" type="submit" class="btn btn-block btn-outline btn-info">Exportar</button>
-                            </div>
-                    </div>-->
+                <div class="col-lg-1 col-sm-4 col-xs-12">
+                    <button id="btnExportar" type="submit" class="btn btn-block btn-outline btn-info">Exportar</button>
+                </div>
+        </div>-->
                     <div class="row">
                         <div class="col-sm-12">
                             <dl>
@@ -265,7 +265,7 @@
                             </dl>
                         </div>
                         <div class="col-sm-12">
-                            <table class="table-bordered table-hover table" data-tablesaw-mode="swipe">
+                            <table id="idTablaAdminSoli" class="table-bordered table-hover table" data-tablesaw-mode="swipe">
                                 <thead>
                                     <tr>
                                         <th scope="col" data-tablesaw-sortable-col data-tablesaw-priority="persist"></th>
@@ -375,7 +375,8 @@
                         @{Html.RenderPartial("_paginador", Model);}
                     </div>
                 </div>
-            </div>
+                <div id="infoUsuarioSelected"></div>
+            </div>            
 
             @{
                 if (ViewBag.SolicitudMasiva)
@@ -672,10 +673,62 @@
         }
 
         $(document).ready(function () {
-            $("table tbody tr").each(function () {
-                var estado = $(this).parent().parents('tr').find('td').eq(5).val();
-                console.log(estado);
+
+            $('#idTablaAdminSoli td').on('click', function () {
+                // Obtener el contenido del elemento <td>
+                var idSolicitudRrhh = $(this).closest('tr').find('td:eq(1)').text();
+                var contenidoTd = $(this).closest('tr').find('td:eq(8)').text().toUpperCase();
+
+                var Options = {};
+                Options.url = "/SolicitudRRHH/verEstadoVacaciones";
+                Options.type = "POST";
+                Options.data = JSON.stringify({ idSolicitudRrhh: idSolicitudRrhh });
+                Options.datatype = "json";
+                Options.contentType = "application/json";
+                Options.success = function (data) {
+                    if (data) {
+                        console.log("dtot:", data.diasTotales);
+                        // Agrega la palabra "día" o "días" según el valor de contadorDias
+                        var pluralTot = data.diasTotales === 1 ? "día total" : "días totales";
+                        var pluralDisp = data.diasDisponibles === 1 ? "día disponible" : "días disponibles";
+                        var pluralRest = (data.diasTotales - data.diasDisponibles) === 1 ? "día usado" : "días usados";
+                        var infoUsuarioSelected = "<span>Usuario " + contenidoTd + ": </span> <br>"
+                            + data.diasTotales + " " + pluralTot + "<br>" +
+                            (data.diasTotales - data.diasDisponibles) + " " + pluralRest+ "<br>" +
+                            data.diasDisponibles + " " + pluralDisp;
+                        $('#infoUsuarioSelected').html("<div style='background-color: #2cabe3; padding: 1em; color: #ffffff;'>" + infoUsuarioSelected + "</div>");
+
+
+                    }
+                };
+                Options.error = function () { alert("Error in Getting States!!"); unblock(); };
+                $.ajax(Options);  
             });
+
+            /*
+            $("table tbody tr").each(function () {
+                var dias = $(this).find('td:eq(5)').text().trim(); // Obtiene el contenido de la sexta columna (índice 5)
+                var usuario = $(this).find('td:eq(8)').text().trim();
+                    
+                // Divide el texto en palabras utilizando el espacio como separador
+                var palabras = dias.split(' ');
+
+                // Verificar si la primera palabra es un número antes de sumarla
+                var primeraPalabra = parseFloat(palabras[0]); // Usamos parseFloat para manejar decimales
+                console.log(dias);
+
+                if (!isNaN(primeraPalabra)) {
+                    // Si es un número válido, realiza el filtro
+                    if (contenidoTd === usuario.toUpperCase()) {
+                        contadorDias += primeraPalabra; // Suma la primera palabra al contador
+
+                        // Haz algo con la fila que cumple con el filtro
+                        console.log(contadorDias, "tot");
+                    }
+                }
+            });
+            */
+
             $('.datepicker').datepicker({
                 dateFormat: 'dd/mm/yy',
                 position: "bottom"
