@@ -60,6 +60,12 @@ namespace PortalRoemmers.Areas.RRHH.Models.SolicitudRRHH
         [ForeignKey("idEstado")]
         public EstadoModels estado { get; set; }
 
+        //Periodo 10
+        [Required(ErrorMessage = "Este campo {0} es obligatorio")]
+        [StringLength(4, ErrorMessage = "El campo {0} no puede exceder {1}  characters.")]
+        [Display(Name = "Periodo")]
+        public string periodo { get; set; }
+
         //Subtipo
         [Display(Name = "Subtipo")]
         [StringLength(10)]
