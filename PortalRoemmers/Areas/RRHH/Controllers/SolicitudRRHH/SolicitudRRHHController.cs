@@ -41,7 +41,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
         {
             return View();
         }*/
-        [CustomAuthorize(Roles = "000003,000405")]
+        [CustomAuthorize(Roles = "000003,000406")]
         public ActionResult Index(string menuArea, string menuVista, int pagina = 1, string search = "", string idAcc = "", string fchEveSolGasI = "", string fchEveSolGasF = "")
        {
             EmpleadoModels emple = (EmpleadoModels)System.Web.HttpContext.Current.Session[Sessiones.empleado];
@@ -104,7 +104,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             return View(model);
         }
 
-        [CustomAuthorize(Roles = "000003,000406")]
+        [CustomAuthorize(Roles = "000003,000407")]
         [HttpGet]
         public ActionResult Registrar(int diasRestantes)
         {
@@ -124,7 +124,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
 
         }
 
-        [CustomAuthorize(Roles = "000003,000406")]
+        [CustomAuthorize(Roles = "000003,000410")]
         [HttpGet]
         public ActionResult RegistrarMasivamente()
         {
@@ -294,7 +294,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
 
         [HttpGet]
         [EncryptedActionParameter]
-        [CustomAuthorize(Roles = "000003,000407")]
+        [CustomAuthorize(Roles = "000003,000408")]
         public ActionResult Modificar(string id, string diasRestantes)
         {
             var model = _soli.obtenerItem(id);
@@ -426,7 +426,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
 
         [HttpGet]
         [EncryptedActionParameter]
-        [CustomAuthorize(Roles = "000003,000407")]
+        [CustomAuthorize(Roles = "000003,000406")]
         public ActionResult Visualizar(string id)
         {
             var model = _soli.obtenerItem(id);
@@ -441,7 +441,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
 
         [HttpGet]
         [EncryptedActionParameter]
-        [CustomAuthorize(Roles = "000003,000407")]
+        [CustomAuthorize(Roles = "000003,000406")]
         public ActionResult VisualizarMasivamente(string id)
         {
             var model = _soli.obtenerItem(id);
