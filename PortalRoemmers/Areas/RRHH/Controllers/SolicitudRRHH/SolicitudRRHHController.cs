@@ -670,12 +670,13 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
         //9
         public JsonResult aprobarSolicitud(string idSolicitudRRHH)
         {
+
             var variable = _soli.updateEstadoSoliRRHH(idSolicitudRRHH, ConstantesGlobales.estadoAprobado);
 
-            var usuPrinc = _usu.obtenerItem(SessionPersister.UserId);
+            var usuPrinc = _usu.obtenerItem(_soli.obtenerItem(idSolicitudRRHH).idAccSol);
             var empPrinc = _emp.obtenerItem(usuPrinc.idEmp);
             var usuJefe = _usu.obtenerItemXEmpleado(empPrinc.idEmpJ);
-            var empJefe = _usu.obtenerItemXEmpleado(empPrinc.idEmpJ);
+            var empJefe = _emp.obtenerItem(empPrinc.idEmpJ);
 
             //envio mensaje al usuario emisor
             EmailHelper mE = new EmailHelper();
@@ -696,10 +697,10 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
         {
             var variable = _soli.updateEstadoSoliRRHH(idSolicitudRRHH, ConstantesGlobales.estadoRechazado);
 
-            var usuPrinc = _usu.obtenerItem(SessionPersister.UserId);
+            var usuPrinc = _usu.obtenerItem(_soli.obtenerItem(idSolicitudRRHH).idAccSol);
             var empPrinc = _emp.obtenerItem(usuPrinc.idEmp);
             var usuJefe = _usu.obtenerItemXEmpleado(empPrinc.idEmpJ);
-            var empJefe = _usu.obtenerItemXEmpleado(empPrinc.idEmpJ);
+            var empJefe = _emp.obtenerItem(empPrinc.idEmpJ);
 
             //envio mensaje al usuario emisor
             EmailHelper mE = new EmailHelper();
