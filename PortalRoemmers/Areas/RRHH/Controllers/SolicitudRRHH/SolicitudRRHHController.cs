@@ -191,13 +191,13 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
                         EmailHelper m = new EmailHelper();
                         string mensaje = string.Format("<section> Estimado (a) {0}<BR/> <p>Se registró una solicitud de vacaciones</p></section>", emple.nomComEmp);
                         string titulo = "Solicitud de Vacaciones";
-                        m.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensaje, titulo, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+                        //m.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensaje, titulo, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
 
                         //envio mensaje al usuario receptor
                         EmailHelper m1 = new EmailHelper();
                         string mensaje1 = string.Format("<section> Estimado (a) {0}<BR/> <p>Nuevo registro de vacaciones de {1}</p></section>", empJefe.nomComEmp, emple.nomComEmp);
                         string titulo1 = "Solicitud de Vacaciones";
-                        m.SendEmail(/*model.solicitante.email*/usuJefe.email, mensaje1, titulo1, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+                        //m.SendEmail(/*model.solicitante.email*/usuJefe.email, mensaje1, titulo1, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
 
                     }
                     else
@@ -263,13 +263,13 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
                             EmailHelper m = new EmailHelper();
                             string mensaje = string.Format("<section> Estimado (a) {0}<BR/> <p>Se registró una solicitud de vacaciones</p></section>", emple.nomComEmp);
                             string titulo = "Solicitud de Vacaciones";
-                            m.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensaje, titulo, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+                            //m.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensaje, titulo, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
 
                             //envio mensaje al usuario receptor
                             EmailHelper m1 = new EmailHelper();
                             string mensaje1 = string.Format("<section> Estimado (a) {0}<BR/> <p>Nueva solicitud de vacaciones de {1}</p></section>", empJefe.nomComEmp, emple.nomComEmp);
                             string titulo1 = "Solicitud de Vacaciones";
-                            m.SendEmail(/*model.solicitante.email*/usuJefe.email, mensaje1, titulo1, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+                            //m.SendEmail(/*model.solicitante.email*/usuJefe.email, mensaje1, titulo1, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
                         }
                         else
                         {
@@ -336,13 +336,13 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
                         EmailHelper mE = new EmailHelper();
                         string mensajeE = string.Format("<section> Estimado (a) {0}<BR/> <p>Se modificó una solicitud de vacaciones</p></section>", emple.nomComEmp);
                         string tituloE = "Solicitud de Vacaciones";
-                        mE.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensajeE, tituloE, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+                        //mE.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensajeE, tituloE, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
 
                         //envio mensaje al usuario receptor
                         EmailHelper mR = new EmailHelper();
                         string mensajeR = string.Format("<section> Estimado (a) {0}<BR/> <p>Se modificó una solicitud de vacaciones de {1}</p></section>", empJefe.nomComEmp, emple.nomComEmp);
                         string tituloR = "Solicitud de Vacaciones";
-                        mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+                        //mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
                         mensaje = "<div id='success' class='alert alert-success'>Se modificó correctamente el registro.</div>";
                     }
                     else
@@ -620,13 +620,13 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             EmailHelper mE = new EmailHelper();
             string mensajeE = string.Format("<section> Estimado (a) {0}<BR/> <p>Se anuló la solicitud de vacaciones</p></section>", empPrinc.nomComEmp);
             string tituloE = "Anulación de solicitud de Vacaciones";
-            mE.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensajeE, tituloE, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+            //mE.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensajeE, tituloE, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
 
             //envio mensaje al usuario receptor
             EmailHelper mR = new EmailHelper();
             string mensajeR = string.Format("<section> Estimado (a) {0}<BR/> <p>Se anuló la solicitud de vacaciones a {1}</p></section>", empJefe.nomComEmp, empPrinc.nomComEmp);
             string tituloR = "Anulación de solicitud de Vacaciones";
-            mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+            //mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
 
             return Json(variable, JsonRequestBehavior.AllowGet);
         }
@@ -681,13 +681,13 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             EmailHelper mE = new EmailHelper();
             string mensajeE = string.Format("<section> Estimado (a) {0}<BR/> <p>Se aprobó una solicitud de vacaciones</p></section>", empPrinc.nomComEmp);
             string tituloE = "Aprobación de solicitud de Vacaciones";
-            mE.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensajeE, tituloE, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+            //mE.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensajeE, tituloE, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
 
             //envio mensaje al usuario receptor
             EmailHelper mR = new EmailHelper();
             string mensajeR = string.Format("<section> Estimado (a) {0}<BR/> <p>Se aprobó una solicitud de vacaciones a {1}</p></section>", empJefe.nomComEmp, empPrinc.nomComEmp);
             string tituloR = "Aprobación de solicitud de Vacaciones";
-            mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+            //mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
 
             return Json(variable, JsonRequestBehavior.AllowGet);
         }
@@ -705,13 +705,13 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             EmailHelper mE = new EmailHelper();
             string mensajeE = string.Format("<section> Estimado (a) {0}<BR/> <p>Se denegó una solicitud de vacaciones</p></section>", empPrinc.nomComEmp);
             string tituloE = "Denegación de solicitud de Vacaciones";
-            mE.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensajeE, tituloE, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+            //mE.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensajeE, tituloE, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
 
             //envio mensaje al usuario receptor
             EmailHelper mR = new EmailHelper();
             string mensajeR = string.Format("<section> Estimado (a) {0}<BR/> <p>Se denegó una solicitud de vacaciones a {1}</p></section>", empJefe.nomComEmp, empPrinc.nomComEmp);
             string tituloR = "Denegación de solicitud de Vacaciones";
-            mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+            //mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
 
             return Json(variable, JsonRequestBehavior.AllowGet);
         }
