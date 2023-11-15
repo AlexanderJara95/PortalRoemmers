@@ -194,7 +194,12 @@
                                                                     <strong style="color: #2cabe3">LISTO</strong>
                                                                 </a>
                                                             }
-
+                                                            if (item.estado.nomEst == "PRE-APROBADO")
+                                                            {
+                                                                <a href="@MyExtensions.ActionUrl("Visualizar", "SolicitudRRHH", new { Area = "RRHH", id = item.idSolicitudRrhh })" data-toggle="tooltip" title="Visualizar">
+                                                                    <strong style="color: #ffc36d">LISTO</strong>
+                                                                </a>
+                                                            }
                                                             if (item.estado.nomEst == "RECHAZADO")
                                                             {
                                                                 <a href="@MyExtensions.ActionUrl("Visualizar", "SolicitudRRHH", new { Area = "RRHH", id = item.idSolicitudRrhh })" data-toggle="tooltip" title="Visualizar">
@@ -322,6 +327,10 @@
                                                             if (item.estado.nomEst == "APROBADO")
                                                             {
                                                                 <strong style="color: #2cabe3">LISTO</strong>
+                                                            }
+                                                            if (item.estado.nomEst == "PRE-APROBADO")
+                                                            {
+                                                                <strong style="color: #ffc36d">LISTO</strong>
                                                             }
                                                             if (item.estado.nomEst == "RECHAZADO")
                                                             {
