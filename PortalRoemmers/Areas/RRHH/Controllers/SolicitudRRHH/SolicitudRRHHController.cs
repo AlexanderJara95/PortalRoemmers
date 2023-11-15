@@ -670,25 +670,44 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
         //9
         public JsonResult aprobarSolicitud(string idSolicitudRRHH)
         {
-
-            var variable = _soli.updateEstadoSoliRRHH(idSolicitudRRHH, ConstantesGlobales.estadoAprobado);
-
-            var usuPrinc = _usu.obtenerItem(_soli.obtenerItem(idSolicitudRRHH).idAccSol);
+            var solicitud = _soli.obtenerItem(idSolicitudRRHH);
+            var variable = true;
+            var usuPrinc = _usu.obtenerItem(solicitud.idAccSol);
             var empPrinc = _emp.obtenerItem(usuPrinc.idEmp);
             var usuJefe = _usu.obtenerItemXEmpleado(empPrinc.idEmpJ);
             var empJefe = _emp.obtenerItem(empPrinc.idEmpJ);
 
-            //envio mensaje al usuario emisor
-            EmailHelper mE = new EmailHelper();
-            string mensajeE = string.Format("<section> Estimado (a) {0}<BR/> <p>Se aprobó una solicitud de vacaciones</p></section>", empPrinc.nomComEmp);
-            string tituloE = "Aprobación de solicitud de Vacaciones";
-            //mE.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensajeE, tituloE, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+            if ((empPrinc.idAreRoe == ConstantesGlobales.idMarketing || empPrinc.idAreRoe == ConstantesGlobales.idVentas) && (solicitud.estado.ToString() != ConstantesGlobales.estadoPreApro) )
+            {
+                variable = _soli.updateEstadoSoliRRHH(idSolicitudRRHH, ConstantesGlobales.estadoPreApro);
+                //envio mensaje al usuario emisor
+                EmailHelper mE = new EmailHelper();
+                string mensajeE = string.Format("<section> Estimado (a) {0}<BR/> <p>Se aprobó una solicitud de vacaciones</p></section>", empPrinc.nomComEmp);
+                string tituloE = "Aprobación de solicitud de Vacaciones";
+                //mE.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensajeE, tituloE, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
 
-            //envio mensaje al usuario receptor
-            EmailHelper mR = new EmailHelper();
-            string mensajeR = string.Format("<section> Estimado (a) {0}<BR/> <p>Se aprobó una solicitud de vacaciones a {1}</p></section>", empJefe.nomComEmp, empPrinc.nomComEmp);
-            string tituloR = "Aprobación de solicitud de Vacaciones";
-            //mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+                //envio mensaje al usuario receptor
+                EmailHelper mR = new EmailHelper();
+                string mensajeR = string.Format("<section> Estimado (a) {0}<BR/> <p>Se aprobó una solicitud de vacaciones a {1}</p></section>", empJefe.nomComEmp, empPrinc.nomComEmp);
+                string tituloR = "Aprobación de solicitud de Vacaciones";
+                //mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+            }
+            else
+            {
+                variable = _soli.updateEstadoSoliRRHH(idSolicitudRRHH, ConstantesGlobales.estadoAprobado);
+                //envio mensaje al usuario emisor
+                EmailHelper mE = new EmailHelper();
+                string mensajeE = string.Format("<section> Estimado (a) {0}<BR/> <p>Se aprobó una solicitud de vacaciones</p></section>", empPrinc.nomComEmp);
+                string tituloE = "Aprobación de solicitud de Vacaciones";
+                //mE.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensajeE, tituloE, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+
+                //envio mensaje al usuario receptor
+                EmailHelper mR = new EmailHelper();
+                string mensajeR = string.Format("<section> Estimado (a) {0}<BR/> <p>Se aprobó una solicitud de vacaciones a {1}</p></section>", empJefe.nomComEmp, empPrinc.nomComEmp);
+                string tituloR = "Aprobación de solicitud de Vacaciones";
+                //mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+            }
+
 
             return Json(variable, JsonRequestBehavior.AllowGet);
         }
