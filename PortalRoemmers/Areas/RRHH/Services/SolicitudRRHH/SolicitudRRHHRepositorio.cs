@@ -42,7 +42,7 @@ namespace PortalRoemmers.Areas.RRHH.Services.SolicitudRRHH
                     .Include(x => x.estado)
                     .Include(x => x.subtipoSolicitud)
                     .OrderByDescending(x => x.idSolicitudRrhh)
-                    .Where(x => ((x.idAccSol == SessionPersister.UserId || x.idAccApro == SessionPersister.UserId) && x.idEstado != ConstantesGlobales.estadoAnulado && (x.idSubTipoSolicitudRrhh == subtipo || (x.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM && (x.idAccSol == SessionPersister.UserId || x.idAccApro == SessionPersister.UserId)))) && ((x.fchIniSolicitud >= p) && (x.fchIniSolicitud <= a) && (x.fchFinSolicitud >= p) && (x.fchFinSolicitud <= a)) && (x.descSolicitud.Contains(search) || (x.subtipoSolicitud.descSubtipoSolicitud.Contains(search)) || x.estado.nomEst.Contains(search)))
+                    .Where(x => ((x.idAccSol == SessionPersister.UserId || x.idAccApro == SessionPersister.UserId || x.idEstado == ConstantesGlobales.estadoPreApro) && x.idEstado != ConstantesGlobales.estadoAnulado && (x.idSubTipoSolicitudRrhh == subtipo || (x.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM && (x.idAccSol == SessionPersister.UserId || x.idAccApro == SessionPersister.UserId)))) && ((x.fchIniSolicitud >= p) && (x.fchIniSolicitud <= a) && (x.fchFinSolicitud >= p) && (x.fchFinSolicitud <= a)) && (x.descSolicitud.Contains(search) || (x.subtipoSolicitud.descSubtipoSolicitud.Contains(search)) || x.estado.nomEst.Contains(search)))
                     .Skip((pagina - 1) * cantidadRegistrosPorPagina)
                     .Take(cantidadRegistrosPorPagina).ToList();
 
