@@ -131,6 +131,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             ViewBag.procedeA = true;
             SolicitudRRHHModels model = new SolicitudRRHHModels();
             model.idAccSol = SessionPersister.UserId;
+            model.periodo = DateTime.Now.Year.ToString();
             ViewBag.GrupoRrhh = new SelectList(_gru.obtenerGruposRrhh(), "idGrupoRrhh", "descGrupo");
             var actual = DateTime.Today.ToString("dd/MM/yyyy");
 
@@ -249,6 +250,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
                 {
                     model.idAccApro = _usu.obtenerItemXEmpleado(emple.idEmpJ).idAcc;
                     model.idSubTipoSolicitudRrhh = ConstantesGlobales.subTipoVacaciones;
+                    model.periodo = retornarPeriodo(emple.idAreRoe);
                     try
                     {
                         if (_soli.crear(model))
@@ -563,6 +565,19 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             return cantTotalDisponible;
         }
 
+        public string retornarPeriodo(string idArea)
+        {
+            int anioActual = DateTime.Now.Year;
+
+            if (idArea == ConstantesGlobales.idMarketing || idArea == ConstantesGlobales.idVentas)
+            {
+                return anioActual.ToString();
+            }
+            else
+            {
+                return (anioActual - 1).ToString();
+            }
+        } 
         public bool validarLimiteVacaciones(DateTime fechaInicio, DateTime fechaFin, int diasRestantes)
         {
             int diasHabiles=calcularDiasHabiles(fechaInicio, fechaFin);

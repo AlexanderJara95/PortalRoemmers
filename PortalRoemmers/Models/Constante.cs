@@ -29,6 +29,8 @@ public static class ConstantesGlobales
 {
     //tb_Area
     public static string ninguno = "11";
+    public static string idMarketing = "6";
+    public static string idVentas = "9";
 
     //tabla tb_Cargo
     public static string NI = "0"; //cargo NINGUNO
