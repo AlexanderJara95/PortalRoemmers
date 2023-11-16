@@ -287,7 +287,7 @@
                                 <tbody>
                                     @foreach (var item in Model.SoliRRHH)
                                     {
-                                        if (item.idAccApro == ViewBag.userId && item.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacaciones)
+                                        if ((item.idAccApro == ViewBag.userId || item.aprobFinal == ViewBag.userId) && item.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacaciones)
                                         {
                                             DateTime fechaInicio = item.fchIniSolicitud;
                                             DateTime fechaFin = item.fchFinSolicitud;
@@ -312,7 +312,7 @@
                                                     <!--<a href="MyExtensions.ActionUrl("Visualizar", "SolicitudGasto", new { Area = "Ventas", id = item.idSolicitudRrhh })" data-toggle="tooltip" title="Visualizar"> <i class="fa fa-eye text-inverse m-r-10"></i> </a>-->
                                                     @{
                                                         //solo algunos lo ven
-                                                        if (item.idEstado == ConstantesGlobales.estadoRegistrado || item.idEstado == ConstantesGlobales.estadoModificado || item.idEstado == ConstantesGlobales.estadoPreApro)
+                                                        if (item.idEstado == ConstantesGlobales.estadoRegistrado || item.idEstado == ConstantesGlobales.estadoModificado || (item.idEstado == ConstantesGlobales.estadoPreApro && item.aprobFinal == ViewBag.userId))
                                                         {
                                                             <!--<a href="MyExtensions.ActionUrl("Modificar", "SolicitudRRHH", new { Area = "RRHH", id = item.idSolicitudRrhh })" data-toggle="tooltip" title="Editar"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a>-->
                                                             <!--<a data-toggle="tooltip" title="Anular" id="sa-params"> <i class="fa fa-close text-danger"></i> </a>-->
