@@ -542,6 +542,10 @@
     <Compile Include="Migrations\202311141941471_AgregaPeriodoSolicitudRRHHModel.Designer.cs">
       <DependentUpon>202311141941471_AgregaPeriodoSolicitudRRHHModel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202311161357020_AgregaAprobFinalSolicitudRRHHModel.cs" />
+    <Compile Include="Migrations\202311161357020_AgregaAprobFinalSolicitudRRHHModel.Designer.cs">
+      <DependentUpon>202311161357020_AgregaAprobFinalSolicitudRRHHModel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationDbContext.cs" />
     <Compile Include="Models\BaseModelo.cs" />
@@ -4018,6 +4022,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202311141941471_AgregaPeriodoSolicitudRRHHModel.resx">
       <DependentUpon>202311141941471_AgregaPeriodoSolicitudRRHHModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202311161357020_AgregaAprobFinalSolicitudRRHHModel.resx">
+      <DependentUpon>202311161357020_AgregaAprobFinalSolicitudRRHHModel.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
