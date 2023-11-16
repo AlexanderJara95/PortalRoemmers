@@ -44,7 +44,9 @@
                                     @Html.HiddenFor(model => model.usufchCrea)
                                     @Html.HiddenFor(model => model.usuMod)
                                     @Html.HiddenFor(model => model.usufchMod)
-                                    @Html.Hidden("diasRestantes",(int)ViewBag.diasRestantes)
+                                    @Html.HiddenFor(model => model.periodo)
+                                    @Html.HiddenFor(model => model.aprobFinal)
+                                    @Html.Hidden("diasRestantes", (int)ViewBag.diasRestantes)
 
                                     <div class="panel-body">
                                         <div class="row">

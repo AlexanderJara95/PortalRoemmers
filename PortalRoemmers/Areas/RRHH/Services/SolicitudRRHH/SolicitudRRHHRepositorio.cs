@@ -42,7 +42,7 @@ namespace PortalRoemmers.Areas.RRHH.Services.SolicitudRRHH
                     .Include(x => x.estado)
                     .Include(x => x.subtipoSolicitud)
                     .OrderByDescending(x => x.idSolicitudRrhh)
-                    .Where(x => ((x.idAccSol == SessionPersister.UserId || x.idAccApro == SessionPersister.UserId || x.idEstado == ConstantesGlobales.estadoPreApro) && x.idEstado != ConstantesGlobales.estadoAnulado && (x.idSubTipoSolicitudRrhh == subtipo || (x.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM && (x.idAccSol == SessionPersister.UserId || x.idAccApro == SessionPersister.UserId)))) && ((x.fchIniSolicitud >= p) && (x.fchIniSolicitud <= a) && (x.fchFinSolicitud >= p) && (x.fchFinSolicitud <= a)) && (x.descSolicitud.Contains(search) || (x.subtipoSolicitud.descSubtipoSolicitud.Contains(search)) || x.estado.nomEst.Contains(search)))
+                    .Where(x => ((x.idAccSol == SessionPersister.UserId || x.idAccApro == SessionPersister.UserId || x.aprobFinal == SessionPersister.UserId) && x.idEstado != ConstantesGlobales.estadoAnulado && (x.idSubTipoSolicitudRrhh == subtipo || (x.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM && (x.idAccSol == SessionPersister.UserId || x.idAccApro == SessionPersister.UserId)))) && ((x.fchIniSolicitud >= p) && (x.fchIniSolicitud <= a) && (x.fchFinSolicitud >= p) && (x.fchFinSolicitud <= a)) && (x.descSolicitud.Contains(search) || (x.subtipoSolicitud.descSubtipoSolicitud.Contains(search)) || x.estado.nomEst.Contains(search)))
                     .Skip((pagina - 1) * cantidadRegistrosPorPagina)
                     .Take(cantidadRegistrosPorPagina).ToList();
 
@@ -203,7 +203,7 @@ namespace PortalRoemmers.Areas.RRHH.Services.SolicitudRRHH
             Boolean ok = false;
             using (var db = new ApplicationDbContext())
             {
-                var filaExistente = db.tb_GrupoSolicitudRRHH.FirstOrDefault(g => g.idSolicitudRrhh == model.idSolicitudRrhh );
+                var filaExistente = db.tb_GrupoSolicitudRRHH.FirstOrDefault(g => g.idSolicitudRrhh == model.idSolicitudRrhh);
                 try
                 {
                     if (filaExistente != null)
@@ -223,7 +223,7 @@ namespace PortalRoemmers.Areas.RRHH.Services.SolicitudRRHH
         }
 
         public Boolean crear(SolicitudRRHHModels model)
-        {   
+        {
             Boolean exec = true;
             using (var db = new ApplicationDbContext())
             {
@@ -240,7 +240,7 @@ namespace PortalRoemmers.Areas.RRHH.Services.SolicitudRRHH
             return exec;
         }
 
-        public Boolean crearUserSoliRrhh (UserSolicitudRRHHModels model)
+        public Boolean crearUserSoliRrhh(UserSolicitudRRHHModels model)
         {
             Boolean exec = true;
             using (var db = new ApplicationDbContext())
@@ -324,5 +324,34 @@ namespace PortalRoemmers.Areas.RRHH.Services.SolicitudRRHH
                 }
             }
         }
+        public Boolean updateEstadoAprobFinalSoliRRHH(string sol, string estado, string aprobFinal)
+        {
+            string commandText = "UPDATE tb_SolicitudRRHH SET idEstado = @idEstado, aprobFinal = @aprobFinal, usuMod=@usuMod , usufchMod=@usufchMod  WHERE idSolicitudRrhh = @idSolicitudRrhh ;";
+
+            using (SqlConnection connection = new SqlConnection(Conexion.connetionString))
+            {
+                SqlCommand command = new SqlCommand(commandText, connection);
+
+                command.Parameters.Add("@idSolicitudRrhh", SqlDbType.VarChar);
+                command.Parameters["@idSolicitudRrhh"].Value = sol;
+                command.Parameters.AddWithValue("@idEstado", estado);
+                command.Parameters.AddWithValue("@aprobFinal", aprobFinal);
+                command.Parameters.AddWithValue("@usuMod", SessionPersister.Username);
+                command.Parameters.AddWithValue("@usufchMod", DateTime.Now);
+                try
+                {
+                    connection.Open();
+                    Int32 rowsAffected = command.ExecuteNonQuery();
+                    connection.Close();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    return false;
+                }
+            }
+        }
+
     }
 }

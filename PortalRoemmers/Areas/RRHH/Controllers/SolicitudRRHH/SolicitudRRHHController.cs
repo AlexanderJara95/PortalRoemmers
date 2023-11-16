@@ -518,7 +518,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
         {
             foreach (var item in soli)
             {
-                if (item.idAccApro == ViewBag.userId)
+                if (item.idAccApro == ViewBag.userId || item.aprobFinal == ViewBag.userId)
                 {
                     return true;
                 }
@@ -677,9 +677,10 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             var usuJefe = _usu.obtenerItemXEmpleado(empPrinc.idEmpJ);
             var empJefe = _emp.obtenerItem(empPrinc.idEmpJ);
 
-            if ((empPrinc.idAreRoe == ConstantesGlobales.idMarketing || empPrinc.idAreRoe == ConstantesGlobales.idVentas) && (solicitud.estado.ToString() != ConstantesGlobales.estadoPreApro) )
+            if ((empPrinc.idAreRoe == ConstantesGlobales.idMarketing || empPrinc.idAreRoe == ConstantesGlobales.idVentas) && (solicitud.idEstado != ConstantesGlobales.estadoPreApro) )
             {
-                variable = _soli.updateEstadoSoliRRHH(idSolicitudRRHH, ConstantesGlobales.estadoPreApro);
+                var aproFinal = _usu.obtenerItemXEmpleado(empJefe.idEmpJ);
+                variable = _soli.updateEstadoAprobFinalSoliRRHH(idSolicitudRRHH, ConstantesGlobales.estadoPreApro, aproFinal.idAcc);
                 //envio mensaje al usuario emisor
                 EmailHelper mE = new EmailHelper();
                 string mensajeE = string.Format("<section> Estimado (a) {0}<BR/> <p>Se aprobó una solicitud de vacaciones</p></section>", empPrinc.nomComEmp);
@@ -748,7 +749,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             string numDocum = "";
             string numDocumJ = "";
             string totalDias = "";
-            string mensajeAlerta = "";
+            string periodo = "";
             DateTime desde = new DateTime();
             DateTime hasta = new DateTime();
             EmpleadoModels usuItem = new EmpleadoModels();
@@ -814,7 +815,9 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
                         numDocumJ = sl.GetCellValueAsString(rowIndex, 4).Trim();
                         desde = sl.GetCellValueAsDateTime(rowIndex, 5);
                         hasta = sl.GetCellValueAsDateTime(rowIndex, 6);
-                        totalDias = calcularDiasHabiles(desde, hasta).ToString();
+                        periodo = calcularDiasHabiles(desde, hasta).ToString();
+                        hasta = sl.GetCellValueAsDateTime(rowIndex, 8);
+
                         usuItem = _emp.obtenerxDniEmpleado(numDocum);
                         idc++;
 
@@ -828,6 +831,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
                         modelSoli.idSubTipoSolicitudRrhh = ConstantesGlobales.subTipoVacaciones;
                         modelSoli.fchIniSolicitud = desde;
                         modelSoli.fchFinSolicitud = hasta;
+                        modelSoli.periodo = periodo;
 
                         if (!_soli.validarExisteEnRegistro(_usu.obtenerItemXEmpleado(usuItem.idEmp).idAcc, desde, hasta))
                         {
