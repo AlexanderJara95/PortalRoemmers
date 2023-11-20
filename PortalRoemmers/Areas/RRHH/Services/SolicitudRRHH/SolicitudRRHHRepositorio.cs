@@ -42,7 +42,7 @@ namespace PortalRoemmers.Areas.RRHH.Services.SolicitudRRHH
                     .Include(x => x.estado)
                     .Include(x => x.subtipoSolicitud)
                     .OrderByDescending(x => x.idSolicitudRrhh)
-                    .Where(x => ((x.idAccSol == SessionPersister.UserId || x.idAccApro == SessionPersister.UserId || x.aprobFinal == SessionPersister.UserId) && x.idEstado != ConstantesGlobales.estadoAnulado && (x.idSubTipoSolicitudRrhh == subtipo || (x.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM && (x.idAccSol == SessionPersister.UserId || x.idAccApro == SessionPersister.UserId)))) && ((x.fchIniSolicitud >= p) && (x.fchIniSolicitud <= a) && (x.fchFinSolicitud >= p) && (x.fchFinSolicitud <= a)) && (x.descSolicitud.Contains(search) || (x.subtipoSolicitud.descSubtipoSolicitud.Contains(search)) || x.estado.nomEst.Contains(search)))
+                    .Where(x => ((x.idAccSol == SessionPersister.UserId || x.idAccApro == SessionPersister.UserId || x.aprobFinal == SessionPersister.UserId) && x.idEstado != ConstantesGlobales.estadoAnulado && (x.idSubTipoSolicitudRrhh == subtipo || (x.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM && (x.idAccSol == SessionPersister.UserId || x.idAccApro == SessionPersister.UserId || x.aprobFinal == SessionPersister.UserId)))) && ((x.fchIniSolicitud >= p) && (x.fchIniSolicitud <= a) && (x.fchFinSolicitud >= p) && (x.fchFinSolicitud <= a)) && (x.descSolicitud.Contains(search) || (x.subtipoSolicitud.descSubtipoSolicitud.Contains(search)) || x.estado.nomEst.Contains(search)))
                     .Skip((pagina - 1) * cantidadRegistrosPorPagina)
                     .Take(cantidadRegistrosPorPagina).ToList();
 
@@ -67,6 +67,7 @@ namespace PortalRoemmers.Areas.RRHH.Services.SolicitudRRHH
                     .Include(x => x.subtipoSolicitud)
                     .OrderByDescending(x => x.idSolicitudRrhh)
                     .Where(solicitud =>
+                    solicitud.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM &&
                     db.tb_GrupoSolicitudRRHH.Any(grupoSol =>
                         grupoSol.idSolicitudRrhh == solicitud.idSolicitudRrhh &&
                         db.tb_GrupoRRHH.Any(grupo =>
@@ -113,7 +114,7 @@ namespace PortalRoemmers.Areas.RRHH.Services.SolicitudRRHH
 
                 //AREA DEL USUARIO
                 string idAreaUser = db.tb_Usuario
-                    .Where(usu => usu.idAcc == SessionPersister.UserId)
+                    .Where(usu => usu.idAcc == idAccSol)
                     .Join(db.tb_Empleado,
                         usu => usu.idEmp,
                         emp => emp.idEmp,
@@ -132,6 +133,7 @@ namespace PortalRoemmers.Areas.RRHH.Services.SolicitudRRHH
                     .Include(x => x.subtipoSolicitud)
                     .OrderByDescending(x => x.idSolicitudRrhh)
                     .Where(solicitud =>
+                    solicitud.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM &&
                     db.tb_GrupoSolicitudRRHH.Any(grupoSol =>
                         grupoSol.idSolicitudRrhh == solicitud.idSolicitudRrhh &&
                         db.tb_GrupoRRHH.Any(grupo =>
@@ -141,7 +143,7 @@ namespace PortalRoemmers.Areas.RRHH.Services.SolicitudRRHH
                                 areaGrupo.idAreRoe == idAreaUser) &&
                             !db.tb_ExcluGrupoRRHH.Any(exclude =>
                                 exclude.idGrupoRrhh == grupo.idGrupoRrhh &&
-                                exclude.idAcc == SessionPersister.UserId))))
+                                exclude.idAcc == idAccSol))))
                     .ToList();
                 var modelFinal = model.Concat(modelMasiva).ToList();
                 return modelFinal;

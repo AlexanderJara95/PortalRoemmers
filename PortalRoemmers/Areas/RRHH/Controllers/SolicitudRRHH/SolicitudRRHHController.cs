@@ -159,6 +159,8 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             model.idAccSol = SessionPersister.UserId;
             model.usuCrea = SessionPersister.Username;
             model.usufchCrea = DateTime.Now;
+            //Se crea en el periodo actual
+            model.periodo = DateTime.Now.Year.ToString();
 
             UserSolicitudRRHHModels userSoliRRHH = new UserSolicitudRRHHModels();
             userSoliRRHH.idSolicitudRrhh = model.idSolicitudRrhh;
@@ -529,7 +531,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
         {
             foreach (var item in soli)
             {
-                if (item.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM && (item.idAccSol == SessionPersister.UserId || item.idAccApro == SessionPersister.UserId))
+                if (item.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM && (item.idAccSol == SessionPersister.UserId || item.idAccApro == SessionPersister.UserId || item.aprobFinal == SessionPersister.UserId))
                 {
                     return true;
                 }
@@ -677,10 +679,10 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             var usuJefe = _usu.obtenerItemXEmpleado(empPrinc.idEmpJ);
             var empJefe = _emp.obtenerItem(empPrinc.idEmpJ);
 
-            if ((empPrinc.idAreRoe == ConstantesGlobales.idMarketing || empPrinc.idAreRoe == ConstantesGlobales.idVentas) && (solicitud.idEstado != ConstantesGlobales.estadoPreApro) )
+            if ((empPrinc.idAreRoe == ConstantesGlobales.idMarketing || empPrinc.idAreRoe == ConstantesGlobales.idVentas || (empPrinc.idAreRoe == ConstantesGlobales.idRrhh && solicitud.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM) ) && (solicitud.idEstado != ConstantesGlobales.estadoPreApro) )
             {
-                var aproFinal = _usu.obtenerItemXEmpleado(empJefe.idEmpJ);
-                variable = _soli.updateEstadoAprobFinalSoliRRHH(idSolicitudRRHH, ConstantesGlobales.estadoPreApro, aproFinal.idAcc);
+                var aprobFinal = _usu.obtenerItemXEmpleado(empJefe.idEmpJ);
+                variable = _soli.updateEstadoAprobFinalSoliRRHH(idSolicitudRRHH, ConstantesGlobales.estadoPreApro, aprobFinal.idAcc);
                 //envio mensaje al usuario emisor
                 EmailHelper mE = new EmailHelper();
                 string mensajeE = string.Format("<section> Estimado (a) {0}<BR/> <p>Se aprobó una solicitud de vacaciones</p></section>", empPrinc.nomComEmp);
