@@ -57,6 +57,22 @@ namespace PortalRoemmers.Areas.Sistemas.Services.Usuario
             }
             return cuenta;
         }
+        public UsuarioModels obtenerItemXUsername(string username)
+        {
+            UsuarioModels cuenta = new UsuarioModels();
+
+            if (username != null)
+            {
+                using (var db = new ApplicationDbContext())
+                {
+                    cuenta = db.tb_Usuario.Include(x => x.empleado).Include(x => x.empleado.cargo).Include(x => x.empleado.area).Include(x => x.empleado.afp).Include(x => x.aprobacion).Where(y => y.username == username).First();
+                    return cuenta;
+                }
+
+            }
+            return cuenta;
+        }
+        
         public UsuarioModels obtenerItemXEmpleado(string id)
         {
             UsuarioModels cuenta = new UsuarioModels();
