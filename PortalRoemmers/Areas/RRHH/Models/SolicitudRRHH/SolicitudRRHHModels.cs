@@ -66,7 +66,7 @@ namespace PortalRoemmers.Areas.RRHH.Models.SolicitudRRHH
         [Display(Name = "Periodo")]
         public string periodo { get; set; }
 
-        //Periodo 11
+        //Aprobador Final 11
         [StringLength(10, ErrorMessage = "El campo {0} no puede exceder {1}  characters.")]
         [Display(Name = "Aprobador Final")]
         public string aprobFinal { get; set; }

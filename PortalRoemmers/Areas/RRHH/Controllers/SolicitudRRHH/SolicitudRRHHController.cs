@@ -180,6 +180,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             {
                 model.idAccApro = _usu.obtenerItemXEmpleado(emple.idEmpJ).idAcc;
                 model.idSubTipoSolicitudRrhh = ConstantesGlobales.subTipoVacacionesM;
+
                 try
                 {
                     if (_soli.crear(model))
@@ -744,7 +745,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
         public JsonResult importData()
         {
             FileStream fs = new FileStream(Server.MapPath("~/Import/SolicitudRRHH/VacacionesPortal2023.xlsx"), FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-            SLDocument sl = new SLDocument(fs, "PERIODO 2023");
+            SLDocument sl = new SLDocument(fs, "ITEMS");
             int rowIndexVal = 2;
             int rowIndex = 2;
 
@@ -754,13 +755,13 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             string periodo = "";
             DateTime desde = new DateTime();
             DateTime hasta = new DateTime();
-            EmpleadoModels usuItem = new EmpleadoModels();
+            EmpleadoModels empItem = new EmpleadoModels();
             SolicitudRRHHModels modelSoli = new SolicitudRRHHModels();
             bool todasLasFilasValidas = true;
 
             string mensaje = "|";
             int c = 0;
-            if (sl.SelectWorksheet("PERIODO 2022"))
+            if (sl.SelectWorksheet("ITEMS"))
             { //valido que tenga la pestaña
                 //_inv = new InventarioAxService();
                 //_inv.eliminarRegistros();
@@ -771,33 +772,38 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
                     numDocumJ = sl.GetCellValueAsString(rowIndex, 4).Trim();
                     desde = sl.GetCellValueAsDateTime(rowIndex, 5);
                     hasta = sl.GetCellValueAsDateTime(rowIndex, 6);
-                    usuItem = _emp.obtenerxDniEmpleado(numDocum);
+                    empItem = _emp.obtenerxDniEmpleado(numDocum);
 
                     if (!string.IsNullOrEmpty(numDocum)
-                        && usuItem != null
-                        && !string.IsNullOrEmpty(usuItem.idEmpJ))
-                    {//siempre y cuando se diferente a vacio o nulo
-                        if (_soli.validarExisteEnRegistro(_usu.obtenerItemXEmpleado(usuItem.idEmp).idAcc, desde, hasta)) mensaje += "El registro ya existe|";
+                        && empItem != null
+                        && !string.IsNullOrEmpty(empItem.idEmpJ))
+                    {
+                        //siempre y cuando se diferente a vacio o nulo
+                        if (_soli.validarExisteEnRegistro(_usu.obtenerItemXEmpleado(empItem.idEmp).idAcc, desde, hasta)) {
+                            todasLasFilasValidas = false;
+                            mensaje += "El registro ya existe|";
+                        }
+                        
                     }
                     else
                     {
                         todasLasFilasValidas = false;
                         if (string.IsNullOrEmpty(numDocum)) mensaje += "No hay información de usuario|";
-                        if (usuItem == null)
+                        if (empItem == null)
                         {
                             mensaje += "No se encuentra al usuario|";
                         }
                         else
                         {
-                            if (usuItem != null && string.IsNullOrEmpty(usuItem.idEmpJ)) {
-                                usuItem.idEmpJ = 
+                            if (empItem != null && string.IsNullOrEmpty(empItem.idEmpJ)) {
+                                empItem.idEmpJ = 
                                 mensaje += "No tiene Jefe Seleccionado|"; 
                             }
                         }
                     }
                     totalDias = calcularDiasHabiles(desde, hasta).ToString();
                     sl.SetCellValue(rowIndex, 7, totalDias);
-                    sl.SetCellValue(rowIndex, 8, mensaje);
+                    sl.SetCellValue(rowIndex, 9, mensaje);
                     mensaje = "|";
                     //incrementeamos una unidad al indice de la fila para continuar con el recorrido
                     rowIndex += 1;
@@ -805,45 +811,59 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
 
                 rowIndex = 2;
 
-
                 if (todasLasFilasValidas)
                 {
                     string tabla = "tb_SolicitudRRHH";
-                    int idc = enu.buscarTabla(tabla) - 1;
+                    
                     while (!string.IsNullOrEmpty(sl.GetCellValueAsString(rowIndex, 1)))
                     {
+                        int idc = enu.buscarTabla(tabla);
                         //tomamos los valores de las celdas y lo pasamos a las respectivas columnas
                         numDocum = sl.GetCellValueAsString(rowIndex, 1).Trim();
                         numDocumJ = sl.GetCellValueAsString(rowIndex, 4).Trim();
                         desde = sl.GetCellValueAsDateTime(rowIndex, 5);
                         hasta = sl.GetCellValueAsDateTime(rowIndex, 6);
-                        periodo = calcularDiasHabiles(desde, hasta).ToString();
-                        hasta = sl.GetCellValueAsDateTime(rowIndex, 8);
+                        totalDias = calcularDiasHabiles(desde, hasta).ToString();
+                        periodo = sl.GetCellValueAsString(rowIndex, 8);
 
-                        usuItem = _emp.obtenerxDniEmpleado(numDocum);
-                        idc++;
+                        empItem = _emp.obtenerxDniEmpleado(numDocum);
+                        var usuItem = _usu.obtenerItemXEmpleado(empItem.idEmp);
+                        var usuItemJ = _usu.obtenerItemXEmpleado(empItem.idEmpJ);
+                        var empItemJ = _emp.obtenerItem(usuItemJ.idEmp);
 
                         modelSoli.idSolicitudRrhh = idc.ToString("D7");
                         modelSoli.descSolicitud = "Vacaciones de " + totalDias + " días";
                         modelSoli.idEstado = ConstantesGlobales.estadoAprobado;
-                        modelSoli.idAccSol = _usu.obtenerItemXEmpleado(usuItem.idEmp).idAcc;
-                        modelSoli.usuCrea = _usu.obtenerItemXEmpleado(usuItem.idEmp).username;
+                        modelSoli.idAccSol = usuItem.idAcc;
+                        modelSoli.usuCrea = usuItem.username;
                         modelSoli.usufchCrea = DateTime.Now;
-                        modelSoli.idAccApro = _usu.obtenerItemXEmpleado(usuItem.idEmpJ).idAcc;
+                        modelSoli.usuMod = usuItemJ.username;
+                        modelSoli.usufchMod = DateTime.Now;
+                        modelSoli.idAccApro = usuItemJ.idAcc;
                         modelSoli.idSubTipoSolicitudRrhh = ConstantesGlobales.subTipoVacaciones;
                         modelSoli.fchIniSolicitud = desde;
                         modelSoli.fchFinSolicitud = hasta;
                         modelSoli.periodo = periodo;
 
-                        if (!_soli.validarExisteEnRegistro(_usu.obtenerItemXEmpleado(usuItem.idEmp).idAcc, desde, hasta))
+
+                        if(empItem.idAreRoe == ConstantesGlobales.idMarketing || empItem.idAreRoe == ConstantesGlobales.idVentas)
                         {
+                            var aprobFinal = _usu.obtenerItemXEmpleado(empItemJ.idEmpJ);
+                            modelSoli.aprobFinal = aprobFinal.idAcc;
+                            modelSoli.usuMod = aprobFinal.username;
+
+                        }
+
+                        if (!_soli.validarExisteEnRegistro(_usu.obtenerItemXEmpleado(empItem.idEmp).idAcc, desde, hasta))
+                        {
+
                             if (_soli.crear(modelSoli))
                             {
+                                enu.actualizarTabla(tabla, idc);
                                 mensaje += "Se creo el registro|";
                             }
                             else
                             {
-                                idc--;
                                 mensaje += "No se creo el registro|";
                             }
                         }
@@ -857,90 +877,6 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
                 sl.SaveAs(Server.MapPath("~/Import/SolicitudRRHH/VacacionesPortal2023.xlsx"));
                 fs.Close();
             }
-            /*if (sl.SelectWorksheet("PERIODO 2023"))
-            { //valido que tenga la pestaña
-                //_inv = new InventarioAxService();
-                //_inv.eliminarRegistros();
-                while (!string.IsNullOrEmpty(sl.GetCellValueAsString(rowIndex, 1)))
-                {
-                    //tomamos los valores de las celdas y lo pasamos a las respectivas columnas
-                    numDocum = sl.GetCellValueAsString(rowIndex, 1).Trim();
-                    numDocumJ = sl.GetCellValueAsString(rowIndex, 4).Trim();                    
-                    desde = sl.GetCellValueAsDateTime(rowIndex, 5);
-                    hasta = sl.GetCellValueAsDateTime(rowIndex, 6);
-                    usuItem = _emp.obtenerxDniEmpleado(numDocum);
-
-                    if (!string.IsNullOrEmpty(numDocum)
-                        && usuItem != null
-                        && !string.IsNullOrEmpty(usuItem.idEmpJ)
-                        && !_soli.validarExisteEnRegistro(usuItem.idEmp, desde,hasta))
-                    {//siempre y cuando se diferente a vacio o nulo
-
-                    }
-                    else
-                    {
-                        todasLasFilasValidas = false;
-                        if (string.IsNullOrEmpty(numDocum)) mensaje += "No hay información de usuario|";
-                        if (usuItem == null) {
-                            mensaje += "No se encuentra al usuario|";
-                        }
-                        else
-                        {
-                            if (_soli.validarExisteEnRegistro(usuItem.idEmp, desde, hasta)) mensaje += "El registro ya existe|";
-                            if (usuItem != null && string.IsNullOrEmpty(usuItem.idEmpJ)) mensaje += "No tiene Jefe Seleccionado|";
-                        }               
-                    }
-                    
-                    sl.SetCellValue(rowIndex, 7, totalDias);
-                    sl.SetCellValue(rowIndex, 8, mensaje);
-                    mensaje = "|";
-                    //incrementeamos una unidad al indice de la fila para continuar con el recorrido
-                    rowIndex += 1;                    
-                }
-                
-                if (todasLasFilasValidas)
-                {
-                    string tabla = "tb_SolicitudRRHH";
-                    int idc = enu.buscarTabla(tabla) - 1;
-                    while (!string.IsNullOrEmpty(sl.GetCellValueAsString(rowIndex, 1)))
-                    {
-                        //tomamos los valores de las celdas y lo pasamos a las respectivas columnas
-                        numDocum = sl.GetCellValueAsString(rowIndex, 1).Trim();
-                        numDocumJ = sl.GetCellValueAsString(rowIndex, 4).Trim();
-                        desde = sl.GetCellValueAsDateTime(rowIndex, 5);
-                        hasta = sl.GetCellValueAsDateTime(rowIndex, 6);
-                        totalDias = calcularDiasHabiles(desde, hasta).ToString();
-                        usuItem = _emp.obtenerxDniEmpleado(numDocum);
-                        idc++;
-
-                        modelSoli.idSolicitudRrhh = idc.ToString("D7");
-                        modelSoli.descSolicitud = "Vacaciones de " + totalDias + " días";
-                        modelSoli.idEstado = ConstantesGlobales.estadoAprobado;
-                        modelSoli.idAccSol = _usu.obtenerItemXEmpleado(usuItem.idEmp).idAcc;
-                        modelSoli.usuCrea = _usu.obtenerItemXEmpleado(usuItem.idEmp).username;
-                        modelSoli.usufchCrea = DateTime.Now;
-                        modelSoli.idAccApro = _usu.obtenerItemXEmpleado(usuItem.idEmpJ).idAcc;
-                        modelSoli.idSubTipoSolicitudRrhh = ConstantesGlobales.subTipoVacaciones;
-                        modelSoli.fchIniSolicitud = desde;
-                        modelSoli.fchFinSolicitud = hasta;
-
-                        if (_soli.crear(modelSoli))
-                        {
-                            mensaje += "Se creo el registro|";
-                        }
-                        else
-                        {
-                            idc--;
-                            mensaje += "No se creo el registro|";
-                        }
-
-                        modelSoli = new SolicitudRRHHModels();
-                    }
-                }
-
-                sl.SaveAs(Server.MapPath("~/Import/SolicitudRRHH/VacacionesPortal2023.xlsx"));
-                fs.Close();
-            }*/
             return Json(Server.MapPath("~/Import/SolicitudRRHH/VacacionesPortal2023.xlsx"), JsonRequestBehavior.AllowGet);
 
         }        
@@ -969,8 +905,9 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
 
         public FileResult Resultado(string ruta)
         {
-            return File(ruta, "application/vnd.ms-excel");
+            return File(ruta, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         }
+
 
 
     }
