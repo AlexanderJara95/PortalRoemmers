@@ -601,7 +601,7 @@
     @Scripts.Render("~/Bundles/Bootstrap_JS")
 
 
-    <script>
+<script>
         $("#FormUpload").submit(function (e) {
             UploadFile();
             return false;
@@ -637,17 +637,16 @@
                 url: '@Url.Action("saveFile", "SolicitudRRHH")',
                 type: 'POST',
                 data: data,
+                cache: false,
+                contentType: false,
+                processData: false,
                 success: function (result) {
-
                     if (result) {
                         $.post('/RRHH/SolicitudRRHH/importData', function (data, status) {
                             if (status == "success") {
-
                                 if (data.indexOf("Import") > -1) {
                                     $("#idCarga").addClass("d-none");
-                                    url = "/RRHH/SolicitudRRHH/Resultado?ruta=" + data;
-                                    window.open(url);
-                                    location.reload();
+                                    downloadFile(data);
                                 } else {
                                     $('#responsive-modal').modal('hide');
                                     $("div #success").removeClass('hidden');
@@ -655,6 +654,7 @@
                                     setTimeout(function () { $("div #success").fadeOut(5000); $("div #success").fadeIn(5000); }, 2000);
                                     setTimeout(function () { $("div #success").addClass('hidden'); }, 8000);
                                     alert("Se generó un error al guardar");
+                                    unblock();
                                 }
                                 unblock();
                             }
@@ -674,6 +674,11 @@
                 contentType: false,
                 processData: false
             });
+        }
+
+        function downloadFile(filePath) {
+            var downloadUrl = '@Url.Action("Resultado", "SolicitudRRHH")' + '?ruta=' + filePath;
+            window.location.href = downloadUrl; // Esto iniciará la descarga
         }
 
         function block() {
@@ -718,14 +723,14 @@
                     }
                 };
                 Options.error = function () { alert("Error in Getting States!!"); unblock(); };
-                $.ajax(Options);  
+                $.ajax(Options);
             });
 
             /*
             $("table tbody tr").each(function () {
                 var dias = $(this).find('td:eq(5)').text().trim(); // Obtiene el contenido de la sexta columna (índice 5)
                 var usuario = $(this).find('td:eq(8)').text().trim();
-                    
+
                 // Divide el texto en palabras utilizando el espacio como separador
                 var palabras = dias.split(' ');
 
@@ -879,5 +884,5 @@
         });
 
 
-    </script>
+</script>
 }
