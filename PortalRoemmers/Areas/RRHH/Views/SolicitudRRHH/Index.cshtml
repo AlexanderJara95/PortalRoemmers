@@ -34,13 +34,28 @@
                         <input class="form-control form-control-line datepicker" id="fchEveSolGasF" name="fchEveSolGasF" placeholder="dd/mm/aaaa" autocomplete="off" value="@ViewBag.actual">
                     </div>
                 </div>
-                <div class="col-md-2">
-                    <span class="input-group-btn">
+                @if (ViewBag.Exportar)
+                {
+                    <div class="col-md-2">
                         <button class="btn waves-effect waves-light btn-info">
                             <i class="fa fa-search"></i>
                         </button>
-                    </span>
-                </div>
+                        <button id="getReporte" class="btn waves-effect waves-light btn-inverse">
+                            Reporte <i class="fa fa-file-excel-o"></i>
+                        </button>
+                    </div>
+                }
+                else
+                {
+                    <div class="col-md-2">
+                        <span class="input-group-btn">
+                            <button class="btn waves-effect waves-light btn-info">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </span>
+                    </div>
+                }
+
             </div>
         }
         <br />
@@ -606,7 +621,38 @@
             UploadFile();
             return false;
         });
+        $("#getReporte").click(function (e) {
+            e.preventDefault(); // Evita que el evento click haga su acción por defecto (útil si es un botón de submit)
+            var data = new FormData();
+            var inicio = $("#fchEveSolGasI").val();
+            var fin = $("#fchEveSolGasF").val();
+            data.append("inicio", inicio);
+            data.append("fin", fin); // Asegúrate de añadir esta línea para enviar el parámetro 'fin'
 
+            $.ajax({
+                url: '@Url.Action("exportData", "SolicitudRRHH")',
+                type: 'POST',
+                data: data,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (result) {
+                    if (result) {
+                        downloadFile(result);
+                    } else {
+                        alert("se genero error al guardar");
+                        unblock();
+                    }
+                },
+                error: function (err) {
+                    alert(err.statusText);
+                    unblock();
+                },
+                cache: false,
+                contentType: false,
+                processData: false
+            });
+        });
         function validateFileSelected(event) {
             if (($("#inputGroupFile04"))[0].files[0] != undefined) {
                 var ext = $('#inputGroupFile04').val().split('.').pop().toLowerCase();
@@ -677,10 +723,11 @@
         }
 
         function downloadFile(filePath) {
+            alert(filePath);
             var downloadUrl = '@Url.Action("Resultado", "SolicitudRRHH")' + '?ruta=' + filePath;
             window.location.href = downloadUrl; // Esto iniciará la descarga
         }
-
+        
         function block() {
             $('section.block1').block({
                 message: '<h4><img src="../../Content/plugins/images/busy.gif" /> Sólo un momento...</h4>'

@@ -923,7 +923,8 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             return Json(Server.MapPath("~/Import/SolicitudRRHH/VacacionesPortal2023.xlsx"), JsonRequestBehavior.AllowGet);
 
         }
-        [CustomAuthorizeJson(Roles = "000003,000347")]
+
+        [HttpPost]
         public JsonResult exportData(string inicio, string fin)
         {
             FileStream fs = new FileStream(Server.MapPath("~/Import/SolicitudRRHH/PlantillaVacacionesPortal2023.xlsx"), FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
@@ -949,102 +950,47 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             {
                 foreach (var solicitud in todasSolicitudes)
                 {
-                    var cont = 1;
+                    var userPrinc = _usu.obtenerItem(solicitud.idAccSol);
+                    var empPrinc = _emp.obtenerItem(userPrinc.idEmp);
+                    var userAprob = _usu.obtenerItemXUsername(solicitud.usuMod);
+                    var empAprob = _emp.obtenerItem(userAprob.idEmp);
                     if (solicitud.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacaciones)
                     {
-                        var userPrinc = _usu.obtenerItem(solicitud.idAccSol);    
-                        var empPrinc = _emp.obtenerItem(userPrinc.idEmp);
-                        var userAprob = _usu.obtenerItemXUsername(solicitud.usuMod);
-                        var empAprob = _emp.obtenerItem(userAprob.idEmp);
-
-                        sl.SetCellValue(rowIndex, 1, cont);
+                        sl.SetCellValue(rowIndex, 1, rowIndex-1);
                         sl.SetCellValue(rowIndex, 2, empPrinc.nomComEmp);
                         sl.SetCellValue(rowIndex, 3, retornarArea(empPrinc.idAreRoe));
                         sl.SetCellValue(rowIndex, 4, solicitud.fchIniSolicitud);
                         sl.SetCellValue(rowIndex, 5, solicitud.fchFinSolicitud);
-                        sl.SetCellValue(rowIndex, 6, calcularDiasHabiles(solicitud.fchIniSolicitud,solicitud.fchFinSolicitud));
+                        sl.SetCellValue(rowIndex, 6, calcularDiasHabiles(solicitud.fchIniSolicitud, solicitud.fchFinSolicitud));
                         sl.SetCellValue(rowIndex, 7, empAprob.nomComEmp);
                         sl.SetCellValue(rowIndex, 8, solicitud.periodo);
-                        cont++;
+                        rowIndex++; // Incrementa el índice de la fila para la siguiente solicitud.
+
                     }
                     else
                     {
-                        
-                    }
-                    
-                    rowIndex++; // Incrementa el índice de la fila para la siguiente solicitud.
-                }
-                            
-
-                rowIndex = 2;
-
-                if (todasLasFilasValidas)
-                {
-                    string tabla = "tb_SolicitudRRHH";
-
-                    while (!string.IsNullOrEmpty(sl.GetCellValueAsString(rowIndex, 1)))
-                    {
-                        int idc = enu.buscarTabla(tabla);
-                        //tomamos los valores de las celdas y lo pasamos a las respectivas columnas
-                        numDocum = sl.GetCellValueAsString(rowIndex, 1).Trim();
-                        numDocumJ = sl.GetCellValueAsString(rowIndex, 4).Trim();
-                        desde = sl.GetCellValueAsDateTime(rowIndex, 5);
-                        hasta = sl.GetCellValueAsDateTime(rowIndex, 6);
-                        totalDias = calcularDiasHabiles(desde, hasta).ToString();
-                        periodo = sl.GetCellValueAsString(rowIndex, 8);
-
-                        empItem = _emp.obtenerxDniEmpleado(numDocum);
-                        var usuItem = _usu.obtenerItemXEmpleado(empItem.idEmp);
-                        var usuItemJ = _usu.obtenerItemXEmpleado(empItem.idEmpJ);
-                        var empItemJ = _emp.obtenerItem(usuItemJ.idEmp);
-
-                        modelSoli.idSolicitudRrhh = idc.ToString("D7");
-                        modelSoli.descSolicitud = "Vacaciones de " + totalDias + " días";
-                        modelSoli.idEstado = ConstantesGlobales.estadoAprobado;
-                        modelSoli.idAccSol = usuItem.idAcc;
-                        modelSoli.usuCrea = usuItem.username;
-                        modelSoli.usufchCrea = DateTime.Now;
-                        modelSoli.usuMod = usuItemJ.username;
-                        modelSoli.usufchMod = DateTime.Now;
-                        modelSoli.idAccApro = usuItemJ.idAcc;
-                        modelSoli.idSubTipoSolicitudRrhh = ConstantesGlobales.subTipoVacaciones;
-                        modelSoli.fchIniSolicitud = desde;
-                        modelSoli.fchFinSolicitud = hasta;
-                        modelSoli.periodo = periodo;
-
-
-                        if (empItem.idAreRoe == ConstantesGlobales.idMarketing || empItem.idAreRoe == ConstantesGlobales.idVentas)
+                        var usuariosMasiva = _usu.obtenerUsuariosXSolicitudMasiva(solicitud.idSolicitudRrhh);
+                        foreach (var usuarioM in usuariosMasiva)
                         {
-                            var aprobFinal = _usu.obtenerItemXEmpleado(empItemJ.idEmpJ);
-                            modelSoli.aprobFinal = aprobFinal.idAcc;
-                            modelSoli.usuMod = aprobFinal.username;
-
+                            var userActual = _usu.obtenerItem(solicitud.idAccSol);
+                            var empActual = _emp.obtenerItem(userActual.idEmp);
+                            sl.SetCellValue(rowIndex, 1, rowIndex-1);
+                            sl.SetCellValue(rowIndex, 2, empActual.nomComEmp);
+                            sl.SetCellValue(rowIndex, 3, retornarArea(empActual.idAreRoe));
+                            sl.SetCellValue(rowIndex, 4, solicitud.fchIniSolicitud);
+                            sl.SetCellValue(rowIndex, 5, solicitud.fchFinSolicitud);
+                            sl.SetCellValue(rowIndex, 6, calcularDiasHabiles(solicitud.fchIniSolicitud, solicitud.fchFinSolicitud));
+                            sl.SetCellValue(rowIndex, 7, empAprob.nomComEmp);
+                            sl.SetCellValue(rowIndex, 8, solicitud.periodo);
+                            rowIndex++; // Incrementa el índice de la fila para la siguiente solicitud.
                         }
-
-                        if (!_soli.validarExisteEnRegistro(_usu.obtenerItemXEmpleado(empItem.idEmp).idAcc, desde, hasta))
-                        {
-
-                            if (_soli.crear(modelSoli))
-                            {
-                                enu.actualizarTabla(tabla, idc);
-                                mensaje += "Se creo el registro|";
-                            }
-                            else
-                            {
-                                mensaje += "No se creo el registro|";
-                            }
-                        }
-
-                        mensaje = "|";
-                        modelSoli = new SolicitudRRHHModels();
-                        rowIndex += 1;
                     }
                 }
 
-                sl.SaveAs(Server.MapPath("~/Import/SolicitudRRHH/VacacionesPortal2023.xlsx"));
+                sl.SaveAs(Server.MapPath("~/Import/SolicitudRRHH/ReporteVacacionesPortal.xlsx"));
                 fs.Close();
             }
-            return Json(Server.MapPath("~/Import/SolicitudRRHH/VacacionesPortal2023.xlsx"), JsonRequestBehavior.AllowGet);
+            return Json(Server.MapPath("~/Import/SolicitudRRHH/ReporteVacacionesPortal.xlsx"), JsonRequestBehavior.AllowGet);
 
         }
 

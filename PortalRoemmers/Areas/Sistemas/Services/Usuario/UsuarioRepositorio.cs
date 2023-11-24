@@ -88,6 +88,30 @@ namespace PortalRoemmers.Areas.Sistemas.Services.Usuario
             }
             return cuenta;
         }
+        public List<UsuarioModels> obtenerUsuariosXSolicitudMasiva(string varSolicitud)
+        {
+            using (var db = new ApplicationDbContext())
+            {
+                // Asumiendo que 'varSolicitud' es un ID y que cada solicitud masiva tiene una lista de grupos asociados.
+                var usuariosDeSolicitudMasiva = db.tb_SolicitudRRHH
+                    .Where(solicitud => solicitud.idSolicitudRrhh == varSolicitud && solicitud.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM)
+                    .SelectMany(solicitud => db.tb_GrupoSolicitudRRHH
+                        .Where(grupoSol => grupoSol.idSolicitudRrhh == solicitud.idSolicitudRrhh)
+                        .SelectMany(grupoSol => db.tb_GrupoRRHH
+                            .Where(grupo => grupo.idGrupoRrhh == grupoSol.idGrupoRrhh)
+                            .SelectMany(grupo => db.tb_AreaGrupoRRHH
+                                .Where(areaGrupo => areaGrupo.idGrupoRrhh == grupo.idGrupoRrhh)
+                                .SelectMany(areaGrupo => db.tb_Empleado
+                                    .Where(emp => emp.idAreRoe == areaGrupo.idAreRoe)
+                                    .SelectMany(emp => emp.usuarios)
+                                )
+                            )
+                        )
+                    ).ToList();
+                return usuariosDeSolicitudMasiva;
+            }
+        }
+
         public Boolean crear(UsuarioModels model)
         {
             Usu_RolModels ur = new Usu_RolModels();
