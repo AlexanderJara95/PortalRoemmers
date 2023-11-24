@@ -150,7 +150,30 @@ namespace PortalRoemmers.Areas.RRHH.Services.SolicitudRRHH
             }
         }
 
-        public SolicitudRRHHModels obtenerItem(string id)
+        public List<SolicitudRRHHModels> obtenerSolicitudesReporte(string primero, string actual)
+        {
+
+            // ------------------------------------------------------------------------
+            DateTime p = DateTime.Parse(primero); //desde
+            DateTime a = DateTime.Parse(actual).AddHours(23).AddMinutes(59);//hasta
+            //------------------------------------------------------------------------
+
+            using (var db = new ApplicationDbContext())
+            {
+                //SOLICITUDES PROPIAS
+                var model = db.tb_SolicitudRRHH
+                    .Include(x => x.solicitante.empleado)
+                    .Include(x => x.aprobador.empleado)
+                    .Include(x => x.estado)
+                    .Include(x => x.subtipoSolicitud)
+                    .OrderByDescending(x => x.idSolicitudRrhh)
+                    .Where(x => (x.idEstado != ConstantesGlobales.estadoAnulado && (x.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacaciones || x.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM)) && ((x.fchIniSolicitud >= p) && (x.fchIniSolicitud <= a) && (x.fchFinSolicitud >= p) && (x.fchFinSolicitud <= a)))
+                    .ToList();
+                return model;
+            }
+        }
+
+            public SolicitudRRHHModels obtenerItem(string id)
         {
             using (var db = new ApplicationDbContext())
             {
