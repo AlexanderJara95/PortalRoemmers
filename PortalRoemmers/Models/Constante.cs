@@ -28,17 +28,17 @@ public class Encrypt
 public static class ConstantesGlobales
 {
     //tb_Area
-    public static string idContabilidad = "1";
-    public static string idDptoTec = "2";
-    public static string idFinanzas = "3";
-    public static string idGerencia = "4";
-    public static string idLogistica = "5";
-    public static string idMarketing = "6";
-    public static string idRrhh = "7";
-    public static string idSistemas = "8";
-    public static string idVentas = "9";
-    public static string idMantenimiento = "10";
-    public static string ninguno = "11";
+    public static string idContabilidad = "1"; //Administrativo
+    public static string idDptoTec = "2";  //Tecnico
+    public static string idFinanzas = "3"; //Administrativo
+    public static string idGerencia = "4"; //Administrativo
+    public static string idLogistica = "5"; //Administrativo
+    public static string idMarketing = "6"; //Venta Interna
+    public static string idRrhh = "7"; //Administrativo
+    public static string idSistemas = "8"; //Administrativo
+    public static string idVentas = "9"; //Venta Externa
+    public static string idMantenimiento = "10"; 
+    public static string ninguno = "11"; 
 
     //tabla tb_Cargo
     public static string NI = "0"; //cargo NINGUNO
