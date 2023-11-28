@@ -92,7 +92,12 @@ namespace PortalRoemmers.Areas.Sistemas.Services.Usuario
         {
             using (var db = new ApplicationDbContext())
             {
-                // Asumiendo que 'varSolicitud' es un ID y que cada solicitud masiva tiene una lista de grupos asociados.
+                // Obtener la fecha de inicio del evento de la solicitud masiva
+                var fechaInicioEvento = db.tb_SolicitudRRHH
+                    .Where(solicitud => solicitud.idSolicitudRrhh == varSolicitud)
+                    .Select(solicitud => solicitud.fchIniSolicitud)
+                    .FirstOrDefault();
+
                 var usuariosDeSolicitudMasiva = db.tb_SolicitudRRHH
                     .Where(solicitud => solicitud.idSolicitudRrhh == varSolicitud && solicitud.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM)
                     .SelectMany(solicitud => db.tb_GrupoSolicitudRRHH
@@ -102,7 +107,7 @@ namespace PortalRoemmers.Areas.Sistemas.Services.Usuario
                             .SelectMany(grupo => db.tb_AreaGrupoRRHH
                                 .Where(areaGrupo => areaGrupo.idGrupoRrhh == grupo.idGrupoRrhh)
                                 .SelectMany(areaGrupo => db.tb_Empleado
-                                    .Where(emp => emp.idAreRoe == areaGrupo.idAreRoe)
+                                    .Where(emp => emp.idAreRoe == areaGrupo.idAreRoe && emp.ingfchEmp <= fechaInicioEvento)
                                     .SelectMany(emp => emp.usuarios)
                                 )
                             )
@@ -111,6 +116,7 @@ namespace PortalRoemmers.Areas.Sistemas.Services.Usuario
                 return usuariosDeSolicitudMasiva;
             }
         }
+
 
         public Boolean crear(UsuarioModels model)
         {
