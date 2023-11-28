@@ -723,7 +723,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             var usuJefe = _usu.obtenerItemXEmpleado(empPrinc.idEmpJ);
             var empJefe = _emp.obtenerItem(empPrinc.idEmpJ);
 
-            if ((empPrinc.idAreRoe == ConstantesGlobales.idMarketing || empPrinc.idAreRoe == ConstantesGlobales.idVentas || (empPrinc.idAreRoe == ConstantesGlobales.idRrhh && solicitud.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM) ) && (solicitud.idEstado != ConstantesGlobales.estadoPreApro) )
+            if ((empPrinc.idAreRoe == ConstantesGlobales.idMarketing || empPrinc.idAreRoe == ConstantesGlobales.idVentas || (empPrinc.idAreRoe == ConstantesGlobales.idRrhh && solicitud.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM) ) && (solicitud.idEstado != ConstantesGlobales.estadoPreApro) && (solicitud.aprobFinal != SessionPersister.UserId) )
             {
                 var aprobFinal = _usu.obtenerItemXEmpleado(empJefe.idEmpJ);
                 variable = _soli.updateEstadoAprobFinalSoliRRHH(idSolicitudRRHH, ConstantesGlobales.estadoPreApro, aprobFinal.idAcc);
@@ -959,8 +959,8 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
                         sl.SetCellValue(rowIndex, 1, rowIndex-1);
                         sl.SetCellValue(rowIndex, 2, empPrinc.nomComEmp);
                         sl.SetCellValue(rowIndex, 3, retornarArea(empPrinc.idAreRoe));
-                        sl.SetCellValue(rowIndex, 4, solicitud.fchIniSolicitud);
-                        sl.SetCellValue(rowIndex, 5, solicitud.fchFinSolicitud);
+                        sl.SetCellValue(rowIndex, 4, solicitud.fchIniSolicitud.ToString());
+                        sl.SetCellValue(rowIndex, 5, solicitud.fchFinSolicitud.ToString());
                         sl.SetCellValue(rowIndex, 6, calcularDiasHabiles(solicitud.fchIniSolicitud, solicitud.fchFinSolicitud));
                         sl.SetCellValue(rowIndex, 7, empAprob.nomComEmp);
                         sl.SetCellValue(rowIndex, 8, solicitud.periodo);

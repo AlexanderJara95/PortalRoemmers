@@ -331,11 +331,18 @@
                                                         {
                                                             <!--<a href="MyExtensions.ActionUrl("Modificar", "SolicitudRRHH", new { Area = "RRHH", id = item.idSolicitudRrhh })" data-toggle="tooltip" title="Editar"> <i class="fa fa-pencil text-inverse m-r-10"></i> </a>-->
                                                             <!--<a data-toggle="tooltip" title="Anular" id="sa-params"> <i class="fa fa-close text-danger"></i> </a>-->
-                                                            <select data-toggle="tooltip" title="Cambiar Estado" id="sa-params" class="form-select">
-                                                                <option selected>Cambiar estado</option>
-                                                                <option value="9">Aprobar</option>
-                                                                <option value="12">Desaprobar</option>
-                                                            </select>
+                                                            if (item.estado.nomEst == "MODIFICADO" && item.aprobFinal == ViewBag.userId)
+                                                            {
+                                                                <strong style="color: #ffc36d">PENDIENTE</strong>
+                                                            }
+                                                            else { 
+                                                                <select data-toggle="tooltip" title="Cambiar Estado" id="sa-params" class="form-select">
+                                                                    <option selected>Cambiar estado</option>
+                                                                    <option value="9">Aprobar</option>
+                                                                    <option value="12">Desaprobar</option>
+                                                                </select>                                                            
+                                                            }
+                                                            
                                                         }
                                                         else
                                                         {
@@ -476,7 +483,7 @@
                                                                 {
                                                                     if (item.estado.nomEst == "REGISTRADO" || item.estado.nomEst == "MODIFICADO")
                                                                     {
-                                                                        <strong style="color: #858585">LISTO</strong>
+                                                                        <strong style="color: #858585">PENDIENTE</strong>
                                                                     }
                                                                     if (item.estado.nomEst == "APROBADO")
                                                                     {
