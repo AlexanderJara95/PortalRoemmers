@@ -959,8 +959,8 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
                         sl.SetCellValue(rowIndex, 1, rowIndex-1);
                         sl.SetCellValue(rowIndex, 2, empPrinc.nomComEmp);
                         sl.SetCellValue(rowIndex, 3, retornarArea(empPrinc.idAreRoe));
-                        sl.SetCellValue(rowIndex, 4, solicitud.fchIniSolicitud.ToString());
-                        sl.SetCellValue(rowIndex, 5, solicitud.fchFinSolicitud.ToString());
+                        sl.SetCellValue(rowIndex, 4, solicitud.fchIniSolicitud.ToString("dd/MM/yyyy"));
+                        sl.SetCellValue(rowIndex, 5, solicitud.fchFinSolicitud.ToString("dd/MM/yyyy"));
                         sl.SetCellValue(rowIndex, 6, calcularDiasHabiles(solicitud.fchIniSolicitud, solicitud.fchFinSolicitud));
                         sl.SetCellValue(rowIndex, 7, empAprob.nomComEmp);
                         sl.SetCellValue(rowIndex, 8, solicitud.periodo);
@@ -972,13 +972,13 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
                         var usuariosMasiva = _usu.obtenerUsuariosXSolicitudMasiva(solicitud.idSolicitudRrhh);
                         foreach (var usuarioM in usuariosMasiva)
                         {
-                            var userActual = _usu.obtenerItem(solicitud.idAccSol);
+                            var userActual = _usu.obtenerItem(usuarioM.idAcc);
                             var empActual = _emp.obtenerItem(userActual.idEmp);
                             sl.SetCellValue(rowIndex, 1, rowIndex-1);
                             sl.SetCellValue(rowIndex, 2, empActual.nomComEmp);
                             sl.SetCellValue(rowIndex, 3, retornarArea(empActual.idAreRoe));
-                            sl.SetCellValue(rowIndex, 4, solicitud.fchIniSolicitud);
-                            sl.SetCellValue(rowIndex, 5, solicitud.fchFinSolicitud);
+                            sl.SetCellValue(rowIndex, 4, solicitud.fchIniSolicitud.ToString("dd/MM/yyyy"));
+                            sl.SetCellValue(rowIndex, 5, solicitud.fchFinSolicitud.ToString("dd/MM/yyyy"));
                             sl.SetCellValue(rowIndex, 6, calcularDiasHabiles(solicitud.fchIniSolicitud, solicitud.fchFinSolicitud));
                             sl.SetCellValue(rowIndex, 7, empAprob.nomComEmp);
                             sl.SetCellValue(rowIndex, 8, solicitud.periodo);
