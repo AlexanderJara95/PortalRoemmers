@@ -635,7 +635,7 @@
             var fin = $("#fchEveSolGasF").val();
             data.append("inicio", inicio);
             data.append("fin", fin); // Asegúrate de añadir esta línea para enviar el parámetro 'fin'
-
+            block();
             $.ajax({
                 url: '@Url.Action("exportData", "SolicitudRRHH")',
                 type: 'POST',
@@ -730,7 +730,6 @@
         }
 
         function downloadFile(filePath) {
-            alert(filePath);
             var downloadUrl = '@Url.Action("Resultado", "SolicitudRRHH")' + '?ruta=' + filePath;
             window.location.href = downloadUrl; // Esto iniciará la descarga
         }
