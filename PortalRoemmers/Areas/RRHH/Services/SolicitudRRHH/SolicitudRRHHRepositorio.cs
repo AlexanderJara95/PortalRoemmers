@@ -35,6 +35,15 @@ namespace PortalRoemmers.Areas.RRHH.Services.SolicitudRRHH
 
             using (var db = new ApplicationDbContext())
             {
+                //FECHA DE INGRESO
+                DateTime? fechaIngresoEmp = db.tb_Usuario
+                    .Where(usu => usu.idAcc == SessionPersister.UserId)
+                    .Join(db.tb_Empleado,
+                        usu => usu.idEmp,
+                        emp => emp.idEmp,
+                        (usu, emp) => emp.ingfchEmp)
+                    .FirstOrDefault();
+
                 //SOLICITUDES PROPIAS
                 var model = db.tb_SolicitudRRHH
                     .Include(x => x.solicitante.empleado)
@@ -68,6 +77,7 @@ namespace PortalRoemmers.Areas.RRHH.Services.SolicitudRRHH
                     .OrderByDescending(x => x.idSolicitudRrhh)
                     .Where(solicitud =>
                     solicitud.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM &&
+                    solicitud.fchIniSolicitud >= fechaIngresoEmp &&
                     db.tb_GrupoSolicitudRRHH.Any(grupoSol =>
                         grupoSol.idSolicitudRrhh == solicitud.idSolicitudRrhh &&
                         db.tb_GrupoRRHH.Any(grupo =>
@@ -102,6 +112,15 @@ namespace PortalRoemmers.Areas.RRHH.Services.SolicitudRRHH
 
             using (var db = new ApplicationDbContext())
             {
+                //FECHA DE INGRESO
+                DateTime? fechaIngresoEmp = db.tb_Usuario
+                    .Where(usu => usu.idAcc == SessionPersister.UserId)
+                    .Join(db.tb_Empleado,
+                        usu => usu.idEmp,
+                        emp => emp.idEmp,
+                        (usu, emp) => emp.ingfchEmp)
+                    .FirstOrDefault();
+
                 //SOLICITUDES PROPIAS
                 var model = db.tb_SolicitudRRHH
                     .Include(x => x.solicitante.empleado)
@@ -134,6 +153,7 @@ namespace PortalRoemmers.Areas.RRHH.Services.SolicitudRRHH
                     .OrderByDescending(x => x.idSolicitudRrhh)
                     .Where(solicitud =>
                     solicitud.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM &&
+                    solicitud.fchIniSolicitud >= fechaIngresoEmp &&
                     db.tb_GrupoSolicitudRRHH.Any(grupoSol =>
                         grupoSol.idSolicitudRrhh == solicitud.idSolicitudRrhh &&
                         db.tb_GrupoRRHH.Any(grupo =>
@@ -167,7 +187,7 @@ namespace PortalRoemmers.Areas.RRHH.Services.SolicitudRRHH
                     .Include(x => x.estado)
                     .Include(x => x.subtipoSolicitud)
                     .OrderByDescending(x => x.idSolicitudRrhh)
-                    .Where(x => (x.idEstado != ConstantesGlobales.estadoAnulado && (x.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacaciones || x.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM)) && ((x.fchIniSolicitud >= p) && (x.fchIniSolicitud <= a) && (x.fchFinSolicitud >= p) && (x.fchFinSolicitud <= a)))
+                    .Where(x => (x.idEstado == ConstantesGlobales.estadoAprobado && (x.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacaciones || x.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM)) && ((x.fchIniSolicitud >= p) && (x.fchIniSolicitud <= a) && (x.fchFinSolicitud >= p) && (x.fchFinSolicitud <= a)))
                     .ToList();
                 return model;
             }
