@@ -30,6 +30,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.LicenciaRRHH
 
         public LicenciaRRHHController()
         {
+            _emp = new EmpleadoRepositorio();
             _lic = new LicenciaRRHHRepositorio();
             _stip = new SubtipoSolicitudRRHHRepositorio();
             _usu = new UsuarioRepositorio();
@@ -123,7 +124,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.LicenciaRRHH
         public ActionResult Registrar(SolicitudRRHHModels model, HttpPostedFileBase file)
         {
             EmpleadoModels emple = (EmpleadoModels)System.Web.HttpContext.Current.Session[Sessiones.empleado];
-            //string responsableD = emple.idEmp + ";" + emple.apePatEmp + " " + emple.apeMatEmp + " " + emple.nom1Emp + " " + emple.nom2Emp + ";" + "";
+            string responsableD = emple.idEmp + ";" + emple.apePatEmp + " " + emple.apeMatEmp + " " + emple.nom1Emp + " " + emple.nom2Emp + ";" + "";
             string tabla = "tb_SolicitudRRHH";
             int idc = enu.buscarTabla(tabla);
             model.idSolicitudRrhh = idc.ToString("D7");
@@ -132,6 +133,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.LicenciaRRHH
             model.idAccSol = SessionPersister.UserId;
             model.usuCrea = SessionPersister.Username;
             model.usufchCrea = DateTime.Now;
+            model.periodo = DateTime.Now.Year.ToString();
 
             var empJefe = _emp.obtenerItem(emple.idEmpJ);
             var usuJefe = _usu.obtenerItemXEmpleado(emple.idEmpJ);
