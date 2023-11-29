@@ -236,6 +236,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             //string responsableD = emple.idEmp + ";" + emple.apePatEmp + " " + emple.apeMatEmp + " " + emple.nom1Emp + " " + emple.nom2Emp + ";" + "";
             string tabla = "tb_SolicitudRRHH";
             int idc = enu.buscarTabla(tabla);
+            
             model.idSolicitudRrhh = idc.ToString("D7");
 
             model.idEstado = ConstantesGlobales.estadoRegistrado;
@@ -248,6 +249,16 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             userSoliRRHH.idAccRes = SessionPersister.UserId;
             userSoliRRHH.usuCrea = model.usuCrea;
             userSoliRRHH.usufchCrea = model.usufchCrea;
+            
+            if ((emple.idAreRoe == ConstantesGlobales.idMarketing || emple.idAreRoe == ConstantesGlobales.idVentas || (emple.idAreRoe == ConstantesGlobales.idRrhh && model.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM)))
+            {
+                model.aprobFinal = _usu.obtenerItemXEmpleado(empJefe.idEmpJ).idAcc;
+            }
+            else
+            {
+                model.aprobFinal = usuJefe.idAcc;
+            }
+
             if (validarLimiteVacaciones(model.fchIniSolicitud,model.fchFinSolicitud, diasRestantes))
             {
                 if (emple.idEmpJ != "" || emple.idEmpJ != null)
@@ -723,21 +734,20 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             var usuJefe = _usu.obtenerItemXEmpleado(empPrinc.idEmpJ);
             var empJefe = _emp.obtenerItem(empPrinc.idEmpJ);
 
-            if ((empPrinc.idAreRoe == ConstantesGlobales.idMarketing || empPrinc.idAreRoe == ConstantesGlobales.idVentas || (empPrinc.idAreRoe == ConstantesGlobales.idRrhh && solicitud.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM) ) && (solicitud.idEstado != ConstantesGlobales.estadoPreApro) && (solicitud.aprobFinal != SessionPersister.UserId) )
+            if (solicitud.aprobFinal != SessionPersister.UserId)
             {
-                var aprobFinal = _usu.obtenerItemXEmpleado(empJefe.idEmpJ);
-                variable = _soli.updateEstadoAprobFinalSoliRRHH(idSolicitudRRHH, ConstantesGlobales.estadoPreApro, aprobFinal.idAcc);
+                variable = _soli.updateEstadoSoliRRHH(idSolicitudRRHH, ConstantesGlobales.estadoPreApro);
                 //envio mensaje al usuario emisor
                 EmailHelper mE = new EmailHelper();
-                string mensajeE = string.Format("<section> Estimado (a) {0}<BR/> <p>Se aprobó una solicitud de vacaciones</p></section>", empPrinc.nomComEmp);
+                string mensajeE = string.Format("<section> Estimado (a) {0}<BR/> <p>Se pre aprobó una solicitud de vacaciones</p></section>", empPrinc.nomComEmp);
                 string tituloE = "Aprobación de solicitud de Vacaciones";
                 //mE.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensajeE, tituloE, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
 
                 //envio mensaje al usuario receptor
                 EmailHelper mR = new EmailHelper();
-                string mensajeR = string.Format("<section> Estimado (a) {0}<BR/> <p>Se aprobó una solicitud de vacaciones a {1}</p></section>", empJefe.nomComEmp, empPrinc.nomComEmp);
+                string mensajeR = string.Format("<section> Estimado (a) {0}<BR/> <p>Se pre aprobó una solicitud de vacaciones a {1}</p></section>", empJefe.nomComEmp, empPrinc.nomComEmp);
                 string tituloR = "Aprobación de solicitud de Vacaciones";
-                //mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+                //mR.SendEmail(/*model.solicitante.email*/aprobFinal.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
             }
             else
             {
@@ -765,8 +775,8 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
 
             var usuPrinc = _usu.obtenerItem(_soli.obtenerItem(idSolicitudRRHH).idAccSol);
             var empPrinc = _emp.obtenerItem(usuPrinc.idEmp);
-            var usuJefe = _usu.obtenerItemXEmpleado(empPrinc.idEmpJ);
-            var empJefe = _emp.obtenerItem(empPrinc.idEmpJ);
+            var usuJefe = _usu.obtenerItem(SessionPersister.UserId);
+            var empJefe = _emp.obtenerItem(usuJefe.idEmp);
 
             //envio mensaje al usuario emisor
             EmailHelper mE = new EmailHelper();
