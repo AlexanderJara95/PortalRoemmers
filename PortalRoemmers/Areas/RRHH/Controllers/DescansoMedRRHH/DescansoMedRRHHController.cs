@@ -30,6 +30,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.DescansoMedRRHH
 
         public DescansoMedRRHHController()
         {
+            _emp = new EmpleadoRepositorio();
             _des = new DescansoMedRRHHRepositorio();
             _stip = new SubtipoSolicitudRRHHRepositorio();
             _usu = new UsuarioRepositorio();
@@ -116,6 +117,10 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.DescansoMedRRHH
         public ActionResult Registrar(SolicitudRRHHModels model, HttpPostedFileBase file)
         {
             EmpleadoModels emple = (EmpleadoModels)System.Web.HttpContext.Current.Session[Sessiones.empleado];
+
+            var empJefe = _emp.obtenerItem(emple.idEmpJ);
+            var usuJefe = _usu.obtenerItemXEmpleado(emple.idEmpJ);
+            var usuPrinc = _usu.obtenerItemXEmpleado(emple.idEmp);
             //string responsableD = emple.idEmp + ";" + emple.apePatEmp + " " + emple.apeMatEmp + " " + emple.nom1Emp + " " + emple.nom2Emp + ";" + "";
             string tabla = "tb_SolicitudRRHH";
             int idc = enu.buscarTabla(tabla);
@@ -125,10 +130,9 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.DescansoMedRRHH
             model.idAccSol = SessionPersister.UserId;
             model.usuCrea = SessionPersister.Username;
             model.usufchCrea = DateTime.Now;
+            model.periodo = DateTime.Now.Year.ToString();
 
-            var empJefe = _emp.obtenerItem(emple.idEmpJ);
-            var usuJefe = _usu.obtenerItemXEmpleado(emple.idEmpJ);
-            var usuPrinc = _usu.obtenerItemXEmpleado(emple.idEmp);
+            
 
             UserSolicitudRRHHModels userSoliRRHH = new UserSolicitudRRHHModels();
             userSoliRRHH.idSolicitudRrhh = model.idSolicitudRrhh;
