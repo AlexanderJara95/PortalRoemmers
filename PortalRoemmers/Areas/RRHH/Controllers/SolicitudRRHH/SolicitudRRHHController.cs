@@ -897,9 +897,9 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
                         modelSoli.fchIniSolicitud = desde;
                         modelSoli.fchFinSolicitud = hasta;
                         modelSoli.periodo = periodo;
+                        modelSoli.aprobFinal = _usu.obtenerItemXEmpleado(_emp.obtenerxDniEmpleado(numDocumJ).idEmp).idAcc; 
 
-
-                        if(empItem.idAreRoe == ConstantesGlobales.idMarketing || empItem.idAreRoe == ConstantesGlobales.idVentas)
+                        if (empItem.idAreRoe == ConstantesGlobales.idMarketing || empItem.idAreRoe == ConstantesGlobales.idVentas)
                         {
                             var aprobFinal = _usu.obtenerItemXEmpleado(empItemJ.idEmpJ);
                             modelSoli.aprobFinal = aprobFinal.idAcc;
