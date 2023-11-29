@@ -81,6 +81,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             ViewBag.primero = inicio.ToString("dd/MM/yyyy");
             ViewBag.actual = fin.ToString("dd/MM/yyyy");
             ViewBag.userId = SessionPersister.UserId;
+            ViewBag.idArea = emple.idAreRoe;
 
             //-----------------------------
             //var parametro = p.selectResultado(ConstantesGlobales.Com_Usu_Pre_Cas_03).ToList();
@@ -259,52 +260,59 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
                 model.aprobFinal = usuJefe.idAcc;
             }
 
-            if (validarLimiteVacaciones(model.fchIniSolicitud,model.fchFinSolicitud, diasRestantes))
+            if (_soli.validarExisteCruceEnRegistro(userSoliRRHH.idAccRes,model.fchIniSolicitud, model.fchFinSolicitud))
             {
-                if (emple.idEmpJ != "" || emple.idEmpJ != null)
+                if (validarLimiteVacaciones(model.fchIniSolicitud, model.fchFinSolicitud, diasRestantes))
                 {
-                    model.idAccApro = _usu.obtenerItemXEmpleado(emple.idEmpJ).idAcc;
-                    model.idSubTipoSolicitudRrhh = ConstantesGlobales.subTipoVacaciones;
-                    model.periodo = retornarPeriodo(emple.idAreRoe);
-                    try
+                    if (emple.idEmpJ != "" || emple.idEmpJ != null)
                     {
-                        if (_soli.crear(model))
+                        model.idAccApro = _usu.obtenerItemXEmpleado(emple.idEmpJ).idAcc;
+                        model.idSubTipoSolicitudRrhh = ConstantesGlobales.subTipoVacaciones;
+                        model.periodo = retornarPeriodo(emple.idAreRoe);
+                        try
                         {
-                            enu.actualizarTabla(tabla, idc);
-                            TempData["mensaje"] = "<div id='success' class='alert alert-success'>Se creó un nuevo registro.</div>";
-                            _soli.crearUserSoliRrhh(userSoliRRHH);
+                            if (_soli.crear(model))
+                            {
+                                enu.actualizarTabla(tabla, idc);
+                                TempData["mensaje"] = "<div id='success' class='alert alert-success'>Se creó un nuevo registro.</div>";
+                                _soli.crearUserSoliRrhh(userSoliRRHH);
 
-                            //envio mensaje al usuario emisor
-                            EmailHelper m = new EmailHelper();
-                            string mensaje = string.Format("<section> Estimado (a) {0}<BR/> <p>Se registró una solicitud de vacaciones</p></section>", emple.nomComEmp);
-                            string titulo = "Solicitud de Vacaciones";
-                            //m.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensaje, titulo, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+                                //envio mensaje al usuario emisor
+                                EmailHelper m = new EmailHelper();
+                                string mensaje = string.Format("<section> Estimado (a) {0}<BR/> <p>Se registró una solicitud de vacaciones</p></section>", emple.nomComEmp);
+                                string titulo = "Solicitud de Vacaciones";
+                                //m.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensaje, titulo, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
 
-                            //envio mensaje al usuario receptor
-                            EmailHelper m1 = new EmailHelper();
-                            string mensaje1 = string.Format("<section> Estimado (a) {0}<BR/> <p>Nueva solicitud de vacaciones de {1}</p></section>", empJefe.nomComEmp, emple.nomComEmp);
-                            string titulo1 = "Solicitud de Vacaciones";
-                            //m.SendEmail(/*model.solicitante.email*/usuJefe.email, mensaje1, titulo1, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+                                //envio mensaje al usuario receptor
+                                EmailHelper m1 = new EmailHelper();
+                                string mensaje1 = string.Format("<section> Estimado (a) {0}<BR/> <p>Nueva solicitud de vacaciones de {1}</p></section>", empJefe.nomComEmp, emple.nomComEmp);
+                                string titulo1 = "Solicitud de Vacaciones";
+                                //m.SendEmail(/*model.solicitante.email*/usuJefe.email, mensaje1, titulo1, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+                            }
+                            else
+                            {
+                                TempData["mensaje"] = "<div id='warning' class='alert alert-warning'>" + "Error en guardar el registro" + "</div>";
+                            }
                         }
-                        else
+                        catch (Exception e)
                         {
-                            TempData["mensaje"] = "<div id='warning' class='alert alert-warning'>" + "Error en guardar el registro" + "</div>";
+                            e.Message.ToString();
                         }
                     }
-                    catch (Exception e)
+                    else
                     {
-                        e.Message.ToString();
+                        TempData["mensaje"] = "<div id='warning' class='alert alert-warning'>" + "Se necesita asignar Jefe" + "</div>";
                     }
                 }
-                else{
-                    TempData["mensaje"] = "<div id='warning' class='alert alert-warning'>" + "Se necesita asignar Jefe" + "</div>";
+                else
+                {
+                    TempData["mensaje"] = "<div id='warning' class='alert alert-warning'>" + "Has superado la cantidad de días disponibles" + "</div>";
                 }
             }
             else
             {
-                TempData["mensaje"] = "<div id='warning' class='alert alert-warning'>" + "Has superado la cantidad de días disponibles" + "</div>";
+                TempData["mensaje"] = "<div id='warning' class='alert alert-warning'>" + "Tienes vacaciones programadas en las fechas ingresadas" + "</div>";
             }
-
             return RedirectToAction("Index", new { menuArea = SessionPersister.ActiveMenu, menuVista = SessionPersister.ActiveVista, pagina = SessionPersister.Pagina, search = SessionPersister.Search });
 
         }
@@ -341,38 +349,46 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
                 model.idEstado = ConstantesGlobales.estadoModificado;               
             }
 
-            if (validarLimiteVacaciones(model.fchIniSolicitud, model.fchFinSolicitud, diasRestantes))
+            if (_soli.validarExisteCruceEnRegistro(userSoliRRHH.idAccRes, model.fchIniSolicitud, model.fchFinSolicitud))
             {
-                try
+                if (validarLimiteVacaciones(model.fchIniSolicitud, model.fchFinSolicitud, diasRestantes))
                 {
-                    if (_soli.modificar(model))
+                    try
                     {
-                        //envio mensaje al usuario emisor
-                        EmailHelper mE = new EmailHelper();
-                        string mensajeE = string.Format("<section> Estimado (a) {0}<BR/> <p>Se modificó una solicitud de vacaciones</p></section>", emple.nomComEmp);
-                        string tituloE = "Solicitud de Vacaciones";
-                        //mE.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensajeE, tituloE, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+                        if (_soli.modificar(model))
+                        {
+                            //envio mensaje al usuario emisor
+                            EmailHelper mE = new EmailHelper();
+                            string mensajeE = string.Format("<section> Estimado (a) {0}<BR/> <p>Se modificó una solicitud de vacaciones</p></section>", emple.nomComEmp);
+                            string tituloE = "Solicitud de Vacaciones";
+                            //mE.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensajeE, tituloE, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
 
-                        //envio mensaje al usuario receptor
-                        EmailHelper mR = new EmailHelper();
-                        string mensajeR = string.Format("<section> Estimado (a) {0}<BR/> <p>Se modificó una solicitud de vacaciones de {1}</p></section>", empJefe.nomComEmp, emple.nomComEmp);
-                        string tituloR = "Solicitud de Vacaciones";
-                        //mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
-                        mensaje = "<div id='success' class='alert alert-success'>Se modificó correctamente el registro.</div>";
+                            //envio mensaje al usuario receptor
+                            EmailHelper mR = new EmailHelper();
+                            string mensajeR = string.Format("<section> Estimado (a) {0}<BR/> <p>Se modificó una solicitud de vacaciones de {1}</p></section>", empJefe.nomComEmp, emple.nomComEmp);
+                            string tituloR = "Solicitud de Vacaciones";
+                            //mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+                            mensaje = "<div id='success' class='alert alert-success'>Se modificó correctamente el registro.</div>";
+                        }
+                        else
+                        {
+                            mensaje = "<div id='warning' class='alert alert-warning'>" + "Error en la modificación del registro" + "</div>";
+                        }
+
                     }
-                    else
+                    catch (Exception e)
                     {
-                        mensaje = "<div id='warning' class='alert alert-warning'>" + "Error en la modificación del registro" + "</div>";
+                        e.Message.ToString();
                     }
-
                 }
-                catch (Exception e) {
-                    e.Message.ToString();
+                else
+                {
+                    mensaje = "<div id='warning' class='alert alert-warning'>" + "Has superado la cantidad de días disponibles" + "</div>";
                 }
             }
             else
             {
-                mensaje = "<div id='warning' class='alert alert-warning'>" + "Has superado la cantidad de días disponibles" + "</div>";
+                TempData["mensaje"] = "<div id='warning' class='alert alert-warning'>" + "Tienes vacaciones programadas en las fechas ingresadas" + "</div>";
             }
 
             TempData["mensaje"] = mensaje;

@@ -342,6 +342,21 @@ namespace PortalRoemmers.Areas.RRHH.Services.SolicitudRRHH
             }
         }
 
+        public bool validarExisteCruceEnRegistro(string id, DateTime desde, DateTime hasta)
+        {
+            using (var db = new ApplicationDbContext())
+            {
+                bool existeCruce = db.tb_SolicitudRRHH
+                    .Any(x => x.idAccSol == id &&
+                              ((x.fchIniSolicitud <= desde && x.fchFinSolicitud >= desde) ||  // Nueva fecha 'desde' está dentro de un rango existente
+                               (x.fchIniSolicitud <= hasta && x.fchFinSolicitud >= hasta) ||  // Nueva fecha 'hasta' está dentro de un rango existente
+                               (x.fchIniSolicitud >= desde && x.fchFinSolicitud <= hasta)));  // Rango existente está completamente dentro del nuevo rango
+
+                return existeCruce;
+            }
+        }
+
+
         public Boolean updateEstadoSoliRRHH(string sol, string estado)
         {
             string commandText = "UPDATE tb_SolicitudRRHH SET idEstado = @idEstado, usuMod=@usuMod , usufchMod=@usufchMod  WHERE idSolicitudRrhh = @idSolicitudRrhh ;";
