@@ -10,6 +10,7 @@ using System.Data.Entity; //permite usar landa
 using System.Data.SqlClient;
 using PortalRoemmers.Security;
 using PortalRoemmers.Areas.RRHH.Models.SolicitudRRHH;
+using System.Collections.Generic;
 
 namespace PortalRoemmers.Areas.RRHH.Services.LicenciaRRHH
 {
@@ -68,6 +69,28 @@ namespace PortalRoemmers.Areas.RRHH.Services.LicenciaRRHH
                 return model;
             }
 
+        }
+        public List<SolicitudRRHHModels> obtenerSolicitudesReporte(string primero, string actual)
+        {
+
+            // ------------------------------------------------------------------------
+            DateTime p = DateTime.Parse(primero); //desde
+            DateTime a = DateTime.Parse(actual).AddHours(23).AddMinutes(59);//hasta
+            //------------------------------------------------------------------------
+
+            using (var db = new ApplicationDbContext())
+            {
+                //SOLICITUDES PROPIAS
+                var model = db.tb_SolicitudRRHH
+                    .Include(x => x.solicitante.empleado)
+                    .Include(x => x.aprobador.empleado)
+                    .Include(x => x.estado)
+                    .Include(x => x.subtipoSolicitud)
+                    .OrderByDescending(x => x.idSolicitudRrhh)
+                    .Where(x => (x.idEstado == ConstantesGlobales.estadoAprobado && x.idSubTipoSolicitudRrhh == ConstantesGlobales.tipoLicencias) && ((x.fchIniSolicitud >= p) && (x.fchIniSolicitud <= a) && (x.fchFinSolicitud >= p) && (x.fchFinSolicitud <= a)))
+                    .ToList();
+                return model;
+            }
         }
         public Boolean modificar(SolicitudRRHHModels model)
         {
