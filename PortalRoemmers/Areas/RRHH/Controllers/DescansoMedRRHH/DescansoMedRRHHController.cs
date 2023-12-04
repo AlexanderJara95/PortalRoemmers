@@ -15,6 +15,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.IO;
 using System.Text;
+using SpreadsheetLight;
 
 namespace PortalRoemmers.Areas.RRHH.Controllers.DescansoMedRRHH
 {
@@ -91,6 +92,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.DescansoMedRRHH
             var model = _des.obtenerTodos(pagina, search, ConstantesGlobales.tipoDescansos, inicio.ToString(), fin.ToString());
             ViewBag.SolicitudAdmin = validarSolicitudAdmin(model.SoliRRHH);
             ViewBag.diasUtilizados = modelCant.SoliRRHH.Where(x => x.idAccApro != SessionPersister.UserId).Count();
+            ViewBag.Exportar = validarExportarRrhh();
             //-----------------------------
             return View(model);
         }
@@ -402,6 +404,118 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.DescansoMedRRHH
             mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
 
             return Json(variable, JsonRequestBehavior.AllowGet);
+        }
+
+        public bool validarExportarRrhh()
+        {
+            var emp = _emp.obtenerItem(_usu.obtenerItem(SessionPersister.UserId).idEmp);
+            if (emp.idAreRoe == ConstantesGlobales.idRrhh)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+
+        [HttpPost]
+        public JsonResult exportData(string inicio, string fin)
+        {
+            FileStream fs = new FileStream(Server.MapPath("~/Import/DescansoMedRRHH/PlantillaDescansoMedPortal2023.xlsx"), FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            SLDocument sl = new SLDocument(fs, "ITEMS");
+            int rowIndexVal = 2;
+            int rowIndex = 2;
+
+            string numDocum = "";
+            string numDocumJ = "";
+            string totalDias = "";
+            string periodo = "";
+            DateTime desde = new DateTime();
+            DateTime hasta = new DateTime();
+            EmpleadoModels empItem = new EmpleadoModels();
+            SolicitudRRHHModels modelSoli = new SolicitudRRHHModels();
+            bool todasLasFilasValidas = true;
+
+            var todasSolicitudes = _des.obtenerSolicitudesReporte(inicio, fin);
+
+            string mensaje = "|";
+            int c = 0;
+            if (sl.SelectWorksheet("ITEMS"))
+            {
+                foreach (var solicitud in todasSolicitudes)
+                {
+                    var userPrinc = _usu.obtenerItem(solicitud.idAccSol);
+                    var empPrinc = _emp.obtenerItem(userPrinc.idEmp);
+                    var userAprob = _usu.obtenerItemXUsername(solicitud.usuMod);
+                    var empAprob = _emp.obtenerItem(userAprob.idEmp);
+
+                    sl.SetCellValue(rowIndex, 1, rowIndex - 1);
+                    sl.SetCellValue(rowIndex, 2, empPrinc.nomComEmp);
+                    sl.SetCellValue(rowIndex, 3, retornarArea(empPrinc.idAreRoe));
+                    sl.SetCellValue(rowIndex, 4, solicitud.fchIniSolicitud.ToString("dd/MM/yyyy"));
+                    sl.SetCellValue(rowIndex, 5, solicitud.fchFinSolicitud.ToString("dd/MM/yyyy"));
+                    sl.SetCellValue(rowIndex, 6, calcularDiasHabiles(solicitud.fchIniSolicitud, solicitud.fchFinSolicitud));
+                    sl.SetCellValue(rowIndex, 7, empAprob.nomComEmp);
+                    sl.SetCellValue(rowIndex, 8, solicitud.periodo);
+                    rowIndex++; // Incrementa el índice de la fila para la siguiente solicitud.
+                    
+                }
+
+                sl.SaveAs(Server.MapPath("~/Import/DescansoMedRRHH/ReporteDescansoMedPortal.xlsx"));
+                fs.Close();
+            }
+            return Json(Server.MapPath("~/Import/DescansoMedRRHH/ReporteDescansoMedPortal.xlsx"), JsonRequestBehavior.AllowGet);
+
+        }
+        public FileResult Resultado(string ruta)
+        {
+            return File(ruta, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        }
+        public string retornarArea(string idArea)
+        {
+            int anioActual = DateTime.Now.Year;
+
+            if (idArea == ConstantesGlobales.idMarketing)
+            {
+                return "VENTAS INTERNAS";
+            }
+            else
+            {
+                if (idArea == ConstantesGlobales.idVentas)
+                {
+                    return "VENTAS EXTERNAS";
+                }
+                else
+                {
+                    if (idArea == ConstantesGlobales.idDptoTec)
+                    {
+                        return "TÉCNICO";
+                    }
+                    else
+                    {
+                        return "ADMINISTRATIVO";
+                    }
+
+                }
+            }
+        }
+        public int calcularDiasHabiles(DateTime fechaInicio, DateTime fechaFin)
+        {
+            int diasHabiles = 0;
+            TimeSpan tiempoTotal = fechaFin - fechaInicio;
+
+            for (int i = 0; i <= tiempoTotal.TotalDays; i++)
+            {
+                DateTime fechaActual = fechaInicio.AddDays(i);
+
+                if (fechaActual.DayOfWeek != DayOfWeek.Saturday && fechaActual.DayOfWeek != DayOfWeek.Sunday)
+                {
+                    diasHabiles++;
+                }
+            }
+            return diasHabiles;
         }
 
 
