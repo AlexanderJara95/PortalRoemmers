@@ -174,8 +174,8 @@ public static class ConstantesGlobales
     public static string subTipoVacaciones = "1"; //vacaciones
     public static string subTipoVacacionesM = "2"; //vacaciones Masivas
     public static string tipoVacaciones = "1";//tipo vacaciones
-    public static string tipoDescansos = "2";//tipo descansos médicos
-    public static string tipoLicencias = "3";//tipo licencias
+    public static string tipoDescansos = "3";//tipo descansos médicos
+    public static string tipoLicencias = "10";//tipo licencias
 
 }
 
