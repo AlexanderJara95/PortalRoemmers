@@ -26,7 +26,7 @@ namespace PortalRoemmers.Areas.Almacen.Controllers
         [CustomAuthorize(Roles = "000003,000325")]
         public ActionResult Index(string menuArea, string menuVista, int pagina = 1, string search = "")
         {
-            _conR = new NumeroConteoService();
+            _conR = new NumeroConteoService();            
 
             SessionPersister.ActiveVista = menuVista;
             SessionPersister.ActiveMenu = menuArea;
@@ -286,6 +286,7 @@ namespace PortalRoemmers.Areas.Almacen.Controllers
                     sl.SetCellValue(fil, col, rst.ToInlineString());
                     sl.SetColumnWidth(col, 18);
                 }
+
                 col = col + 1;
                 font = new SLFont();
                 font.Bold = true;//negrita
@@ -397,9 +398,10 @@ namespace PortalRoemmers.Areas.Almacen.Controllers
             if (!exists) Directory.CreateDirectory(Server.MapPath(path));
 
             _con = new InventarioProductoService();
+            _inv = new InventarioAxService();
 
             var conTitulo = _con.obtenerConteoDetalle();
-
+            var conAgrupadoAx = _con.obtenerConteoAgrupadoAx();
             using (SLDocument sl = new SLDocument())
             {
                 sl.RenameWorksheet("Sheet1", "REPORTE");
@@ -503,6 +505,42 @@ namespace PortalRoemmers.Areas.Almacen.Controllers
                 sl.SetCellValue(fil, col, rst.ToInlineString());
                 sl.SetColumnWidth(col, 12);
 
+                col = 9; // Asegúrate de que esta es la siguiente columna disponible
+                font = new SLFont();
+                font.Bold = true; //negrita
+                font.SetFont(FontSchemeValues.Minor, 14);
+                rst = new SLRstType();
+                rst.AppendText("Suma Can. Conteo", font);
+                sl.SetCellValue(fil, col, rst.ToInlineString());
+                sl.SetColumnWidth(col, 20);
+
+                col = 10;
+                font = new SLFont();
+                font.Bold = true;//negrita
+                font.SetFont(FontSchemeValues.Minor, 14);
+                rst = new SLRstType();
+                rst.AppendText("Can. Ax", font);
+                sl.SetCellValue(fil, col, rst.ToInlineString());
+                sl.SetColumnWidth(col, 15);
+
+                col = 11;
+                font = new SLFont();
+                font.Bold = true;//negrita
+                font.SetFont(FontSchemeValues.Minor, 14);
+                rst = new SLRstType();
+                rst.AppendText("Suma Can. Ax", font);
+                sl.SetCellValue(fil, col, rst.ToInlineString());
+                sl.SetColumnWidth(col, 20);
+
+                col = 12;
+                font = new SLFont();
+                font.Bold = true;//negrita
+                font.SetFont(FontSchemeValues.Minor, 14);
+                rst = new SLRstType();
+                rst.AppendText("Resultado", font);
+                sl.SetCellValue(fil, col, rst.ToInlineString());
+                sl.SetColumnWidth(col, 15);
+
 
                 // --------------------------------------
                 //Rayas
@@ -514,11 +552,22 @@ namespace PortalRoemmers.Areas.Almacen.Controllers
                 sl.SetCellStyle(fil, 1, fil, col, style2);
                 // --------------------------------------
 
-
                 fil = fil + 1;
+
+                // Escribiendo datos y combinando celdas
+                int inicioFilaSuma = 0;
+                string loteActual = string.Empty;
+
+                var sumaPorLote = new Dictionary<string, int>();
 
                 foreach (var c in conTitulo)
                 {
+                    if (!sumaPorLote.ContainsKey(c.nroLotCon))
+                    {
+                        sumaPorLote[c.nroLotCon] = 0;
+                    }
+                    sumaPorLote[c.nroLotCon] += c.canInvCon;
+
                     //Código
                     col = 1;
                     sl.SetCellValue(fil, col, c.codProCon);
@@ -551,9 +600,52 @@ namespace PortalRoemmers.Areas.Almacen.Controllers
                     col = 8;
                     sl.SetCellValue(fil, col, c.canInvCon);
 
+                    col = 10;
+                    var invAxFil = _inv.obtenerModel(c.codProCon, c.nroLotCon, c.ubiProCon);
+                    sl.SetCellValue(fil, col, invAxFil != null ? invAxFil.canProInv : 0 );
+
+                    if (loteActual != c.nroLotCon)
+                    {
+                        if (inicioFilaSuma != 0)
+                        {
+                            // Combina las celdas del lote anterior
+                            sl.MergeWorksheetCells(inicioFilaSuma, 9, fil - 1, 9);
+                            sl.SetCellValue(inicioFilaSuma, 9, sumaPorLote[loteActual]);
+
+                            // Combina las celdas del lote anterior
+                            var canTotalProvinv = conAgrupadoAx.Find(lote => lote.nroLotInv == loteActual).canProInv;
+                            sl.MergeWorksheetCells(inicioFilaSuma, 11, fil - 1, 11);
+                            sl.SetCellValue(inicioFilaSuma, 11, canTotalProvinv);
+
+                            //Resultado.
+                            col = 11;
+                            sl.MergeWorksheetCells(inicioFilaSuma, 12, fil - 1, 12);
+                            sl.SetCellValue(inicioFilaSuma, 12, sumaPorLote[loteActual] - canTotalProvinv);
+                        }
+
+                        inicioFilaSuma = fil;
+                        loteActual = c.nroLotCon;
+                    }           
 
                     fil = fil + 1;
                 }
+                if (inicioFilaSuma != 0 && !string.IsNullOrEmpty(loteActual))
+                {
+                    // Combina y establece valor para la columna 9 (Suma Can. Conteo)
+                    sl.MergeWorksheetCells(inicioFilaSuma, 9, fil - 1, 9);
+                    sl.SetCellValue(inicioFilaSuma, 9, sumaPorLote.ContainsKey(loteActual) ? sumaPorLote[loteActual] : 0);
+
+                    // Combina y establece valor para la columna 10 (Tot Cantidad)
+                    var canTotal = conAgrupadoAx.Find(lote => lote.nroLotInv == loteActual);
+                    sl.MergeWorksheetCells(inicioFilaSuma, 11, fil - 1, 11);
+                    sl.SetCellValue(inicioFilaSuma, 11, canTotal != null ? canTotal.canProInv : 0);
+
+                    //Resultado.
+                    col = 12;
+                    sl.MergeWorksheetCells(inicioFilaSuma, 12, fil - 1, 12);
+                    sl.SetCellValue(inicioFilaSuma, 12, (sumaPorLote.ContainsKey(loteActual) && canTotal != null) ? (sumaPorLote[loteActual] - canTotal.canProInv):0);
+                }
+
                 sl.SaveAs(Server.MapPath(path));
             }
                 return Server.MapPath(path);
