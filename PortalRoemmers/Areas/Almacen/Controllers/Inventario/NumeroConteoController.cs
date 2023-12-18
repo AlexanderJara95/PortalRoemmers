@@ -51,7 +51,8 @@ namespace PortalRoemmers.Areas.Almacen.Controllers
         {
 
             if(ModelState.IsValid)
-            {
+            {                
+                _con= new InventarioProductoService();
                 _conR = new NumeroConteoService();
 
                 model.usuCrea = SessionPersister.Username;
@@ -59,6 +60,16 @@ namespace PortalRoemmers.Areas.Almacen.Controllers
 
                 if(_conR.crear(model))
                 {
+
+                    if (_con.ObtenerProductosOk(model.codCon-1).Count != 0)
+                    {
+                        var resultado = _con.ObtenerProductosOk(model.codCon - 1);
+                        foreach (var producto in resultado)
+                        {
+                            producto.nroInvCon = model.codCon;
+                            _con.crear(producto);
+                        }
+                    }
                     TempData["mensaje"] = "<div id='success' class='alert alert-success'>Se creó un nuevo registro.</div>";
                 }
                 else
@@ -97,7 +108,7 @@ namespace PortalRoemmers.Areas.Almacen.Controllers
 
                 _conR = new NumeroConteoService();
                 if(_conR.modificar(model))
-                {
+                {              
                     TempData["mensaje"] = "<div id='success' class='alert alert-success'>Se modificó un nuevo registro.</div>";
                 }
                 else
