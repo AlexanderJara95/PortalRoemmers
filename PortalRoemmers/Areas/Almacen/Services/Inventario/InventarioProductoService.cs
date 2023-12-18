@@ -40,6 +40,26 @@ namespace PortalRoemmers.Areas.Almacen.Services.Inventario
                 return modelo;
             }
         }
+
+        public List<InventarioProductoModels> ObtenerProductosOk(int codConteo)
+        {
+            using (var db = new ApplicationDbContext())
+            {
+                var resultado = from t1 in db.tb_InvPro
+                                from t2 in db.tb_InvAx
+                                where t1.codProCon == t2.idProInv
+                                      && t1.nroLotCon == t2.nroLotInv
+                                      && t1.ubiProCon == t2.ubiProInv
+                                      && t2.canProInv - t1.canInvCon == 0
+                                      && t1.nroInvCon == codConteo
+                                select t1;
+
+                return resultado.ToList();
+            }
+        }
+
+
+
         public InventarioProductoModels obtenerModel(string pro, string lot, string ubi,int con)
         {
             using(var db = new ApplicationDbContext())
