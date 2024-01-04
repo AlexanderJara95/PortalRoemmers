@@ -159,6 +159,7 @@ namespace PortalRoemmers.Areas.Marketing.Controllers
             if (idActividades != "")
             { 
                 var estim = _esti.obtenerItem(idActividades) ;
+                var activ = _act.obtenerItem(idActividades);
                 ///-----------------
                 model.idAccRes = estim.actividad.idAccRes+"-"+_asiapr.obtenerNivAprob(estim.actividad.idAccRes);
                 model.idAccApro = _asiapr.obtenerAprobadoresAsignados(estim.actividad.idAccRes).Select(x => x.idAccApro).FirstOrDefault();
@@ -168,6 +169,7 @@ namespace PortalRoemmers.Areas.Marketing.Controllers
                 model.idActivEst = idActividades;
                 model.idTipGas = estim.idTipGas;
                 model.idConGas = estim.idConGas;
+                model.titSolGas = activ.nomActiv;
                 model.idZon = ConstantesGlobales.zona_ninguno;
                 actual = estim.actividad.fchIniActiv.ToString("dd/MM/yyyy");
                 DateTime date = DateTime.Now;
@@ -229,6 +231,7 @@ namespace PortalRoemmers.Areas.Marketing.Controllers
             creaTablas(familiaD, medicoD, responsableD, actividadD,documentoD);
             
             ViewBag.fecha = actual;
+            ViewBag.Titulo = model.titSolGas;
 
             return View();
         }
@@ -1212,7 +1215,7 @@ namespace PortalRoemmers.Areas.Marketing.Controllers
                 ViewBag.tipopago = new SelectList(_tipPag.obtenerTipoPago(), "idTipPag", "nomTipPag", model.idTipPag);
                 ViewBag.tiposolicitud = new SelectList(_tipSol.obtenerTipoSolicitudes(), "idTipSol", "nomTipSol", model.idTipSol);
                 ViewBag.tipogastoA = new SelectList(selectTipGasto(model.idActiv), "value", "text", model.idTipGasAct);
-                ViewBag.gastoA = new SelectList(selectGasto(model.idActiv, model.idTipGasAct), "value", "text", model.idActGas);
+                ViewBag.gastoA = new SelectList(selectGasto(model.idActiv, model.idTipGasAct), "value", "text", model.idActGas);                
             }
             catch (Exception e){
 

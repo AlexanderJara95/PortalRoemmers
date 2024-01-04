@@ -426,8 +426,9 @@
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label class="col-md-12">@Html.LabelFor(model => model.titSolGas)</label>
+                                                    @Html.HiddenFor(model => model.titSolGas)
                                                     <div class="col-md-12">
-                                                        @Html.EditorFor(model => model.titSolGas, new { htmlAttributes = new { @class = "form-control form-control-line", @placeholder = "Título" } })
+                                                        @Html.EditorFor(model => model.titSolGas, new { htmlAttributes = new { @class = "form-control form-control-line", @Value = ViewBag.Titulo } })
                                                         @Html.ValidationMessageFor(model => model.titSolGas, "", new { @class = "text-danger" })
                                                     </div>
                                                 </div>
