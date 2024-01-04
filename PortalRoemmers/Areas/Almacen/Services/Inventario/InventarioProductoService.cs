@@ -181,7 +181,7 @@ namespace PortalRoemmers.Areas.Almacen.Services.Inventario
         {
             using (var db = new ApplicationDbContext())
             {
-                var model = db.tb_InvPro.OrderBy(x => x.codProCon).ToList();
+                var model = db.tb_InvPro.OrderBy(x => x.codProCon).ThenBy(x => x.nroInvCon).ToList();
                 return model;
             }
         }

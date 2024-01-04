@@ -568,16 +568,17 @@ namespace PortalRoemmers.Areas.Almacen.Controllers
                 // Escribiendo datos y combinando celdas
                 int inicioFilaSuma = 0;
                 string loteActual = string.Empty;
+                int nroConteo = 0;
 
                 var sumaPorLote = new Dictionary<string, int>();
 
                 foreach (var c in conTitulo)
                 {
-                    if (!sumaPorLote.ContainsKey(c.nroLotCon))
+                    if (!sumaPorLote.ContainsKey(c.nroLotCon + "|" + c.nroInvCon))
                     {
-                        sumaPorLote[c.nroLotCon] = 0;
+                        sumaPorLote[c.nroLotCon + "|" + c.nroInvCon] = 0;
                     }
-                    sumaPorLote[c.nroLotCon] += c.canInvCon;
+                    sumaPorLote[c.nroLotCon + "|" + c.nroInvCon] += c.canInvCon;
 
                     //Código
                     col = 1;
@@ -615,13 +616,15 @@ namespace PortalRoemmers.Areas.Almacen.Controllers
                     var invAxFil = _inv.obtenerModel(c.codProCon, c.nroLotCon, c.ubiProCon);
                     sl.SetCellValue(fil, col, invAxFil != null ? invAxFil.canProInv : 0 );
 
-                    if (loteActual != c.nroLotCon)
+                    string identificadorCompuesto = c.nroLotCon + "|" + c.nroInvCon;
+
+                    if ((loteActual+"|"+nroConteo) != identificadorCompuesto)
                     {
                         if (inicioFilaSuma != 0)
                         {
                             // Combina las celdas del lote anterior
                             sl.MergeWorksheetCells(inicioFilaSuma, 9, fil - 1, 9);
-                            sl.SetCellValue(inicioFilaSuma, 9, sumaPorLote[loteActual]);
+                            sl.SetCellValue(inicioFilaSuma, 9, sumaPorLote[loteActual + "|" + nroConteo]);
 
                             // Combina las celdas del lote anterior
                             var canTotalProvinv = conAgrupadoAx.Find(lote => lote.nroLotInv == loteActual).canProInv;
@@ -631,20 +634,22 @@ namespace PortalRoemmers.Areas.Almacen.Controllers
                             //Resultado.
                             col = 11;
                             sl.MergeWorksheetCells(inicioFilaSuma, 12, fil - 1, 12);
-                            sl.SetCellValue(inicioFilaSuma, 12, sumaPorLote[loteActual] - canTotalProvinv);
+                            sl.SetCellValue(inicioFilaSuma, 12, sumaPorLote[loteActual + "|" + nroConteo] - canTotalProvinv);
                         }
 
                         inicioFilaSuma = fil;
                         loteActual = c.nroLotCon;
-                    }           
+                        nroConteo = c.nroInvCon;
+
+                    }
 
                     fil = fil + 1;
                 }
-                if (inicioFilaSuma != 0 && !string.IsNullOrEmpty(loteActual))
+                if (inicioFilaSuma != 0 && !string.IsNullOrEmpty(loteActual + "|" + nroConteo))
                 {
                     // Combina y establece valor para la columna 9 (Suma Can. Conteo)
                     sl.MergeWorksheetCells(inicioFilaSuma, 9, fil - 1, 9);
-                    sl.SetCellValue(inicioFilaSuma, 9, sumaPorLote.ContainsKey(loteActual) ? sumaPorLote[loteActual] : 0);
+                    sl.SetCellValue(inicioFilaSuma, 9, sumaPorLote.ContainsKey(loteActual + "|" + nroConteo) ? sumaPorLote[loteActual + "|" + nroConteo] : 0);
 
                     // Combina y establece valor para la columna 10 (Tot Cantidad)
                     var canTotal = conAgrupadoAx.Find(lote => lote.nroLotInv == loteActual);
@@ -654,7 +659,7 @@ namespace PortalRoemmers.Areas.Almacen.Controllers
                     //Resultado.
                     col = 12;
                     sl.MergeWorksheetCells(inicioFilaSuma, 12, fil - 1, 12);
-                    sl.SetCellValue(inicioFilaSuma, 12, (sumaPorLote.ContainsKey(loteActual) && canTotal != null) ? (sumaPorLote[loteActual] - canTotal.canProInv):0);
+                    sl.SetCellValue(inicioFilaSuma, 12, (sumaPorLote.ContainsKey(loteActual + "|" + nroConteo) && canTotal != null) ? (sumaPorLote[loteActual + "|" + nroConteo] - canTotal.canProInv):0);
                 }
 
                 sl.SaveAs(Server.MapPath(path));
