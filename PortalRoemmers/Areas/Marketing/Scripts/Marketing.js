@@ -95,6 +95,40 @@ function Search(table, buscar, post) {
         }
     });
 }
+
+//Search Médico Especialidad - 2024
+function SearchMed(table, buscar, post) {
+    var row = "";
+
+    var b = $('#' + buscar).val();
+
+    $("#" + table + " > tbody:last").empty();
+    block();
+
+    $.post(post, { buscar: b }, function (data, status) {
+        if (status == "success") {
+            if (data == "") {
+                row = "<tr>";
+                row += "<td colspan='2' class='text-center'>" + "No encontrado" + "</td>";
+                row += "</tr>";
+                $("#" + table + " > tbody:last").append(row);
+            }
+            else {
+                $.each(data, function (i, elem) {
+                    row = "<tr>";
+                    row += "<td class='text-center'>" + elem.codigo + "</td>";
+                    row += "<td class='text-center'>" + elem.nombre + "</td>";
+                    row += "<td class='text-center'>" + elem.especialidad + "</td>";
+                    row += "<td class='hide'>" + elem.descripcion + "</td>";
+                    row += "</tr>";
+                    $("#" + table + " > tbody:last").append(row);
+                });
+            }
+            unblock();
+        }
+    });
+}
+
 /**
  *    <section id="wrapper" class="block1">
  *    </section>

@@ -200,7 +200,7 @@ namespace PortalRoemmers.Areas.Marketing.Controllers
                     }
                 }
                 //***--****
-                var mdetalle = _esti.obtenerDetalleMedico(idActividades).Select(x => new { x.idCli, x.cliente.nomCli, x.cliente.nroMatCli });
+                var mdetalle = _esti.obtenerDetalleMedico(idActividades).Select(x => new { x.idCli, x.cliente.nomCli, x.cliente.nroMatCli, x.cliente.idEsp });
                 //var mdetalle = model.dMed.Select(x => x.cliente);
                 if (mdetalle.Count() != 0)
                 {
@@ -210,7 +210,7 @@ namespace PortalRoemmers.Areas.Marketing.Controllers
                         {
                             medicoD += "|";
                         }
-                        medicoD += d.idCli + ";" + d.nomCli + ";" + d.nroMatCli;
+                        medicoD += d.idCli + ";" + d.nomCli + ";" + d.nroMatCli + ";" + d.idEsp;
                     }
                 }
                 //***--****
@@ -1322,6 +1322,7 @@ namespace PortalRoemmers.Areas.Marketing.Controllers
                     rowsF += "<td class='text-center'>" + item[1] + "</td>";
                     rowsF += "<td class='text-center'>" + item[2] + "</td>";
                     rowsF += "<td class='hidden'>" + item[3] + "</td>";
+                    rowsF += "<td class='text-center'>" + _est.obtenerItem(item[2]) + "</td>";
                     rowsF += "<td class='elimfila'><span class='glyphicon glyphicon-remove'></span></td>";
                     rowsF += "</tr>";
                 }
@@ -1337,6 +1338,7 @@ namespace PortalRoemmers.Areas.Marketing.Controllers
                     rowsM += "<td class='text-center'>" + item[0] + "</td>";
                     rowsM += "<td class='text-center'>" + item[1] + "</td>";
                     rowsM += "<td class='text-center'>" + item[2] + "</td>";
+                    rowsM += "<td class='text-center'>" + item[3] + "</td>";
                     rowsM += "<td class='elimfila'><span class='glyphicon glyphicon-remove'></span></td>";
                     rowsM += "</tr>";
                 }

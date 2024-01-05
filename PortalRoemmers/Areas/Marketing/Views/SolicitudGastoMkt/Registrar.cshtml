@@ -67,7 +67,7 @@
                     <div class="input-group">
                         <input type="text" id="search2" name="search2" class="form-control" placeholder="Buscar">
                         <span class="input-group-btn">
-                            <button class="btn waves-effect waves-light btn-info" onclick="Search('tb_medico_Search','search2','/Medico/SearchCliente')">
+                            <button class="btn waves-effect waves-light btn-info" onclick="SearchMed('tb_medico_Search','search2','/Medico/SearchClienteUpdate')">
                                 <i class="fa fa-search"></i>
                             </button>
                         </span>
@@ -79,6 +79,7 @@
                                     <tr>
                                         <th class="text-center">#</th>
                                         <th class="text-center">Nombre</th>
+                                        <th class="text-center">Especialidad</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -638,6 +639,7 @@
                                                         <th class="text-center">#</th>
                                                         <th class="text-center">Nombre</th>
                                                         <th class="text-center">Matricula</th>
+                                                        <th class="text-center">Especialidad</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -1104,6 +1106,7 @@
                 row = "<tr>";
                 row += "<td class='text-center'>" + $(this).find("td").eq(0).text() + "</td>";
                 row += "<td class='text-center'>" + $(this).find("td").eq(1).text() + "</td>";
+                row += "<td class='text-center'>" + $(this).find("td").eq(3).text() + "</td>";
                 row += "<td class='text-center'>" + $(this).find("td").eq(2).text() + "</td>";
                 row += "<td class='elimfila'><span class='glyphicon glyphicon-remove'></span></td>";
                 row += "</tr>";
