@@ -7,6 +7,7 @@ using PortalRoemmers.Security;
 using System.Linq;
 using System.Web.Mvc;
 using System;
+using PortalRoemmers.Areas.Sistemas.Services.Visitador;
 
 namespace PortalRoemmers.Areas.Sistemas.Controllers.Medico
 {
@@ -17,9 +18,11 @@ namespace PortalRoemmers.Areas.Sistemas.Controllers.Medico
         private GeneroRepositorio _gen;
         private EstadoRepositorio _est;
         private TipMedRepositorio _tipcli;
+        private EspecialidadRepositorio _esp;
         public MedicoController()
         {
             _ide = new TipDocIdeRepositorio();
+            _esp = new EspecialidadRepositorio();
             _cli = new MedicoRepositorio();
             _gen = new GeneroRepositorio();
             _est = new EstadoRepositorio();
@@ -121,6 +124,11 @@ namespace PortalRoemmers.Areas.Sistemas.Controllers.Medico
             var s = _cli.obtenerClientes().Where(x => x.nomCli.ToUpper().Contains(buscar.ToUpper())&&x.idEst==ConstantesGlobales.estadoActivo).Select(z => new { codigo = z.idCli, nombre = z.nomCli, descripcion = z.nroMatCli }).Take(1000);
             return Json(s, JsonRequestBehavior.AllowGet);
         }
-
+        //Agregando Especialidad
+        public JsonResult SearchClienteUpdate(string buscar)
+        {
+            var s = _cli.obtenerClientes().Where(x => x.nomCli.ToUpper().Contains(buscar.ToUpper()) && x.idEst == ConstantesGlobales.estadoActivo).Select(z => new { codigo = z.idCli, nombre = z.nomCli, descripcion = z.nroMatCli, especialidad = _esp.obtenerItem(z.idEsp ?? "99").nomEsp}).Take(1000);
+            return Json(s, JsonRequestBehavior.AllowGet);
+        }
     }
 }
