@@ -2490,7 +2490,8 @@ namespace PortalRoemmers.Areas.Marketing.Controllers
                         font.Bold = true;//negrita
                         font.SetFont(FontSchemeValues.Minor, 12);//tamaño de letra
                         rst = new SLRstType();
-                        rst.AppendText("Fecha de Eve.", font);
+                        //rst.AppendText("Fecha de Eve.", font);
+                        rst.AppendText("Mes de Eve.", font);
                         sl.SetCellValue(fil, col, rst.ToInlineString());
 
                         col = 8;
@@ -2638,7 +2639,8 @@ namespace PortalRoemmers.Areas.Marketing.Controllers
                                 //fil = fil - counter;
                                 //---------------------------------------------------
                                 col = 6;
-                                sl.SetCellValue(fil, col, det.solGasto.fchEveSolGas.ToString("dd-MM-yyyy"));
+                                /*sl.SetCellValue(fil, col, det.solGasto.fchEveSolGas.ToString("dd-MM-yyyy"));*/
+                                sl.SetCellValue(fil, col, det.solGasto.fchEveSolGas.ToString("MMMM"));
                                 style = sl.CreateStyle();
                                 style.Alignment.Horizontal = HorizontalAlignmentValues.Center;
                                 sl.SetCellStyle(fil, col, style);
