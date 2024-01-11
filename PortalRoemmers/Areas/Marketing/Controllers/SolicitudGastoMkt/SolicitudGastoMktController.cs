@@ -231,7 +231,7 @@ namespace PortalRoemmers.Areas.Marketing.Controllers
             creaTablas(familiaD, medicoD, responsableD, actividadD,documentoD);
             
             ViewBag.fecha = actual;
-            ViewBag.Titulo = model.titSolGas.Trim()+"/";
+            ViewBag.Titulo = (model.titSolGas != null) ? model.titSolGas.Trim() + "/" : "";
 
             return View();
         }
