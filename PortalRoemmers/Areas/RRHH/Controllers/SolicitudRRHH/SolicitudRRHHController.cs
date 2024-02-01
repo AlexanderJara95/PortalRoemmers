@@ -175,9 +175,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             grupoSoliRRHH.idGrupoRrhh = idGrupoRrhh;
             grupoSoliRRHH.descGrupo = model.descSolicitud;
             grupoSoliRRHH.usuCrea = model.usuCrea;
-            grupoSoliRRHH.usufchCrea = model.usufchCrea;
-
-            
+            grupoSoliRRHH.usufchCrea = model.usufchCrea;            
 
             if (emple.idEmpJ != "" || emple.idEmpJ != null)
             {
