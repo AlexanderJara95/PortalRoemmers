@@ -52,6 +52,7 @@ namespace PortalRoemmers.Areas.RRHH.Services.SolicitudRRHH
                     .Include(x => x.subtipoSolicitud)
                     .OrderByDescending(x => x.idSolicitudRrhh)
                     .Where(x => ((x.idAccSol == SessionPersister.UserId || x.idAccApro == SessionPersister.UserId || x.aprobFinal == SessionPersister.UserId) && x.idEstado != ConstantesGlobales.estadoAnulado && (x.idSubTipoSolicitudRrhh == subtipo || (x.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM && (x.idAccSol == SessionPersister.UserId || x.idAccApro == SessionPersister.UserId || x.aprobFinal == SessionPersister.UserId)))) && ((x.fchIniSolicitud >= p) && (x.fchIniSolicitud <= a) && (x.fchFinSolicitud >= p) && (x.fchFinSolicitud <= a)) && (x.descSolicitud.Contains(search) || (x.subtipoSolicitud.descSubtipoSolicitud.Contains(search)) || x.estado.nomEst.Contains(search)))
+                    .Where(x => x.fchIniSolicitud.Year == DateTime.Now.Year && x.fchFinSolicitud.Year == DateTime.Now.Year)
                     .Skip((pagina - 1) * cantidadRegistrosPorPagina)
                     .Take(cantidadRegistrosPorPagina).ToList();
 
@@ -77,6 +78,7 @@ namespace PortalRoemmers.Areas.RRHH.Services.SolicitudRRHH
                     .OrderByDescending(x => x.idSolicitudRrhh)
                     .Where(solicitud =>
                     solicitud.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM &&
+                    solicitud.estado.idEst == ConstantesGlobales.estadoAprobado &&
                     solicitud.fchIniSolicitud >= fechaIngresoEmp &&
                     db.tb_GrupoSolicitudRRHH.Any(grupoSol =>
                         grupoSol.idSolicitudRrhh == solicitud.idSolicitudRrhh &&
@@ -88,6 +90,7 @@ namespace PortalRoemmers.Areas.RRHH.Services.SolicitudRRHH
                             !db.tb_ExcluGrupoRRHH.Any(exclude =>
                                 exclude.idGrupoRrhh == grupo.idGrupoRrhh &&
                                 exclude.idAcc == SessionPersister.UserId))))
+                    .Where(x => x.fchIniSolicitud.Year == DateTime.Now.Year && x.fchFinSolicitud.Year == DateTime.Now.Year)
                     .ToList();
 
                 var modelFinal = model.Concat(modelMasiva).ToList();
@@ -347,10 +350,11 @@ namespace PortalRoemmers.Areas.RRHH.Services.SolicitudRRHH
             using (var db = new ApplicationDbContext())
             {
                 bool existeCruce = db.tb_SolicitudRRHH
-                    .Any(x => x.idAccSol == id &&
-                              ((x.fchIniSolicitud <= desde && x.fchFinSolicitud >= desde) ||  // Nueva fecha 'desde' está dentro de un rango existente
-                               (x.fchIniSolicitud <= hasta && x.fchFinSolicitud >= hasta) ||  // Nueva fecha 'hasta' está dentro de un rango existente
-                               (x.fchIniSolicitud >= desde && x.fchFinSolicitud <= hasta)));  // Rango existente está completamente dentro del nuevo rango
+                .Any(x => x.idAccSol == id
+                       && (x.idEstado != ConstantesGlobales.estadoRegistrado && x.idEstado != ConstantesGlobales.estadoModificado)
+                       && ((x.fchIniSolicitud <= desde && x.fchFinSolicitud >= desde) ||  // Nueva fecha 'desde' está dentro de un rango existente
+                           (x.fchIniSolicitud <= hasta && x.fchFinSolicitud >= hasta) ||  // Nueva fecha 'hasta' está dentro de un rango existente
+                           (x.fchIniSolicitud >= desde && x.fchFinSolicitud <= hasta))); // Rango existente está completamente dentro del nuevo rango                             
 
                 return existeCruce;
             }
