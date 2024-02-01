@@ -177,11 +177,21 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             grupoSoliRRHH.usuCrea = model.usuCrea;
             grupoSoliRRHH.usufchCrea = model.usufchCrea;
 
+            
 
             if (emple.idEmpJ != "" || emple.idEmpJ != null)
             {
                 model.idAccApro = _usu.obtenerItemXEmpleado(emple.idEmpJ).idAcc;
                 model.idSubTipoSolicitudRrhh = ConstantesGlobales.subTipoVacacionesM;
+
+                if (emple.idAreRoe == ConstantesGlobales.idRrhh && model.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacacionesM)
+                {
+                    model.aprobFinal = _usu.obtenerItemXEmpleado(empJefe.idEmpJ).idAcc;
+                }
+                else
+                {
+                    model.aprobFinal = usuJefe.idAcc;
+                }
 
                 try
                 {
@@ -196,13 +206,13 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
                         EmailHelper m = new EmailHelper();
                         string mensaje = string.Format("<section> Estimado (a) {0}<BR/> <p>Se registró una solicitud de vacaciones</p></section>", emple.nomComEmp);
                         string titulo = "Solicitud de Vacaciones";
-                        //m.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensaje, titulo, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+                        m.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensaje, titulo, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
 
                         //envio mensaje al usuario receptor
                         EmailHelper m1 = new EmailHelper();
                         string mensaje1 = string.Format("<section> Estimado (a) {0}<BR/> <p>Nuevo registro de vacaciones de {1}</p></section>", empJefe.nomComEmp, emple.nomComEmp);
                         string titulo1 = "Solicitud de Vacaciones";
-                        //m.SendEmail(/*model.solicitante.email*/usuJefe.email, mensaje1, titulo1, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+                        m.SendEmail(/*model.solicitante.email*/usuJefe.email, mensaje1, titulo1, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
 
                     }
                     else
@@ -388,7 +398,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             }
             else
             {
-                TempData["mensaje"] = "<div id='warning' class='alert alert-warning'>" + "Tienes vacaciones programadas en las fechas ingresadas" + "</div>";
+                mensaje = "<div id='warning' class='alert alert-warning'>" + "Tienes vacaciones programadas en las fechas ingresadas" + "</div>";
             }
 
             TempData["mensaje"] = mensaje;
@@ -693,13 +703,13 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             EmailHelper mE = new EmailHelper();
             string mensajeE = string.Format("<section> Estimado (a) {0}<BR/> <p>Se anuló la solicitud de vacaciones</p></section>", empPrinc.nomComEmp);
             string tituloE = "Anulación de solicitud de Vacaciones";
-            mE.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensajeE, tituloE, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+            //mE.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensajeE, tituloE, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
 
             //envio mensaje al usuario receptor
             EmailHelper mR = new EmailHelper();
             string mensajeR = string.Format("<section> Estimado (a) {0}<BR/> <p>Se anuló la solicitud de vacaciones a {1}</p></section>", empJefe.nomComEmp, empPrinc.nomComEmp);
             string tituloR = "Anulación de solicitud de Vacaciones";
-            mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+            //mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
 
             return Json(variable, JsonRequestBehavior.AllowGet);
         }
@@ -757,13 +767,13 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
                 EmailHelper mE = new EmailHelper();
                 string mensajeE = string.Format("<section> Estimado (a) {0}<BR/> <p>Se pre aprobó una solicitud de vacaciones</p></section>", empPrinc.nomComEmp);
                 string tituloE = "Aprobación de solicitud de Vacaciones";
-                mE.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensajeE, tituloE, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+                //mE.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensajeE, tituloE, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
 
                 //envio mensaje al usuario receptor
                 EmailHelper mR = new EmailHelper();
                 string mensajeR = string.Format("<section> Estimado (a) {0}<BR/> <p>Se pre aprobó una solicitud de vacaciones a {1}</p></section>", empJefe.nomComEmp, empPrinc.nomComEmp);
                 string tituloR = "Aprobación de solicitud de Vacaciones";
-                mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+                //mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
             }
             else
             {
@@ -772,13 +782,13 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
                 EmailHelper mE = new EmailHelper();
                 string mensajeE = string.Format("<section> Estimado (a) {0}<BR/> <p>Se aprobó una solicitud de vacaciones</p></section>", empPrinc.nomComEmp);
                 string tituloE = "Aprobación de solicitud de Vacaciones";
-                mE.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensajeE, tituloE, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+                //mE.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensajeE, tituloE, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
 
                 //envio mensaje al usuario receptor
                 EmailHelper mR = new EmailHelper();
                 string mensajeR = string.Format("<section> Estimado (a) {0}<BR/> <p>Se aprobó una solicitud de vacaciones a {1}</p></section>", empJefe.nomComEmp, empPrinc.nomComEmp);
                 string tituloR = "Aprobación de solicitud de Vacaciones";
-                mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+                //mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
             }
 
 
@@ -798,13 +808,13 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             EmailHelper mE = new EmailHelper();
             string mensajeE = string.Format("<section> Estimado (a) {0}<BR/> <p>Se denegó una solicitud de vacaciones</p></section>", empPrinc.nomComEmp);
             string tituloE = "Denegación de solicitud de Vacaciones";
-            mE.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensajeE, tituloE, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+            //mE.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensajeE, tituloE, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
 
             //envio mensaje al usuario receptor
             EmailHelper mR = new EmailHelper();
             string mensajeR = string.Format("<section> Estimado (a) {0}<BR/> <p>Se denegó una solicitud de vacaciones a {1}</p></section>", empJefe.nomComEmp, empPrinc.nomComEmp);
             string tituloR = "Denegación de solicitud de Vacaciones";
-            mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+            //mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
 
             return Json(variable, JsonRequestBehavior.AllowGet);
         }
@@ -851,8 +861,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
                         if (_soli.validarExisteCruceEnRegistro(_usu.obtenerItemXEmpleado(empItem.idEmp).idAcc, desde, hasta)) {
                             todasLasFilasValidas = false;
                             mensaje += "El registro ya existe|";
-                        }
-                        
+                        }                        
                     }
                     else
                     {
