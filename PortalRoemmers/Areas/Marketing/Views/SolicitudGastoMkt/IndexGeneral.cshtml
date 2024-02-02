@@ -189,14 +189,14 @@ Layout = "~/Views/Shared/_Layout.cshtml";
                                         dfr = dfr.Remove(dfr.Length - 1, 1);
                                         }
                                         }
-                                        <a href="@Url.Action(" Imprimir", "SolicitudGastoMkt" , new { Area="Marketing" , html=false, sol=item.idSolGas })" data-toggle="tooltip" title="Imprimir"> <i class="fa fa-print text-inverse m-r-10"></i> </a>
+                                        <a href="@Url.Action("Imprimir", "SolicitudGastoMkt" , new { Area="Marketing" , html=false, sol=item.idSolGas })" data-toggle="tooltip" title="Imprimir"> <i class="fa fa-print text-inverse m-r-10"></i> </a>
                                         <a href="#responsive-modal-Firmas" data-toggle="modal" title="Firmas" class="open-firma m-r-10" data-detfr="@dfr"><i class="fa fa-list-ol"></i></a>
-                                        <a href="@MyExtensions.ActionUrl(" VisualizarGeneral", "SolicitudGastoMkt" , new { Area="Marketing" , id=item.idSolGas })" data-toggle="tooltip" title="Visualizar"> <i class="fa fa-eye text-inverse m-r-10"></i> </a>
+                                        <a href="@MyExtensions.ActionUrl("VisualizarGeneral", "SolicitudGastoMkt" , new { Area="Marketing" , id=item.idSolGas })" data-toggle="tooltip" title="Visualizar"> <i class="fa fa-eye text-inverse m-r-10"></i> </a>
                                         @{
                                         //Estado
                                         var cambio = item.idSolGas + "|" + item.idEst + "|" + item.estado.nomEst + "|";
                                         }
-                                        <a href="@Url.Action(" ModMovPres", "SolicitudGastoMkt" , new { Area="Marketing" , id=item.idSolGas })" data-toggle="tooltip" title="Presupuesto"> <i class="mdi mdi-file-powerpoint-box"></i> </a>
+                                        <a href="@Url.Action("ModMovPres", "SolicitudGastoMkt" , new { Area="Marketing" , id=item.idSolGas })" data-toggle="tooltip" title="Presupuesto"> <i class="mdi mdi-file-powerpoint-box"></i> </a>
                                         @{ if (ConstantesGlobales.administrator.Contains(SessionPersister.Username))
                                         {
                                         <a href="#responsive-modal-Estado" id="sa-estado" data-toggle="modal" title="Cambiar Estado" class="cambiar-estado m-r-12" data-detcamb="@cambio"><i class="mdi mdi-etsy"></i></a>

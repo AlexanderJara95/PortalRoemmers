@@ -543,7 +543,7 @@ namespace PortalRoemmers.Areas.Marketing.Controllers
                     {
                         medicoD += "|";
                     }
-                    medicoD += d.idCli + ";" + d.nomCli + ";" + d.nroCloUPCli;
+                    medicoD += d.idCli + ";" + d.nomCli + ";" + d.nroMatCli + ";" + d.idEsp;
                 }
             }
 
@@ -655,7 +655,7 @@ namespace PortalRoemmers.Areas.Marketing.Controllers
                     {
                         medicoD += "|";
                     }
-                    medicoD += d.idCli + ";" + d.nomCli + ";" + d.nroCloUPCli;
+                    medicoD += d.idCli + ";" + d.nomCli + ";" + d.nroMatCli + ";" + d.idEsp;
                 }
             }
 
@@ -890,7 +890,7 @@ namespace PortalRoemmers.Areas.Marketing.Controllers
                     {
                         medicoD += "|";
                     }
-                    medicoD += d.idCli + ";" + d.nomCli + ";" + d.nroCloUPCli;
+                    medicoD += d.idCli + ";" + d.nomCli + ";" + d.nroMatCli + ";" + d.idEsp;
                 }
             }
 
