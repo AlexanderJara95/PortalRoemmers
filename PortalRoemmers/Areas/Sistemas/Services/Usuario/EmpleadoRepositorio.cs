@@ -49,6 +49,13 @@ namespace PortalRoemmers.Areas.Sistemas.Services.Usuario
             return model;
         }
 
+        public EmpleadoModels obtenerItemXcargo(string id)
+        {
+            var db = new ApplicationDbContext();
+            EmpleadoModels model = db.tb_Empleado.Include(x => x.jefe).Where(x => x.idCarg == id && x.idEst == ConstantesGlobales.estadoActivo).FirstOrDefault();
+            return model;
+        }
+
         public EmpleadoModels obtenerItemDetalle(string id)
         {
             EmpleadoModels model=new EmpleadoModels();

@@ -50,6 +50,8 @@ public static class ConstantesGlobales
     public static string SUP = "41";// SUPERVISOR
     public static string REP = "37";// REPRESENTANTE
     public static string GM = "24";//GERENTE DE MARKETING
+    public static string AS = "2";//ASISTENTE SOCIAL
+    public static string JR = "30";//JEFE DE RHH
     //tabla tb_Estado
     public static string estadoCesado = "2";//estado cesado
     public static string estadoActivo = "1";//estado activo

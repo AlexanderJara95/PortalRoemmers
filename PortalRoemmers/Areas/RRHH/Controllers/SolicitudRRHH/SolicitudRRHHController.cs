@@ -796,11 +796,18 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
                 {
                     //envio mensaje a rrhh
                     EmailHelper mRH = new EmailHelper();
-                    var usuRRHH = _usu.obtenerItem(ConstantesGlobales.encVac); //usuario responsable RRHH
-                    var empRRHH = _emp.obtenerItem(usuRRHH.idEmp); //empleado responsable RRHH
-                    string mensajeRH = string.Format("<section> Buen día {0}<BR/> <p>Se aprobó una solicitud de vacaciones a {1}<br>Desde: "+solicitud.fchIniSolicitud+"<br>Hasta: "+solicitud.fchFinSolicitud+"</p></section>", empRRHH.nomComEmp, empPrinc.nomComEmp);
+
+                    var empJR = _emp.obtenerItemXcargo(ConstantesGlobales.JR); //emp jefe de RRHH
+                    var usuJR = _usu.obtenerItemXEmpleado(empJR.idEmp); //usu jefe de RRHH
+                    var empAS = _emp.obtenerItemXcargo(ConstantesGlobales.AS); //emp Asistente social de RRHH
+                    var usuAS = _usu.obtenerItemXEmpleado(empAS.idEmp); //usu Asistente social de RRHH
+
+                    string mensajeRH = string.Format("<section> Buen día {0}<BR/> <p>Se aprobó una solicitud de vacaciones a {1}<br>Desde: "+solicitud.fchIniSolicitud.ToString("dd/MM/yyyy") + "<br>Hasta: "+solicitud.fchFinSolicitud.ToString("dd/MM/yyyy")+ "</p></section>", empAS.nomComEmp, empPrinc.nomComEmp);
                     string tituloRH = "VACACIONES " + solicitud.periodo + " - " + empPrinc.nom1Emp.ToUpper() + " " + empPrinc.apePatEmp.ToUpper();
-                    mRH.SendEmail(/*model.solicitante.email*/usuRRHH.email, mensajeRH, tituloRH, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+                    
+                    List<string> ccEmails = new List<string> { usuJR.email, usuPrinc.email, usuJefe.email};
+                    mRH.SendEmailCC(usuAS.email, ccEmails, mensajeRH, tituloRH, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+
                 }
 
             }
