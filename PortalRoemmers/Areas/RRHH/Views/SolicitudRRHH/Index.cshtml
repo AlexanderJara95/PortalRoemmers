@@ -208,6 +208,12 @@
                                                                 <a href="@MyExtensions.ActionUrl("Visualizar", "SolicitudRRHH", new { Area = "RRHH", id = item.idSolicitudRrhh })" data-toggle="tooltip" title="Visualizar">
                                                                     <strong style="color: #2cabe3">LISTO</strong>
                                                                 </a>
+                                                                if (item.idAccSol == SessionPersister.UserId && item.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacaciones) {
+                                                                    <span>&nbsp;&nbsp;|&nbsp;&nbsp;</span>                                                                    
+                                                                    <button id="getDoc">
+                                                                        <i class="fa fa-print text-inverse "></i>
+                                                                    </button>
+                                                                }
                                                             }
                                                             if (item.estado.nomEst == "PRE-APROBADO")
                                                             {
@@ -686,6 +692,43 @@
                 processData: false
             });
         });
+
+        $(document).on("click", "#getDoc", function (e) {
+            e.preventDefault(); // Evita que el evento click haga su acción por defecto (útil si es un botón de submit)
+            var data = new FormData();
+
+            // Encuentra la fila en la que se hizo clic
+            var fila = $(this).closest('tr');
+            var inicio = fila.find('td:eq(1)').text(); // Obtiene el texto de la segunda celda de esa fila
+
+            data.append("id", inicio);
+            block();
+            $.ajax({
+                url: '@Url.Action("DescargarDocFinal", "SolicitudRRHH")',
+                type: 'POST',
+                data: data,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (result) {
+                    if (result) {
+                        descargarDocX(result);
+                    } else {
+                        alert("se genero error al guardar");
+                        unblock();
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                    unblock();
+                },
+                cache: false,
+                contentType: false,
+                processData: false
+            });
+        });
+
+
         function validateFileSelected(event) {
             if (($("#inputGroupFile04"))[0].files[0] != undefined) {
                 var ext = $('#inputGroupFile04').val().split('.').pop().toLowerCase();
@@ -759,7 +802,13 @@
             var downloadUrl = '@Url.Action("Resultado", "SolicitudRRHH")' + '?ruta=' + filePath;
             window.location.href = downloadUrl; // Esto iniciará la descarga
         }
-        
+
+        function descargarDocX(filePath) {
+            console.log("filepa", filePath.FilePath);
+            var downloadUrl = '@Url.Action("SolicitudVacaciones", "SolicitudRRHH")' + '?ruta=' + filePath.FilePath;
+            window.location.href = downloadUrl; // Esto iniciará la descarga
+        }
+
         function block() {
             $('section.block1').block({
                 message: '<h4><img src="../../Content/plugins/images/busy.gif" /> Sólo un momento...</h4>'

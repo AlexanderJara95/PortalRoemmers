@@ -27,6 +27,8 @@ public class Encrypt
 
 public static class ConstantesGlobales
 {
+    //tb_Usuario
+    public static string encVac = "1169"; //Encargado Vacacinones
     //tb_Area
     public static string idContabilidad = "1"; //Administrativo
     public static string idDptoTec = "2";  //Tecnico

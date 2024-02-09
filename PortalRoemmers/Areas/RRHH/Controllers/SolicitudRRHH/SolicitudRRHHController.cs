@@ -14,6 +14,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.IO;
 using SpreadsheetLight;
+using Xceed.Words.NET;
 
 namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
 {
@@ -24,6 +25,8 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
         private UsuarioRepositorio _usu;
         private EmpleadoRepositorio _emp;
         private GrupoRRHHRepositorio _gru;
+        private AreaRoeRepositorio _are;
+        private SedeRepositorio _sed;
         private Ennumerador enu;
         private Parametros p;
 
@@ -33,6 +36,8 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             _soli = new SolicitudRRHHRepositorio();
             _usu = new UsuarioRepositorio();
             _gru = new GrupoRRHHRepositorio();
+            _are = new AreaRoeRepositorio();
+            _sed = new SedeRepositorio();
             p = new Parametros();
             enu = new Ennumerador();
         }
@@ -701,13 +706,13 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             EmailHelper mE = new EmailHelper();
             string mensajeE = string.Format("<section> Estimado (a) {0}<BR/> <p>Se anuló la solicitud de vacaciones</p></section>", empPrinc.nomComEmp);
             string tituloE = "Anulación de solicitud de Vacaciones";
-            //mE.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensajeE, tituloE, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+            mE.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensajeE, tituloE, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
 
             //envio mensaje al usuario receptor
             EmailHelper mR = new EmailHelper();
             string mensajeR = string.Format("<section> Estimado (a) {0}<BR/> <p>Se anuló la solicitud de vacaciones a {1}</p></section>", empJefe.nomComEmp, empPrinc.nomComEmp);
             string tituloR = "Anulación de solicitud de Vacaciones";
-            //mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+            mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
 
             return Json(variable, JsonRequestBehavior.AllowGet);
         }
@@ -765,13 +770,13 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
                 EmailHelper mE = new EmailHelper();
                 string mensajeE = string.Format("<section> Estimado (a) {0}<BR/> <p>Se pre aprobó una solicitud de vacaciones</p></section>", empPrinc.nomComEmp);
                 string tituloE = "Aprobación de solicitud de Vacaciones";
-                //mE.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensajeE, tituloE, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+                mE.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensajeE, tituloE, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
 
                 //envio mensaje al usuario receptor
                 EmailHelper mR = new EmailHelper();
                 string mensajeR = string.Format("<section> Estimado (a) {0}<BR/> <p>Se pre aprobó una solicitud de vacaciones a {1}</p></section>", empJefe.nomComEmp, empPrinc.nomComEmp);
                 string tituloR = "Aprobación de solicitud de Vacaciones";
-                //mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+                mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
             }
             else
             {
@@ -780,13 +785,24 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
                 EmailHelper mE = new EmailHelper();
                 string mensajeE = string.Format("<section> Estimado (a) {0}<BR/> <p>Se aprobó una solicitud de vacaciones</p></section>", empPrinc.nomComEmp);
                 string tituloE = "Aprobación de solicitud de Vacaciones";
-                //mE.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensajeE, tituloE, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+                mE.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensajeE, tituloE, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
 
                 //envio mensaje al usuario receptor
                 EmailHelper mR = new EmailHelper();
                 string mensajeR = string.Format("<section> Estimado (a) {0}<BR/> <p>Se aprobó una solicitud de vacaciones a {1}</p></section>", empJefe.nomComEmp, empPrinc.nomComEmp);
                 string tituloR = "Aprobación de solicitud de Vacaciones";
-                //mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+                mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+                if(solicitud.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacaciones)
+                {
+                    //envio mensaje a rrhh
+                    EmailHelper mRH = new EmailHelper();
+                    var usuRRHH = _usu.obtenerItem(ConstantesGlobales.encVac); //usuario responsable RRHH
+                    var empRRHH = _emp.obtenerItem(usuRRHH.idEmp); //empleado responsable RRHH
+                    string mensajeRH = string.Format("<section> Buen día {0}<BR/> <p>Se aprobó una solicitud de vacaciones a {1}<br>Desde: "+solicitud.fchIniSolicitud+"<br>Hasta: "+solicitud.fchFinSolicitud+"</p></section>", empRRHH.nomComEmp, empPrinc.nomComEmp);
+                    string tituloRH = "VACACIONES " + solicitud.periodo + " - " + empPrinc.nom1Emp.ToUpper() + " " + empPrinc.apePatEmp.ToUpper();
+                    mRH.SendEmail(/*model.solicitante.email*/usuRRHH.email, mensajeRH, tituloRH, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+                }
+
             }
 
 
@@ -806,13 +822,13 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             EmailHelper mE = new EmailHelper();
             string mensajeE = string.Format("<section> Estimado (a) {0}<BR/> <p>Se denegó una solicitud de vacaciones</p></section>", empPrinc.nomComEmp);
             string tituloE = "Denegación de solicitud de Vacaciones";
-            //mE.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensajeE, tituloE, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+            mE.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensajeE, tituloE, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
 
             //envio mensaje al usuario receptor
             EmailHelper mR = new EmailHelper();
             string mensajeR = string.Format("<section> Estimado (a) {0}<BR/> <p>Se denegó una solicitud de vacaciones a {1}</p></section>", empJefe.nomComEmp, empPrinc.nomComEmp);
             string tituloR = "Denegación de solicitud de Vacaciones";
-            //mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+            mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
 
             return Json(variable, JsonRequestBehavior.AllowGet);
         }
@@ -1028,6 +1044,37 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
         }
 
         [HttpPost]
+        public JsonResult DescargarDocFinal(string id)
+        {
+            var solicitud = _soli.obtenerItem(id);
+            var usuario = _usu.obtenerItem(solicitud.idAccSol);
+            EmpleadoModels empleado = _emp.obtenerItem(usuario.idEmp);
+
+            // Crear un nombre de archivo único para la ubicación temporal
+            string outputPath = Path.Combine(Path.GetTempPath(), "SolicitudVacaciones_" + Guid.NewGuid() + ".docx");
+
+            // Abrir el documento Word y reemplazar marcadores de posición con valores dinámicos
+            using (DocX doc = DocX.Load(Server.MapPath("~/Import/SolicitudRRHH/PlantillaSolicitudVacaciones.docx")))
+            {
+                doc.ReplaceText("<<FECHA_SOLICITUD>>", solicitud.usufchCrea?.ToString("dd/MM/yyyy"));
+                doc.ReplaceText("<<AREA>>", _are.obtenerItem(empleado.idAreRoe).nomAreRoe);
+                doc.ReplaceText("<<SEDE>>", _sed.obtenerSede(empleado.cod_sede)?.nom_sede ?? "");
+                doc.ReplaceText("<<NOMBRES_APELLIDOS>>", empleado.nomComEmp);
+                doc.ReplaceText("<<DESDE>>", solicitud.fchIniSolicitud.ToString("dd/MM/yyyy"));
+                doc.ReplaceText("<<HASTA>>", solicitud.fchFinSolicitud.ToString("dd/MM/yyyy"));
+                doc.ReplaceText("<<PERIODO>>", solicitud.periodo);
+
+                // Guardar el documento en la ubicación temporal
+                doc.SaveAs(outputPath);
+            }
+
+            // Descargar el documento
+            // return File(outputPath, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "SolicitudVacaciones.docx");
+            return Json(new { FilePath = outputPath });
+           
+        }
+
+        [HttpPost]
         public JsonResult saveFile(HttpPostedFileBase file)
         {
             Boolean ok = false;
@@ -1054,7 +1101,10 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             return File(ruta, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         }
 
-
+        public FileResult SolicitudVacaciones(string ruta)
+        {
+            return File(ruta, "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+        }
 
     }
 
