@@ -770,13 +770,13 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
                 EmailHelper mE = new EmailHelper();
                 string mensajeE = string.Format("<section> Estimado (a) {0}<BR/> <p>Se pre aprobó una solicitud de vacaciones</p></section>", empPrinc.nomComEmp);
                 string tituloE = "Aprobación de solicitud de Vacaciones";
-                mE.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensajeE, tituloE, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+                //mE.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensajeE, tituloE, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
 
                 //envio mensaje al usuario receptor
                 EmailHelper mR = new EmailHelper();
                 string mensajeR = string.Format("<section> Estimado (a) {0}<BR/> <p>Se pre aprobó una solicitud de vacaciones a {1}</p></section>", empJefe.nomComEmp, empPrinc.nomComEmp);
                 string tituloR = "Aprobación de solicitud de Vacaciones";
-                mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+                //mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
             }
             else
             {
@@ -785,13 +785,13 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
                 EmailHelper mE = new EmailHelper();
                 string mensajeE = string.Format("<section> Estimado (a) {0}<BR/> <p>Se aprobó una solicitud de vacaciones</p></section>", empPrinc.nomComEmp);
                 string tituloE = "Aprobación de solicitud de Vacaciones";
-                mE.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensajeE, tituloE, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+                //mE.SendEmail(/*model.solicitante.email*/ usuPrinc.email, mensajeE, tituloE, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
 
                 //envio mensaje al usuario receptor
                 EmailHelper mR = new EmailHelper();
                 string mensajeR = string.Format("<section> Estimado (a) {0}<BR/> <p>Se aprobó una solicitud de vacaciones a {1}</p></section>", empJefe.nomComEmp, empPrinc.nomComEmp);
                 string tituloR = "Aprobación de solicitud de Vacaciones";
-                mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
+                //mR.SendEmail(/*model.solicitante.email*/usuJefe.email, mensajeR, tituloR, ConstCorreo.CORREO, ConstCorreo.CLAVE_CORREO);
                 if(solicitud.idSubTipoSolicitudRrhh == ConstantesGlobales.subTipoVacaciones)
                 {
                     //envio mensaje a rrhh

@@ -69,7 +69,7 @@
                     <div class="input-group">
                         <input type="text" id="search2" name="search2" class="form-control" placeholder="Buscar">
                         <span class="input-group-btn">
-                            <button class="btn waves-effect waves-light btn-info" onclick="Search('tb_medico_Search','search2','/Medico/SearchCliente')">
+                            <button class="btn waves-effect waves-light btn-info" onclick="SearchMed('tb_medico_Search','search2','/Medico/SearchClienteUpdate')">
                                 <i class="fa fa-search"></i>
                             </button>
                         </span>
@@ -81,6 +81,7 @@
                                     <tr>
                                         <th class="text-center">#</th>
                                         <th class="text-center">Nombre</th>
+                                        <th class="text-center">Especialidad</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -276,7 +277,7 @@
                                                                 foreach (var p in (SelectList)ViewBag.presupuesto)
                                                                 {
                                                                     var sp = new List<string>();
-                                                                    if(Model != null)
+                                                                    if (Model != null)
                                                                     {
                                                                         if (Model.idPres != null)
                                                                         {
@@ -371,6 +372,7 @@
                                                     <th class="text-center">#</th>
                                                     <th class="text-center">Nombre</th>
                                                     <th class="text-center">Matricula</th>
+                                                    <th class="text-center">Especialidad</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -438,6 +440,7 @@
     @Scripts.Render("~/Bundles/datepicker_JS")
     @Scripts.Render("~/Bundles/bloqueo_JS")
     <script src="~/Areas/Sistemas/Scripts/Sistemas.js"></script>
+    <script src="~/Areas/Marketing/Scripts/Marketing.js"></script>
     <script src="~/Content/plugins/bower_components/sweetalert/sweetalert.min.js"></script>
     <script>
         $(document).ready(function () {
@@ -691,6 +694,7 @@
                 row = "<tr>";
                 row += "<td class='text-center'>" + $(this).find("td").eq(0).text() + "</td>";
                 row += "<td class='text-center'>" + $(this).find("td").eq(1).text() + "</td>";
+                row += "<td class='text-center'>" + $(this).find("td").eq(3).text() + "</td>";
                 row += "<td class='text-center'>" + $(this).find("td").eq(2).text() + "</td>";
                 row += "<td class='elimfila'><span class='glyphicon glyphicon-remove'></span></td>";
                 row += "</tr>";
