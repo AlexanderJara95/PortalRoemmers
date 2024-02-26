@@ -351,7 +351,7 @@ namespace PortalRoemmers.Areas.RRHH.Services.SolicitudRRHH
             {
                 bool existeCruce = db.tb_SolicitudRRHH
                 .Any(x => x.idAccSol == id
-                       && (x.idEstado != ConstantesGlobales.estadoRegistrado && x.idEstado != ConstantesGlobales.estadoModificado)
+                       && (x.idEstado != ConstantesGlobales.estadoRegistrado && x.idEstado != ConstantesGlobales.estadoModificado && x.idEstado != ConstantesGlobales.estadoRechazado)
                        && ((x.fchIniSolicitud <= desde && x.fchFinSolicitud >= desde) ||  // Nueva fecha 'desde' está dentro de un rango existente
                            (x.fchIniSolicitud <= hasta && x.fchFinSolicitud >= hasta) ||  // Nueva fecha 'hasta' está dentro de un rango existente
                            (x.fchIniSolicitud >= desde && x.fchFinSolicitud <= hasta))); // Rango existente está completamente dentro del nuevo rango                             
