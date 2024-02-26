@@ -340,7 +340,8 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             ViewBag.fechaFin = model.fchFinSolicitud.ToShortDateString();
             int diasHabiles = calcularDiasHabiles(model.fchIniSolicitud,model.fchFinSolicitud);
             //dias restantes sin el inicio y final actual
-            ViewBag.diasRestantes = Convert.ToInt32(diasRestantes) + diasHabiles;
+            //ViewBag.diasRestantes = Convert.ToInt32(diasRestantes) + diasHabiles;
+            ViewBag.diasRestantes = Convert.ToInt32(diasRestantes);
             //model.idSubTipoSolicitudRrhh = model.idSubTipoSolicitudRrhh;            
             return View(model);
         }
@@ -365,7 +366,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             if (!_soli.validarExisteCruceEnRegistro(model.idAccSol, model.fchIniSolicitud, model.fchFinSolicitud))
             {
                 if (validarLimiteVacaciones(model.fchIniSolicitud, model.fchFinSolicitud, diasRestantes))
-                {
+                {ZZZ
                     try
                     {
                         if (_soli.modificar(model))
