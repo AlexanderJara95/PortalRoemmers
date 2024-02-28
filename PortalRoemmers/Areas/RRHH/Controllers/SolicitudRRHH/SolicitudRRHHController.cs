@@ -366,7 +366,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.SolicitudRRHH
             if (!_soli.validarExisteCruceEnRegistro(model.idAccSol, model.fchIniSolicitud, model.fchFinSolicitud))
             {
                 if (validarLimiteVacaciones(model.fchIniSolicitud, model.fchFinSolicitud, diasRestantes))
-                {ZZZ
+                {
                     try
                     {
                         if (_soli.modificar(model))
