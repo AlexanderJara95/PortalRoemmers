@@ -43,7 +43,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.LicenciaRRHH
         {
             return View();
         }*/
-        [CustomAuthorize(Roles = "000003,000405")]
+        [CustomAuthorize(Roles = "000003,000422")]
         public ActionResult Index(string menuArea, string menuVista, int pagina = 1, string search = "", string idAcc = "", string fchEveSolGasI = "", string fchEveSolGasF = "")
         {
             EmpleadoModels emple = (EmpleadoModels)System.Web.HttpContext.Current.Session[Sessiones.empleado];
@@ -104,7 +104,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.LicenciaRRHH
             return View(model);
         }
 
-        [CustomAuthorize(Roles = "000003,000406")]
+        [CustomAuthorize(Roles = "000003,000423")]
         [HttpGet]
         public ActionResult Registrar()
         {
@@ -207,7 +207,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.LicenciaRRHH
 
         [HttpGet]
         [EncryptedActionParameter]
-        [CustomAuthorize(Roles = "000003,000407")]
+        [CustomAuthorize(Roles = "000003,000424")]
         public ActionResult Modificar(string id)
         {
             var model = _lic.obtenerItem(id);
@@ -274,7 +274,7 @@ namespace PortalRoemmers.Areas.RRHH.Controllers.LicenciaRRHH
 
         [HttpGet]
         [EncryptedActionParameter]
-        [CustomAuthorize(Roles = "000003,000407")]
+        [CustomAuthorize(Roles = "000003,000422")]
         public ActionResult Visualizar(string id)
         {
             var model = _lic.obtenerItem(id);
