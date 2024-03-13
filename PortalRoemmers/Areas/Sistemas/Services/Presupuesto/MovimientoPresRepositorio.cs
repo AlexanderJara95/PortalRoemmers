@@ -153,6 +153,23 @@ namespace PortalRoemmers.Areas.Sistemas.Services.Presupuesto
             }
 
         }
+        public MovimientoPresModels obtenerMovimiento(string idSolGas)
+        {
+            using (var db = new ApplicationDbContext())
+            {
+                MovimientoPresModels model = null;
+                try
+                {
+                    model = db.tb_MovPres.Include(x => x.presupuesto).Where(x => x.idSolGas == idSolGas).FirstOrDefault();
+                }
+                catch (Exception e)
+                {
+                    e.Message.ToString();
+                }
+
+                return model;
+            }
+        }
 
         public List<MovimientoPresModels> obtenerMovimientos(string idSolGas)
         {

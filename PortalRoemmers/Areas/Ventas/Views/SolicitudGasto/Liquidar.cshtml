@@ -188,6 +188,31 @@
                 }
             });
 
+            $('#example23 td').on('click', function () {
+                // Obtener el índice de la celda en la que se hizo clic
+                var cellIndex = $(this).index();
+                // Verificar si el índice corresponde a la columna 7
+                if (cellIndex === 7) {
+                    // Obtener el contenido del elemento <td>
+                    var idSolGas = $(this).closest('tr').find('td:eq(1)').text().trim();
+
+                    var Options = {};
+                    Options.url = "/SolicitudGasto/verSaldoDisponible";
+                    Options.type = "POST";
+                    Options.data = JSON.stringify({ idSolGas: idSolGas });
+                    Options.datatype = "json";
+                    Options.contentType = "application/json";
+                    Options.success = function (data) {
+                        if (data) {
+                            console.log("saldoPres:", data.saldoPres);
+                            swal("Saldo Actual", data.saldoPres, "success");
+                        }
+                    };
+                    Options.error = function () { alert("Error in Getting States!!"); unblock(); };
+                    $.ajax(Options);
+                }
+            });
+
 
         });
 

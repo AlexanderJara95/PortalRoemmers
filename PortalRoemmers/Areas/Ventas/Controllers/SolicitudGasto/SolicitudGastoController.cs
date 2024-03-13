@@ -1603,6 +1603,27 @@ namespace PortalRoemmers.Areas.Ventas.Controllers.SolicitudGasto
 
             return Json(mensaje, JsonRequestBehavior.AllowGet);
         }
+        //Adicional
+        public JsonResult verSaldoDisponible(string idSolGas)
+        {
+            MovimientoPresModels movPres = _mov.obtenerMovimiento(idSolGas);
+            string simbModemovPres = "";
+            if (movPres.idMon == ConstantesGlobales.monedaDol)
+            {
+                simbModemovPres = "$ ";
+            }
+            else
+            {
+                simbModemovPres = "S/. ";
+            }
+
+            var result = new
+            {
+                saldoPres = simbModemovPres + movPres.presupuesto.Saldo.ToString()
+            };
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
         //busquedas
         [HttpPost]
         public JsonResult buscarConceptoTGasto(string idTipGas)
